@@ -1,0 +1,20 @@
+{
+  "appearance": {
+    "themeColor": "#292524",
+    "customCSS": "/* Add custom CSS here */\n.btn-primary {\n  background-color: var(--theme-color);\n}",
+    "customJS": "// Add custom JS here\nconsole.log('Custom JS loaded');"
+  },
+  "translations": {
+    "home_welcome": "Chào mừng đến với Cẩm Cù House",
+    "btn_menu": "Xem Thực Đơn",
+    "btn_visit": "Ghé Chơi Ngay"
+  },
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": "587",
+    "user": "admin@camcuhouse.com",
+    "pass": "",
+    "fromName": "Cẩm Cù House",
+    "fromEmail": "no-reply@camcuhouse.com"
+  }
+}

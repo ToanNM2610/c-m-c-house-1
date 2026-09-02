@@ -1,0 +1,11 @@
+[
+  {
+    "id": "u1",
+    "username": "admin",
+    "fullName": "Toàn Nguyễn",
+    "email": "admin@camcuhouse.com",
+    "role": "Quản trị viên",
+    "avatar": "https://placehold.co/100x100/292524/a8a29e?text=A",
+    "postCount": 1
+  }
+]

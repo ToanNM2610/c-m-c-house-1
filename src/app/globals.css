@@ -1,26 +1,143 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #1A0F0A; /* Deep Espresso Brown */
+  --foreground: #F4EFEA; /* Warm Beige */
+  --primary: #1A0F0A;
+  --secondary: #F4EFEA;
+  --accent: #4A5D4E;    /* Olive Green */
+  --gold: #C5A880;      /* Muted Gold */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-cormorant);
+  --font-playfair: var(--font-playfair);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #1A0F0A;
+  color: #F4EFEA;
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  letter-spacing: 0.015em;
+  cursor: auto;
+}
+
+/* Custom Selection */
+::selection {
+  background-color: rgba(197, 168, 128, 0.35);
+  color: #F4EFEA;
+}
+
+/* Lenis Smooth Scroll Optimization */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Texture & Grain Mộc Mạc */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+
+/* Ambient Cinematic Orbs (Pure Radial Gradient - Zero CPU/GPU Filter Blur Overhead) */
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #1A0F0A;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+  will-change: transform;
+  animation: float 28s infinite ease-in-out alternate;
+}
+
+.orb-1 {
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(74, 93, 78, 0.3) 0%, rgba(74, 93, 78, 0.08) 45%, transparent 70%);
+  top: -10%;
+  left: -10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(197, 168, 128, 0.25) 0%, rgba(197, 168, 128, 0.06) 45%, transparent 70%);
+  bottom: -15%;
+  right: -10%;
+  animation-delay: -6s;
+}
+
+.orb-3 {
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(43, 24, 16, 0.6) 0%, rgba(43, 24, 16, 0.15) 50%, transparent 70%);
+  top: 35%;
+  left: 35%;
+  animation-delay: -14s;
+}
+
+@keyframes float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(30px, -35px, 0) scale(1.05);
+  }
+  66% {
+    transform: translate3d(-20px, 20px, 0) scale(0.95);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Shimmer & Gold Gradient Utilities */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #F4EFEA 0%, #C5A880 50%, #F4EFEA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border {
+  border-color: rgba(197, 168, 128, 0.3);
+}
+
+.gold-border-hover:hover {
+  border-color: rgba(197, 168, 128, 0.8);
+  box-shadow: 0 0 25px rgba(197, 168, 128, 0.15);
 }

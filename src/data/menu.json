@@ -1,0 +1,605 @@
+[
+  {
+    "id": "c1",
+    "name": "Cà phê đen/sữa",
+    "price": "20.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Black / Milk Coffee",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c2",
+    "name": "Cà phê sài gòn",
+    "price": "25.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Saigon Style Coffee",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c3",
+    "name": "Cà phê muối",
+    "price": "28.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Salted Coffee",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c4",
+    "name": "Cà phê dừa xay",
+    "price": "28.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Coconut Blended Coffee",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c5",
+    "name": "Cà phê kem trứng",
+    "price": "30.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Egg Cream Coffee",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c6",
+    "name": "Bạc xỉu",
+    "price": "25.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Bac Xiu (White Coffee)",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c7",
+    "name": "Cacao sữa",
+    "price": "25.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Hot/Iced Milk Cocoa",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c8",
+    "name": "Cacao kem muối",
+    "price": "28.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Salted Cream Cocoa",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "c9",
+    "name": "Cacao kem trứng",
+    "price": "30.000đ",
+    "category": "CÀ PHÊ",
+    "inStock": true,
+    "nameEn": "Egg Cream Cocoa",
+    "categoryEn": "COFFEE"
+  },
+  {
+    "id": "t1",
+    "name": "Trà gừng mật ong",
+    "price": "25.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Honey Ginger Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t2",
+    "name": "Trà Lipton thảo mộc",
+    "price": "27.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Herbal Lipton Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t3",
+    "name": "Trà vải",
+    "price": "27.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Lychee Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t4",
+    "name": "Trà đào",
+    "price": "27.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Peach Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t5",
+    "name": "Trà đào cam sả",
+    "price": "30.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Peach Orange Lemongrass Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t6",
+    "name": "Trà sữa Thái xanh",
+    "price": "27.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Thai Green Milk Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t7",
+    "name": "Trà sữa truyền thống",
+    "price": "25.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Traditional Milk Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t8",
+    "name": "Trà sữa kem trứng",
+    "price": "30.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Egg Cream Milk Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t9",
+    "name": "Trà hoa cúc",
+    "price": "28.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Chamomile Chrysanthemum Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "t10",
+    "name": "Hoa đu đủ mật ong",
+    "price": "28.000đ",
+    "category": "TRÀ",
+    "inStock": true,
+    "nameEn": "Papaya Flower Honey Tea",
+    "categoryEn": "TEA"
+  },
+  {
+    "id": "st1",
+    "name": "Sinh tố Mãng cầu",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Soursop Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st2",
+    "name": "Sinh tố Sapoche",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Sapodilla (Sapoche) Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st3",
+    "name": "Sinh tố Xoài",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Mango Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st4",
+    "name": "Sinh tố Dừa",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Coconut Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st5",
+    "name": "Sinh tố Bơ",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Avocado Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st6",
+    "name": "Sinh tố Đậu đỏ",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Red Bean Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st7",
+    "name": "Sinh tố Việt quất/Dâu",
+    "price": "28.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Blueberry / Strawberry Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st8",
+    "name": "Sinh tố Bơ sầu riêng",
+    "price": "33.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Avocado Durian Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "st9",
+    "name": "Sinh tố Hạt sen",
+    "price": "33.000đ",
+    "category": "SINH TỐ",
+    "inStock": true,
+    "nameEn": "Lotus Seed Smoothie",
+    "categoryEn": "SMOOTHIES"
+  },
+  {
+    "id": "e1",
+    "name": "Nước ép Táo",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Fresh Apple Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e2",
+    "name": "Nước ép Ổi",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Fresh Guava Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e3",
+    "name": "Nước ép Cam",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Fresh Orange Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e4",
+    "name": "Nước ép Thơm",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Fresh Pineapple Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e5",
+    "name": "Nước ép Chanh dây",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Passion Fruit Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e6",
+    "name": "Nước ép Cà rốt",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Fresh Carrot Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e7",
+    "name": "Nước ép Dưa hấu",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Fresh Watermelon Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e8",
+    "name": "Nước ép Cải kale",
+    "price": "30.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Kale Green Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "e9",
+    "name": "Nước ép Mix tùy chọn",
+    "price": "35.000đ",
+    "category": "NƯỚC ÉP",
+    "inStock": true,
+    "nameEn": "Custom Mixed Juice",
+    "categoryEn": "FRESH JUICE"
+  },
+  {
+    "id": "sd1",
+    "name": "Soda Atiso đỏ",
+    "price": "30.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Red Hibiscus Soda",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sd2",
+    "name": "Soda chanh bạc hà",
+    "price": "30.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Mint Lime Soda",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sd3",
+    "name": "Soda việt quất/dâu",
+    "price": "30.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Blueberry / Strawberry Soda",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sc1",
+    "name": "Sữa chua dầm",
+    "price": "23.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Crushed Ice Yogurt",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sc2",
+    "name": "Sữa chua nếp cẩm",
+    "price": "27.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Black Sticky Rice Yogurt",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sc3",
+    "name": "Sữa chua chanh dây",
+    "price": "27.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Passion Fruit Yogurt",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sc4",
+    "name": "Sữa chua việt quất/dâu",
+    "price": "27.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Blueberry / Strawberry Yogurt",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "sc5",
+    "name": "Sữa chua hạt đác",
+    "price": "30.000đ",
+    "category": "SODA / SỮA CHUA",
+    "inStock": true,
+    "nameEn": "Arenga Palm Seed Yogurt",
+    "categoryEn": "SODA & YOGURT"
+  },
+  {
+    "id": "k1",
+    "name": "Đá me",
+    "price": "27.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Iced Tamarind Drink",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k2",
+    "name": "Tắc xí muội",
+    "price": "27.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Preserved Salted Plum Kumquat Drink",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k3",
+    "name": "Dừa tươi",
+    "price": "22.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Fresh Young Coconut",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k4",
+    "name": "Chanh mật ong",
+    "price": "25.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Honey Lemon Drink",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k5",
+    "name": "Chanh muối",
+    "price": "25.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Preserved Salted Lime Drink",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k6",
+    "name": "Dưa hấu tắc xay",
+    "price": "27.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Blended Watermelon & Kumquat",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k7",
+    "name": "Matcha latte",
+    "price": "27.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Matcha Latte",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k8",
+    "name": "Matcha đậu đỏ",
+    "price": "30.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Matcha Red Bean",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "k9",
+    "name": "Oreo đá xay",
+    "price": "30.000đ",
+    "category": "KHÁC",
+    "inStock": true,
+    "nameEn": "Oreo Ice Blended",
+    "categoryEn": "OTHERS"
+  },
+  {
+    "id": "f1",
+    "name": "Bánh mì ốp la xúc xích",
+    "price": "30.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Baguette with Sunny-Side Up Eggs & Sausage",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f2",
+    "name": "Mỳ Spaghetti",
+    "price": "35.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Spaghetti Bolognese",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f3",
+    "name": "Bò kho + bánh mì",
+    "price": "45.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Vietnamese Beef Stew with Baguette",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f4",
+    "name": "Cà ri gà + bánh mì",
+    "price": "45.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Chicken Curry with Baguette",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f5",
+    "name": "Bánh tráng phơi sương + Sa tế",
+    "price": "12.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Dew-soaked Rice Paper with Chili Sate",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f6",
+    "name": "Bánh tráng phơi sương + Ớt siêu cay",
+    "price": "12.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Dew-soaked Rice Paper with Extra Hot Chili",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f7",
+    "name": "Phô mai que",
+    "price": "20.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Fried Mozzarella Sticks",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f8",
+    "name": "Khoai tây chiên",
+    "price": "20.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Crispy French Fries",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f9",
+    "name": "Cá viên",
+    "price": "20.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Fried Fish Balls",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f10",
+    "name": "Bò viên",
+    "price": "20.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Fried Beef Balls",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f11",
+    "name": "Chả cá cốm",
+    "price": "25.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Green Rice Flake Fish Cakes",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f12",
+    "name": "Hồ lô",
+    "price": "25.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "Grilled Gourd Sausages",
+    "categoryEn": "FOOD & SNACKS"
+  },
+  {
+    "id": "f13",
+    "name": "Xúc xích Đức",
+    "price": "25.000đ",
+    "category": "MÓN ĂN",
+    "inStock": true,
+    "nameEn": "German Sausages",
+    "categoryEn": "FOOD & SNACKS"
+  }
+]
