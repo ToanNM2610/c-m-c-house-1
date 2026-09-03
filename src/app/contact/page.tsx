@@ -32,13 +32,25 @@ export default function ContactPage() {
           
           {/* Left Column: Direct Contact & Direction Cards (5 Cols) */}
           <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            initial="initial"
+            animate="animate"
+            variants={{
+              initial: { opacity: 0 },
+              animate: {
+                opacity: 1,
+                transition: { staggerChildren: 0.08, delayChildren: 0.1 }
+              }
+            }}
             className="lg:col-span-5 flex flex-col justify-between gap-6"
           >
             {/* Address & Navigation Card */}
-            <div className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5">
+            <motion.div 
+              variants={{
+                initial: { opacity: 0, y: 20 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+              }}
+              className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5"
+            >
               <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
                 <MapPin size={22} />
               </div>
@@ -63,10 +75,16 @@ export default function ContactPage() {
                   <ExternalLink size={12} />
                 </a>
               </div>
-            </div>
+            </motion.div>
 
             {/* Opening Hours Card */}
-            <div className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5">
+            <motion.div 
+              variants={{
+                initial: { opacity: 0, y: 20 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+              }}
+              className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5"
+            >
               <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
                 <Clock size={22} />
               </div>
@@ -80,10 +98,16 @@ export default function ContactPage() {
                   <p>{t("contact.hours2")}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Hotline & Direct Booking Card */}
-            <div className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5">
+            <motion.div 
+              variants={{
+                initial: { opacity: 0, y: 20 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+              }}
+              className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5"
+            >
               <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
                 <Phone size={22} />
               </div>
@@ -97,10 +121,16 @@ export default function ContactPage() {
                   <Phone size={14} /> {t("contact.directCall")}
                 </a>
               </div>
-            </div>
+            </motion.div>
 
             {/* Social Channels Bar */}
-            <div className="p-6 rounded-2xl bg-[#1A0F0A] border border-[#C5A880]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <motion.div 
+              variants={{
+                initial: { opacity: 0, y: 20 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+              }}
+              className="p-6 rounded-2xl bg-[#1A0F0A] border border-[#C5A880]/20 flex flex-col sm:flex-row items-center justify-between gap-4"
+            >
               <span className="text-xs font-sans tracking-widest text-[#C5A880] uppercase font-semibold">
                 {t("contact.socialLabel")}
               </span>
@@ -142,7 +172,7 @@ export default function ContactPage() {
                   </svg>
                 </a>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Right Column: Google Maps Large Interactive Embed (7 Cols) */}

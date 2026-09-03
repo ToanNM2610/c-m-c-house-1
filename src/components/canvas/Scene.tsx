@@ -78,7 +78,7 @@ export default function Scene({ ...props }) {
         <Preload all />
 
         {/* Hậu kỳ điện ảnh */}
-        <EffectComposer disableNormalPass>
+        <EffectComposer enableNormalPass={false}>
           <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={isLowPerf ? 1.0 : 1.5} />
           <Vignette eskil={false} offset={0.1} darkness={1.1} />
           {!isLowPerf && <Noise opacity={0.02} />}
