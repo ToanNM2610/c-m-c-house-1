@@ -4,17 +4,15 @@ import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
-// Bộ 4 tọa độ SVG định hình đường cong chất lỏng (Curved SVG Liquid Reveal)
-// 1. Initial: Rèm võng sâu xuống đáy màn hình với đỉnh bụng tại Y=200
+// Cấu hình 3 trạng thái của đường cong SVG Liquid Reveal:
+// 1. Initial: Đường cong võng sâu xuống đáy với đỉnh bụng tại Y=200
 const initialPath = 'M 0 0 L 100 0 L 100 100 Q 50 200 0 100 Z';
-// 2. Flat (Enter): Rèm dâng lên căng phẳng che trọn màn hình tại Y=100
+// 2. Flat (Enter): Rèm dâng lên che trọn màn hình phẳng tuyệt đối tại Y=100
 const flatPath = 'M 0 0 L 100 0 L 100 100 Q 50 100 0 100 Z';
-// 3. Arch (Exit): Đỉnh vòm được kéo vút lên trên đỉnh màn hình tạo vòm cong nghệ thuật
-const archPath = 'M 0 0 L 100 0 L 100 0 Q 50 -40 0 0 Z';
-// 4. End: Rèm thu gọn hoàn toàn vào mép trên màn hình
+// 3. Exit (Reveal): Rèm uốn cong kéo vút lên trên đỉnh biến mất tại Y=0
 const exitPath = 'M 0 0 L 100 0 L 100 0 Q 50 0 0 0 Z';
 
-const liquidEase = [0.76, 0, 0.24, 1] as const;
+const transitionEase = [0.76, 0, 0.24, 1] as const;
 const contentEase = [0.22, 1, 0.36, 1] as const;
 
 export default function Template({ children }: { children: React.ReactNode }) {
@@ -32,7 +30,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* ======================================================== */}
-      {/* TẦNG 1: LỚP CHỈ VÀNG HOÀNG GIA (#C5A880) - LƯỚT DẪN ĐẦU  */}
+      {/* TẦNG 1: LỚP RÈM VÀNG ĐỒNG (#C5A880) - LƯỚT DẪN ĐẦU       */}
       {/* ======================================================== */}
       <svg
         key={`curtain-gold-${pathname}`}
@@ -41,19 +39,29 @@ export default function Template({ children }: { children: React.ReactNode }) {
         preserveAspectRatio="none"
       >
         <motion.path
-          initial={{ d: initialPath }}
-          animate={{ d: [initialPath, flatPath, archPath, exitPath] }}
+          initial={{ d: initialPath, opacity: 1 }}
+          animate={{
+            d: [initialPath, flatPath, exitPath],
+            opacity: [1, 1, 0],
+          }}
           transition={{
-            duration: 0.75,
-            times: [0, 0.35, 0.85, 1],
-            ease: liquidEase,
+            d: {
+              duration: 1.15,
+              times: [0, 0.48, 1],
+              ease: transitionEase,
+            },
+            opacity: {
+              duration: 1.15,
+              times: [0, 0.92, 1],
+              ease: 'linear',
+            },
           }}
           fill="#C5A880"
         />
       </svg>
 
       {/* ======================================================== */}
-      {/* TẦNG 2: LỚP RÈM LỤA CÀ PHÊ MỘC (#1A0F0A) - TRỄ 0.08S     */}
+      {/* TẦNG 2: LỚP RÈM NÂU GỖ TRẦM (#1A0F0A) - TRỄ 0.08S        */}
       {/* ======================================================== */}
       <svg
         key={`curtain-dark-${pathname}`}
@@ -62,28 +70,39 @@ export default function Template({ children }: { children: React.ReactNode }) {
         preserveAspectRatio="none"
       >
         <motion.path
-          initial={{ d: initialPath }}
-          animate={{ d: [initialPath, flatPath, archPath, exitPath] }}
+          initial={{ d: initialPath, opacity: 1 }}
+          animate={{
+            d: [initialPath, flatPath, exitPath],
+            opacity: [1, 1, 0],
+          }}
           transition={{
-            duration: 0.75,
-            delay: 0.08,
-            times: [0, 0.35, 0.85, 1],
-            ease: liquidEase,
+            d: {
+              duration: 1.15,
+              delay: 0.08,
+              times: [0, 0.48, 1],
+              ease: transitionEase,
+            },
+            opacity: {
+              duration: 1.15,
+              delay: 0.08,
+              times: [0, 0.92, 1],
+              ease: 'linear',
+            },
           }}
           fill="#1A0F0A"
         />
       </svg>
 
       {/* ======================================================== */}
-      {/* CHUYỂN ĐỘNG NỘI DUNG TRANG: SCALE 0.98 -> 1, Y: 20 -> 0   */}
+      {/* NỘI DUNG TRANG: FADE IN VÀ TRỒI NHẸ KHI RÈM THU LÊN ĐỈNH */}
       {/* ======================================================== */}
       <motion.div
         key={`page-content-${pathname}`}
-        initial={{ opacity: 0, y: 20, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{
-          duration: 0.65,
-          delay: 0.26,
+          duration: 0.55,
+          delay: 0.52,
           ease: contentEase,
         }}
         className="w-full min-h-screen overflow-x-hidden"
