@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useGallery } from "@/hooks/useGallery";
 import { useLanguage } from "@/context/LanguageContext";
 import BlurText from "@/components/ui/BlurText";
+import CardTilt from "@/components/ui/transitions/CardTilt";
 
 export default function HomePage() {
   const [isMounted, setIsMounted] = useState(false);
@@ -351,37 +352,38 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {highlights.map((item, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: idx * 0.08, ease: [0.25, 1, 0.5, 1] }}
-                className="group relative rounded-2xl overflow-hidden bg-[#1A0F0A]/30 backdrop-blur-md border border-[#C5A880]/20 hover:border-[#C5A880]/70 transition-all duration-300 shadow-2xl hover:-translate-y-1"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden bg-[#180D07]">
-                  <Image 
-                    src={item.img} 
-                    alt={t(item.nameKey)}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    loading="lazy"
-                    quality={75}
-                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-85 group-hover:opacity-100" 
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#120703] via-[#120703]/90 to-transparent">
-                  <h3 className="text-lg sm:text-xl font-serif text-[#F4EFEA] mb-1.5 group-hover:text-[#C5A880] transition-colors">
-                    {t(item.nameKey)}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#F4EFEA]/70 font-light line-clamp-2 mb-3">
-                    {t(item.descKey)}
-                  </p>
-                  <p className="text-[#C5A880] font-sans font-semibold tracking-wide text-sm">
-                    {item.price}
-                  </p>
-                </div>
-              </motion.div>
+              <CardTilt key={idx} className="h-full">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.45, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  className="group relative h-full rounded-2xl overflow-hidden bg-[#1A0F0A]/30 backdrop-blur-md border border-[#C5A880]/20 hover:border-[#C5A880]/70 transition-all duration-300 shadow-2xl"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden bg-[#180D07]">
+                    <Image 
+                      src={item.img} 
+                      alt={t(item.nameKey)}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      loading="lazy"
+                      quality={75}
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-85 group-hover:opacity-100" 
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-[#120703] via-[#120703]/90 to-transparent">
+                    <h3 className="text-lg sm:text-xl font-serif text-[#F4EFEA] mb-1.5 group-hover:text-[#C5A880] transition-colors">
+                      {t(item.nameKey)}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#F4EFEA]/70 font-light line-clamp-2 mb-3">
+                      {t(item.descKey)}
+                    </p>
+                    <p className="text-[#C5A880] font-sans font-semibold tracking-wide text-sm">
+                      {item.price}
+                    </p>
+                  </div>
+                </motion.div>
+              </CardTilt>
             ))}
           </div>
           

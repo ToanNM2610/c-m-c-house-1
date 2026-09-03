@@ -50,7 +50,7 @@ export default function GalleryPage() {
               hidden: { opacity: 0 },
               show: {
                 opacity: 1,
-                transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+                transition: { staggerChildren: 0.06, delayChildren: 0.1 }
               }
             }}
           >
