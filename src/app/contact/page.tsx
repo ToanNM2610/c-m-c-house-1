@@ -1,14 +1,21 @@
 "use client";
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { MapPin, Clock, Phone, Navigation, ExternalLink } from "lucide-react";
+import { MapPin, Clock, Phone, Navigation, ExternalLink, Globe2, Map } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import BlurText from "@/components/ui/BlurText";
+
+const Contact3DScene = dynamic(() => import("@/components/3d/Contact3DScene"), {
+  ssr: false,
+});
 
 const GOOGLE_MAPS_URL = "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
 
 export default function ContactPage() {
   const { t, lang } = useLanguage();
+  const [mapMode, setMapMode] = useState<"globe" | "google">("globe");
 
   return (
     <main className="relative min-h-screen bg-transparent text-[#F4EFEA] z-10 pt-32 pb-32 font-sans">
@@ -27,18 +34,19 @@ export default function ContactPage() {
           <div className="w-16 h-[1px] bg-[#C5A880]/40 mx-auto mt-4"></div>
         </div>
 
-        {/* 2-Column Content Layout: Info & Google Maps Embed */}
+        {/* 2-Column Content Layout: Info Cards & 3D Globe / Google Maps */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
           
           {/* Left Column: Direct Contact & Direction Cards (5 Cols) */}
           <motion.div 
             initial="initial"
-            animate="animate"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
             variants={{
               initial: { opacity: 0 },
               animate: {
                 opacity: 1,
-                transition: { staggerChildren: 0.08, delayChildren: 0.1 }
+                transition: { staggerChildren: 0.1, delayChildren: 0.1 }
               }
             }}
             className="lg:col-span-5 flex flex-col justify-between gap-6"
@@ -46,18 +54,18 @@ export default function ContactPage() {
             {/* Address & Navigation Card */}
             <motion.div 
               variants={{
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+                initial: { opacity: 0, y: 30 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
               }}
-              className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5"
+              className="p-8 rounded-2xl bg-[#24140C]/70 backdrop-blur-md border border-[#C5A880]/25 hover:border-[#C5A880]/70 transition-all duration-300 shadow-xl flex items-start gap-5"
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5 shadow-inner">
                 <MapPin size={22} />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="font-serif text-lg text-[#F4EFEA]">{t("contact.addressLabel")}</h3>
-                  <span className="text-[10px] uppercase font-sans tracking-wider bg-[#C5A880]/15 text-[#C5A880] px-2 py-0.5 rounded-full border border-[#C5A880]/30">
+                  <span className="text-[10px] uppercase font-sans tracking-wider bg-[#C5A880]/15 text-[#C5A880] px-2 py-0.5 rounded-full border border-[#C5A880]/30 font-medium">
                     Gia Nghĩa
                   </span>
                 </div>
@@ -68,7 +76,8 @@ export default function ContactPage() {
                   href={GOOGLE_MAPS_URL}
                   target="_blank" 
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 bg-[#F4EFEA] hover:bg-[#C5A880] text-[#1A0F0A] px-5 py-2.5 rounded-xl font-sans font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-sm"
+                  data-cursor-hover
+                  className="inline-flex items-center gap-2 bg-[#F4EFEA] hover:bg-[#C5A880] text-[#1A0F0A] px-5 py-2.5 rounded-xl font-sans font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-md cursor-pointer"
                 >
                   <Navigation size={13} />
                   <span>{t("contact.openMapBtn")}</span>
@@ -80,12 +89,12 @@ export default function ContactPage() {
             {/* Opening Hours Card */}
             <motion.div 
               variants={{
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+                initial: { opacity: 0, y: 30 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
               }}
-              className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5"
+              className="p-8 rounded-2xl bg-[#24140C]/70 backdrop-blur-md border border-[#C5A880]/25 hover:border-[#C5A880]/70 transition-all duration-300 shadow-xl flex items-start gap-5"
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5 shadow-inner">
                 <Clock size={22} />
               </div>
               <div className="flex-1">
@@ -103,12 +112,12 @@ export default function ContactPage() {
             {/* Hotline & Direct Booking Card */}
             <motion.div 
               variants={{
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+                initial: { opacity: 0, y: 30 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
               }}
-              className="p-8 rounded-2xl bg-[#24140C] border border-[#C5A880]/25 hover:border-[#C5A880]/60 transition-all duration-300 shadow-xl flex items-start gap-5"
+              className="p-8 rounded-2xl bg-[#24140C]/70 backdrop-blur-md border border-[#C5A880]/25 hover:border-[#C5A880]/70 transition-all duration-300 shadow-xl flex items-start gap-5"
             >
-              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5 shadow-inner">
                 <Phone size={22} />
               </div>
               <div className="flex-1">
@@ -116,7 +125,8 @@ export default function ContactPage() {
                 <p className="text-2xl font-serif text-[#C5A880] font-bold tracking-wider mb-4">0382 851 688</p>
                 <a 
                   href="tel:0382851688" 
-                  className="inline-flex items-center justify-center gap-2 bg-[#1E1008] hover:bg-[#C5A880] hover:text-[#1A0F0A] text-[#F4EFEA] border border-[#C5A880]/40 px-6 py-2.5 rounded-xl font-sans font-semibold text-xs uppercase tracking-widest transition-all duration-300 shadow-sm"
+                  data-cursor-hover
+                  className="inline-flex items-center justify-center gap-2 bg-[#1E1008] hover:bg-[#C5A880] hover:text-[#1A0F0A] text-[#F4EFEA] border border-[#C5A880]/40 px-6 py-2.5 rounded-xl font-sans font-semibold text-xs uppercase tracking-widest transition-all duration-300 shadow-sm cursor-pointer"
                 >
                   <Phone size={14} /> {t("contact.directCall")}
                 </a>
@@ -126,10 +136,10 @@ export default function ContactPage() {
             {/* Social Channels Bar */}
             <motion.div 
               variants={{
-                initial: { opacity: 0, y: 20 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+                initial: { opacity: 0, y: 30 },
+                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
               }}
-              className="p-6 rounded-2xl bg-[#1A0F0A] border border-[#C5A880]/20 flex flex-col sm:flex-row items-center justify-between gap-4"
+              className="p-6 rounded-2xl bg-[#1A0F0A]/90 backdrop-blur-md border border-[#C5A880]/20 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg"
             >
               <span className="text-xs font-sans tracking-widest text-[#C5A880] uppercase font-semibold">
                 {t("contact.socialLabel")}
@@ -141,6 +151,7 @@ export default function ContactPage() {
                   target="_blank" 
                   rel="noreferrer" 
                   aria-label="Facebook"
+                  data-cursor-hover
                   className="w-10 h-10 rounded-full bg-[#24140C] border border-[#C5A880]/30 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
@@ -153,6 +164,7 @@ export default function ContactPage() {
                   target="_blank" 
                   rel="noreferrer" 
                   aria-label="YouTube"
+                  data-cursor-hover
                   className="w-10 h-10 rounded-full bg-[#24140C] border border-[#C5A880]/30 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
@@ -165,6 +177,7 @@ export default function ContactPage() {
                   target="_blank" 
                   rel="noreferrer" 
                   aria-label="TikTok"
+                  data-cursor-hover
                   className="w-10 h-10 rounded-full bg-[#24140C] border border-[#C5A880]/30 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
@@ -175,42 +188,78 @@ export default function ContactPage() {
             </motion.div>
           </motion.div>
 
-          {/* Right Column: Google Maps Large Interactive Embed (7 Cols) */}
+          {/* Right Column: 3D Wireframe Globe with Beacon & View Mode Switcher (7 Cols) */}
           <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
             className="lg:col-span-7 flex flex-col"
           >
-            <div className="w-full h-full min-h-[420px] lg:min-h-[600px] rounded-2xl overflow-hidden shadow-2xl bg-[#1E1008] border border-[#C5A880]/30 relative flex flex-col">
+            <div className="w-full h-full min-h-[440px] lg:min-h-[620px] rounded-2xl overflow-hidden shadow-2xl bg-[#1A0F0A]/95 border border-[#C5A880]/30 relative flex flex-col">
               
-              {/* Header inside Map Box */}
-              <div className="p-4 px-6 bg-[#1A0F0A]/95 border-b border-[#C5A880]/20 flex justify-between items-center z-10">
+              {/* Header Bar with Toggle Switch */}
+              <div className="p-4 px-6 bg-[#1A0F0A] border-b border-[#C5A880]/20 flex flex-wrap justify-between items-center gap-3 z-30">
                 <div className="flex items-center gap-2 text-xs font-sans tracking-wider text-[#F4EFEA]/90">
                   <MapPin size={15} className="text-[#C5A880]" />
-                  <span className="font-medium">Cẩm Cù House • Gia Nghĩa, Đắk Nông</span>
+                  <span className="font-serif font-medium">Cẩm Cù House • Gia Nghĩa, Đắk Nông</span>
                 </div>
-                <a 
-                  href={GOOGLE_MAPS_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[11px] font-sans text-[#C5A880] hover:text-[#F4EFEA] uppercase tracking-widest flex items-center gap-1.5 transition-colors font-medium"
-                >
-                  <span>{t("contact.openMapBtn")}</span>
-                  <ExternalLink size={12} />
-                </a>
+
+                <div className="flex items-center gap-2">
+                  {/* View Mode Toggle: 3D Hologram vs Satellite Map */}
+                  <div className="flex items-center bg-[#25150E] p-1 rounded-xl border border-[#C5A880]/25">
+                    <button
+                      onClick={() => setMapMode("globe")}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+                        mapMode === "globe"
+                          ? "bg-[#C5A880] text-[#1A0F0A] font-semibold shadow-sm"
+                          : "text-[#F4EFEA]/60 hover:text-[#C5A880]"
+                      }`}
+                    >
+                      <Globe2 size={13} />
+                      <span>3D Globe</span>
+                    </button>
+                    <button
+                      onClick={() => setMapMode("google")}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
+                        mapMode === "google"
+                          ? "bg-[#C5A880] text-[#1A0F0A] font-semibold shadow-sm"
+                          : "text-[#F4EFEA]/60 hover:text-[#C5A880]"
+                      }`}
+                    >
+                      <Map size={13} />
+                      <span>Google Maps</span>
+                    </button>
+                  </div>
+
+                  <a 
+                    href={GOOGLE_MAPS_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] font-sans text-[#C5A880] hover:text-[#F4EFEA] uppercase tracking-widest flex items-center gap-1.5 transition-colors font-medium ml-1"
+                  >
+                    <span>{t("contact.openMapBtn")}</span>
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
               </div>
 
-              {/* Exact Google Maps Embed Iframe */}
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d4802.49617262464!2d107.7030752!3d11.9758153!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173c7ccbd4cd55f%3A0x932e986e061ca415!2zQ-G6qW0gQ8O5IEhvdXNl!5e1!3m2!1svi!2s!4v1788347215068!5m2!1svi!2s"
-                className="w-full h-[350px] md:h-[450px] lg:h-full min-h-[380px] lg:min-h-[520px] rounded-b-2xl border-0 shadow-2xl filter contrast-[1.05] opacity-95 hover:opacity-100 transition-opacity duration-300"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-                title={lang === "en" ? "Cam Cu House Location" : "Vị trí Cẩm Cù House"}
-              />
+              {/* View Content: 3D Globe or Google Maps */}
+              <div className="w-full flex-1 relative min-h-[380px] lg:min-h-[540px]">
+                {mapMode === "globe" ? (
+                  <Contact3DScene />
+                ) : (
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d4802.49617262464!2d107.7030752!3d11.9758153!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173c7ccbd4cd55f%3A0x932e986e061ca415!2zQ-G6qW0gQ8O5IEhvdXNl!5e1!3m2!1svi!2s!4v1788347215068!5m2!1svi!2s"
+                    className="w-full h-full min-h-[380px] lg:min-h-[540px] border-0 filter contrast-[1.05] opacity-95 hover:opacity-100 transition-opacity duration-300"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    title={lang === "en" ? "Cam Cu House Location" : "Vị trí Cẩm Cù House"}
+                  />
+                )}
+              </div>
             </div>
           </motion.div>
 

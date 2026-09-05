@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function IntroLoader() {
+  const pathname = usePathname() || "";
+  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/wp-admin");
   const [show, setShow] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isHiding, setIsHiding] = useState(false);
   const { lang } = useLanguage();
 
   useEffect(() => {
+    if (isAdmin) return;
+
     // Only run once per session
     const hasPlayed = sessionStorage.getItem("intro_played");
     if (hasPlayed) {
@@ -46,7 +51,7 @@ export default function IntroLoader() {
     return () => clearInterval(timer);
   }, []);
 
-  if (!show) return null;
+  if (isAdmin || !show) return null;
 
   return (
     <AnimatePresence>

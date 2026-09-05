@@ -445,7 +445,7 @@ export default function AdminPostsPage() {
                 {imageMode === "url" ? (
                   <input 
                     type="url" 
-                    value={coverImage}
+                    value={coverImage || ""}
                     onChange={(e) => setCoverImage(e.target.value)}
                     placeholder="https://..."
                     className="w-full border border-[#8c8f94] rounded-sm px-2 py-1"

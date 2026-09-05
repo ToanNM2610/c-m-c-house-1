@@ -1,4 +1,33 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+Hãy tái cấu trúc và hiện thực hóa trọn vẹn bộ tiêu chuẩn "Cinematic Coffee Experience" trị giá cao cho website Cẩm Cù House:
+
+1. BẢNG MÀU CAO CẤP & HỆ THỐNG PHÔNG CHỮ (`tailwind.config.ts` & `src/app/layout.tsx`):
+   - Cấu hình Font Google qua next/font:
+     + Tiêu đề (Headings): Cormorant Garamond hoặc Playfair Display (Serif cổ điển, đậm chất kể chuyện).
+     + Thân bài (Body): Plus Jakarta Sans (Sans-serif mỏng, letter-spacing thoáng).
+   - Thiết lập Palette màu:
+     + primary: '#1A0F0A' (Deep Espresso Brown)
+     + secondary: '#F4EFEA' (Warm Beige / Giấy kraft)
+     + accent: '#4A5D4E' (Olive Green nông trại)
+     + gold: '#C5A880' (Muted Gold cho chi tiết viền kim loại sang trọng)
+   - Áp dụng nền mặc định toàn site: bg-[#1A0F0A] text-[#F4EFEA].
+
+2. HIỆU ỨNG CUỘN ẢO & CON TRỎ CHUỘT TÙY BIẾN (SMOOTH SCROLL & CUSTOM CURSOR):
+   - Tích hợp Lenis Smooth Scroll để toàn bộ thao tác cuộn chuột lướt êm ái như một thước phim điện ảnh (loại bỏ độ giật thông thường).
+   - Xây dựng component `<CustomCursor />` (tự động ẩn trên màn hình cảm ứng):
+     + Con trỏ dạng vòng tròn nhỏ chạy mượt theo gia tốc chuột (spring physics).
+     + Khi rê vào các nút bấm, ảnh không gian hoặc hạt cà phê: Vòng tròn nở to, đổi sang viền vàng gold (#C5A880) kèm chữ "Khám phá" hoặc "Xem thêm".
+
+3. TRẢI NGHIỆM THỊ GIÁC 3D VÀ CUỘN THEO CỐT TRUYỆN TẠI TRANG CHỦ (`src/app/page.tsx`):
+   - Hero Section 3D Interactive:
+     + Vật thể trung tâm (Hạt cà phê / Bao bì mộc đặc sản) xoay nhẹ đa chiều (3D Parallax Tilt rotateX, rotateY) bám sát chuyển động di chuột.
+     + Phía sau phủ lớp hiệu ứng ánh sáng / sương mờ suối nước mộc mạc bằng CSS radial gradient và particle nhẹ.
+   - Typography Blur Mask Animation:
+     + Các tiêu đề chính không xuất hiện thô cứng mà tách từng từ, trượt từ dưới lên kèm hiệu ứng mờ nhạt dần (filter blur từ 10px -> 0px, opacity 0 -> 1).
+   - Scale on Scroll (Phóng to khung cảnh):
+     + Khối ảnh vườn hoa cẩm cù và bờ suối Đắk Nông tự động phóng to dần (scale từ 0.92 lên 1.05) khi người dùng cuộn tới, tạo cảm giác người xem bước hẳn vào không gian quán.
+
+4. BẢO TOÀN ĐA NGÔN NGỮ (VI / EN):
+   - Toàn bộ các tiêu đề nghệ thuật, câu chuyện hạt cà phê nguyên bản và nhãn nút mới phải kết nối với context ngôn ngữ `useLanguage()`, bấm nút VI / EN là chuyển đổi mượt mà 100%.# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 /node_modules

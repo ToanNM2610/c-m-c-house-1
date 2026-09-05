@@ -8,8 +8,8 @@ export default function Footer() {
   const pathname = usePathname();
   const { t } = useLanguage();
 
-  // Hide on Admin
-  if (pathname && pathname.startsWith("/admin")) {
+  // Hide on Admin and Full-Page 3D Home
+  if (pathname === "/" || (pathname && pathname.startsWith("/admin"))) {
     return null;
   }
 

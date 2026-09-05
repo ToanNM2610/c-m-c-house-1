@@ -1,113 +1,132 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Coffee, Sprout, HeartHandshake } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
+import { Coffee, Sprout, HeartHandshake, Compass } from "lucide-react";
 import BlurText from "@/components/ui/BlurText";
 
+const About3DScene = dynamic(() => import("@/components/3d/About3DScene"), {
+  ssr: false,
+  loading: () => null,
+});
+
+const TIMELINE_STAGES = [
+  {
+    step: "Chặng 01",
+    title: "Hành Trình Tạo Dựng",
+    icon: Sprout,
+    p1: "Giữa bạt ngàn đất đỏ bazan và những thung lũng sương sớm của Gia Nghĩa, Cẩm Cù House được gieo mầm từ tình yêu sâu sắc với mảnh đất Tây Nguyên mộc mạc.",
+    p2: "Chúng tôi dựng nên ngôi nhà gỗ bên triền suối đá, nơi những cây cẩm cù rừng nở hoa tỏa hương thơm dịu nhẹ, tạo nên một chốn dừng chân bình yên cho những tâm hồn tìm về thiên nhiên.",
+  },
+  {
+    step: "Chặng 02",
+    title: "Triết Lý Rang Mộc Nguyên Bản",
+    icon: Coffee,
+    p1: "Tại Cẩm Cù, từng hạt cà phê Robusta đều được nâng niu và tuyển chọn kỹ lưỡng từ những nông trại địa phương trù phú.",
+    p2: "Phương pháp rang mộc 100% không tẩm ướp phụ gia, tôn vinh trọn vẹn hậu vị ngọt đầm, độ đậm đà tự nhiên và phong vị mộc mạc đặc trưng của đại ngàn Đắk Nông.",
+  },
+  {
+    step: "Chặng 03",
+    title: "Chốn Dừng Chân Cho Tâm Hồn",
+    icon: HeartHandshake,
+    p1: "Không chỉ là một quán cà phê, Cẩm Cù House là không gian sinh thái an yên, nơi con người và cỏ cây hòa quyện cùng dòng chảy tự nhiên.",
+    p2: "Ngồi bên hiên nhà gỗ, lắng nghe tiếng suối róc rách và thả trôi những âu lo thường nhật, tìm lại sự thanh thản thuần khiết trong từng hơi thở sớm mai.",
+  },
+];
+
 export default function AboutPage() {
-  const { t } = useLanguage();
   return (
-    <main className="relative min-h-screen font-sans bg-transparent text-[#F4EFEA] z-10 pt-32 pb-32">
-      <section className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8">
-        
-        {/* Header */}
-        <div className="text-center mb-24">
-          <span className="text-[#C5A880] uppercase tracking-[0.25em] text-xs sm:text-sm mb-3 block font-sans">
-            {t("about.subtitle")}
+    <main className="relative min-h-screen font-sans bg-[#1A0F0A] text-[#F4EFEA] z-10 pt-32 pb-36 overflow-hidden">
+      {/* 3D Z-Drive Parallax Tunnel Background */}
+      <About3DScene />
+
+      <section className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8">
+        {/* HEADER: VỀ CẨM CÙ HOUSE */}
+        <div className="text-center mb-24 max-w-3xl mx-auto">
+          <span className="text-[#C5A880] uppercase tracking-[0.25em] text-xs sm:text-sm mb-3 block font-sans font-medium">
+            Hành Trình Gìn Giữ Hương Vị Tây Nguyên
           </span>
           <BlurText 
-            text={t("about.title")}
+            text="VỀ CẨM CÙ HOUSE"
             as="h1"
-            className="text-4xl md:text-6xl lg:text-7xl font-serif text-[#F4EFEA] mb-8"
+            className="text-4xl md:text-6xl lg:text-7xl font-serif text-[#F4EFEA] mb-6 tracking-tight"
           />
-          <div className="w-16 h-[1px] bg-[#C5A880]/40 mx-auto"></div>
+          <p className="text-sm sm:text-base text-[#F4EFEA]/75 font-light leading-relaxed max-w-2xl mx-auto">
+            Câu chuyện về ngôi nhà gỗ bên bờ suối đá, tình yêu với những hạt cà phê rang mộc và khát khao gìn giữ vẻ đẹp hoang sơ giữa đại ngàn Đắk Nông.
+          </p>
+          <div className="w-20 h-[1px] bg-gradient-to-r from-transparent via-[#C5A880]/60 to-transparent mx-auto mt-8"></div>
         </div>
 
-        {/* 3 Sections */}
-        <motion.div 
-          className="space-y-32"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: { staggerChildren: 0.2 }
-            }
-          }}
+        {/* TIMELINE THANH MẢNH SANG TRỌNG */}
+        <div className="relative">
+          {/* Trục chỉ vàng kim chạy dọc tâm Timeline */}
+          <div className="absolute left-6 sm:left-1/2 top-4 bottom-4 w-[1px] bg-gradient-to-b from-transparent via-[#C5A880]/50 to-transparent sm:-translate-x-1/2 pointer-events-none" />
+
+          <div className="space-y-16 sm:space-y-24">
+            {TIMELINE_STAGES.map((stage, idx) => {
+              const Icon = stage.icon;
+              const isEven = idx % 2 === 0;
+
+              return (
+                <motion.div
+                  key={stage.step}
+                  initial={{ opacity: 0, y: 35 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                  className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-8 sm:gap-0 ${
+                    isEven ? "sm:flex-row" : "sm:flex-row-reverse"
+                  }`}
+                >
+                  {/* Cột Nội Dung Thẻ */}
+                  <div
+                    className={`w-full sm:w-1/2 pl-16 sm:pl-0 ${
+                      isEven ? "sm:pr-14 sm:text-right" : "sm:pl-14 sm:text-left"
+                    }`}
+                  >
+                    <div className="p-8 sm:p-10 rounded-2xl bg-[#1A0F0A]/90 backdrop-blur-md border border-[#C5A880]/30 shadow-2xl hover:border-[#C5A880]/60 transition-all duration-500 group">
+                      <span className="inline-block text-[#C5A880] font-mono text-xs tracking-widest uppercase mb-2 px-2.5 py-1 rounded bg-[#C5A880]/15 font-semibold">
+                        {stage.step}
+                      </span>
+                      <h3 className="text-2xl sm:text-3xl font-serif text-[#F4EFEA] mb-4 group-hover:text-[#C5A880] transition-colors duration-300">
+                        {stage.title}
+                      </h3>
+                      <p className="text-sm sm:text-base text-[#F4EFEA]/80 font-light leading-relaxed mb-3">
+                        {stage.p1}
+                      </p>
+                      <p className="text-sm sm:text-base text-[#F4EFEA]/70 font-light leading-relaxed">
+                        {stage.p2}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Node Tròn Biểu Tượng Căn Giữa Trục Timeline */}
+                  <div className="absolute left-6 sm:left-1/2 -translate-x-1/2 flex items-center justify-center z-20">
+                    <div className="w-12 h-12 rounded-full border-2 border-[#C5A880] bg-[#1A0F0A] flex items-center justify-center text-[#C5A880] shadow-[0_0_20px_rgba(197,168,128,0.4)] group-hover:scale-110 transition-transform">
+                      <Icon size={20} strokeWidth={1.5} />
+                    </div>
+                  </div>
+
+                  {/* Khoảng trống đối xứng bên kia (cho desktop) */}
+                  <div className="hidden sm:block sm:w-1/2" />
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* FOOTER CALLOUT NHỎ BÊN DƯỚI */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mt-28 text-center"
         >
-          
-          {/* Section 1: Hành trình tạo dựng */}
-          <motion.div 
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
-            }}
-            className="flex flex-col md:flex-row gap-12 items-center"
-          >
-            <div className="md:w-1/3 flex justify-center text-[#C5A880]/30">
-              <Sprout size={160} strokeWidth={0.6} className="text-[#C5A880]/40" />
-            </div>
-            <div className="md:w-2/3">
-              <span className="text-[#C5A880] font-sans text-xs tracking-widest uppercase block mb-2 font-semibold">Chặng 01</span>
-              <h3 className="text-3xl font-serif text-[#F4EFEA] mb-6">{t("about.s1Title")}</h3>
-              <p className="text-base sm:text-lg text-[#F4EFEA]/75 leading-relaxed font-light mb-4">
-                {t("about.s1p1")}
-              </p>
-              <p className="text-base sm:text-lg text-[#F4EFEA]/75 leading-relaxed font-light">
-                {t("about.s1p2")}
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Section 2: Triết lý xanh */}
-          <motion.div 
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
-            }}
-            className="flex flex-col md:flex-row-reverse gap-12 items-center"
-          >
-            <div className="md:w-1/3 flex justify-center">
-              <Coffee size={160} strokeWidth={0.6} className="text-[#C5A880]/40" />
-            </div>
-            <div className="md:w-2/3">
-              <span className="text-[#C5A880] font-sans text-xs tracking-widest uppercase block mb-2 font-semibold">Chặng 02</span>
-              <h3 className="text-3xl font-serif text-[#F4EFEA] mb-6">{t("about.s2Title")}</h3>
-              <p className="text-base sm:text-lg text-[#F4EFEA]/75 leading-relaxed font-light mb-4">
-                {t("about.s2p1")}
-              </p>
-              <p className="text-base sm:text-lg text-[#F4EFEA]/75 leading-relaxed font-light">
-                {t("about.s2p2")}
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Section 3: Văn hóa phục vụ */}
-          <motion.div 
-            variants={{
-              hidden: { opacity: 0, y: 30 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
-            }}
-            className="flex flex-col md:flex-row gap-12 items-center"
-          >
-            <div className="md:w-1/3 flex justify-center">
-              <HeartHandshake size={160} strokeWidth={0.6} className="text-[#C5A880]/40" />
-            </div>
-            <div className="md:w-2/3">
-              <span className="text-[#C5A880] font-sans text-xs tracking-widest uppercase block mb-2 font-semibold">Chặng 03</span>
-              <h3 className="text-3xl font-serif text-[#F4EFEA] mb-6">{t("about.s3Title")}</h3>
-              <p className="text-base sm:text-lg text-[#F4EFEA]/75 leading-relaxed font-light mb-4">
-                {t("about.s3p1")}
-              </p>
-              <p className="text-base sm:text-lg text-[#F4EFEA]/75 leading-relaxed font-light">
-                {t("about.s3p2")}
-              </p>
-            </div>
-          </motion.div>
-
+          <div className="inline-flex items-center gap-2 text-xs font-mono text-[#C5A880] border border-[#C5A880]/30 px-6 py-2.5 rounded-full bg-[#1A0F0A]/85 backdrop-blur-sm shadow-lg">
+            <Compass size={14} />
+            <span>GIA NGHĨA, ĐẮK NÔNG • ĐIỂM CHẠM THIÊN NHIÊN VÀ CÀ PHÊ MỘC</span>
+          </div>
         </motion.div>
       </section>
     </main>

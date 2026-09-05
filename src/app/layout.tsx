@@ -6,6 +6,9 @@ import ThemeEffects from "@/components/layout/ThemeEffects";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import IntroLoader from "@/components/IntroLoader";
+import CustomCursor from "@/components/ui/CustomCursor";
+import BodyCursorController from "@/components/layout/BodyCursorController";
+import SecurityShield from "@/components/ui/SecurityShield";
 import { LanguageProvider } from "@/context/LanguageContext";
 
 const cormorant = Cormorant_Garamond({
@@ -88,25 +91,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="scroll-smooth">
+    <html lang="vi" className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${cormorant.variable} ${plusJakarta.variable} ${playfair.variable} antialiased font-sans bg-transparent text-[#F4EFEA]`}>
-        <LanguageProvider>
-          <IntroLoader />
-          <SmoothScroll>
-            <ThemeEffects />
-            <Header />
-            <main className="w-full min-h-screen">
-              {children}
-            </main>
-            <Footer />
-          </SmoothScroll>
-        </LanguageProvider>
+      <body className={`${cormorant.variable} ${plusJakarta.variable} ${playfair.variable} antialiased font-sans bg-transparent text-[#F4EFEA] select-none`}>
+        <SecurityShield>
+          <LanguageProvider>
+            <BodyCursorController />
+            <CustomCursor />
+            <IntroLoader />
+            <SmoothScroll>
+              <ThemeEffects />
+              <Header />
+              <main className="w-full min-h-screen">
+                {children}
+              </main>
+              <Footer />
+            </SmoothScroll>
+          </LanguageProvider>
+        </SecurityShield>
       </body>
     </html>
   );

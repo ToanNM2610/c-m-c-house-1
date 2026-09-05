@@ -6,7 +6,7 @@ export default function ThemeEffects() {
   const pathname = usePathname();
 
   // Tắt hoàn toàn hiệu ứng ở trang admin
-  if (pathname && pathname.startsWith("/admin")) {
+  if (pathname && (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin"))) {
     return null;
   }
 
