@@ -92,7 +92,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-3N9EMFECXS";
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-F1E55KL26P";
 
   return (
     <html lang="vi" className="scroll-smooth" data-scroll-behavior="smooth">
