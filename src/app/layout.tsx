@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Analytics } from "@vercel/analytics/react";
 import SmoothScroll from "@/components/SmoothScroll";
 import ThemeEffects from "@/components/layout/ThemeEffects";
 import Header from "@/components/layout/Header";
