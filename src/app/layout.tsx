@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/react";
 import SmoothScroll from "@/components/SmoothScroll";
 import ThemeEffects from "@/components/layout/ThemeEffects";
 import Header from "@/components/layout/Header";
@@ -91,6 +93,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-3N9EMFECXS";
+
   return (
     <html lang="vi" className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
@@ -117,6 +121,7 @@ export default function RootLayout({
         </SecurityShield>
         <Analytics />
       </body>
+      <GoogleAnalytics gaId={gaId} />
     </html>
   );
 }
