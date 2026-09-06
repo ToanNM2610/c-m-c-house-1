@@ -4,37 +4,40 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { Coffee, Sprout, HeartHandshake, Compass } from "lucide-react";
 import BlurText from "@/components/ui/BlurText";
+import { useLanguage } from "@/context/LanguageContext";
 
 const About3DScene = dynamic(() => import("@/components/3d/About3DScene"), {
   ssr: false,
   loading: () => null,
 });
 
-const TIMELINE_STAGES = [
-  {
-    step: "Chặng 01",
-    title: "Hành Trình Tạo Dựng",
-    icon: Sprout,
-    p1: "Giữa bạt ngàn đất đỏ bazan và những thung lũng sương sớm của Gia Nghĩa, Cẩm Cù House được gieo mầm từ tình yêu sâu sắc với mảnh đất Tây Nguyên mộc mạc.",
-    p2: "Chúng tôi dựng nên ngôi nhà gỗ bên triền suối đá, nơi những cây cẩm cù rừng nở hoa tỏa hương thơm dịu nhẹ, tạo nên một chốn dừng chân bình yên cho những tâm hồn tìm về thiên nhiên.",
-  },
-  {
-    step: "Chặng 02",
-    title: "Triết Lý Rang Mộc Nguyên Bản",
-    icon: Coffee,
-    p1: "Tại Cẩm Cù, từng hạt cà phê Robusta đều được nâng niu và tuyển chọn kỹ lưỡng từ những nông trại địa phương trù phú.",
-    p2: "Phương pháp rang mộc 100% không tẩm ướp phụ gia, tôn vinh trọn vẹn hậu vị ngọt đầm, độ đậm đà tự nhiên và phong vị mộc mạc đặc trưng của đại ngàn Đắk Nông.",
-  },
-  {
-    step: "Chặng 03",
-    title: "Chốn Dừng Chân Cho Tâm Hồn",
-    icon: HeartHandshake,
-    p1: "Không chỉ là một quán cà phê, Cẩm Cù House là không gian sinh thái an yên, nơi con người và cỏ cây hòa quyện cùng dòng chảy tự nhiên.",
-    p2: "Ngồi bên hiên nhà gỗ, lắng nghe tiếng suối róc rách và thả trôi những âu lo thường nhật, tìm lại sự thanh thản thuần khiết trong từng hơi thở sớm mai.",
-  },
-];
-
 export default function AboutPage() {
+  const { lang, t } = useLanguage();
+
+  const TIMELINE_STAGES = [
+    {
+      step: t("about.stage1Step"),
+      title: t("about.stage1Title"),
+      icon: Sprout,
+      p1: t("about.stage1p1"),
+      p2: t("about.stage1p2"),
+    },
+    {
+      step: t("about.stage2Step"),
+      title: t("about.stage2Title"),
+      icon: Coffee,
+      p1: t("about.stage2p1"),
+      p2: t("about.stage2p2"),
+    },
+    {
+      step: t("about.stage3Step"),
+      title: t("about.stage3Title"),
+      icon: HeartHandshake,
+      p1: t("about.stage3p1"),
+      p2: t("about.stage3p2"),
+    },
+  ];
+
   return (
     <main className="relative min-h-screen font-sans bg-[#1A0F0A] text-[#F4EFEA] z-10 pt-32 pb-36 overflow-hidden">
       {/* 3D Z-Drive Parallax Tunnel Background */}
@@ -44,15 +47,15 @@ export default function AboutPage() {
         {/* HEADER: VỀ CẨM CÙ HOUSE */}
         <div className="text-center mb-24 max-w-3xl mx-auto">
           <span className="text-[#C5A880] uppercase tracking-[0.25em] text-xs sm:text-sm mb-3 block font-sans font-medium">
-            Hành Trình Gìn Giữ Hương Vị Tây Nguyên
+            {t("about.tag")}
           </span>
           <BlurText 
-            text="VỀ CẨM CÙ HOUSE"
+            text={t("about.mainTitle")}
             as="h1"
             className="text-4xl md:text-6xl lg:text-7xl font-serif text-[#F4EFEA] mb-6 tracking-tight"
           />
           <p className="text-sm sm:text-base text-[#F4EFEA]/75 font-light leading-relaxed max-w-2xl mx-auto">
-            Câu chuyện về ngôi nhà gỗ bên bờ suối đá, tình yêu với những hạt cà phê rang mộc và khát khao gìn giữ vẻ đẹp hoang sơ giữa đại ngàn Đắk Nông.
+            {t("about.mainDesc")}
           </p>
           <div className="w-20 h-[1px] bg-gradient-to-r from-transparent via-[#C5A880]/60 to-transparent mx-auto mt-8"></div>
         </div>
@@ -69,7 +72,7 @@ export default function AboutPage() {
 
               return (
                 <motion.div
-                  key={stage.step}
+                  key={idx}
                   initial={{ opacity: 0, y: 35 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-80px" }}
@@ -125,7 +128,11 @@ export default function AboutPage() {
         >
           <div className="inline-flex items-center gap-2 text-xs font-mono text-[#C5A880] border border-[#C5A880]/30 px-6 py-2.5 rounded-full bg-[#1A0F0A]/85 backdrop-blur-sm shadow-lg">
             <Compass size={14} />
-            <span>GIA NGHĨA, ĐẮK NÔNG • ĐIỂM CHẠM THIÊN NHIÊN VÀ CÀ PHÊ MỘC</span>
+            <span>
+              {lang === "en" 
+                ? "GIA NGHIA, DAK NONG • WHERE BOTANICAL LIFE MEETS ARTISAN COFFEE" 
+                : "GIA NGHĨA, ĐẮK NÔNG • ĐIỂM CHẠM THIÊN NHIÊN VÀ CÀ PHÊ MỘC"}
+            </span>
           </div>
         </motion.div>
       </section>

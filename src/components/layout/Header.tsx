@@ -148,6 +148,7 @@ export default function Header() {
           <div className="flex items-center gap-2 ml-4 border border-[#C5A880]/30 rounded-full px-3 py-1 bg-[#25150E]/60 backdrop-blur-sm shadow-sm">
             <button
               onClick={() => setLang("vi")}
+              title="Tiếng Việt (VNĐ ₫)"
               className={`text-xs font-medium transition-colors cursor-pointer ${
                 lang === "vi"
                   ? "text-[#C5A880] font-bold"
@@ -159,6 +160,7 @@ export default function Header() {
             <span className="text-[#C5A880]/40 text-xs">|</span>
             <button
               onClick={() => setLang("en")}
+              title="English (USD $)"
               className={`text-xs font-medium transition-colors cursor-pointer ${
                 lang === "en"
                   ? "text-[#C5A880] font-bold"
@@ -175,6 +177,7 @@ export default function Header() {
           <div className="flex items-center gap-1.5 border border-[#C5A880]/30 rounded-full px-2.5 py-1 bg-[#25150E]/80">
             <button
               onClick={() => setLang("vi")}
+              title="Tiếng Việt (VNĐ)"
               className={`text-xs font-medium ${
                 lang === "vi" ? "text-[#C5A880] font-bold" : "text-[#F4EFEA]/60"
               }`}
@@ -184,6 +187,7 @@ export default function Header() {
             <span className="text-[#C5A880]/40 text-xs">|</span>
             <button
               onClick={() => setLang("en")}
+              title="English (USD $)"
               className={`text-xs font-medium ${
                 lang === "en" ? "text-[#C5A880] font-bold" : "text-[#F4EFEA]/60"
               }`}

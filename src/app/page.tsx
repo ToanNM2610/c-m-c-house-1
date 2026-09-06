@@ -7,6 +7,7 @@ import { useScroll, useMotionValueEvent } from "framer-motion";
 import * as THREE from "three";
 import Link from "next/link";
 import { Coffee, ArrowRight, MapPin, Compass, Sparkles as SparkleIcon, Phone, Clock } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 /**
  * Hook phát hiện thiết bị di động (màn hình < 768px)
@@ -749,6 +750,7 @@ function Unified3DWorld({
 }
 
 export default function HomePage() {
+  const { lang, t, formatPrice } = useLanguage();
   const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
   const scrollProgressRef = useRef<number>(0);
@@ -805,11 +807,11 @@ export default function HomePage() {
           <div className="text-center max-w-xl mx-auto pointer-events-auto pb-4 sm:pb-6">
             <div className="glass-ultra-pill px-5 sm:px-8 py-3.5 sm:py-5 rounded-2xl sm:rounded-3xl mb-6 sm:mb-8 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl">
               <p className="text-xs sm:text-base font-serif italic text-[#F3E8DB]/90 tracking-wide">
-                Chốn dừng chân mộc mạc bên bờ suối đá và hương cà phê nguyên bản giữa lòng Gia Nghĩa, Đắk Nông.
+                {t("home.subtitle")}
               </p>
             </div>
             <div className="flex flex-col items-center gap-2 text-[#C5A880]/75">
-              <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-mono">Cuộn chuột để bay xuyên không gian 3D</span>
+              <span className="text-[9px] sm:text-[10px] uppercase tracking-widest font-mono">{t("home.scrollPrompt")}</span>
               <div className="w-5 h-8 rounded-full border border-[#C5A880]/40 flex items-start justify-center p-1.5 glass-ultra-pill">
                 <div className="w-1.5 h-2 rounded-full bg-[#C5A880] animate-bounce" />
               </div>
@@ -826,20 +828,20 @@ export default function HomePage() {
               <div className="flex items-center gap-2 mb-2 sm:mb-3">
                 <span className="w-2 h-2 rounded-full bg-[#C5A880] animate-pulse" />
                 <span className="text-[10px] sm:text-xs uppercase font-mono tracking-[0.25em] text-[#C5A880]">
-                  GIA NGHĨA • ĐẮK NÔNG
+                  {t("home.sec2Tag")}
                 </span>
               </div>
 
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-serif text-[#F3E8DB] mb-3 sm:mb-4 leading-tight">
-                Chốn Bình Yên <br />
-                <span className="italic text-[#C5A880] font-light">Bên Bờ Suối Đá</span>
+                {t("home.sec2Title")} <br />
+                <span className="italic text-[#C5A880] font-light">{t("home.sec2TitleHighlight")}</span>
               </h2>
 
               <p className="text-xs sm:text-sm font-light text-[#F3E8DB]/85 leading-relaxed mb-3 sm:mb-4">
-                Tách biệt khỏi những xô bồ phố thị, Cẩm Cù House nép mình bên thung lũng đá cuội và dòng suối mát lành Gia Nghĩa.
+                {t("home.sec2Desc1")}
               </p>
               <p className="text-xs sm:text-sm font-light text-[#F3E8DB]/70 leading-relaxed mb-5 sm:mb-8 hidden sm:block">
-                Nơi mỗi sớm mai thức giấc cùng tiếng chim chuyền cành, thưởng thức ly Robusta rang mộc và đón ánh ban mai rạng rỡ xuyên qua kẽ lá.
+                {t("home.sec2Desc2")}
               </p>
 
               <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-[#C5A880]/20">
@@ -847,7 +849,7 @@ export default function HomePage() {
                   href="/space"
                   className="glass-ultra-pill inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-[11px] sm:text-xs uppercase tracking-wider text-[#C5A880] hover:text-[#1A0F0A] hover:bg-[#C5A880] font-semibold cursor-pointer transition-all duration-300 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl"
                 >
-                  <span>Khám phá không gian</span>
+                  <span>{t("home.sec2Btn")}</span>
                   <ArrowRight size={13} />
                 </Link>
 
@@ -868,15 +870,15 @@ export default function HomePage() {
         <section className="h-screen w-full flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none">
           <div className="pointer-events-auto max-w-3xl flex flex-col items-center justify-center">
             <span className="glass-ultra-pill inline-flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#C5A880] px-4 sm:px-6 py-2 rounded-full mb-4 sm:mb-6 font-mono bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl">
-              ✦ BỘ SƯU TẬP KHOẢNH KHẮC ✦
+              {t("home.sec3Badge")}
             </span>
             <h2 className="text-3xl sm:text-6xl lg:text-7xl font-serif text-[#F3E8DB] leading-tight mb-4 sm:mb-6">
-              Khoảnh Khắc <br />
-              <span className="italic font-light text-[#C5A880]">Cẩm Cù House</span>
+              {t("home.sec3Title")} <br />
+              <span className="italic font-light text-[#C5A880]">{t("home.sec3TitleHighlight")}</span>
             </h2>
             <div className="glass-ultra-pill px-5 sm:px-8 py-3 sm:py-4 rounded-2xl max-w-xl bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl">
               <p className="text-xs sm:text-sm font-light text-[#F3E8DB]/85 leading-relaxed">
-                Từng giọt sương mai, từng nhành hoa dại bên hiên quán mộc — những khoảng lặng lắng đọng cho tâm hồn tìm về chốn bình yên nguyên bản.
+                {t("home.sec3Desc")}
               </p>
             </div>
           </div>
@@ -886,10 +888,10 @@ export default function HomePage() {
         <section className="h-screen w-full flex flex-col justify-between py-12 sm:py-16 px-4 sm:px-12 max-w-7xl mx-auto pointer-events-none">
           <div className="text-center max-w-2xl mx-auto pointer-events-auto glass-ultra-pill px-5 sm:px-8 py-3 sm:py-4 rounded-2xl sm:rounded-3xl bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl">
             <span className="text-[10px] sm:text-xs uppercase font-sans tracking-[0.25em] text-[#C5A880] block mb-1 font-medium">
-              TINH HOA NÔNG SẢN TÂY NGUYÊN
+              {t("home.sec4Tag")}
             </span>
             <h2 className="text-xl sm:text-3xl font-serif text-[#F3E8DB]">
-              Hạt Cà Phê Mộc & Thực Đơn Tuyển Chọn
+              {t("home.sec4Title")}
             </h2>
           </div>
 
@@ -899,30 +901,34 @@ export default function HomePage() {
               <div className="glass-ultra flex flex-col justify-between cursor-pointer p-4 sm:p-6 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/40 md:backdrop-blur-xl">
                 <div>
                   <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                    <h3 className="font-serif text-base sm:text-lg text-[#F3E8DB]">Cà phê muối</h3>
+                    <h3 className="font-serif text-base sm:text-lg text-[#F3E8DB]">
+                      {lang === "en" ? "Salted Cream Coffee" : "Cà phê muối"}
+                    </h3>
                     <span className="text-[11px] sm:text-xs font-mono font-bold text-[#C5A880] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl bg-[#C5A880]/15">
-                      28.000đ
+                      {formatPrice("28.000đ")}
                     </span>
                   </div>
                   <p className="text-[11px] sm:text-xs text-[#F3E8DB]/75 font-light leading-relaxed">
-                    Vị mặn mòi nhẹ nhàng kết hợp lớp kem béo ngậy và Robusta Đắk Nông rang mộc đậm đà.
+                    {lang === "en" ? "Delicate sea salt cream harmonized with rich, firewood-roasted Dak Nong Robusta." : "Vị mặn mòi nhẹ nhàng kết hợp lớp kem béo ngậy và Robusta Đắk Nông rang mộc đậm đà."}
                   </p>
                 </div>
               </div>
 
               <div className="glass-ultra flex flex-col justify-between relative ring-1 ring-[#C5A880]/40 transform md:-translate-y-2 cursor-pointer p-4 sm:p-6 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/40 md:backdrop-blur-xl">
                 <span className="absolute -top-2.5 right-6 text-[8px] sm:text-[9px] uppercase tracking-widest font-mono bg-[#C5A880] text-[#1A0F0A] px-2.5 sm:px-3 py-0.5 rounded-full font-bold shadow-md">
-                  ĐẶC SẢN QUÁN
+                  {t("home.sec4Badge")}
                 </span>
                 <div>
                   <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                    <h3 className="font-serif text-base sm:text-lg text-[#F3E8DB]">Cà phê kem trứng</h3>
+                    <h3 className="font-serif text-base sm:text-lg text-[#F3E8DB]">
+                      {lang === "en" ? "Specialty Egg Cream Coffee" : "Cà phê kem trứng"}
+                    </h3>
                     <span className="text-[11px] sm:text-xs font-mono font-bold text-[#C5A880] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl bg-[#C5A880]/20">
-                      30.000đ
+                      {formatPrice("30.000đ")}
                     </span>
                   </div>
                   <p className="text-[11px] sm:text-xs text-[#F3E8DB]/75 font-light leading-relaxed">
-                    Lớp bọt trứng đánh bông mịn sánh quyện thơm lừng, đánh thức mọi giác quan sớm mai.
+                    {lang === "en" ? "Silky, velvety whipped egg custard atop intense dark roast, awakening the senses." : "Lớp bọt trứng đánh bông mịn sánh quyện thơm lừng, đánh thức mọi giác quan sớm mai."}
                   </p>
                 </div>
               </div>
@@ -930,13 +936,15 @@ export default function HomePage() {
               <div className="glass-ultra flex flex-col justify-between cursor-pointer p-4 sm:p-6 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/40 md:backdrop-blur-xl">
                 <div>
                   <div className="flex justify-between items-center mb-1.5 sm:mb-2">
-                    <h3 className="font-serif text-base sm:text-lg text-[#F3E8DB]">Trà đào cam sả</h3>
+                    <h3 className="font-serif text-base sm:text-lg text-[#F3E8DB]">
+                      {lang === "en" ? "Peach Orange Lemongrass Tea" : "Trà đào cam sả"}
+                    </h3>
                     <span className="text-[11px] sm:text-xs font-mono font-bold text-[#C5A880] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl bg-[#C5A880]/15">
-                      30.000đ
+                      {formatPrice("30.000đ")}
                     </span>
                   </div>
                   <p className="text-[11px] sm:text-xs text-[#F3E8DB]/75 font-light leading-relaxed">
-                    Vị trà thanh thoát, hương sả vườn tự nhiên hòa cùng miếng đào giòn ngọt sảng khoái.
+                    {lang === "en" ? "Crisp botanical tea infused with fresh garden lemongrass and sweet, crunchy peach slices." : "Vị trà thanh thoát, hương sả vườn tự nhiên hòa cùng miếng đào giòn ngọt sảng khoái."}
                   </p>
                 </div>
               </div>
@@ -946,7 +954,7 @@ export default function HomePage() {
               href="/menu"
               className="glass-ultra-pill inline-flex items-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[11px] sm:text-xs uppercase tracking-widest text-[#C5A880] hover:text-[#F3E8DB] font-medium cursor-pointer mt-1 sm:mt-2 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl"
             >
-              <span>Khám phá trọn bộ thực đơn</span>
+              <span>{t("home.sec4FullMenu")}</span>
               <ArrowRight size={13} />
             </Link>
           </div>
@@ -957,13 +965,13 @@ export default function HomePage() {
           <div className="flex-1 flex flex-col items-center justify-center text-center pointer-events-auto">
             <div className="glass-ultra max-w-2xl mx-auto p-6 sm:p-10 bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/40 md:backdrop-blur-xl">
               <span className="text-[10px] sm:text-xs uppercase font-sans tracking-[0.25em] sm:tracking-[0.28em] text-[#C5A880] block mb-2">
-                ĐÓN CHÀO BẠN ĐẾN VỚI
+                {t("home.sec5Tag")}
               </span>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-[#F3E8DB] mb-3 sm:mb-4">
                 Cẩm Cù House
               </h2>
               <p className="text-xs sm:text-sm font-light text-[#F3E8DB]/85 max-w-lg mx-auto leading-relaxed mb-6 sm:mb-8">
-                Hãy ghé thăm chúng mình để lắng nghe tiếng suối đá, hít thở bầu không khí rừng nguyên sơ và thưởng thức ly cà phê mộc đậm tình Tây Nguyên.
+                {t("home.sec5Desc")}
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
@@ -972,14 +980,14 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-[#C5A880] hover:bg-[#FFE1B3] text-[#1A0F0A] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-[0_0_30px_rgba(197,168,128,0.5)] hover:scale-105 cursor-pointer font-sans"
                 >
                   <Coffee size={15} />
-                  <span>Xem Thực Đơn</span>
+                  <span>{t("home.sec5MenuBtn")}</span>
                 </Link>
                 <Link
                   href="/contact"
                   className="glass-ultra-pill inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl text-[#F3E8DB] font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 cursor-pointer font-sans hover:border-[#C5A880] bg-[#1A0F0A]/85 backdrop-blur-md md:bg-[#1A0F0A]/45 md:backdrop-blur-xl"
                 >
                   <MapPin size={15} className="text-[#C5A880]" />
-                  <span>Đặt Bàn / Ghé Thăm</span>
+                  <span>{t("home.sec5ContactBtn")}</span>
                 </Link>
               </div>
             </div>

@@ -89,7 +89,7 @@ const CATEGORY_MAP_EN: Record<string, string> = {
 export default function MenuPage() {
   const [isMounted, setIsMounted] = useState(false);
   const { menu } = useMenu();
-  const { lang, t } = useLanguage();
+  const { lang, t, formatPrice } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
@@ -203,7 +203,7 @@ export default function MenuPage() {
                       </div>
                       <div className="absolute bottom-3 right-3 z-20">
                         <span className="font-serif text-sm font-semibold text-[#1A0F0A] bg-[#C5A880] px-3 py-1 rounded-full shadow-lg">
-                          {feat.price}
+                          {formatPrice(feat.price)}
                         </span>
                       </div>
                     </div>
@@ -343,7 +343,7 @@ export default function MenuPage() {
                                   )}
                                 </div>
                                 <span className="text-[#C5A880] font-sans font-medium whitespace-nowrap text-sm bg-[#1A0F0A]/90 px-3 py-1 rounded-full border border-[#C5A880]/30 shadow-inner">
-                                  {item.price}
+                                  {formatPrice(item.price)}
                                 </span>
                               </div>
                             </CardTilt>
