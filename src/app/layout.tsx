@@ -92,8 +92,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID || "G-F1E55KL26P";
-
   return (
     <html lang="vi" className="scroll-smooth" data-scroll-behavior="smooth">
       <head>
@@ -120,7 +118,7 @@ export default function RootLayout({
         </SecurityShield>
         <Analytics />
       </body>
-      <GoogleAnalytics gaId={gaId} />
+      <GoogleAnalytics gaId="G-F1E55KL26P" />
     </html>
   );
 }
