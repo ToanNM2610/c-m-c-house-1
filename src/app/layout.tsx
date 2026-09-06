@@ -10,6 +10,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import BodyCursorController from "@/components/layout/BodyCursorController";
 import SecurityShield from "@/components/ui/SecurityShield";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { Analytics } from '@vercel/analytics/next';
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin", "vietnamese"],
@@ -114,6 +115,7 @@ export default function RootLayout({
             </SmoothScroll>
           </LanguageProvider>
         </SecurityShield>
+        <Analytics />
       </body>
     </html>
   );
