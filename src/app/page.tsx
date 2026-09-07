@@ -114,28 +114,13 @@ function FeatheredImage({
   );
 }
 
-// Bộ 12 màu sắc đặc trưng hài hòa của khối Megaminx Rubik kết hợp phong cách Cẩm Cù House
-const MEGAMINX_COLORS = [
-  "#FFFFFF", // Trắng tinh khôi (White)
-  "#E5A93C", // Hoàng kim rực rỡ (Amber Gold)
-  "#D92546", // Đỏ Ruby (Crimson Red)
-  "#1D70B8", // Xanh biển sâu (Sapphire Blue)
-  "#2A9D8F", // Xanh ngọc lục bảo (Emerald Green)
-  "#8338EC", // Tím thạch anh (Amethyst Purple)
-  "#F77F00", // Cam hoàng hôn Đắk Nông (Sunset Orange)
-  "#70E000", // Xanh non mầm lá (Lime Green)
-  "#00B4D8", // Xanh lam ngọc bích (Cyan Turquoise)
-  "#F28482", // Hồng san hô đất (Coral Rose)
-  "#8C5A3C", // Nâu cà phê mộc rang củi (Firewood Roasted Coffee)
-  "#C5A880", // Vàng đồng Cẩm Cù House (Signature Warm Bronze)
-];
-
 /**
- * TẦNG 1: KHỐI MEGAMINX 3D (DODECAHEDRON RUBIK 12 MẶT)
+ * TẦNG 1: KHỐI MEGAMINX 3D WIREFRAME TRONG SUỐT (GOLD EDGES & GLASS EFFECT)
  * - Tọa lạc tại trung tâm Hero Section (position = [0, 0, 0]), lơ lửng phía trên không gian nội thất quán.
- * - Sử dụng THREE.DodecahedronGeometry làm khung lõi đen carbon (Black Chassis).
- * - 12 mặt ngũ giác đều được chia thành 11 mảnh ghép nổi khối (tâm ngũ giác + 5 góc + 5 cạnh) chuẩn Rubik Megaminx.
- * - Các rãnh bezel đen và viền cạnh sắc nét tôn lên độ tinh xảo điêu khắc 3D.
+ * - Khung viền đa diện 3D sắc nét chiết xuất từ THREE.DodecahedronGeometry (30 cạnh chính).
+ * - Các đường rãnh chia mảnh Megaminx (180 đoạn thẳng: ngũ giác tâm + các nhánh cắt đa giác) bằng LineSegments.
+ * - Chất liệu đường nét ánh kim vàng gold (#D4AF37 & #E5C07B) thanh mảnh, tinh tế.
+ * - Lớp pha lê bên trong có độ trong suốt cực cao (opacity: 0.05, depthWrite: false) tạo chiều sâu 3D xuyên thấu ra không gian nội thất.
  * - HIỆU ỨNG XOAY & CUỘN TRANG (SCROLL ZOOM):
  *   + Tự động xoay 3 trục mượt mà liên tục khi đứng yên.
  *   + Khi cuộn xuống: Khối Megaminx phóng to dần tiến về phía người xem, tự nghiêng phối cảnh.
@@ -162,10 +147,10 @@ function MegaminxDodecahedron({
   const R = isMobile ? 1.15 : 1.35;
   const baseScale = isMobile ? 0.92 : 1.18;
 
-  // Khởi tạo Dodecahedron khung lõi đen và 12 mặt ghép Megaminx
-  const { coreGeo, edgesGeo, faceGeometries } = useMemo(() => {
+  // Khởi tạo khung viền Dodecahedron và toàn bộ đường rãnh Megaminx
+  const { coreGeo, outerEdgesGeo, grooveGeo } = useMemo(() => {
     const dodec = new THREE.DodecahedronGeometry(R, 0);
-    const edges = new THREE.EdgesGeometry(dodec, 15);
+    const outerEdges = new THREE.EdgesGeometry(dodec, 15);
     const pos = dodec.attributes.position;
 
     // Phân nhóm 36 tam giác thành 12 mặt ngũ giác đều
@@ -183,25 +168,12 @@ function MegaminxDodecahedron({
       found.vertices.push(a, b, c);
     }
 
-    // Tiện ích hình học 2D
     const lerp2 = (a: [number, number], b: [number, number], t: number): [number, number] => [
       a[0] + (b[0] - a[0]) * t,
       a[1] + (b[1] - a[1]) * t,
     ];
-    const centroid = (pts: [number, number][]): [number, number] => {
-      let cx = 0, cy = 0;
-      for (const p of pts) {
-        cx += p[0];
-        cy += p[1];
-      }
-      return [cx / pts.length, cy / pts.length];
-    };
-    const scalePoly = (pts: [number, number][], factor: number): [number, number][] => {
-      const c = centroid(pts);
-      return pts.map((p) => [c[0] + (p[0] - c[0]) * factor, c[1] + (p[1] - c[1]) * factor]);
-    };
 
-    const faceGeos: THREE.BufferGeometry[] = [];
+    const grooveLines: number[] = [];
 
     faces.forEach((f) => {
       // Lọc 5 đỉnh duy nhất của mặt ngũ giác
@@ -243,73 +215,44 @@ function MegaminxDodecahedron({
         C.push([rC * Math.cos(a), rC * Math.sin(a)]);
       }
 
-      // Tỷ lệ cắt viền cạnh (Edge cuts)
+      // Tỷ lệ rãnh cắt cạnh (Edge cuts)
       const edgeT = 0.34;
-      const pieces: [number, number][][] = [];
 
-      // 1. Mảnh tâm ngũ giác (Center Piece)
-      pieces.push(scalePoly(C, 0.88));
+      const to3D = (pt2: [number, number]) => {
+        return center
+          .clone()
+          .add(u.clone().multiplyScalar(pt2[0]))
+          .add(v.clone().multiplyScalar(pt2[1]))
+          .add(f.normal.clone().multiplyScalar(0.003));
+      };
 
-      // 2. 5 Mảnh góc (Corner Pieces)
+      // 1. Viền ngũ giác tâm (5 đoạn thẳng)
       for (let k = 0; k < 5; k++) {
-        const pts: [number, number][] = [
-          P[k],
-          lerp2(P[k], P[(k + 4) % 5], edgeT),
-          C[k],
-          lerp2(P[k], P[(k + 1) % 5], edgeT),
-        ];
-        pieces.push(scalePoly(pts, 0.88));
+        const p1 = to3D(C[k]);
+        const p2 = to3D(C[(k + 1) % 5]);
+        grooveLines.push(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
       }
 
-      // 3. 5 Mảnh cạnh (Edge Pieces)
+      // 2. Các rãnh cắt chia góc và cạnh tỏa từ tâm ngũ giác ra viền ngoài (10 đoạn thẳng)
       for (let k = 0; k < 5; k++) {
-        const pts: [number, number][] = [
-          lerp2(P[k], P[(k + 1) % 5], edgeT),
-          lerp2(P[(k + 1) % 5], P[k], edgeT),
-          C[(k + 1) % 5],
-          C[k],
-        ];
-        pieces.push(scalePoly(pts, 0.88));
+        const leftCut = lerp2(P[k], P[(k + 4) % 5], edgeT);
+        const rightCut = lerp2(P[k], P[(k + 1) % 5], edgeT);
+        const pCenter = to3D(C[k]);
+        const pLeft = to3D(leftCut);
+        const pRight = to3D(rightCut);
+
+        grooveLines.push(pCenter.x, pCenter.y, pCenter.z, pLeft.x, pLeft.y, pLeft.z);
+        grooveLines.push(pCenter.x, pCenter.y, pCenter.z, pRight.x, pRight.y, pRight.z);
       }
-
-      // Chuyển 11 mảnh 2D thành toạ độ 3D nổi trên mặt ngũ giác (nhô cao 0.008 để lộ rãnh đen bezel)
-      const positions: number[] = [];
-      const normals: number[] = [];
-      const elevation = 0.008;
-
-      pieces.forEach((poly) => {
-        const pts3D = poly.map((pt2) =>
-          center
-            .clone()
-            .add(u.clone().multiplyScalar(pt2[0]))
-            .add(v.clone().multiplyScalar(pt2[1]))
-            .add(f.normal.clone().multiplyScalar(elevation))
-        );
-
-        for (let i = 1; i < pts3D.length - 1; i++) {
-          positions.push(
-            pts3D[0].x, pts3D[0].y, pts3D[0].z,
-            pts3D[i].x, pts3D[i].y, pts3D[i].z,
-            pts3D[i + 1].x, pts3D[i + 1].y, pts3D[i + 1].z
-          );
-          normals.push(
-            f.normal.x, f.normal.y, f.normal.z,
-            f.normal.x, f.normal.y, f.normal.z,
-            f.normal.x, f.normal.y, f.normal.z
-          );
-        }
-      });
-
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-      geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
-      faceGeos.push(geo);
     });
+
+    const groove = new THREE.BufferGeometry();
+    groove.setAttribute("position", new THREE.Float32BufferAttribute(grooveLines, 3));
 
     return {
       coreGeo: dodec,
-      edgesGeo: edges,
-      faceGeometries: faceGeos,
+      outerEdgesGeo: outerEdges,
+      grooveGeo: groove,
     };
   }, [R]);
 
@@ -370,57 +313,53 @@ function MegaminxDodecahedron({
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      {/* 1. Khung lõi đen carbon Dodecahedron (Black Chassis) */}
+      {/* 1. Lớp pha lê Dodecahedron trong suốt cực cao (Glass Depth Effect: 0.05 opacity) */}
       <mesh geometry={coreGeo}>
-        <meshStandardMaterial
-          color="#120E0C"
-          roughness={0.4}
-          metalness={0.65}
+        <meshPhysicalMaterial
+          color="#C5A880"
+          roughness={0.08}
+          metalness={0.1}
+          transmission={0.96}
+          ior={1.4}
           transparent
-          opacity={megaminxOpacity * 0.98}
+          opacity={megaminxOpacity * 0.05}
+          depthWrite={false}
         />
       </mesh>
 
-      {/* 2. Đường viền rãnh vát cạnh sắc nét (Bezel Edges) */}
-      <lineSegments geometry={edgesGeo}>
+      {/* 2. Đường viền khung 30 cạnh chính của khối Dodecahedron (Gold Wireframe Edges) */}
+      <lineSegments geometry={outerEdgesGeo}>
         <lineBasicMaterial
-          color="#C5A880"
+          color="#E5C07B"
           transparent
-          opacity={megaminxOpacity * 0.65}
+          opacity={megaminxOpacity * 0.95}
         />
       </lineSegments>
 
-      {/* 3. 12 Mặt Megaminx với các mảnh ghép nổi khối (11 mảnh / mặt: tâm ngũ giác + 5 góc + 5 cạnh) */}
-      {faceGeometries.map((geo, idx) => (
-        <mesh key={idx} geometry={geo}>
-          <meshPhysicalMaterial
-            color={MEGAMINX_COLORS[idx % MEGAMINX_COLORS.length]}
-            roughness={0.22}
-            metalness={0.35}
-            clearcoat={isMobile ? 0.4 : 0.8}
-            clearcoatRoughness={0.12}
-            reflectivity={0.65}
-            transparent
-            opacity={megaminxOpacity * 0.98}
-          />
-        </mesh>
-      ))}
+      {/* 3. Các đường rãnh chia mảnh ghép Megaminx (180 đoạn rãnh: ngũ giác tâm + các góc/cạnh) */}
+      <lineSegments geometry={grooveGeo}>
+        <lineBasicMaterial
+          color="#D4AF37"
+          transparent
+          opacity={megaminxOpacity * 0.82}
+        />
+      </lineSegments>
 
       {/* 4. Nguồn sáng tỏa từ tâm khối Megaminx */}
-      <pointLight color="#FFE5B4" intensity={megaminxOpacity * 3.0} distance={8} />
-      <pointLight color="#F59E0B" intensity={megaminxOpacity * 1.5} distance={5} />
+      <pointLight color="#FFE5B4" intensity={megaminxOpacity * 2.8} distance={8} />
+      <pointLight color="#D4AF37" intensity={megaminxOpacity * 1.5} distance={5} />
 
       {/* 5. Vòng quỹ đạo hoàng kim lơ lửng xung quanh */}
       <mesh ref={ring1Ref} rotation={[Math.PI / 3, 0, 0]}>
         <torusGeometry args={[isMobile ? 1.55 : 1.82, 0.012, 16, 64]} />
         <meshStandardMaterial
-          color="#C5A880"
-          emissive="#C5A880"
-          emissiveIntensity={0.6}
+          color="#D4AF37"
+          emissive="#D4AF37"
+          emissiveIntensity={0.5}
           metalness={0.9}
           roughness={0.1}
           transparent
-          opacity={megaminxOpacity * 0.55}
+          opacity={megaminxOpacity * 0.45}
         />
       </mesh>
 
@@ -429,11 +368,11 @@ function MegaminxDodecahedron({
         <meshStandardMaterial
           color="#FFE1B3"
           emissive="#FFE1B3"
-          emissiveIntensity={0.45}
+          emissiveIntensity={0.4}
           metalness={0.9}
           roughness={0.1}
           transparent
-          opacity={megaminxOpacity * 0.42}
+          opacity={megaminxOpacity * 0.35}
         />
       </mesh>
 
