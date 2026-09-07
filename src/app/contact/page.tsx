@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import { MapPin, Clock, Phone, Compass, ArrowUpRight, Send, CheckCircle2 } from "lucide-react";
+import { Compass, ArrowUpRight, Phone, Mail, MapPin, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const Contact3DScene = dynamic(() => import("@/components/3d/Contact3DScene"), {
@@ -21,51 +20,21 @@ const Contact3DScene = dynamic(() => import("@/components/3d/Contact3DScene"), {
 });
 
 const GOOGLE_MAPS_URL = "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
+const ZALO_URL = "https://zalo.me/0382851688";
+const HOTLINE_TEL = "tel:0382851688";
+const EMAIL_MAILTO = "mailto:hello@camcuhouse.online";
 
 export default function ContactPage() {
   const { lang } = useLanguage();
-
-  const [name, setName] = useState("");
-  const [contactInfo, setContactInfo] = useState("");
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !message.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      await fetch("/api/guestbook", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          contact: contactInfo.trim(),
-          message: message.trim(),
-        }),
-      }).catch(() => {});
-
-      setIsSuccess(true);
-      setName("");
-      setContactInfo("");
-      setMessage("");
-    } catch {
-      setIsSuccess(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12">
         {/* ========================================================= */}
-        {/* 1. HEADER: LỜI TỰ TÌNH CỦA CHỦ QUÁN                       */}
+        {/* 1. HEADER: TỰ TÌNH CỦA CHỦ QUÁN                           */}
         {/* ========================================================= */}
-        <header className="py-12 md:py-16 max-w-4xl space-y-6">
+        <header className="py-10 md:py-14 max-w-4xl space-y-6">
           <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-[#D4AF37]">
             <Compass size={13} />
             <span>THE BEACON • GIA NGHĨA, ĐẮK NÔNG (11.98° N, 107.70° E)</span>
@@ -88,141 +57,116 @@ export default function ContactPage() {
 
 
         {/* ========================================================= */}
-        {/* 2. CHIA ĐÔI MÀN HÌNH: FORM TỐI GIẢN & QUẢ ĐỊA CẦU 3D      */}
+        {/* 2. CHIA ĐÔI: LIÊN HỆ TRỰC TIẾP & QUẢ ĐỊA CẦU 3D          */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center mt-6">
           
-          {/* CỘT 1 (6 Cols): FORM GỬI LỜI NHẮN DẠNG FLOATING LINES */}
-          <div className="lg:col-span-6 space-y-8">
+          {/* CỘT 1 (6 Cols): DIRECT CONTACT (KHÔNG FORM, CLICK LÀ KẾT NỐI) */}
+          <div className="lg:col-span-6 space-y-12">
+            
             <div className="border-b border-white/10 pb-4">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block mb-1">
-                SỔ LƯU BÚT LỮ KHÁCH
+              <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-[#D4AF37]">
+                KẾT NỐI VỚI CHÚNG TÔI • DIRECT CONTACT
               </span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-light text-[#F4EFEA]">
-                Gửi Lời Nhắn Về Hiên Quán
-              </h2>
             </div>
 
-            {isSuccess ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="py-12 space-y-4"
+            {/* DÒNG 1: SỐ ĐIỆN THOẠI & ZALO SIÊU TO */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#F4EFEA]/40 flex items-center gap-2">
+                <Phone size={12} className="text-[#D4AF37]" />
+                <span>HOTLINE & ZALO TRỰC TIẾP</span>
+              </span>
+
+              <a
+                href={ZALO_URL}
+                target="_blank"
+                rel="noreferrer"
+                data-cursor-diff
+                className="group inline-block text-3xl sm:text-5xl md:text-6xl font-serif font-light tracking-wide text-[#F4EFEA] hover:text-[#D4AF37] transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37] flex items-center justify-center text-[#D4AF37]">
-                  <CheckCircle2 size={24} />
-                </div>
-                <h3 className="text-xl font-serif font-medium text-[#F4EFEA]">
-                  Đã lưu lại lời nhắn của bạn!
-                </h3>
-                <p className="text-xs text-[#F4EFEA]/70 max-w-md leading-relaxed">
-                  Cẩm Cù House đã nhận được dòng tâm tình này. Cảm ơn bạn và mong sớm được đón tiếp bạn bên bờ suối.
-                </p>
-                <button
-                  onClick={() => setIsSuccess(false)}
-                  className="mt-4 text-xs font-mono uppercase tracking-widest text-[#D4AF37] hover:underline"
-                >
-                  ← Gửi lời nhắn khác
-                </button>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-10">
-                {/* Dòng 1: Tên lữ khách */}
-                <div className="relative group">
-                  <label className="block text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]/70 mb-2">
-                    Tên của bạn *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Bạn tên là gì..."
-                    className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/20 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
-                  />
-                </div>
+                <span>038 285 1688</span>
+                <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-[1px] bg-[#D4AF37]" />
+              </a>
 
-                {/* Dòng 2: Số điện thoại hoặc email */}
-                <div className="relative group">
-                  <label className="block text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]/70 mb-2">
-                    Cách liên hệ lại (Số điện thoại / Email - tùy chọn)
-                  </label>
-                  <input
-                    type="text"
-                    value={contactInfo}
-                    onChange={(e) => setContactInfo(e.target.value)}
-                    placeholder="Để lại số điện thoại hoặc email nếu cần phản hồi..."
-                    className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/20 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
-                  />
-                </div>
-
-                {/* Dòng 3: Lời nhắn */}
-                <div className="relative group">
-                  <label className="block text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]/70 mb-2">
-                    Lời nhắn gửi *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Chia sẻ đôi dòng tâm sự, hỏi thăm đường đi hay góc bàn bên bờ suối..."
-                    className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/20 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300 resize-none"
-                  />
-                </div>
-
-                {/* Nút gửi tối giản */}
-                <div>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#0A0908] bg-[#D4AF37] hover:bg-[#FFE1B3] px-8 py-3.5 rounded-full font-semibold transition-colors duration-300 cursor-pointer shadow-lg"
-                  >
-                    <Send size={13} />
-                    <span>{isSubmitting ? "Đang gửi..." : "Gửi Về Cẩm Cù House"}</span>
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* Thông tin tọa độ & liên hệ vắn tắt */}
-            <div className="pt-8 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
-              <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block">
-                  ĐỊA CHỈ HIÊN QUÁN
-                </span>
-                <p className="font-light text-[#F4EFEA]/80 leading-relaxed">
-                  Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
-                </p>
+              <div className="pt-1 flex items-center gap-4 text-xs font-mono text-[#D4AF37]/80">
                 <a
-                  href={GOOGLE_MAPS_URL}
+                  href={HOTLINE_TEL}
+                  className="hover:underline flex items-center gap-1 text-[11px]"
+                >
+                  <span>Gọi trực tiếp</span>
+                  <ArrowUpRight size={12} />
+                </a>
+                <span className="text-white/20">•</span>
+                <a
+                  href={ZALO_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1 text-[11px] font-mono text-[#D4AF37] hover:underline pt-1"
+                  className="hover:underline flex items-center gap-1 text-[11px]"
                 >
-                  <span>Chỉ đường trên Google Maps</span>
-                  <ArrowUpRight size={11} />
-                </a>
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block">
-                  GIỜ MỞ CỬA & HOTLINE
-                </span>
-                <p className="font-light text-[#F4EFEA]/80">07:00 – 22:00 (Mỗi ngày)</p>
-                <a
-                  href="tel:0382851688"
-                  className="block font-mono text-[#D4AF37] hover:underline pt-1"
-                >
-                  038 285 1688
+                  <span>Nhắn qua Zalo</span>
+                  <ArrowUpRight size={12} />
                 </a>
               </div>
             </div>
+
+            {/* DÒNG 2: HÒM THƯ ĐIỆN TỬ SIÊU TO */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#F4EFEA]/40 flex items-center gap-2">
+                <Mail size={12} className="text-[#D4AF37]" />
+                <span>HÒM THƯ ĐIỆN TỬ</span>
+              </span>
+
+              <a
+                href={EMAIL_MAILTO}
+                data-cursor-diff
+                className="group inline-block text-2xl sm:text-4xl md:text-5xl font-serif font-light tracking-wide text-[#F4EFEA] hover:text-[#D4AF37] transition-all duration-300 break-all"
+              >
+                <span>hello@camcuhouse.online</span>
+                <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-[1px] bg-[#D4AF37]" />
+              </a>
+
+              <p className="text-[11px] font-mono text-[#F4EFEA]/50">
+                Nhấp vào để gửi email trực tiếp cho chúng tôi
+              </p>
+            </div>
+
+            {/* DÒNG 3: ĐỊA CHỈ NHỎ TINH TẾ & BẢN ĐỒ CHỈ ĐƯỜNG */}
+            <div className="pt-4 border-t border-white/10 space-y-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#F4EFEA]/40 flex items-center gap-2">
+                <MapPin size={12} className="text-[#D4AF37]" />
+                <span>ĐỊA CHỈ HIÊN QUÁN</span>
+              </span>
+
+              <a
+                href={GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="group block space-y-1 hover:text-[#D4AF37] transition-colors"
+              >
+                <div className="text-xl sm:text-2xl font-serif text-[#F4EFEA] group-hover:text-[#D4AF37]">
+                  Bờ suối Gia Nghĩa, Đắk Nông
+                </div>
+                <div className="text-xs font-light text-[#F4EFEA]/70 leading-relaxed">
+                  Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa
+                </div>
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#D4AF37] group-hover:translate-x-1 transition-transform pt-1">
+                  <span>Mở ứng dụng Google Maps</span>
+                  <ArrowUpRight size={12} />
+                </div>
+              </a>
+            </div>
+
+            {/* Thời gian đón khách */}
+            <div className="text-xs font-mono text-[#F4EFEA]/60 flex items-center gap-2 pt-2">
+              <Sparkles size={13} className="text-[#D4AF37]" />
+              <span>Đón khách: 07:00 – 22:00 mỗi ngày • Không gian suối đá quanh năm</span>
+            </div>
+
           </div>
 
           {/* CỘT 2 (6 Cols): WEBGL 3D EARTH GLOBE VỚI BEACON ĐẮK NÔNG */}
           <div className="lg:col-span-6 sticky top-28">
-            <div className="w-full h-[460px] sm:h-[560px] rounded-3xl overflow-hidden border border-white/10 bg-black/60 shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative">
+            <div className="w-full h-[460px] sm:h-[560px] rounded-3xl overflow-hidden border border-white/10 bg-black/60 shadow-[0_25px_70px_rgba(0,0,0,0.95)] relative">
               <Contact3DScene />
             </div>
           </div>
