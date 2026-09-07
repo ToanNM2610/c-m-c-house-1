@@ -258,27 +258,23 @@ function MegaminxDodecahedron({
 
   useFrame((state, delta) => {
     const rawOffset = scrollProgressRef.current ?? 0;
-    const offset = Math.min(Math.max(rawOffset, 0), 1);
+    // p chạy mượt mà từ 0 ở đỉnh trang đến 1 ở chân trang (Full Page Scroll Progress)
+    const p = Math.min(Math.max(rawOffset, 0), 1);
 
-    // Tiến độ cuộn trong khoảng Hero Section (0.0 -> 0.18)
-    const p = Math.min(Math.max(offset / 0.18, 0), 1);
+    // HIỆU ỨNG PHÓNG TO XUYÊN SUỐT TOÀN BỘ TRANG (1x -> 7.5x):
+    // Khi người dùng cuộn từ đỉnh trang xuống cuối trang:
+    // Khối khung dây phóng to dần đều từ 1x lên 7.5x (hiệu ứng bay xuyên vào tâm khối)
+    // Khi cuộn ngược lên: mượt mà thu nhỏ trở lại vị trí ban đầu
+    const targetScale = baseScale * (1.0 + Math.pow(p, 0.92) * 6.5);
+    const targetZ = p * 0.8;
 
-    // HIỆU ỨNG LƯỚT VÀ PHÓNG TO:
-    // Khi lướt xuống: Phóng to dần (tăng lũy tiến đến 3.8x) và tịnh tiến Z về phía camera (+1.8)
-    // Khi lướt lên: Thu nhỏ lại về baseScale và Z về 0
-    const targetScale = baseScale * (1.0 + Math.pow(p, 1.2) * 2.8);
-    const targetZ = p * 1.8;
-
-    // Mờ dần tự nhiên khi phóng to cực đại chuẩn bị chuyển sang Section 2
-    let targetOpacity = 1.0;
-    if (p > 0.7) {
-      targetOpacity = Math.max(1.0 - (p - 0.7) / 0.3, 0);
-    }
+    // Khối khung dây 3D duy trì hiển thị bền bỉ xuyên suốt toàn bộ chiều dài trang
+    const targetOpacity = 1.0;
 
     // Damping mượt mà 60fps không giật lag
-    currentScaleRef.current = THREE.MathUtils.damp(currentScaleRef.current, targetScale, 4.5, delta);
-    currentZRef.current = THREE.MathUtils.damp(currentZRef.current, targetZ, 4.5, delta);
-    currentOpacityRef.current = THREE.MathUtils.damp(currentOpacityRef.current, targetOpacity, 4.5, delta);
+    currentScaleRef.current = THREE.MathUtils.damp(currentScaleRef.current, targetScale, 4.0, delta);
+    currentZRef.current = THREE.MathUtils.damp(currentZRef.current, targetZ, 4.0, delta);
+    currentOpacityRef.current = THREE.MathUtils.damp(currentOpacityRef.current, targetOpacity, 4.0, delta);
 
     const op = currentOpacityRef.current;
     setMegaminxOpacity(op);
@@ -294,10 +290,10 @@ function MegaminxDodecahedron({
 
       groupRef.current.position.set(mouseParallaxX, floatY + mouseParallaxY, currentZRef.current);
 
-      // Tự động xoay 3 trục chậm rãi khi đứng yên để khoe trọn góc cạnh 3D của các mặt khối Megaminx
-      groupRef.current.rotation.y += delta * 0.28;
-      groupRef.current.rotation.x += delta * 0.18;
-      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.6) * 0.14 + p * 0.5;
+      // Tự động xoay nhẹ nhàng liên tục theo cả 3 trục khi lướt qua từng phân đoạn nội dung
+      groupRef.current.rotation.y += delta * 0.22;
+      groupRef.current.rotation.x += delta * 0.14;
+      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.5) * 0.12 + p * 2.2;
     }
 
     if (ring1Ref.current) {
@@ -333,6 +329,7 @@ function MegaminxDodecahedron({
           color="#E5C07B"
           transparent
           opacity={megaminxOpacity * 0.95}
+          depthWrite={false}
         />
       </lineSegments>
 
@@ -342,6 +339,7 @@ function MegaminxDodecahedron({
           color="#D4AF37"
           transparent
           opacity={megaminxOpacity * 0.82}
+          depthWrite={false}
         />
       </lineSegments>
 
@@ -438,7 +436,7 @@ function Section2Photo3D({
   const photoScale: [number, number] = isMobile ? [2.9, 1.63] : [3.6, 2.05];
 
   return (
-    <group ref={groupRef} position={[0, 0, -7.5]}>
+    <group ref={groupRef} position={[0, 0, -1.8]}>
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.4}>
         <FeatheredImage
           url="/uploads/gallery/1788250253551-943009233.jpg"
@@ -507,7 +505,7 @@ function FloatingParallaxGallery3D({
   const scaleSub: [number, number] = isMobile ? [2.0, 1.12] : [2.5, 1.4];
 
   return (
-    <group ref={groupRef} position={[0, 0, -15.5]}>
+    <group ref={groupRef} position={[0, 0, -2.2]}>
       {/* Ảnh 1: Góc TRÊN - TRÁI */}
       <Float speed={2} rotationIntensity={0.5} floatIntensity={1.5}>
         <FeatheredImage
@@ -671,7 +669,7 @@ function FloatingCoffeeBeans({
   });
 
   return (
-    <group position={[0, 0.4, -23.5]}>
+    <group position={[0, 0.4, -2.5]}>
       <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
         <sphereGeometry args={[0.38, 20, 16]} />
         <meshPhysicalMaterial
@@ -716,7 +714,7 @@ function SanctuaryHalo3D({ scrollProgressRef }: { scrollProgressRef: React.RefOb
   });
 
   return (
-    <group ref={haloGroupRef} position={[0, 0.4, -31.5]}>
+    <group ref={haloGroupRef} position={[0, 0.4, -3.0]}>
       <mesh ref={ringOuterRef}>
         <torusGeometry args={[3.2, 0.035, 16, 120]} />
         <meshStandardMaterial
@@ -768,65 +766,21 @@ function FlightCameraRig({
     const parallaxRotY = -mouseX * 0.05 * parallaxFactor;
     const parallaxRotX = mouseY * 0.03 * parallaxFactor;
 
-    // Lùi camera thêm 2.5 đơn vị trên Mobile để tăng FOV thị giác
-    const zOffset = isMobile ? 2.5 : 0;
+    // Lùi camera thêm trên Mobile để góc nhìn thoáng đãng
+    const zOffset = isMobile ? 2.2 : 0;
 
-    let targetX = 0;
-    let targetY = 0;
-    let targetZ = 5.0 + zOffset;
-    let targetRotY = 0;
-    let targetRotZ = 0;
-
-    if (offset < 0.20) {
-      // Giai đoạn 1 (Hero)
-      const p = offset / 0.20;
-      targetX = 0;
-      targetY = 0;
-      targetZ = (5.0 - p * 4.5) + zOffset;
-      targetRotY = 0;
-    } else if (offset < 0.40) {
-      // Giai đoạn 2 (Bố cục 1: Ảnh 1 bên - Chữ 1 bên)
-      // Trên PC: lượn sang trái (targetX = -0.7). Trên Mobile: căn giữa (targetX = 0).
-      const p = (offset - 0.20) / 0.20;
-      targetX = isMobile ? 0 : -0.7 * Math.sin(p * Math.PI);
-      targetY = isMobile ? 0 : 0.1 * Math.sin(p * Math.PI);
-      targetZ = (0.5 - p * 8.0) + zOffset;
-      targetRotY = isMobile ? 0 : -0.1 * Math.sin(p * Math.PI);
-      targetRotZ = isMobile ? 0 : 0.015 * Math.sin(p * Math.PI);
-    } else if (offset < 0.60) {
-      // Giai đoạn 3 (Bố cục 2: Chữ ở giữa - Ảnh lơ lửng xung quanh)
-      const p = (offset - 0.40) / 0.20;
-      targetX = 0;
-      targetY = 0;
-      targetZ = (-7.5 - p * 8.0) + zOffset;
-      targetRotY = 0;
-      targetRotZ = 0;
-    } else if (offset < 0.80) {
-      // Giai đoạn 4 (Hạt Cà Phê Mộc & Thực đơn tuyển chọn)
-      const p = (offset - 0.60) / 0.20;
-      targetX = 0;
-      targetY = 0.1 * Math.sin(p * Math.PI);
-      targetZ = (-15.5 - p * 8.0) + zOffset;
-      targetRotY = 0;
-      targetRotZ = 0;
-    } else {
-      // Giai đoạn 5 (Lời chào & Vầng hào quang)
-      const p = (offset - 0.80) / 0.20;
-      targetX = 0;
-      targetY = 0;
-      targetZ = (-23.5 - p * 6.0) + zOffset;
-      targetRotY = 0;
-      targetRotZ = 0;
-    }
+    // Camera giữ vị trí ổn định phía trước khối Megaminx, kết hợp zoom nhẹ nhàng theo scroll
+    const targetX = isMobile ? 0 : -0.25 * Math.sin(offset * Math.PI);
+    const targetY = isMobile ? 0 : 0.12 * Math.sin(offset * Math.PI);
+    const targetZ = 5.0 - offset * 1.5 + zOffset;
 
     // Damping mượt mà chuyển động camera
     state.camera.position.x = THREE.MathUtils.damp(state.camera.position.x, targetX + parallaxX, 4, delta);
     state.camera.position.y = THREE.MathUtils.damp(state.camera.position.y, targetY + parallaxY, 4, delta);
     state.camera.position.z = THREE.MathUtils.damp(state.camera.position.z, targetZ, 4, delta);
 
-    state.camera.rotation.y = THREE.MathUtils.damp(state.camera.rotation.y, targetRotY + parallaxRotY, 4, delta);
+    state.camera.rotation.y = THREE.MathUtils.damp(state.camera.rotation.y, parallaxRotY, 4, delta);
     state.camera.rotation.x = THREE.MathUtils.damp(state.camera.rotation.x, parallaxRotX, 4, delta);
-    state.camera.rotation.z = THREE.MathUtils.damp(state.camera.rotation.z, targetRotZ, 4, delta);
   });
 
   return null;
@@ -916,6 +870,12 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsMounted(true);
+    if (typeof window !== "undefined") {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll > 0) {
+        scrollProgressRef.current = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
+      }
+    }
   }, []);
 
   return (
@@ -924,7 +884,7 @@ export default function HomePage() {
       {/* 0. NỀN ẢNH NỘI THẤT QUÁN CẨM CÙ HOUSE CHO HERO SECTION    */}
       {/* ========================================================= */}
       <motion.div
-        className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden"
+        className="fixed inset-0 w-full h-full pointer-events-none -z-10 overflow-hidden"
         style={{
           opacity: heroBgOpacity,
           scale: heroBgScale,
@@ -945,10 +905,10 @@ export default function HomePage() {
       </motion.div>
 
       {/* ========================================================= */}
-      {/* 1. CANVAS 3D CỐ ĐỊNH TOÀN MÀN HÌNH DUY NHẤT                */}
+      {/* 1. CANVAS 3D CỐ ĐỊNH TOÀN MÀN HÌNH DUY NHẤT (NỀN CỐ ĐỊNH Z-0) */}
       {/* DPR thích ứng: [1, 1.1] trên mobile chống giật lag        */}
       {/* ========================================================= */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none z-[1] overflow-hidden">
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         {isMounted && (
           <Canvas
             className="w-full h-full pointer-events-none"
@@ -961,7 +921,7 @@ export default function HomePage() {
             }}
           >
             {/* Không dùng color attach background để nền trong suốt cho ảnh nội thất hiển thị */}
-            <fog attach="fog" args={["#1A0F0A", 5, 25]} />
+            <fog attach="fog" args={["#1A0F0A", 12, 45]} />
 
             <Suspense fallback={null}>
               <Unified3DWorld scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
