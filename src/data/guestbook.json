@@ -1,0 +1,26 @@
+[
+  {
+    "id": "gb-1",
+    "name": "An Nhiên",
+    "from": "Sài Gòn",
+    "message": "Một buổi sớm ngồi bên bờ suối đá, nhấp ngụm cà phê rang củi mộc và lắng nghe tiếng nước reo qua kẽ lá... Tâm trí như được chữa lành và tĩnh lặng sau những tháng ngày phố thị xô bồ.",
+    "isFavorite": true,
+    "createdAt": "2026-09-07T08:15:00.000Z"
+  },
+  {
+    "id": "gb-2",
+    "name": "Minh Khang",
+    "from": "Đà Lạt",
+    "message": "Không gian quá đỗi mộc mạc và tĩnh tại. Giàn hoa cẩm cù buông rủ bên hiên gỗ hòa cùng mùi hương thảo mộc sớm mai thật sự chạm đến cảm xúc.",
+    "isFavorite": true,
+    "createdAt": "2026-09-06T15:20:00.000Z"
+  },
+  {
+    "id": "gb-3",
+    "name": "Hoài Thương",
+    "from": "Gia Nghĩa",
+    "message": "Cảm ơn Cẩm Cù House đã giữ trọn vẹn nét nguyên sơ của thiên nhiên Đắk Nông, không thương mại hóa, một chốn bình yên cho những tâm hồn tìm về.",
+    "isFavorite": false,
+    "createdAt": "2026-09-05T10:00:00.000Z"
+  }
+]

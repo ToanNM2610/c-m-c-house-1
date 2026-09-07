@@ -176,20 +176,20 @@ export default function AdminLayout({
 
   // WP Admin Sidebar Items Simulation
   const navItems = [
-    { name: "Bảng tin", href: "/admin", icon: <LayoutDashboard size={18} /> },
-    { name: "Quản lý Thực đơn", href: "/admin/menu", icon: <Coffee size={18} /> },
+    { name: "Sổ nhật ký & Bảng tin", href: "/admin", icon: <LayoutDashboard size={18} /> },
     { 
-      name: "Bài viết", 
+      name: "Tản văn & Chuyện nhà", 
       href: "/admin/posts", 
       icon: <FileText size={18} />,
       isActive: pathname.startsWith("/admin/posts"),
       subMenu: [
-        { name: "Tất cả bài viết", href: "/admin/posts" },
-        { name: "Viết bài mới", href: "/admin/posts" },
+        { name: "Tất cả tản văn", href: "/admin/posts" },
+        { name: "Viết tản văn mới", href: "/admin/posts" },
       ]
     },
     { name: "Thư viện ảnh", href: "/admin/gallery", icon: <ImageIcon size={18} /> },
-    { name: "Tài khoản", href: "/admin/users", icon: <Users size={18} /> },
+    { name: "Thực đơn mộc", href: "/admin/menu", icon: <Coffee size={18} /> },
+    { name: "Người đồng hành", href: "/admin/users", icon: <Users size={18} /> },
   ];
 
   return (
@@ -207,9 +207,9 @@ export default function AdminLayout({
               <span className="text-lg leading-none -mt-1">+</span> Thêm mới
             </button>
             <div className="absolute top-full left-0 bg-[#1d2327] border-t border-[#3c434a] min-w-[160px] hidden group-hover:flex flex-col shadow-lg z-50">
-              <Link href="/admin/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Món ăn</Link>
-              <Link href="/admin/posts" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><FileText size={14}/> Bài viết</Link>
-              <Link href="/admin/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Hình ảnh</Link>
+              <Link href="/admin/posts" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><FileText size={14}/> Tản văn mới</Link>
+              <Link href="/admin/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Hình ảnh mới</Link>
+              <Link href="/admin/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Món mộc</Link>
             </div>
           </div>
         </div>
