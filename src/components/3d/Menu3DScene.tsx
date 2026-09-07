@@ -52,12 +52,7 @@ function FloatingCoffeeElements() {
         </mesh>
       </Float>
 
-      <Float speed={1.8} rotationIntensity={0.7} floatIntensity={1.0} position={[4.8, -1.8, -7]}>
-        <mesh>
-          <torusGeometry args={[0.9, 0.25, 16, 32]} />
-          <meshStandardMaterial color="#C5A880" wireframe />
-        </mesh>
-      </Float>
+
 
       <Float speed={1.3} rotationIntensity={0.5} floatIntensity={0.9} position={[-3.8, -3.0, -11]}>
         <mesh>

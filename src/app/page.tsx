@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sparkles, Float, Image as DreiImage, TorusKnot, Icosahedron, Dodecahedron } from "@react-three/drei";
+import { Sparkles, Float, Image as DreiImage, Icosahedron, Dodecahedron } from "@react-three/drei";
 import { motion, useScroll, useMotionValueEvent, useTransform } from "framer-motion";
 import * as THREE from "three";
 import Link from "next/link";
@@ -476,70 +476,7 @@ function FloatingParallaxGallery3D({
   );
 }
 
-/**
- * TẦNG 4: VÒNG XOÁY NGHỆ THUẬT ABSTRACT TORUS KNOT TẠI Z = -23.5
- */
-function AbstractKnot3D({ scrollProgressRef }: { scrollProgressRef: React.RefObject<number> }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const knotRef = useRef<THREE.Mesh>(null);
-  const currentOpacityRef = useRef(0);
-  const [opacity, setOpacity] = useState(0);
 
-  useFrame((state, delta) => {
-    const rawOffset = scrollProgressRef.current ?? 0;
-    const offset = Math.min(Math.max(rawOffset, 0), 1);
-
-    // Xuất hiện trong khoảng scroll 0.58 -> 0.82 (đỉnh cao 0.66 -> 0.76)
-    let targetOpacity = 0;
-    if (offset >= 0.58 && offset < 0.66) {
-      targetOpacity = (offset - 0.58) / 0.08;
-    } else if (offset >= 0.66 && offset <= 0.76) {
-      targetOpacity = 1;
-    } else if (offset > 0.76 && offset <= 0.82) {
-      targetOpacity = 1 - (offset - 0.76) / 0.06;
-    }
-
-    currentOpacityRef.current = THREE.MathUtils.damp(currentOpacityRef.current, targetOpacity, 4, delta);
-    const op = currentOpacityRef.current;
-    setOpacity(op);
-
-    if (groupRef.current) {
-      groupRef.current.visible = op > 0.005;
-      const targetY = 0.4 + (1 - op) * -1.0;
-      groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.08);
-    }
-
-    if (knotRef.current) {
-      knotRef.current.rotation.x += delta * 0.28;
-      knotRef.current.rotation.y += delta * 0.42;
-      knotRef.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 0.5) * 0.15;
-    }
-  });
-
-  return (
-    <group ref={groupRef} position={[0, 0.4, -23.5]}>
-      <Float speed={1.8} rotationIntensity={0.2} floatIntensity={0.35}>
-        <TorusKnot ref={knotRef} args={[1.5, 0.4, 128, 32]}>
-          <meshPhysicalMaterial
-            color="#C5A880"
-            emissive="#C5A880"
-            emissiveIntensity={0.25}
-            metalness={0.8}
-            roughness={0.2}
-            transmission={0.5}
-            thickness={0.5}
-            wireframe={true}
-            transparent
-            opacity={opacity * 0.9}
-          />
-        </TorusKnot>
-      </Float>
-
-      <pointLight color="#FFE5B4" intensity={2.8} distance={12} position={[0, 0, 0]} />
-      <Sparkles count={55} scale={[5, 5, 5]} size={2.0} color="#C5A880" speed={0.35} />
-    </group>
-  );
-}
 
 /**
  * CƠN LỐC HẠT CÀ PHÊ 3D (INSTANCED MESH):
@@ -866,7 +803,6 @@ function Unified3DWorld({
       <CrystalPolyhedronBall scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <Section2Photo3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <FloatingParallaxGallery3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
-      <AbstractKnot3D scrollProgressRef={scrollProgressRef} />
       <FloatingCoffeeBeans count={isMobile ? 30 : 150} scrollProgressRef={scrollProgressRef} />
       <SanctuaryHalo3D scrollProgressRef={scrollProgressRef} />
     </>
