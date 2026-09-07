@@ -56,7 +56,7 @@ function MagneticLink({
         className="relative cursor-pointer select-none group py-2 px-1 block"
       >
         <span
-          className={`text-sm tracking-wide font-medium transition-colors duration-300 ${
+          className={`text-sm tracking-wide font-medium transition-colors duration-300 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] ${
             isActive
               ? "text-[#C5A880] font-semibold"
               : "text-[#F4EFEA]/80 group-hover:text-[#F4EFEA]"
@@ -160,14 +160,14 @@ export default function Header() {
         } ${
           isSubPage || isScrolled
             ? "backdrop-blur-md bg-[#1A0F0A]/90 border-b border-[#C5A880]/20 py-2.5 sm:py-3 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
-            : "bg-transparent border-b border-transparent py-4 sm:py-5"
+            : "bg-gradient-to-b from-[#1A0F0A]/90 via-[#1A0F0A]/50 to-transparent border-b border-transparent py-3.5 sm:py-5 backdrop-blur-[2px]"
         } px-4 sm:px-8 md:px-10`}
       >
         <div className="w-full max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-3">
           {/* Logo Thương hiệu: min-w-0 và truncate để không ép văng nút mobile trên màn hình hẹp */}
           <Link
             href="/"
-            className="text-xl sm:text-2xl font-serif text-[#F4EFEA] font-bold tracking-wider cursor-pointer select-none group flex items-center gap-2 min-w-0 shrink"
+            className="text-xl sm:text-2xl font-serif text-[#F4EFEA] font-bold tracking-wider cursor-pointer select-none group flex items-center gap-2 min-w-0 shrink drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]"
           >
             <span className="group-hover:text-[#C5A880] transition-colors truncate">
               Cẩm Cù House
