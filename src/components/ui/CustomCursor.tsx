@@ -130,7 +130,7 @@ export default function CustomCursor() {
             : "rgba(212, 175, 55, 0.4)",
         }}
         transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 rounded-full border flex items-center justify-center backdrop-blur-[1px]"
+        className="fixed top-0 left-0 rounded-full border flex items-center justify-center pointer-events-none"
       >
         {hasText && (
           <motion.span

@@ -131,12 +131,17 @@ void main() {
 }
 `;
 
+import { useCanvas } from "@/context/CanvasContext";
+
 export interface CelestialCoreProps {
-  scrollProgressRef: React.RefObject<number>;
-  isMobile: boolean;
+  scrollProgressRef?: React.RefObject<number>;
+  isMobile?: boolean;
 }
 
-export default function CelestialCore({ scrollProgressRef, isMobile }: CelestialCoreProps) {
+export default function CelestialCore(props: CelestialCoreProps) {
+  const canvasCtx = useCanvas();
+  const scrollProgressRef = props.scrollProgressRef ?? canvasCtx.scrollProgressRef;
+  const isMobile = props.isMobile ?? canvasCtx.isMobile;
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const ring1Ref = useRef<THREE.Mesh>(null);
@@ -169,6 +174,12 @@ export default function CelestialCore({ scrollProgressRef, isMobile }: Celestial
       depthWrite: false,
     });
   }, []);
+
+  useEffect(() => {
+    return () => {
+      shaderMaterial.dispose();
+    };
+  }, [shaderMaterial]);
 
   // Lắng nghe di chuột toàn trang để parallax phản xạ
   useEffect(() => {

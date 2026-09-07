@@ -306,8 +306,12 @@ main,
   -webkit-overflow-scrolling: touch;
 }
 
+html {
+  background: #0A0908;
+}
+
 body {
-  background: #1A0F0A;
+  background: transparent;
   color: #F4EFEA;
   font-family: var(--font-sans), sans-serif;
   letter-spacing: 0.015em;
@@ -454,13 +458,11 @@ html.lenis, html.lenis body {
   box-shadow: 0 0 25px rgba(197, 168, 128, 0.15);
 }
 
-/* ── ANTIGRAVITY PRO: ULTRA PREMIUM GLASSMORPHISM ────────────────── */
+/* ── ANTIGRAVITY PRO: ULTRA SOLID SEMI-TRANSPARENT ────────────────── */
 .glass-ultra {
-  background: rgba(26, 15, 10, 0.4);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(197, 168, 128, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  background: rgba(16, 9, 6, 0.9);
+  border: 1px solid rgba(197, 168, 128, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
   border-radius: 24px;
   padding: 24px;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -472,11 +474,9 @@ html.lenis, html.lenis body {
 }
 
 .glass-ultra-pill {
-  background: rgba(26, 15, 10, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(197, 168, 128, 0.2);
-  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.45);
+  background: rgba(26, 15, 10, 0.92);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.55);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -488,15 +488,18 @@ html.lenis, html.lenis body {
 /* Graceful Degradation cho màn hình điện thoại & thiết bị yếu */
 @media (max-width: 767px) {
   .glass-ultra {
-    background: rgba(26, 15, 10, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(26, 15, 10, 0.95);
     padding: 16px;
     border-radius: 20px;
   }
   .glass-ultra-pill {
-    background: rgba(26, 15, 10, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(26, 15, 10, 0.95);
   }
+}
+
+/* GPU Accelerated utility */
+.will-change-transform {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }

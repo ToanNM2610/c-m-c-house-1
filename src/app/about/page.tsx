@@ -25,7 +25,7 @@ export default function AboutPage() {
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]"
+      className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]"
     >
       {/* Hiệu ứng luồng sáng tự nhiên (Volumetric God Rays) mờ ảo chiếu từ đỉnh */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

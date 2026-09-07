@@ -85,7 +85,7 @@ export default function AdminLayout({
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#120805] via-[#1A0F0A] to-[#2B1408] text-[#F3E8DB] flex items-center justify-center p-4 select-none font-sans">
-        <div className="w-full max-w-md bg-black/40 backdrop-blur-xl border border-[#C5A880]/30 rounded-3xl p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
+        <div className="w-full max-w-md bg-[#1A0F0A]/95 border border-[#C5A880]/30 rounded-3xl p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
           
           {/* Ánh kim trang trí */}
           <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#C5A880]/15 rounded-full blur-3xl pointer-events-none" />

@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState, Suspense, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Preload } from "@react-three/drei";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,7 +16,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import CelestialCore from "@/components/3d/CelestialCore";
+import { useCanvas } from "@/context/CanvasContext";
 import LiquidDistortionImage from "@/components/ui/LiquidDistortionImage";
 
 // Bezier curve chuẩn Awwwards: Snappy nhưng vô cùng mềm mại
@@ -185,9 +183,9 @@ const MENU_HIGHLIGHTS = [
  */
 export default function UltraPremiumHomePage() {
   const { lang, t, formatPrice } = useLanguage();
+  const { setScrollProgress } = useCanvas();
   const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
-  const scrollProgressRef = useRef<number>(0);
 
   // Tham chiếu GSAP Horizontal Scroll
   const horizontalSectionRef = useRef<HTMLDivElement>(null);
@@ -197,14 +195,14 @@ export default function UltraPremiumHomePage() {
   const { scrollYProgress } = useScroll();
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    scrollProgressRef.current = Math.min(Math.max(latest, 0), 1);
+    setScrollProgress(Math.min(Math.max(latest, 0), 1));
   });
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Thiết lập GSAP ScrollTrigger Pinned Horizontal Scroll cho Desktop
+  // Thiết lập GSAP ScrollTrigger Pinned Horizontal Scroll cho Desktop có ctx.revert()
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -215,78 +213,38 @@ export default function UltraPremiumHomePage() {
 
     if (!section || !track) return;
 
-    // Chỉ kích hoạt Pin Scroll khi màn hình >= 768px (Desktop)
-    let ctx: gsap.Context | null = null;
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
 
-    const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        const getScrollAmount = () => {
+          return track.scrollWidth - window.innerWidth;
+        };
 
-    mm.add("(min-width: 768px)", () => {
-      const getScrollAmount = () => {
-        return track.scrollWidth - window.innerWidth;
-      };
-
-      const tween = gsap.to(track, {
-        x: () => -getScrollAmount(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          pin: true,
-          scrub: 1.1,
-          start: "top top",
-          end: () => `+=${getScrollAmount()}`,
-          invalidateOnRefresh: true,
-        },
+        gsap.to(track, {
+          x: () => -getScrollAmount(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            pin: true,
+            scrub: 1.1,
+            start: "top top",
+            end: () => `+=${getScrollAmount()}`,
+            invalidateOnRefresh: true,
+          },
+        });
       });
-
-      return () => {
-        tween.kill();
-      };
-    });
+    }, horizontalSectionRef);
 
     return () => {
-      mm.revert();
+      ctx.revert();
     };
   }, [isMounted]);
 
   return (
-    <div className="relative w-full max-w-[100vw] bg-[#0C0705] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705]">
+    <div className="relative w-full max-w-[100vw] bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705]">
       {/* ========================================================= */}
-      {/* 1. FIXED WEBGL 3D BACKGROUND LAYER (Z-0)                  */}
-      {/* ========================================================= */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-        {isMounted && (
-          <Canvas
-            className="w-full h-full pointer-events-none"
-            camera={{ position: [0, 0, isMobile ? 6.5 : 5.2], fov: 52 }}
-            dpr={[1, 2]}
-            gl={{
-              powerPreference: "high-performance",
-              alpha: true,
-              antialias: true,
-            }}
-          >
-            <fog attach="fog" args={["#0C0705", 8, 45]} />
-            <ambientLight intensity={0.4} />
-            <pointLight position={[5, 8, 5]} intensity={1.5} color="#FFE1B3" />
-            <pointLight position={[-5, -6, -3]} intensity={0.8} color="#C5A880" />
-
-            <Suspense fallback={null}>
-              <CelestialCore
-                scrollProgressRef={scrollProgressRef}
-                isMobile={isMobile}
-              />
-              <Preload all />
-            </Suspense>
-          </Canvas>
-        )}
-
-        {/* Lớp gradient điện ảnh và sương mù hữu cơ */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0C0705]/80 via-transparent to-[#0C0705]/95 pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#0C0705_95%)] opacity-85 pointer-events-none" />
-      </div>
-
-      {/* ========================================================= */}
-      {/* 2. CÁC SECTION NỘI DUNG CHÍNH (Z-10)                      */}
+      {/* CÁC SECTION NỘI DUNG CHÍNH (Z-10)                          */}
       {/* ========================================================= */}
       <div className="relative z-10 w-full">
         {/* ======================================================= */}
@@ -300,7 +258,7 @@ export default function UltraPremiumHomePage() {
             transition={{ duration: 1.0, ease: EASE_AWWWARDS }}
             className="pointer-events-auto pt-4 sm:pt-6"
           >
-            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[10px] sm:text-xs font-mono uppercase tracking-[0.28em] text-[#D4AF37] border border-[#D4AF37]/30 bg-black/40 backdrop-blur-md shadow-[0_0_25px_rgba(212,175,55,0.15)]">
+            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-[10px] sm:text-xs font-mono uppercase tracking-[0.28em] text-[#D4AF37] border border-[#D4AF37]/30 bg-black/80 shadow-[0_0_25px_rgba(212,175,55,0.15)]">
               <SparkleIcon size={12} className="text-[#D4AF37] animate-pulse" />
               <span>ARTISAN COFFEE & BOTANICAL SANCTUARY</span>
               <SparkleIcon size={12} className="text-[#D4AF37] animate-pulse" />
@@ -350,7 +308,7 @@ export default function UltraPremiumHomePage() {
               <Link
                 href="/space"
                 data-cursor-magnetic
-                className="group inline-flex items-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#D4AF37]/50 hover:border-[#D4AF37] text-[#F4EFEA] hover:text-[#FFE1B3] font-medium text-xs sm:text-sm uppercase tracking-widest transition-all duration-500 bg-black/40 hover:bg-black/60 backdrop-blur-md cursor-pointer font-sans shadow-lg hover:scale-105 active:scale-95"
+                className="group inline-flex items-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#D4AF37]/50 hover:border-[#D4AF37] text-[#F4EFEA] hover:text-[#FFE1B3] font-medium text-xs sm:text-sm uppercase tracking-widest transition-all duration-500 bg-black/80 hover:bg-black/95 cursor-pointer font-sans shadow-lg hover:scale-105 active:scale-95"
               >
                 <span>{lang === "en" ? "Our Sanctuary" : "Khám Phá Không Gian"}</span>
                 <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-[#D4AF37]" />
@@ -428,7 +386,7 @@ export default function UltraPremiumHomePage() {
             {STORY_CARDS.map((card, idx) => (
               <div
                 key={card.id}
-                className="shrink-0 w-full sm:w-[380px] md:w-[460px] bg-black/40 backdrop-blur-xl border border-[#D4AF37]/25 rounded-2xl p-4 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col justify-between group transition-all duration-500 hover:border-[#D4AF37]/60"
+                className="shrink-0 w-full sm:w-[380px] md:w-[460px] bg-black/85 border border-[#D4AF37]/25 rounded-2xl p-4 md:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex flex-col justify-between group transition-all duration-500 hover:border-[#D4AF37]/60"
               >
                 {/* Khung ảnh WebGL Liquid Distortion */}
                 <div className="w-full overflow-hidden rounded-xl mb-6">
@@ -458,7 +416,7 @@ export default function UltraPremiumHomePage() {
             ))}
 
             {/* Điểm kết thúc cuộn ngang */}
-            <div className="shrink-0 w-full md:w-[280px] flex flex-col items-center justify-center p-8 text-center border border-dashed border-[#D4AF37]/30 rounded-2xl bg-black/25 backdrop-blur-md">
+            <div className="shrink-0 w-full md:w-[280px] flex flex-col items-center justify-center p-8 text-center border border-dashed border-[#D4AF37]/30 rounded-2xl bg-black/80">
               <span className="text-3xl font-serif text-[#D4AF37] italic mb-3">~</span>
               <p className="text-xs font-mono uppercase tracking-widest text-[#F4EFEA]/80 mb-4">
                 {lang === "en" ? "Ready to taste the stillness?" : "Sẵn sàng đón nhận vị tĩnh lặng?"}
@@ -512,7 +470,7 @@ export default function UltraPremiumHomePage() {
                   delay: idx * 0.18,
                   ease: EASE_AWWWARDS,
                 }}
-                className={`group flex flex-col bg-black/40 backdrop-blur-xl border border-[#D4AF37]/20 rounded-2xl p-5 md:p-6 transition-all duration-500 hover:border-[#D4AF37]/60 shadow-xl ${item.offset}`}
+                className={`group flex flex-col bg-black/85 border border-[#D4AF37]/20 rounded-2xl p-5 md:p-6 transition-all duration-500 hover:border-[#D4AF37]/60 shadow-xl ${item.offset}`}
               >
                 {/* Ảnh với hiệu ứng gợn sóng nước khi hover */}
                 <div className="w-full overflow-hidden rounded-xl mb-5 aspect-[4/5]">
@@ -560,7 +518,7 @@ export default function UltraPremiumHomePage() {
             <Link
               href="/menu"
               data-cursor-magnetic
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[#D4AF37]/40 bg-black/40 backdrop-blur-md text-[#F4EFEA] hover:text-[#0C0705] hover:bg-[#D4AF37] transition-all duration-300 text-xs font-mono uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-[#D4AF37]/40 bg-black/80 text-[#F4EFEA] hover:text-[#0C0705] hover:bg-[#D4AF37] transition-all duration-300 text-xs font-mono uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95"
             >
               <span>{lang === "en" ? "Discover Full Seasonal Menu" : "Khám Phá Toàn Bộ Thực Đơn Mộc"}</span>
               <ArrowRight size={14} />
@@ -574,7 +532,7 @@ export default function UltraPremiumHomePage() {
         {/* ======================================================= */}
         <section className="w-full py-16 md:py-24 overflow-hidden border-t border-b border-[#D4AF37]/15 bg-[#0C0705]/80 select-none">
           {/* Dải Marquee 1: Chạy từ phải sang trái */}
-          <div className="flex w-max space-x-8 animate-marquee">
+          <div className="flex w-max space-x-8 animate-marquee will-change-transform">
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}

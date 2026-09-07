@@ -43,7 +43,7 @@ export default function MenuPage() {
   }, [menu, activeCategory, searchQuery]);
 
   return (
-    <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
+    <div className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
       
       {/* Micro-interaction: Khung ảnh trôi theo con trỏ chuột khi rê chuột vào tên món */}
       <HoverMediaReveal activeItem={hoveredMedia} />

@@ -115,7 +115,7 @@ export default function SpacePage() {
     };
   }, [selectedSpot]);
 
-  // Thiết lập GSAP Horizontal Scroll Pin trên Desktop
+  // Thiết lập GSAP Horizontal Scroll Pin trên Desktop có ctx.revert()
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -125,36 +125,34 @@ export default function SpacePage() {
     const track = horizontalTrackRef.current;
     if (!section || !track) return;
 
-    const mm = gsap.matchMedia();
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 768px)", () => {
-      const getScrollAmount = () => track.scrollWidth - window.innerWidth;
+      mm.add("(min-width: 768px)", () => {
+        const getScrollAmount = () => track.scrollWidth - window.innerWidth;
 
-      const tween = gsap.to(track, {
-        x: () => -getScrollAmount(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          pin: true,
-          scrub: 1.2,
-          start: "top top",
-          end: () => `+=${getScrollAmount()}`,
-          invalidateOnRefresh: true,
-        },
+        gsap.to(track, {
+          x: () => -getScrollAmount(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            pin: true,
+            scrub: 1.2,
+            start: "top top",
+            end: () => `+=${getScrollAmount()}`,
+            invalidateOnRefresh: true,
+          },
+        });
       });
-
-      return () => {
-        tween.kill();
-      };
-    });
+    }, horizontalSectionRef);
 
     return () => {
-      mm.revert();
+      ctx.revert();
     };
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]">
+    <div className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]">
       
       {/* ========================================================= */}
       {/* 1. INTRO EDITORIAL HEADER                                 */}
@@ -272,7 +270,7 @@ export default function SpacePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedSpot(null)}
-            className="fixed inset-0 z-[99999] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-8 cursor-pointer"
+            className="fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center p-4 sm:p-8 cursor-pointer"
           >
             <div
               onClick={(e) => e.stopPropagation()}

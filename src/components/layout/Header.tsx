@@ -159,8 +159,8 @@ export default function Header() {
           showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
         } ${
           isSubPage || isScrolled
-            ? "backdrop-blur-md bg-[#1A0F0A]/90 border-b border-[#C5A880]/20 py-2.5 sm:py-3 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
-            : "bg-gradient-to-b from-[#1A0F0A]/90 via-[#1A0F0A]/50 to-transparent border-b border-transparent py-3.5 sm:py-5 backdrop-blur-[2px]"
+            ? "bg-[#1A0F0A]/95 border-b border-[#C5A880]/20 py-2.5 sm:py-3 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
+            : "bg-gradient-to-b from-[#1A0F0A]/95 via-[#1A0F0A]/70 to-transparent border-b border-transparent py-3.5 sm:py-5"
         } px-4 sm:px-8 md:px-10`}
       >
         <div className="w-full max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-3">
@@ -186,7 +186,7 @@ export default function Header() {
             })}
 
             {/* Nút chuyển đổi ngôn ngữ & tiền tệ (Desktop) */}
-            <div className="flex items-center gap-2 ml-4 border border-[#C5A880]/35 rounded-full px-3.5 py-1 bg-[#25150E]/70 backdrop-blur-md shadow-sm shrink-0">
+            <div className="flex items-center gap-2 ml-4 border border-[#C5A880]/35 rounded-full px-3.5 py-1 bg-[#25150E]/95 shadow-sm shrink-0">
               <button
                 onClick={() => setLang("vi")}
                 title="Tiếng Việt (VNĐ ₫)"
@@ -216,7 +216,7 @@ export default function Header() {
           {/* Mobile Right Controls: flex-shrink-0 shrink-0 BẮT BUỘC để không bao giờ bị đẩy văng */}
           <div className="flex md:hidden items-center gap-2 sm:gap-2.5 flex-shrink-0 shrink-0 z-[9999]">
             {/* Nút đổi ngôn ngữ thu nhỏ trên thanh Header */}
-            <div className="flex items-center border border-[#C5A880]/30 rounded-full px-2 py-0.5 bg-[#25150E]/90 backdrop-blur-md shadow-sm shrink-0">
+            <div className="flex items-center border border-[#C5A880]/30 rounded-full px-2 py-0.5 bg-[#25150E]/95 shadow-sm shrink-0">
               <button
                 onClick={() => setLang("vi")}
                 title="Tiếng Việt (VNĐ)"
@@ -246,7 +246,7 @@ export default function Header() {
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               id="mobile-hamburger-btn"
-              className="w-10 h-10 rounded-full bg-[#25150E]/95 backdrop-blur-md border border-[#C5A880]/50 text-[#C5A880] hover:text-[#F4EFEA] hover:border-[#C5A880] active:scale-95 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.6)] transition-all duration-200 cursor-pointer focus:outline-none shrink-0"
+              className="w-10 h-10 rounded-full bg-[#25150E]/95 border border-[#C5A880]/50 text-[#C5A880] hover:text-[#F4EFEA] hover:border-[#C5A880] active:scale-95 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.6)] transition-all duration-200 cursor-pointer focus:outline-none shrink-0"
               aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu điều hướng"}
               aria-expanded={mobileMenuOpen}
             >
@@ -271,7 +271,7 @@ export default function Header() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="absolute inset-0 bg-black/80 backdrop-blur-md cursor-pointer"
+              className="absolute inset-0 bg-black/90 cursor-pointer"
             />
 
             {/* Panel Drawer trượt êm ái từ phải sang */}

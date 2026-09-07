@@ -5,19 +5,7 @@ import dynamic from "next/dynamic";
 import { Compass, ArrowUpRight, Phone, Mail, MapPin, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-const Contact3DScene = dynamic(() => import("@/components/3d/Contact3DScene"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full min-h-[480px] flex items-center justify-center bg-[#0A0908]">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border border-[#D4AF37]/30 border-t-[#D4AF37] rounded-full animate-spin" />
-        <p className="text-[11px] font-mono text-[#D4AF37]/70 uppercase tracking-widest">
-          Khởi tạo Quả Địa Cầu 3D...
-        </p>
-      </div>
-    </div>
-  ),
-});
+import Contact3DScene from "@/components/3d/Contact3DScene";
 
 const GOOGLE_MAPS_URL = "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
 const ZALO_URL = "https://zalo.me/0382851688";
@@ -28,7 +16,7 @@ export default function ContactPage() {
   const { lang } = useLanguage();
 
   return (
-    <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
+    <div className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
       
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12">
         {/* ========================================================= */}

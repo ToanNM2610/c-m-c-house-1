@@ -185,7 +185,7 @@ export default function GalleryManagement() {
                   <button 
                     type="button"
                     onClick={(e) => handleDeleteImage(e, img.id)}
-                    className="p-2 bg-red-500/90 hover:bg-red-600 text-white rounded-xl transition-colors backdrop-blur-sm shadow-md pointer-events-auto cursor-pointer"
+                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors shadow-md pointer-events-auto cursor-pointer"
                     title="Xóa ảnh"
                   >
                     <Trash2 size={20} />

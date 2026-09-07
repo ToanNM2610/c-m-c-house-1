@@ -11,6 +11,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import BodyCursorController from "@/components/layout/BodyCursorController";
 import SecurityShield from "@/components/ui/SecurityShield";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { CanvasProvider } from "@/context/CanvasContext";
 import { Analytics } from '@vercel/analytics/next';
 import Global3DCanvas from "@/components/3d/Global3DCanvas";
 import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
@@ -105,20 +106,22 @@ export default function RootLayout({
       <body className={`${cormorant.variable} ${plusJakarta.variable} ${playfair.variable} antialiased font-sans bg-transparent text-[#F4EFEA] select-none max-w-[100vw] w-full overflow-x-hidden touch-pan-y`}>
         <SecurityShield>
           <LanguageProvider>
-            <BodyCursorController />
-            <CustomCursor />
-            <IntroLoader />
-            <Global3DCanvas />
-            <SmoothScroll>
-              <ThemeEffects />
-              <Header />
-              <main className="w-full max-w-[100vw] overflow-x-hidden min-h-screen touch-pan-y relative z-10">
-                <PageTransitionProvider>
-                  {children}
-                </PageTransitionProvider>
-              </main>
-              <Footer />
-            </SmoothScroll>
+            <CanvasProvider>
+              <BodyCursorController />
+              <CustomCursor />
+              <IntroLoader />
+              <Global3DCanvas />
+              <SmoothScroll>
+                <ThemeEffects />
+                <Header />
+                <main className="w-full max-w-[100vw] overflow-x-hidden min-h-screen touch-pan-y relative z-10">
+                  <PageTransitionProvider>
+                    {children}
+                  </PageTransitionProvider>
+                </main>
+                <Footer />
+              </SmoothScroll>
+            </CanvasProvider>
           </LanguageProvider>
         </SecurityShield>
         <Analytics />
