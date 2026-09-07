@@ -43,26 +43,27 @@ export default function CardTilt({ children, className = "", cardClassName = "" 
     const tilt = tiltRef.current;
     if (!tilt) return;
 
-    const handlePointerDown = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") {
-        try { tilt.setPointerCapture(e.pointerId); } catch (_) {}
-      }
+    // Trên thiết bị cảm ứng hoặc màn hình mobile, tắt hoàn toàn để cuộn trang mượt mà không bị khựng đơ
+    const isTouchOrMobile =
+      window.innerWidth < 768 ||
+      window.matchMedia("(pointer: coarse)").matches ||
+      "ontouchstart" in window ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    if (isTouchOrMobile) return;
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") track(e);
     };
     const handlePointerLeave = (e: PointerEvent) => {
       if (e.pointerType === "mouse") reset();
     };
 
-    tilt.addEventListener("pointerdown", handlePointerDown as EventListener);
-    tilt.addEventListener("pointermove", track as EventListener);
-    tilt.addEventListener("pointerup", reset);
-    tilt.addEventListener("pointercancel", reset);
+    tilt.addEventListener("pointermove", handlePointerMove as EventListener);
     tilt.addEventListener("pointerleave", handlePointerLeave as EventListener);
 
     return () => {
-      tilt.removeEventListener("pointerdown", handlePointerDown as EventListener);
-      tilt.removeEventListener("pointermove", track as EventListener);
-      tilt.removeEventListener("pointerup", reset);
-      tilt.removeEventListener("pointercancel", reset);
+      tilt.removeEventListener("pointermove", handlePointerMove as EventListener);
       tilt.removeEventListener("pointerleave", handlePointerLeave as EventListener);
     };
   }, [track, reset]);

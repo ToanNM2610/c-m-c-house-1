@@ -704,9 +704,9 @@ function CinematicAmbience({ isMobile }: { isMobile: boolean }) {
       />
       <pointLight position={[0, 2, 2]} intensity={1.5} color="#C5A880" distance={16} />
 
-      {/* Bụi nắng vàng thích ứng: Mobile để 150 hạt (size 2.4) để bù đắp, Desktop 340 hạt */}
+      {/* Bụi nắng vàng thích ứng: Giảm 80% trên Mobile để siêu mượt trên máy cận cao cấp trở xuống, Desktop 340 hạt */}
       <Sparkles
-        count={isMobile ? 150 : 340}
+        count={isMobile ? 68 : 340}
         scale={[22, 24, 45]}
         size={isMobile ? 2.4 : 1.6}
         color="#FFE1B3"
@@ -714,7 +714,7 @@ function CinematicAmbience({ isMobile }: { isMobile: boolean }) {
         opacity={0.65}
       />
       <Sparkles
-        count={isMobile ? 60 : 150}
+        count={isMobile ? 30 : 150}
         scale={[15, 16, 35]}
         size={isMobile ? 3.0 : 2.2}
         color="#C5A880"
@@ -743,7 +743,7 @@ function Unified3DWorld({
       <Section2Photo3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <FloatingParallaxGallery3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <AbstractKnot3D scrollProgressRef={scrollProgressRef} />
-      <FloatingCoffeeBeans count={isMobile ? 40 : 150} scrollProgressRef={scrollProgressRef} />
+      <FloatingCoffeeBeans count={isMobile ? 30 : 150} scrollProgressRef={scrollProgressRef} />
       <SanctuaryHalo3D scrollProgressRef={scrollProgressRef} />
     </>
   );
@@ -769,15 +769,18 @@ export default function HomePage() {
     <div className="relative w-full bg-[#1A0F0A] text-[#F3E8DB] select-none font-sans">
       {/* ========================================================= */}
       {/* 1. CANVAS 3D CỐ ĐỊNH TOÀN MÀN HÌNH DUY NHẤT                */}
-      {/* DPR [1, 1.5] & antialias: false CHỐNG TRÀN VRAM MOBILE    */}
+      {/* DPR thích ứng: [1, 1.1] trên mobile chống giật lag        */}
       {/* ========================================================= */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         {isMounted && (
           <Canvas
             className="w-full h-full pointer-events-none"
             camera={{ position: [0, 0, isMobile ? 8 : 5], fov: 60 }}
-            dpr={[1, 1.5]}
-            gl={{ powerPreference: "high-performance", antialias: false }}
+            dpr={isMobile ? [1, 1.1] : [1, 1.5]}
+            gl={{
+              powerPreference: isMobile ? "default" : "high-performance",
+              antialias: false,
+            }}
           >
             <color attach="background" args={["#1A0F0A"]} />
             <fog attach="fog" args={["#1A0F0A", 4, 18]} />

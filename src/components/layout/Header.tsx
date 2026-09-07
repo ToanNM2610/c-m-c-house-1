@@ -94,6 +94,14 @@ export default function Header() {
         return;
       }
 
+      // Trên trang con hoặc màn hình mobile, luôn giữ Header hiển thị để không bao giờ bị mất nút Menu
+      const isMobileScreen = window.innerWidth < 768;
+      const isSubPage = pathname !== "/";
+      if (isMobileScreen || isSubPage) {
+        setShowHeader(true);
+        return;
+      }
+
       if (currentScrollY > 100) {
         if (currentScrollY > lastScrollY.current + 5) {
           setShowHeader(false);
@@ -109,7 +117,7 @@ export default function Header() {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, pathname]);
 
   // Khóa cuộn trang khi drawer mở
   useEffect(() => {
@@ -142,30 +150,32 @@ export default function Header() {
     return null;
   }
 
+  const isSubPage = pathname !== "/";
+
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-400 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-          showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        className={`fixed top-0 left-0 right-0 z-[9999] w-full transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
         } ${
-          isScrolled
-            ? "backdrop-blur-md bg-[#1A0F0A]/85 border-b border-[#C5A880]/20 py-3 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
+          isSubPage || isScrolled
+            ? "backdrop-blur-md bg-[#1A0F0A]/90 border-b border-[#C5A880]/20 py-2.5 sm:py-3 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
             : "bg-transparent border-b border-transparent py-4 sm:py-5"
         } px-4 sm:px-8 md:px-10`}
       >
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          {/* Logo Thương hiệu */}
+        <div className="max-w-7xl mx-auto flex justify-between items-center gap-3">
+          {/* Logo Thương hiệu: min-w-0 và truncate để không ép văng nút mobile trên màn hình hẹp */}
           <Link
             href="/"
-            className="text-xl sm:text-2xl font-serif text-[#F4EFEA] font-bold tracking-wider cursor-pointer select-none group flex items-center gap-2"
+            className="text-xl sm:text-2xl font-serif text-[#F4EFEA] font-bold tracking-wider cursor-pointer select-none group flex items-center gap-2 min-w-0 shrink"
           >
-            <span className="group-hover:text-[#C5A880] transition-colors">
+            <span className="group-hover:text-[#C5A880] transition-colors truncate">
               Cẩm Cù House
             </span>
           </Link>
 
           {/* Desktop Nav với Magnetic Links */}
-          <nav className="hidden md:flex gap-8 items-center">
+          <nav className="hidden md:flex gap-8 items-center shrink-0">
             {navItemsList.map((item) => {
               const isActive = pathname === item.id;
               return (
@@ -176,7 +186,7 @@ export default function Header() {
             })}
 
             {/* Nút chuyển đổi ngôn ngữ & tiền tệ (Desktop) */}
-            <div className="flex items-center gap-2 ml-4 border border-[#C5A880]/35 rounded-full px-3.5 py-1 bg-[#25150E]/70 backdrop-blur-md shadow-sm">
+            <div className="flex items-center gap-2 ml-4 border border-[#C5A880]/35 rounded-full px-3.5 py-1 bg-[#25150E]/70 backdrop-blur-md shadow-sm shrink-0">
               <button
                 onClick={() => setLang("vi")}
                 title="Tiếng Việt (VNĐ ₫)"
@@ -203,10 +213,10 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Mobile Right Controls: Compact Lang Switch + Nút Hamburger Menu */}
-          <div className="flex md:hidden items-center gap-2 sm:gap-2.5 z-50">
+          {/* Mobile Right Controls: flex-shrink-0 shrink-0 BẮT BUỘC để không bao giờ bị đẩy văng */}
+          <div className="flex md:hidden items-center gap-2 sm:gap-2.5 flex-shrink-0 shrink-0 z-[9999]">
             {/* Nút đổi ngôn ngữ thu nhỏ trên thanh Header */}
-            <div className="flex items-center border border-[#C5A880]/30 rounded-full px-2 py-0.5 bg-[#25150E]/90 backdrop-blur-md shadow-sm">
+            <div className="flex items-center border border-[#C5A880]/30 rounded-full px-2 py-0.5 bg-[#25150E]/90 backdrop-blur-md shadow-sm shrink-0">
               <button
                 onClick={() => setLang("vi")}
                 title="Tiếng Việt (VNĐ)"
@@ -236,7 +246,7 @@ export default function Header() {
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               id="mobile-hamburger-btn"
-              className="w-10 h-10 rounded-full bg-[#25150E]/95 backdrop-blur-md border border-[#C5A880]/50 text-[#C5A880] hover:text-[#F4EFEA] hover:border-[#C5A880] active:scale-95 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.6)] transition-all duration-200 cursor-pointer focus:outline-none z-50"
+              className="w-10 h-10 rounded-full bg-[#25150E]/95 backdrop-blur-md border border-[#C5A880]/50 text-[#C5A880] hover:text-[#F4EFEA] hover:border-[#C5A880] active:scale-95 flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.6)] transition-all duration-200 cursor-pointer focus:outline-none shrink-0"
               aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu điều hướng"}
               aria-expanded={mobileMenuOpen}
             >
@@ -253,7 +263,7 @@ export default function Header() {
       {/* Mobile Drawer Navigation Modal Toàn Diện */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-[60] md:hidden">
+          <div className="fixed inset-0 z-[10000] md:hidden">
             {/* Backdrop làm mờ khi mở Drawer */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -270,7 +280,7 @@ export default function Header() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="absolute top-0 right-0 bottom-0 w-full max-w-[320px] sm:max-w-sm bg-[#160B07] border-l border-[#C5A880]/25 shadow-2xl flex flex-col justify-between p-6 sm:p-7 overflow-y-auto z-[70]"
+              className="absolute top-0 right-0 bottom-0 w-full max-w-[320px] sm:max-w-sm bg-[#160B07] border-l border-[#C5A880]/25 shadow-2xl flex flex-col justify-between p-6 sm:p-7 overflow-y-auto z-[10001]"
             >
               {/* Top Section của Drawer */}
               <div>

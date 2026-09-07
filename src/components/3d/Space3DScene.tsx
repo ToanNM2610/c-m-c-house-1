@@ -70,6 +70,23 @@ function WindResponsiveParticles({ count = 280, scrollVelocity }: { count?: numb
 
 export default function Space3DScene() {
   const [scrollVelocity, setScrollVelocity] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(
+        Boolean(
+          window.innerWidth < 768 ||
+            window.matchMedia("(pointer: coarse)").matches ||
+            "ontouchstart" in window ||
+            (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+        )
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     let lastScroll = window.scrollY;
@@ -93,8 +110,12 @@ export default function Space3DScene() {
     <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
       <Canvas
         camera={{ position: [0, 0, 7], fov: 48 }}
-        dpr={[1, 1.8]}
-        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+        dpr={isMobile ? [1, 1.1] : [1, 1.8]}
+        gl={{
+          antialias: !isMobile,
+          alpha: false,
+          powerPreference: isMobile ? "default" : "high-performance",
+        }}
       >
         <color attach="background" args={["#1A0F0A"]} />
         <fog attach="fog" args={["#1A0F0A", 5, 26]} />
@@ -105,7 +126,8 @@ export default function Space3DScene() {
         <pointLight position={[4, -2, -7]} color="#C5A880" intensity={2.2} distance={18} />
 
         <Suspense fallback={null}>
-          <WindResponsiveParticles count={280} scrollVelocity={scrollVelocity} />
+          {/* Giảm 80% số hạt trên mobile (55 hạt) để tối ưu GPU, giữ 280 hạt trên Desktop */}
+          <WindResponsiveParticles count={isMobile ? 55 : 280} scrollVelocity={scrollVelocity} />
         </Suspense>
       </Canvas>
     </div>

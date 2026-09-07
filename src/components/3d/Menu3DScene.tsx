@@ -88,12 +88,34 @@ function MenuCamera() {
 }
 
 export default function Menu3DScene() {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(
+        Boolean(
+          window.innerWidth < 768 ||
+            window.matchMedia("(pointer: coarse)").matches ||
+            "ontouchstart" in window ||
+            (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+        )
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
       <Canvas
         camera={{ position: [0, 0, 7], fov: 48 }}
-        dpr={[1, 1.8]}
-        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+        dpr={isMobile ? [1, 1.1] : [1, 1.8]}
+        gl={{
+          antialias: !isMobile,
+          alpha: false,
+          powerPreference: isMobile ? "default" : "high-performance",
+        }}
       >
         <color attach="background" args={["#1A0F0A"]} />
         <fog attach="fog" args={["#1A0F0A", 4, 25]} />
@@ -104,7 +126,8 @@ export default function Menu3DScene() {
         <pointLight position={[3, -2, -6]} color="#C5A880" intensity={2.0} distance={18} />
 
         <Suspense fallback={null}>
-          <CoffeeAromaParticles count={160} />
+          {/* Giảm hơn 80% hạt hương cà phê trên mobile (30 hạt) để lướt menu mượt mà, giữ 160 hạt trên Desktop */}
+          <CoffeeAromaParticles count={isMobile ? 30 : 160} />
           <FloatingCoffeeElements />
         </Suspense>
 

@@ -170,8 +170,11 @@ export default function MenuPage() {
                   {lang === "en" ? "Signatures & Best Sellers" : "Bộ Sưu Tập Tiêu Biểu"}
                 </h2>
               </div>
-              <span className="text-xs tracking-widest text-[#C5A880] uppercase font-sans border-b border-[#C5A880]/30 pb-1">
+              <span className="text-xs tracking-widest text-[#C5A880] uppercase font-sans border-b border-[#C5A880]/30 pb-1 hidden sm:inline-block">
                 {lang === "en" ? "Interactive Water Distortion" : "Chạm lướt gợn sóng"}
+              </span>
+              <span className="text-xs tracking-widest text-[#C5A880] uppercase font-sans border-b border-[#C5A880]/30 pb-1 sm:hidden">
+                {lang === "en" ? "Curated Specialties" : "Món tuyển chọn"}
               </span>
             </div>
 

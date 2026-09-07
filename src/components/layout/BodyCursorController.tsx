@@ -16,8 +16,13 @@ export default function BodyCursorController() {
     } else {
       // Khu vực Front-end: Ẩn con trỏ mặc định trên máy tính (nếu có chuột) để dùng Custom Cursor
       document.body.style.cursor = "";
-      const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
-      if (!isTouch) {
+      const isMobileOrTouch =
+        window.innerWidth < 768 ||
+        window.matchMedia("(pointer: coarse)").matches ||
+        "ontouchstart" in window ||
+        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+      if (!isMobileOrTouch) {
         document.body.classList.add("cursor-none");
       } else {
         document.body.classList.remove("cursor-none");

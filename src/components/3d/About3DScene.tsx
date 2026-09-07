@@ -143,6 +143,23 @@ function ZDriveCamera({ scrollProgress }: { scrollProgress: number }) {
 
 export default function About3DScene() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(
+        Boolean(
+          window.innerWidth < 768 ||
+            window.matchMedia("(pointer: coarse)").matches ||
+            "ontouchstart" in window ||
+            (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+        )
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -161,11 +178,11 @@ export default function About3DScene() {
     <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
       <Canvas
         camera={{ position: [0, 0, 9], fov: 50 }}
-        dpr={[1, 1.8]}
+        dpr={isMobile ? [1, 1.1] : [1, 1.8]}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: false,
-          powerPreference: "high-performance",
+          powerPreference: isMobile ? "default" : "high-performance",
         }}
       >
         <color attach="background" args={["#1A0F0A"]} />
@@ -179,7 +196,8 @@ export default function About3DScene() {
         <pointLight position={[0, 2, -16]} color="#D97706" intensity={3.0} distance={20} />
 
         <Suspense fallback={null}>
-          <TunnelParticles count={200} />
+          {/* Giảm 80% số hạt trên mobile (40 hạt) để bảo vệ hiệu năng máy cận cao cấp trở xuống, giữ 200 hạt trên Desktop */}
+          <TunnelParticles count={isMobile ? 40 : 200} />
           <Milestones3D />
         </Suspense>
 

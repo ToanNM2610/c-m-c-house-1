@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { usePathname } from "next/navigation";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import * as THREE from "three";
 import { easing } from "maath";
 import { Float } from "@react-three/drei";
@@ -121,6 +121,23 @@ function CameraController() {
 
 export default function BackgroundCanvas() {
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(
+        Boolean(
+          window.innerWidth < 768 ||
+            window.matchMedia("(pointer: coarse)").matches ||
+            "ontouchstart" in window ||
+            (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+        )
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Tắt ở trang Admin
   if (pathname && pathname.startsWith("/admin")) {
@@ -131,16 +148,21 @@ export default function BackgroundCanvas() {
     <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundColor: "#1A0F0A" }}>
       <Canvas
         camera={{ position: [0, 0, 15], fov: 45 }}
-        dpr={[1, 1.5]}
-        gl={{ alpha: false, antialias: true, powerPreference: "high-performance" }}
+        dpr={isMobile ? [1, 1.1] : [1, 1.5]}
+        gl={{
+          alpha: false,
+          antialias: !isMobile,
+          powerPreference: isMobile ? "default" : "high-performance",
+        }}
       >
         <color attach="background" args={["#1A0F0A"]} />
         <ambientLight intensity={0.4} />
         <directionalLight position={[10, 10, 10]} intensity={0.8} color="#F4EFEA" />
-        
-        <Particles count={150} />
+
+        {/* Giảm 80% số hạt trên mobile (30 hạt) để tối ưu GPU máy cận cao cấp trở xuống, giữ 150 hạt trên Desktop */}
+        <Particles count={isMobile ? 30 : 150} />
         <RusticShapes />
-        
+
         <CameraController />
       </Canvas>
     </div>

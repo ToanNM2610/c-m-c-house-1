@@ -29,9 +29,14 @@ export default function CustomCursor() {
       return;
     }
 
-    // Chỉ bật trên thiết bị có chuột (không phải màn hình cảm ứng)
-    const isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
-    if (isTouch) {
+    // Tắt hoàn toàn trên màn hình mobile (< 768px) và mọi thiết bị cảm ứng (touch)
+    const isMobileOrTouch =
+      window.innerWidth < 768 ||
+      window.matchMedia("(pointer: coarse)").matches ||
+      "ontouchstart" in window ||
+      (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    if (isMobileOrTouch) {
       setIsVisible(false);
       return;
     }

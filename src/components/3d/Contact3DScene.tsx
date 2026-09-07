@@ -386,9 +386,23 @@ export default function Contact3DScene() {
   const [isDaytimeVN, setIsDaytimeVN] = useState<boolean>(true);
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const [isAutoSpin, setIsAutoSpin] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     setIsMounted(true);
+    const checkMobile = () => {
+      setIsMobile(
+        Boolean(
+          window.innerWidth < 768 ||
+            window.matchMedia("(pointer: coarse)").matches ||
+            "ontouchstart" in window ||
+            (navigator.maxTouchPoints && navigator.maxTouchPoints > 0)
+        )
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const updateTime = () => {
       const formatted = formatVietnamTime(new Date());
       setDigitalTime(formatted.fullClock);
@@ -397,7 +411,10 @@ export default function Contact3DScene() {
 
     updateTime();
     const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -489,7 +506,12 @@ export default function Contact3DScene() {
       >
         <Canvas
           camera={{ position: [0, 0, 6.5], fov: 45 }}
-          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+          dpr={isMobile ? [1, 1.1] : [1, 1.6]}
+          gl={{
+            antialias: !isMobile,
+            alpha: true,
+            powerPreference: isMobile ? "default" : "high-performance",
+          }}
           style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}
         >
           {/* Ánh sáng Mặt Trời (DirectionalLight) tạo hiệu ứng ngày/đêm chân thực theo giờ UTC */}
@@ -506,8 +528,8 @@ export default function Contact3DScene() {
           {/* Quả cầu Trái Đất 3D */}
           <GlobeMesh isAutoSpin={isAutoSpin} />
 
-          {/* Bụi vàng vũ trụ */}
-          <StarFieldParticles count={200} />
+          {/* Bụi vàng vũ trụ: Giảm 80% trên mobile (40 hạt), giữ 200 hạt trên Desktop */}
+          <StarFieldParticles count={isMobile ? 40 : 200} />
 
           {/* OrbitControls: Thu phóng kiểu Google Earth & kéo chuột xoay 360° với damping siêu mượt */}
           <OrbitControls

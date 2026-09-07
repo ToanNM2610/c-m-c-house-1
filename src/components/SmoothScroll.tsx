@@ -11,8 +11,16 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const isIgnored = isAdmin;
 
   useEffect(() => {
-    // Nếu là trang Admin: Hủy Lenis để trả về cuộn tự nhiên của trình duyệt
-    if (isIgnored) {
+    // Tắt hoàn toàn Lenis trên Admin hoặc trên thiết bị cảm ứng / màn hình di động (< 768px)
+    // để nhường lại khả năng vuốt chạm 100% tự nhiên của iOS / Android, loại bỏ giật lag
+    const isMobileOrTouch =
+      typeof window !== "undefined" &&
+      (window.innerWidth < 768 ||
+        window.matchMedia("(pointer: coarse)").matches ||
+        "ontouchstart" in window ||
+        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
+
+    if (isIgnored || isMobileOrTouch) {
       if (lenisRef.current) {
         lenisRef.current.destroy();
         lenisRef.current = null;
@@ -21,12 +29,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       return;
     }
 
-    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-
     const lenis = new Lenis({
       lerp: 0.09,
       duration: 1.2,
-      smoothWheel: !isTouch,
+      smoothWheel: true,
       syncTouch: false,
       autoResize: true,
       orientation: "vertical",
