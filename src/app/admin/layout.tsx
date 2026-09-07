@@ -8,7 +8,6 @@ import {
   LayoutDashboard, 
   Coffee, 
   Image as ImageIcon, 
-  FileText, 
   Menu as MenuIcon,
   ChevronLeft,
   ChevronRight,
@@ -18,10 +17,7 @@ import {
   KeyRound,
   Eye,
   EyeOff,
-  ShieldCheck,
-  CalendarCheck,
-  LogOut,
-  Sparkles
+  LogOut
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -174,19 +170,16 @@ export default function AdminLayout({
     );
   }
 
-  // WP Admin Sidebar Items Simulation
-  const navItems = [
-    { name: "Sổ nhật ký & Bảng tin", href: "/admin", icon: <LayoutDashboard size={18} /> },
-    { 
-      name: "Tản văn & Chuyện nhà", 
-      href: "/admin/posts", 
-      icon: <FileText size={18} />,
-      isActive: pathname.startsWith("/admin/posts"),
-      subMenu: [
-        { name: "Tất cả tản văn", href: "/admin/posts" },
-        { name: "Viết tản văn mới", href: "/admin/posts" },
-      ]
-    },
+  interface AdminNavItem {
+    name: string;
+    href: string;
+    icon: React.ReactNode;
+    isActive?: boolean;
+  }
+
+  // Admin Sidebar Items
+  const navItems: AdminNavItem[] = [
+    { name: "Không gian tổng quan", href: "/admin", icon: <LayoutDashboard size={18} /> },
     { name: "Thư viện ảnh", href: "/admin/gallery", icon: <ImageIcon size={18} /> },
     { name: "Thực đơn mộc", href: "/admin/menu", icon: <Coffee size={18} /> },
     { name: "Người đồng hành", href: "/admin/users", icon: <Users size={18} /> },
@@ -207,9 +200,8 @@ export default function AdminLayout({
               <span className="text-lg leading-none -mt-1">+</span> Thêm mới
             </button>
             <div className="absolute top-full left-0 bg-[#1d2327] border-t border-[#3c434a] min-w-[160px] hidden group-hover:flex flex-col shadow-lg z-50">
-              <Link href="/admin/posts" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><FileText size={14}/> Tản văn mới</Link>
-              <Link href="/admin/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Hình ảnh mới</Link>
-              <Link href="/admin/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Món mộc</Link>
+              <Link href="/admin/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Tải ảnh mới</Link>
+              <Link href="/admin/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Thêm món mộc</Link>
             </div>
           </div>
         </div>
@@ -263,19 +255,6 @@ export default function AdminLayout({
                         {item.name}
                       </span>
                     </Link>
-
-                    {/* Sub Menu (WP style) */}
-                    {item.subMenu && isItemActive && !isSidebarCollapsed && (
-                      <ul className="bg-[#1d2327] py-1">
-                        {item.subMenu.map(sub => (
-                          <li key={sub.name}>
-                            <Link href={sub.href} className={`block px-3 py-1.5 text-[13px] pl-10 ${sub.name === "Tất cả bài viết" ? "text-white font-medium" : "text-[#c3c4c7] hover:text-[#72aee6]"}`}>
-                              {sub.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </li>
                 );
               })}

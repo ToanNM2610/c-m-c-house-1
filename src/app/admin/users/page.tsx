@@ -275,7 +275,7 @@ export default function AdminUsersPage() {
               <th className="px-3 py-2 font-semibold">Tên</th>
               <th className="px-3 py-2 font-semibold">Email</th>
               <th className="px-3 py-2 font-semibold">Vai trò</th>
-              <th className="px-3 py-2 font-semibold text-center w-24">Bài viết</th>
+              <th className="px-3 py-2 font-semibold text-center w-24">Đóng góp</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#c3c4c7]">
@@ -323,7 +323,7 @@ export default function AdminUsersPage() {
               <th className="px-3 py-2 font-semibold">Tên</th>
               <th className="px-3 py-2 font-semibold">Email</th>
               <th className="px-3 py-2 font-semibold">Vai trò</th>
-              <th className="px-3 py-2 font-semibold text-center">Bài viết</th>
+              <th className="px-3 py-2 font-semibold text-center">Đóng góp</th>
             </tr>
           </tfoot>
         </table>
