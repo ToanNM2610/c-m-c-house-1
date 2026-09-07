@@ -137,14 +137,6 @@ function FloatingGalleryPlanes() {
 function FloatingGeometricCrystals() {
   return (
     <group>
-      {/* Khối Dodecahedron vàng kim */}
-      <Float speed={1.5} rotationIntensity={0.8} floatIntensity={1.2} position={[-2.0, -1.8, -3.5]}>
-        <mesh>
-          <dodecahedronGeometry args={[0.55, 0]} />
-          <meshStandardMaterial color="#C5A880" metalness={0.7} roughness={0.25} wireframe />
-        </mesh>
-      </Float>
-
       {/* Khối Octahedron xanh rêu rừng Đắk Nông */}
       <Float speed={1.8} rotationIntensity={0.9} floatIntensity={1.0} position={[2.4, 1.8, -4.5]}>
         <mesh>
@@ -153,19 +145,11 @@ function FloatingGeometricCrystals() {
         </mesh>
       </Float>
 
-      {/* Vòng Torus Knot vàng kim xa xa */}
-      <Float speed={1.2} rotationIntensity={0.6} floatIntensity={0.8} position={[-2.8, 3.2, -9]}>
-        <mesh>
-          <torusGeometry args={[1.1, 0.25, 16, 48]} />
-          <meshStandardMaterial color="#C5A880" metalness={0.8} roughness={0.2} transparent opacity={0.4} />
-        </mesh>
-      </Float>
-
       {/* Khối Icosahedron hổ phách sâu lắng */}
       <Float speed={1.4} rotationIntensity={0.7} floatIntensity={1.1} position={[3.6, -2.8, -12]}>
         <mesh>
           <icosahedronGeometry args={[0.9, 0]} />
-          <meshStandardMaterial color="#964B00" transparent opacity={0.5} roughness={0.4} metalness={0.6} wireframe />
+          <meshStandardMaterial color="#964B00" transparent opacity={0.5} roughness={0.4} metalness={0.6} />
         </mesh>
       </Float>
     </group>

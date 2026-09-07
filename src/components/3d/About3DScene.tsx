@@ -97,24 +97,10 @@ function Milestones3D() {
       </Float>
 
       {/* Các khối điêu khắc tinh thể lơ lửng dọc hành trình */}
-      <Float speed={1.2} position={[2.5, 2.2, 0]}>
-        <mesh>
-          <dodecahedronGeometry args={[0.5, 0]} />
-          <meshStandardMaterial color="#C5A880" wireframe />
-        </mesh>
-      </Float>
-
       <Float speed={1.6} position={[-2.2, -2.5, -10]}>
         <mesh>
           <octahedronGeometry args={[0.7, 0]} />
           <meshStandardMaterial color="#4A5D4E" transparent opacity={0.5} roughness={0.2} metalness={0.6} />
-        </mesh>
-      </Float>
-
-      <Float speed={1.3} position={[2.8, 1.8, -19]}>
-        <mesh>
-          <torusGeometry args={[1.2, 0.2, 16, 32]} />
-          <meshStandardMaterial color="#C5A880" transparent opacity={0.4} metalness={0.8} />
         </mesh>
       </Float>
     </group>

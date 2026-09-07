@@ -715,7 +715,7 @@ function FlightCameraRig({
       targetRotY = 0;
       targetRotZ = 0;
     } else if (offset < 0.80) {
-      // Giai đoạn 4 (Abstract Knot & Thực đơn)
+      // Giai đoạn 4 (Hạt Cà Phê Mộc & Thực đơn tuyển chọn)
       const p = (offset - 0.60) / 0.20;
       targetX = 0;
       targetY = 0.1 * Math.sin(p * Math.PI);

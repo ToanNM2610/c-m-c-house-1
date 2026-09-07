@@ -68,12 +68,6 @@ function RusticShapes() {
           <meshStandardMaterial color="#4A5D4E" opacity={0.2} transparent />
         </mesh>
       </Float>
-      <Float speed={1.5} rotationIntensity={0.8} floatIntensity={1} position={[10, 4, -15]}>
-        <mesh>
-          <octahedronGeometry args={[4]} />
-          <meshStandardMaterial color="#C5A880" opacity={0.15} transparent wireframe />
-        </mesh>
-      </Float>
     </>
   );
 }
