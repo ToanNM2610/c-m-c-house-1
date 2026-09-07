@@ -114,18 +114,35 @@ function FeatheredImage({
   );
 }
 
+// Bộ 12 màu sắc đặc trưng hài hòa của khối Megaminx Rubik kết hợp phong cách Cẩm Cù House
+const MEGAMINX_COLORS = [
+  "#FFFFFF", // Trắng tinh khôi (White)
+  "#E5A93C", // Hoàng kim rực rỡ (Amber Gold)
+  "#D92546", // Đỏ Ruby (Crimson Red)
+  "#1D70B8", // Xanh biển sâu (Sapphire Blue)
+  "#2A9D8F", // Xanh ngọc lục bảo (Emerald Green)
+  "#8338EC", // Tím thạch anh (Amethyst Purple)
+  "#F77F00", // Cam hoàng hôn Đắk Nông (Sunset Orange)
+  "#70E000", // Xanh non mầm lá (Lime Green)
+  "#00B4D8", // Xanh lam ngọc bích (Cyan Turquoise)
+  "#F28482", // Hồng san hô đất (Coral Rose)
+  "#8C5A3C", // Nâu cà phê mộc rang củi (Firewood Roasted Coffee)
+  "#C5A880", // Vàng đồng Cẩm Cù House (Signature Warm Bronze)
+];
+
 /**
- * TẦNG 1: KHỐI LĂNG TRỤ LỤC GIÁC 3D (3D HEXAGONAL PRISM / CRYSTAL)
+ * TẦNG 1: KHỐI MEGAMINX 3D (DODECAHEDRON RUBIK 12 MẶT)
  * - Tọa lạc tại trung tâm Hero Section (position = [0, 0, 0]), lơ lửng phía trên không gian nội thất quán.
- * - Sử dụng CylinderGeometry 6 cạnh khúc xạ ánh sáng (Transmission & Clearcoat) tạo hình lục giác hoàn hảo.
- * - Khung viền kim loại vàng gold sắc sảo (EdgesGeometry) làm nổi bật 6 cạnh điêu khắc đương đại.
- * - Lõi tinh thể lục giác hổ phách phát sáng nội bộ và các vòng quỹ đạo hoàng kim 3D.
- * - HIỆU ỨNG CUỘN TRANG (SCROLL SCALE & ROTATION EFFECT):
- *   + Khi lướt xuống: Khối lục giác phóng to dần (targetScale tăng mượt, Z tịnh tiến về camera) và xoay chuyển theo góc nhìn.
- *   + Khi lướt lên: Thu nhỏ lại về kích thước chuẩn.
- *   + Tự động mờ dần khi vượt qua Section 1 (offset > 0.16) để nhường chỗ cho Section 2.
+ * - Sử dụng THREE.DodecahedronGeometry làm khung lõi đen carbon (Black Chassis).
+ * - 12 mặt ngũ giác đều được chia thành 11 mảnh ghép nổi khối (tâm ngũ giác + 5 góc + 5 cạnh) chuẩn Rubik Megaminx.
+ * - Các rãnh bezel đen và viền cạnh sắc nét tôn lên độ tinh xảo điêu khắc 3D.
+ * - HIỆU ỨNG XOAY & CUỘN TRANG (SCROLL ZOOM):
+ *   + Tự động xoay 3 trục mượt mà liên tục khi đứng yên.
+ *   + Khi cuộn xuống: Khối Megaminx phóng to dần tiến về phía người xem, tự nghiêng phối cảnh.
+ *   + Khi cuộn lên: Thu nhỏ lại về kích thước ban đầu.
+ *   + Tự động mờ dần khi vượt qua Section 1 để nhường chỗ cho Section 2.
  */
-function HexagonalCrystalPrism({
+function MegaminxDodecahedron({
   scrollProgressRef,
   isMobile,
 }: {
@@ -133,25 +150,168 @@ function HexagonalCrystalPrism({
   isMobile: boolean;
 }) {
   const groupRef = useRef<THREE.Group>(null);
-  const crystalRef = useRef<THREE.Mesh>(null);
-  const innerCoreRef = useRef<THREE.Mesh>(null);
   const ring1Ref = useRef<THREE.Mesh>(null);
   const ring2Ref = useRef<THREE.Mesh>(null);
 
   const currentScaleRef = useRef(1);
   const currentZRef = useRef(0);
   const currentOpacityRef = useRef(1);
-  const [prismOpacity, setPrismOpacity] = useState(1);
+  const [megaminxOpacity, setMegaminxOpacity] = useState(1);
 
-  // Tạo geometry hình lăng trụ lục giác hoàn hảo (6 cạnh)
-  const hexGeometry = useMemo(() => new THREE.CylinderGeometry(1.05, 1.05, 1.65, 6), []);
-  const hexEdgesGeometry = useMemo(() => new THREE.EdgesGeometry(hexGeometry, 15), [hexGeometry]);
+  // Bán kính khối Megaminx
+  const R = isMobile ? 1.15 : 1.35;
+  const baseScale = isMobile ? 0.92 : 1.18;
 
-  // Lõi lục giác hổ phách phát sáng bên trong
-  const innerGeometry = useMemo(() => new THREE.CylinderGeometry(0.48, 0.48, 0.88, 6), []);
-  const innerEdgesGeometry = useMemo(() => new THREE.EdgesGeometry(innerGeometry, 15), [innerGeometry]);
+  // Khởi tạo Dodecahedron khung lõi đen và 12 mặt ghép Megaminx
+  const { coreGeo, edgesGeo, faceGeometries } = useMemo(() => {
+    const dodec = new THREE.DodecahedronGeometry(R, 0);
+    const edges = new THREE.EdgesGeometry(dodec, 15);
+    const pos = dodec.attributes.position;
 
-  const baseScale = isMobile ? 0.95 : 1.25;
+    // Phân nhóm 36 tam giác thành 12 mặt ngũ giác đều
+    const faces: { normal: THREE.Vector3; vertices: THREE.Vector3[] }[] = [];
+    for (let i = 0; i < pos.count; i += 3) {
+      const a = new THREE.Vector3().fromBufferAttribute(pos, i);
+      const b = new THREE.Vector3().fromBufferAttribute(pos, i + 1);
+      const c = new THREE.Vector3().fromBufferAttribute(pos, i + 2);
+      const normal = new THREE.Vector3().crossVectors(b.clone().sub(a), c.clone().sub(a)).normalize();
+      let found = faces.find((f) => f.normal.dot(normal) > 0.99);
+      if (!found) {
+        found = { normal, vertices: [] };
+        faces.push(found);
+      }
+      found.vertices.push(a, b, c);
+    }
+
+    // Tiện ích hình học 2D
+    const lerp2 = (a: [number, number], b: [number, number], t: number): [number, number] => [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+    ];
+    const centroid = (pts: [number, number][]): [number, number] => {
+      let cx = 0, cy = 0;
+      for (const p of pts) {
+        cx += p[0];
+        cy += p[1];
+      }
+      return [cx / pts.length, cy / pts.length];
+    };
+    const scalePoly = (pts: [number, number][], factor: number): [number, number][] => {
+      const c = centroid(pts);
+      return pts.map((p) => [c[0] + (p[0] - c[0]) * factor, c[1] + (p[1] - c[1]) * factor]);
+    };
+
+    const faceGeos: THREE.BufferGeometry[] = [];
+
+    faces.forEach((f) => {
+      // Lọc 5 đỉnh duy nhất của mặt ngũ giác
+      const unique: THREE.Vector3[] = [];
+      f.vertices.forEach((v) => {
+        if (!unique.some((u) => u.distanceTo(v) < 0.001)) unique.push(v);
+      });
+
+      const center = new THREE.Vector3();
+      unique.forEach((v) => center.add(v));
+      center.divideScalar(unique.length);
+
+      // Trục tọa độ cục bộ (u, v) trên mặt phẳng ngũ giác
+      const u = unique[0].clone().sub(center).normalize();
+      const v = new THREE.Vector3().crossVectors(f.normal, u).normalize();
+
+      // Sắp xếp 5 đỉnh theo chiều kim đồng hồ
+      unique.sort((p1, p2) => {
+        const d1 = p1.clone().sub(center);
+        const d2 = p2.clone().sub(center);
+        const a1 = Math.atan2(d1.dot(v), d1.dot(u));
+        const a2 = Math.atan2(d2.dot(v), d2.dot(u));
+        return a1 - a2;
+      });
+
+      const radius = center.distanceTo(unique[0]);
+
+      // Tọa độ 2D của 5 đỉnh ngoài
+      const P: [number, number][] = unique.map((pt) => {
+        const d = pt.clone().sub(center);
+        return [d.dot(u), d.dot(v)];
+      });
+
+      // Bán kính tâm ngũ giác (Center Piece)
+      const rC = 0.38 * radius;
+      const C: [number, number][] = [];
+      for (let k = 0; k < 5; k++) {
+        const a = (k * 2 * Math.PI) / 5 + Math.atan2(P[0][1], P[0][0]);
+        C.push([rC * Math.cos(a), rC * Math.sin(a)]);
+      }
+
+      // Tỷ lệ cắt viền cạnh (Edge cuts)
+      const edgeT = 0.34;
+      const pieces: [number, number][][] = [];
+
+      // 1. Mảnh tâm ngũ giác (Center Piece)
+      pieces.push(scalePoly(C, 0.88));
+
+      // 2. 5 Mảnh góc (Corner Pieces)
+      for (let k = 0; k < 5; k++) {
+        const pts: [number, number][] = [
+          P[k],
+          lerp2(P[k], P[(k + 4) % 5], edgeT),
+          C[k],
+          lerp2(P[k], P[(k + 1) % 5], edgeT),
+        ];
+        pieces.push(scalePoly(pts, 0.88));
+      }
+
+      // 3. 5 Mảnh cạnh (Edge Pieces)
+      for (let k = 0; k < 5; k++) {
+        const pts: [number, number][] = [
+          lerp2(P[k], P[(k + 1) % 5], edgeT),
+          lerp2(P[(k + 1) % 5], P[k], edgeT),
+          C[(k + 1) % 5],
+          C[k],
+        ];
+        pieces.push(scalePoly(pts, 0.88));
+      }
+
+      // Chuyển 11 mảnh 2D thành toạ độ 3D nổi trên mặt ngũ giác (nhô cao 0.008 để lộ rãnh đen bezel)
+      const positions: number[] = [];
+      const normals: number[] = [];
+      const elevation = 0.008;
+
+      pieces.forEach((poly) => {
+        const pts3D = poly.map((pt2) =>
+          center
+            .clone()
+            .add(u.clone().multiplyScalar(pt2[0]))
+            .add(v.clone().multiplyScalar(pt2[1]))
+            .add(f.normal.clone().multiplyScalar(elevation))
+        );
+
+        for (let i = 1; i < pts3D.length - 1; i++) {
+          positions.push(
+            pts3D[0].x, pts3D[0].y, pts3D[0].z,
+            pts3D[i].x, pts3D[i].y, pts3D[i].z,
+            pts3D[i + 1].x, pts3D[i + 1].y, pts3D[i + 1].z
+          );
+          normals.push(
+            f.normal.x, f.normal.y, f.normal.z,
+            f.normal.x, f.normal.y, f.normal.z,
+            f.normal.x, f.normal.y, f.normal.z
+          );
+        }
+      });
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute("normal", new THREE.Float32BufferAttribute(normals, 3));
+      faceGeos.push(geo);
+    });
+
+    return {
+      coreGeo: dodec,
+      edgesGeo: edges,
+      faceGeometries: faceGeos,
+    };
+  }, [R]);
 
   useFrame((state, delta) => {
     const rawOffset = scrollProgressRef.current ?? 0;
@@ -178,131 +338,113 @@ function HexagonalCrystalPrism({
     currentOpacityRef.current = THREE.MathUtils.damp(currentOpacityRef.current, targetOpacity, 4.5, delta);
 
     const op = currentOpacityRef.current;
-    setPrismOpacity(op);
+    setMegaminxOpacity(op);
 
     if (groupRef.current) {
       groupRef.current.visible = op > 0.005;
       groupRef.current.scale.setScalar(currentScaleRef.current);
 
       // Dao động lơ lửng tự nhiên
-      const floatY = Math.sin(state.clock.elapsedTime * 1.6) * 0.08;
+      const floatY = Math.sin(state.clock.elapsedTime * 1.5) * 0.08;
       const mouseParallaxX = state.pointer.x * (isMobile ? 0.08 : 0.18);
       const mouseParallaxY = -state.pointer.y * (isMobile ? 0.05 : 0.12);
 
       groupRef.current.position.set(mouseParallaxX, floatY + mouseParallaxY, currentZRef.current);
 
-      // Tự xoay chậm nhẹ nhàng trong không gian 3D + xoay theo góc nhìn khi cuộn
-      groupRef.current.rotation.y += delta * 0.32;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.7) * 0.18 + p * 0.55;
-      groupRef.current.rotation.z = Math.cos(state.clock.elapsedTime * 0.5) * 0.12 + p * 0.32;
-    }
-
-    if (innerCoreRef.current) {
-      innerCoreRef.current.rotation.y -= delta * 0.48;
-      innerCoreRef.current.rotation.x += delta * 0.2;
+      // Tự động xoay 3 trục chậm rãi khi đứng yên để khoe trọn góc cạnh 3D của các mặt khối Megaminx
+      groupRef.current.rotation.y += delta * 0.28;
+      groupRef.current.rotation.x += delta * 0.18;
+      groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.6) * 0.14 + p * 0.5;
     }
 
     if (ring1Ref.current) {
-      ring1Ref.current.rotation.z += delta * 0.45;
+      ring1Ref.current.rotation.z += delta * 0.42;
       ring1Ref.current.rotation.x += delta * 0.15;
     }
 
     if (ring2Ref.current) {
       ring2Ref.current.rotation.y -= delta * 0.35;
-      ring2Ref.current.rotation.z += delta * 0.25;
+      ring2Ref.current.rotation.z += delta * 0.22;
     }
   });
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      {/* 1. Bề mặt kính pha lê lục giác mờ trong suốt (Physical Transmission) */}
-      <mesh ref={crystalRef} geometry={hexGeometry}>
-        <meshPhysicalMaterial
-          transmission={isMobile ? 0.65 : 0.92}
-          thickness={isMobile ? 1.2 : 2.2}
-          roughness={0.06}
-          metalness={0.15}
-          clearcoat={isMobile ? 0.5 : 1.0}
-          clearcoatRoughness={0.08}
-          ior={1.54}
-          color="#FFFDF9"
-          emissive="#C5A880"
-          emissiveIntensity={0.25}
-          transparent
-          opacity={prismOpacity * 0.95}
-        />
-      </mesh>
-
-      {/* 2. Khung viền kim loại vàng gold sắc nét (EdgesGeometry) làm nổi bật 6 cạnh */}
-      <lineSegments geometry={hexEdgesGeometry}>
-        <lineBasicMaterial
-          color="#FFE1B3"
-          transparent
-          opacity={prismOpacity * 0.9}
-        />
-      </lineSegments>
-
-      {/* 3. Lõi tinh thể lục giác hổ phách phát sáng nội bộ */}
-      <mesh ref={innerCoreRef} geometry={innerGeometry}>
+      {/* 1. Khung lõi đen carbon Dodecahedron (Black Chassis) */}
+      <mesh geometry={coreGeo}>
         <meshStandardMaterial
-          color="#F59E0B"
-          emissive="#D97706"
-          emissiveIntensity={1.8}
+          color="#120E0C"
+          roughness={0.4}
           metalness={0.65}
-          roughness={0.2}
           transparent
-          opacity={prismOpacity * 0.9}
+          opacity={megaminxOpacity * 0.98}
         />
       </mesh>
 
-      {/* Viền kim loại lõi nội bộ */}
-      <lineSegments geometry={innerEdgesGeometry}>
+      {/* 2. Đường viền rãnh vát cạnh sắc nét (Bezel Edges) */}
+      <lineSegments geometry={edgesGeo}>
         <lineBasicMaterial
-          color="#FFD180"
+          color="#C5A880"
           transparent
-          opacity={prismOpacity * 0.75}
+          opacity={megaminxOpacity * 0.65}
         />
       </lineSegments>
 
-      {/* 4. Nguồn sáng tỏa từ tâm khối lục giác */}
-      <pointLight color="#FFE5B4" intensity={prismOpacity * 3.2} distance={8} />
-      <pointLight color="#F59E0B" intensity={prismOpacity * 1.5} distance={4} />
+      {/* 3. 12 Mặt Megaminx với các mảnh ghép nổi khối (11 mảnh / mặt: tâm ngũ giác + 5 góc + 5 cạnh) */}
+      {faceGeometries.map((geo, idx) => (
+        <mesh key={idx} geometry={geo}>
+          <meshPhysicalMaterial
+            color={MEGAMINX_COLORS[idx % MEGAMINX_COLORS.length]}
+            roughness={0.22}
+            metalness={0.35}
+            clearcoat={isMobile ? 0.4 : 0.8}
+            clearcoatRoughness={0.12}
+            reflectivity={0.65}
+            transparent
+            opacity={megaminxOpacity * 0.98}
+          />
+        </mesh>
+      ))}
+
+      {/* 4. Nguồn sáng tỏa từ tâm khối Megaminx */}
+      <pointLight color="#FFE5B4" intensity={megaminxOpacity * 3.0} distance={8} />
+      <pointLight color="#F59E0B" intensity={megaminxOpacity * 1.5} distance={5} />
 
       {/* 5. Vòng quỹ đạo hoàng kim lơ lửng xung quanh */}
       <mesh ref={ring1Ref} rotation={[Math.PI / 3, 0, 0]}>
-        <torusGeometry args={[1.48, 0.014, 16, 64]} />
+        <torusGeometry args={[isMobile ? 1.55 : 1.82, 0.012, 16, 64]} />
         <meshStandardMaterial
           color="#C5A880"
           emissive="#C5A880"
-          emissiveIntensity={0.7}
+          emissiveIntensity={0.6}
           metalness={0.9}
           roughness={0.1}
           transparent
-          opacity={prismOpacity * 0.6}
+          opacity={megaminxOpacity * 0.55}
         />
       </mesh>
 
       <mesh ref={ring2Ref} rotation={[-Math.PI / 4, Math.PI / 3, 0]}>
-        <torusGeometry args={[1.65, 0.01, 16, 64]} />
+        <torusGeometry args={[isMobile ? 1.72 : 2.02, 0.009, 16, 64]} />
         <meshStandardMaterial
           color="#FFE1B3"
           emissive="#FFE1B3"
-          emissiveIntensity={0.5}
+          emissiveIntensity={0.45}
           metalness={0.9}
           roughness={0.1}
           transparent
-          opacity={prismOpacity * 0.45}
+          opacity={megaminxOpacity * 0.42}
         />
       </mesh>
 
-      {/* 6. Hạt bụi sáng quanh khối lục giác */}
+      {/* 6. Hạt bụi sáng quanh khối Megaminx */}
       <Sparkles
-        count={isMobile ? 25 : 65}
-        scale={[3.2, 3.2, 3.2]}
+        count={isMobile ? 25 : 60}
+        scale={[3.5, 3.5, 3.5]}
         size={isMobile ? 2.5 : 1.8}
         color="#FFE1B3"
         speed={0.4}
-        opacity={prismOpacity * 0.7}
+        opacity={megaminxOpacity * 0.7}
       />
     </group>
   );
@@ -806,7 +948,7 @@ function Unified3DWorld({
     <>
       <FlightCameraRig scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <CinematicAmbience isMobile={isMobile} />
-      <HexagonalCrystalPrism scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
+      <MegaminxDodecahedron scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <Section2Photo3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <FloatingParallaxGallery3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <FloatingCoffeeBeans count={isMobile ? 30 : 150} scrollProgressRef={scrollProgressRef} />
@@ -918,7 +1060,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          {/* Vùng không gian trung tâm: Khối lục giác pha lê 3D (3D Hexagonal Prism / Crystal) lơ lửng phía trên không gian nội thất */}
+          {/* Vùng không gian trung tâm: Khối Megaminx 3D (Dodecahedron Rubik 12 mặt) lơ lửng phía trên không gian nội thất */}
           <div className="w-full flex-1 pointer-events-none" />
 
           {/* Cụm Điều Hướng & Mô Tả Dưới */}
