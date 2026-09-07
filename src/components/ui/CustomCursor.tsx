@@ -11,6 +11,7 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [cursorText, setCursorText] = useState("");
   const [isHovered, setIsHovered] = useState(false);
+  const [isHeadingHovered, setIsHeadingHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
 
   // Vị trí chuột thực tế
@@ -18,18 +19,18 @@ export default function CustomCursor() {
   const mouseY = useMotionValue(-100);
 
   // Spring physics mượt mà cho vòng ngoài (follower)
-  const springConfig = { damping: 28, stiffness: 320, mass: 0.5 };
+  const springConfig = { damping: 26, stiffness: 340, mass: 0.4 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    // Tuyệt đối không kích hoạt Custom Cursor trong khu vực Admin
+    // Không kích hoạt Custom Cursor trong khu vực Admin
     if (isAdmin) {
       setIsVisible(false);
       return;
     }
 
-    // Tắt hoàn toàn trên màn hình mobile (< 768px) và mọi thiết bị cảm ứng (touch)
+    // Tắt trên màn hình mobile (< 768px) và mọi thiết bị cảm ứng
     const isMobileOrTouch =
       window.innerWidth < 768 ||
       window.matchMedia("(pointer: coarse)").matches ||
@@ -47,22 +48,30 @@ export default function CustomCursor() {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
 
-      // Kiểm tra phần tử đang được hover
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
+      // Nhận diện text tiêu đề lớn hoặc phần tử có data-cursor-diff
+      const headingEl = target.closest("h1, h2, [data-cursor-diff], .cursor-diff");
       const interactiveEl = target.closest("a, button, [role='button'], input, textarea, select, [data-cursor-hover]");
       const textEl = target.closest("[data-cursor-text]") as HTMLElement | null;
 
       if (textEl && textEl.dataset.cursorText) {
         setCursorText(textEl.dataset.cursorText);
         setIsHovered(true);
+        setIsHeadingHovered(false);
+      } else if (headingEl) {
+        setCursorText("");
+        setIsHovered(true);
+        setIsHeadingHovered(true);
       } else if (interactiveEl) {
         setCursorText("");
         setIsHovered(true);
+        setIsHeadingHovered(false);
       } else {
         setCursorText("");
         setIsHovered(false);
+        setIsHeadingHovered(false);
       }
     };
 
@@ -86,38 +95,42 @@ export default function CustomCursor() {
     };
   }, [mouseX, mouseY, isAdmin]);
 
-  // Nếu là trang Admin hoặc chưa sẵn sàng thì không render bất kỳ DOM nào
   if (isAdmin || !isVisible) return null;
 
   const hasText = cursorText.length > 0;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[99999] overflow-hidden">
-      {/* Follower ngoài: vòng tròn mở rộng hoặc badge chữ */}
+      {/* Vòng ngoài với hiệu ứng difference khi hover text lớn chuẩn Awwwards */}
       <motion.div
         style={{
           x: smoothX,
           y: smoothY,
           translateX: "-50%",
           translateY: "-50%",
+          mixBlendMode: isHeadingHovered ? "difference" : "normal",
         }}
         animate={{
-          scale: isClicking ? 0.85 : hasText ? 1 : isHovered ? 1.6 : 1,
-          width: hasText ? 80 : 34,
-          height: hasText ? 80 : 34,
-          backgroundColor: hasText
-            ? "rgba(197, 168, 128, 0.95)"
+          scale: isClicking ? 0.85 : 1,
+          width: hasText ? 84 : isHeadingHovered ? 78 : isHovered ? 48 : 28,
+          height: hasText ? 84 : isHeadingHovered ? 78 : isHovered ? 48 : 28,
+          backgroundColor: isHeadingHovered
+            ? "#FFFFFF"
+            : hasText
+            ? "rgba(212, 175, 55, 0.95)"
             : isHovered
-            ? "rgba(197, 168, 128, 0.2)"
-            : "rgba(197, 168, 128, 0)",
-          borderColor: hasText
-            ? "#C5A880"
+            ? "rgba(212, 175, 55, 0.15)"
+            : "rgba(212, 175, 55, 0.04)",
+          borderColor: isHeadingHovered
+            ? "transparent"
+            : hasText
+            ? "#D4AF37"
             : isHovered
-            ? "#C5A880"
-            : "rgba(197, 168, 128, 0.45)",
+            ? "#D4AF37"
+            : "rgba(212, 175, 55, 0.4)",
         }}
-        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed top-0 left-0 rounded-full border border-[#C5A880] flex items-center justify-center backdrop-blur-[1px] shadow-[0_0_20px_rgba(197,168,128,0.15)]"
+        transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed top-0 left-0 rounded-full border flex items-center justify-center backdrop-blur-[1px]"
       >
         {hasText && (
           <motion.span
@@ -131,8 +144,8 @@ export default function CustomCursor() {
         )}
       </motion.div>
 
-      {/* Chấm tròn trung tâm màu vàng #C5A880 bám sát chuột */}
-      {!hasText && (
+      {/* Điểm tâm bám sát chuột khi không ở chế độ difference */}
+      {!hasText && !isHeadingHovered && (
         <motion.div
           style={{
             x: mouseX,
@@ -142,10 +155,10 @@ export default function CustomCursor() {
           }}
           animate={{
             scale: isHovered ? 0.4 : isClicking ? 0.6 : 1,
-            opacity: isHovered ? 0.5 : 1,
+            opacity: isHovered ? 0.4 : 1,
           }}
           transition={{ duration: 0.1 }}
-          className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#C5A880] shadow-[0_0_8px_#C5A880]"
+          className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]"
         />
       )}
     </div>

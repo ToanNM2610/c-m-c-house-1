@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
@@ -12,7 +14,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     // Tắt hoàn toàn Lenis trên Admin hoặc trên thiết bị cảm ứng / màn hình di động (< 768px)
-    // để nhường lại khả năng vuốt chạm 100% tự nhiên của iOS / Android, loại bỏ giật lag
     const isMobileOrTouch =
       typeof window !== "undefined" &&
       (window.innerWidth < 768 ||
@@ -29,8 +30,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       return;
     }
 
+    gsap.registerPlugin(ScrollTrigger);
+
     const lenis = new Lenis({
-      lerp: 0.09,
+      lerp: 0.08,
       duration: 1.2,
       smoothWheel: true,
       syncTouch: false,
@@ -41,16 +44,18 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     lenisRef.current = lenis;
     (window as any).__lenis = lenis;
 
-    let animId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      animId = requestAnimationFrame(raf);
-    }
+    // Đồng bộ hoàn hảo giữa Lenis và GSAP ScrollTrigger
+    lenis.on("scroll", ScrollTrigger.update);
 
-    animId = requestAnimationFrame(raf);
+    const tickerCb = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(tickerCb);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(animId);
+      gsap.ticker.remove(tickerCb);
       lenis.destroy();
       lenisRef.current = null;
       delete (window as any).__lenis;
