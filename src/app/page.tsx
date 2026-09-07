@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sparkles, Float, Image as DreiImage, Icosahedron, Dodecahedron } from "@react-three/drei";
+import { Sparkles, Float, Image as DreiImage } from "@react-three/drei";
 import { motion, useScroll, useMotionValueEvent, useTransform } from "framer-motion";
 import * as THREE from "three";
 import Link from "next/link";
@@ -115,16 +115,17 @@ function FeatheredImage({
 }
 
 /**
- * TẦNG 1: QUẢ CẦU PHA LÊ HÌNH HỌC (GEOMETRIC CRYSTAL POLYHEDRON BALL)
+ * TẦNG 1: KHỐI LĂNG TRỤ LỤC GIÁC 3D (3D HEXAGONAL PRISM / CRYSTAL)
  * - Tọa lạc tại trung tâm Hero Section (position = [0, 0, 0]), lơ lửng phía trên không gian nội thất quán.
- * - Khối Icosahedron khúc xạ ánh sáng (Transmission & Clearcoat) kết hợp lưới hình học wireframe vàng kim.
- * - Lõi Dodecahedron hổ phách phát sáng nội bộ và các vòng quỹ đạo hoàng kim 3D.
- * - HIỆU ỨNG CUỘN TRANG (SCROLL SCALE EFFECT):
- *   + Khi lướt xuống: Quả cầu phóng to dần và tiến lại gần người xem (targetScale tăng mượt, Z tịnh tiến về camera).
- *   + Khi lướt lên: Quả cầu thu nhỏ lại về kích thước chuẩn.
+ * - Sử dụng CylinderGeometry 6 cạnh khúc xạ ánh sáng (Transmission & Clearcoat) tạo hình lục giác hoàn hảo.
+ * - Khung viền kim loại vàng gold sắc sảo (EdgesGeometry) làm nổi bật 6 cạnh điêu khắc đương đại.
+ * - Lõi tinh thể lục giác hổ phách phát sáng nội bộ và các vòng quỹ đạo hoàng kim 3D.
+ * - HIỆU ỨNG CUỘN TRANG (SCROLL SCALE & ROTATION EFFECT):
+ *   + Khi lướt xuống: Khối lục giác phóng to dần (targetScale tăng mượt, Z tịnh tiến về camera) và xoay chuyển theo góc nhìn.
+ *   + Khi lướt lên: Thu nhỏ lại về kích thước chuẩn.
  *   + Tự động mờ dần khi vượt qua Section 1 (offset > 0.16) để nhường chỗ cho Section 2.
  */
-function CrystalPolyhedronBall({
+function HexagonalCrystalPrism({
   scrollProgressRef,
   isMobile,
 }: {
@@ -133,7 +134,6 @@ function CrystalPolyhedronBall({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const crystalRef = useRef<THREE.Mesh>(null);
-  const wireframeRef = useRef<THREE.Mesh>(null);
   const innerCoreRef = useRef<THREE.Mesh>(null);
   const ring1Ref = useRef<THREE.Mesh>(null);
   const ring2Ref = useRef<THREE.Mesh>(null);
@@ -141,7 +141,15 @@ function CrystalPolyhedronBall({
   const currentScaleRef = useRef(1);
   const currentZRef = useRef(0);
   const currentOpacityRef = useRef(1);
-  const [ballOpacity, setBallOpacity] = useState(1);
+  const [prismOpacity, setPrismOpacity] = useState(1);
+
+  // Tạo geometry hình lăng trụ lục giác hoàn hảo (6 cạnh)
+  const hexGeometry = useMemo(() => new THREE.CylinderGeometry(1.05, 1.05, 1.65, 6), []);
+  const hexEdgesGeometry = useMemo(() => new THREE.EdgesGeometry(hexGeometry, 15), [hexGeometry]);
+
+  // Lõi lục giác hổ phách phát sáng bên trong
+  const innerGeometry = useMemo(() => new THREE.CylinderGeometry(0.48, 0.48, 0.88, 6), []);
+  const innerEdgesGeometry = useMemo(() => new THREE.EdgesGeometry(innerGeometry, 15), [innerGeometry]);
 
   const baseScale = isMobile ? 0.95 : 1.25;
 
@@ -170,7 +178,7 @@ function CrystalPolyhedronBall({
     currentOpacityRef.current = THREE.MathUtils.damp(currentOpacityRef.current, targetOpacity, 4.5, delta);
 
     const op = currentOpacityRef.current;
-    setBallOpacity(op);
+    setPrismOpacity(op);
 
     if (groupRef.current) {
       groupRef.current.visible = op > 0.005;
@@ -182,22 +190,16 @@ function CrystalPolyhedronBall({
       const mouseParallaxY = -state.pointer.y * (isMobile ? 0.05 : 0.12);
 
       groupRef.current.position.set(mouseParallaxX, floatY + mouseParallaxY, currentZRef.current);
-    }
 
-    // Xoay các khối hình học đa diện
-    if (crystalRef.current) {
-      crystalRef.current.rotation.y += delta * 0.35;
-      crystalRef.current.rotation.x += delta * 0.22;
-    }
-
-    if (wireframeRef.current) {
-      wireframeRef.current.rotation.y += delta * 0.35;
-      wireframeRef.current.rotation.x += delta * 0.22;
+      // Tự xoay chậm nhẹ nhàng trong không gian 3D + xoay theo góc nhìn khi cuộn
+      groupRef.current.rotation.y += delta * 0.32;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.7) * 0.18 + p * 0.55;
+      groupRef.current.rotation.z = Math.cos(state.clock.elapsedTime * 0.5) * 0.12 + p * 0.32;
     }
 
     if (innerCoreRef.current) {
-      innerCoreRef.current.rotation.y -= delta * 0.55;
-      innerCoreRef.current.rotation.z += delta * 0.3;
+      innerCoreRef.current.rotation.y -= delta * 0.48;
+      innerCoreRef.current.rotation.x += delta * 0.2;
     }
 
     if (ring1Ref.current) {
@@ -213,58 +215,62 @@ function CrystalPolyhedronBall({
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      {/* 1. Quả cầu pha lê đa diện vật lý khúc xạ ánh sáng */}
-      <Icosahedron ref={crystalRef} args={[1, isMobile ? 3 : 4]}>
+      {/* 1. Bề mặt kính pha lê lục giác mờ trong suốt (Physical Transmission) */}
+      <mesh ref={crystalRef} geometry={hexGeometry}>
         <meshPhysicalMaterial
-          transmission={isMobile ? 0.6 : 0.92}
-          thickness={isMobile ? 1.0 : 2.0}
+          transmission={isMobile ? 0.65 : 0.92}
+          thickness={isMobile ? 1.2 : 2.2}
           roughness={0.06}
-          metalness={0.2}
+          metalness={0.15}
           clearcoat={isMobile ? 0.5 : 1.0}
           clearcoatRoughness={0.08}
           ior={1.54}
-          color="#FFF8F0"
+          color="#FFFDF9"
           emissive="#C5A880"
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.25}
           transparent
-          opacity={ballOpacity * 0.95}
+          opacity={prismOpacity * 0.95}
         />
-      </Icosahedron>
+      </mesh>
 
-      {/* 2. Lưới hình học đa diện vàng hoàng kim */}
-      <Icosahedron ref={wireframeRef} args={[1.018, 1]}>
-        <meshStandardMaterial
+      {/* 2. Khung viền kim loại vàng gold sắc nét (EdgesGeometry) làm nổi bật 6 cạnh */}
+      <lineSegments geometry={hexEdgesGeometry}>
+        <lineBasicMaterial
           color="#FFE1B3"
-          emissive="#C5A880"
-          emissiveIntensity={0.65}
-          metalness={0.85}
-          roughness={0.15}
-          wireframe
           transparent
-          opacity={ballOpacity * 0.45}
+          opacity={prismOpacity * 0.9}
         />
-      </Icosahedron>
+      </lineSegments>
 
-      {/* 3. Lõi tinh thể hổ phách phát sáng nội bộ */}
-      <Dodecahedron ref={innerCoreRef} args={[0.46, 0]}>
+      {/* 3. Lõi tinh thể lục giác hổ phách phát sáng nội bộ */}
+      <mesh ref={innerCoreRef} geometry={innerGeometry}>
         <meshStandardMaterial
           color="#F59E0B"
           emissive="#D97706"
           emissiveIntensity={1.8}
-          metalness={0.6}
-          roughness={0.25}
+          metalness={0.65}
+          roughness={0.2}
           transparent
-          opacity={ballOpacity * 0.9}
+          opacity={prismOpacity * 0.9}
         />
-      </Dodecahedron>
+      </mesh>
 
-      {/* 4. Nguồn sáng tỏa từ tâm quả cầu */}
-      <pointLight color="#FFE5B4" intensity={ballOpacity * 3.2} distance={8} />
-      <pointLight color="#F59E0B" intensity={ballOpacity * 1.5} distance={4} />
+      {/* Viền kim loại lõi nội bộ */}
+      <lineSegments geometry={innerEdgesGeometry}>
+        <lineBasicMaterial
+          color="#FFD180"
+          transparent
+          opacity={prismOpacity * 0.75}
+        />
+      </lineSegments>
 
-      {/* 5. Vòng quỹ đạo hoàng kim lơ lửng */}
-      <mesh ref={ring1Ref} rotation={[Math.PI / 4, 0, 0]}>
-        <torusGeometry args={[1.42, 0.014, 16, 64]} />
+      {/* 4. Nguồn sáng tỏa từ tâm khối lục giác */}
+      <pointLight color="#FFE5B4" intensity={prismOpacity * 3.2} distance={8} />
+      <pointLight color="#F59E0B" intensity={prismOpacity * 1.5} distance={4} />
+
+      {/* 5. Vòng quỹ đạo hoàng kim lơ lửng xung quanh */}
+      <mesh ref={ring1Ref} rotation={[Math.PI / 3, 0, 0]}>
+        <torusGeometry args={[1.48, 0.014, 16, 64]} />
         <meshStandardMaterial
           color="#C5A880"
           emissive="#C5A880"
@@ -272,12 +278,12 @@ function CrystalPolyhedronBall({
           metalness={0.9}
           roughness={0.1}
           transparent
-          opacity={ballOpacity * 0.6}
+          opacity={prismOpacity * 0.6}
         />
       </mesh>
 
-      <mesh ref={ring2Ref} rotation={[-Math.PI / 3, Math.PI / 4, 0]}>
-        <torusGeometry args={[1.56, 0.01, 16, 64]} />
+      <mesh ref={ring2Ref} rotation={[-Math.PI / 4, Math.PI / 3, 0]}>
+        <torusGeometry args={[1.65, 0.01, 16, 64]} />
         <meshStandardMaterial
           color="#FFE1B3"
           emissive="#FFE1B3"
@@ -285,18 +291,18 @@ function CrystalPolyhedronBall({
           metalness={0.9}
           roughness={0.1}
           transparent
-          opacity={ballOpacity * 0.45}
+          opacity={prismOpacity * 0.45}
         />
       </mesh>
 
-      {/* 6. Hạt bụi sáng quanh quả cầu */}
+      {/* 6. Hạt bụi sáng quanh khối lục giác */}
       <Sparkles
         count={isMobile ? 25 : 65}
         scale={[3.2, 3.2, 3.2]}
         size={isMobile ? 2.5 : 1.8}
         color="#FFE1B3"
         speed={0.4}
-        opacity={ballOpacity * 0.7}
+        opacity={prismOpacity * 0.7}
       />
     </group>
   );
@@ -800,7 +806,7 @@ function Unified3DWorld({
     <>
       <FlightCameraRig scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <CinematicAmbience isMobile={isMobile} />
-      <CrystalPolyhedronBall scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
+      <HexagonalCrystalPrism scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <Section2Photo3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <FloatingParallaxGallery3D scrollProgressRef={scrollProgressRef} isMobile={isMobile} />
       <FloatingCoffeeBeans count={isMobile ? 30 : 150} scrollProgressRef={scrollProgressRef} />
@@ -912,7 +918,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          {/* Vùng không gian trung tâm: Quả cầu pha lê hình học 3D lơ lửng phía trên không gian nội thất */}
+          {/* Vùng không gian trung tâm: Khối lục giác pha lê 3D (3D Hexagonal Prism / Crystal) lơ lửng phía trên không gian nội thất */}
           <div className="w-full flex-1 pointer-events-none" />
 
           {/* Cụm Điều Hướng & Mô Tả Dưới */}
