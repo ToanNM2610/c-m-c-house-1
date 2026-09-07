@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -13,20 +13,15 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
-  MessageSquare,
-  Brush,
-  Wrench,
-  Settings,
   Users,
-  ShoppingCart,
-  Zap,
-  BarChart2,
-  Plug,
-  MessageCircle,
-  HelpCircle,
-  Settings2,
-  PaintBucket,
-  Code
+  Lock,
+  KeyRound,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+  CalendarCheck,
+  LogOut,
+  Sparkles
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -38,9 +33,151 @@ export default function AdminLayout({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [pinInput, setPinInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState("");
+
+  useEffect(() => {
+    try {
+      const isAuth =
+        sessionStorage.getItem("camcu_admin_auth") === "true" ||
+        localStorage.getItem("camcu_admin_auth") === "true";
+      setIsAuthenticated(isAuth);
+    } catch {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanPin = pinInput.trim();
+    // Chấp nhận các mã PIN / Mật khẩu hợp lệ
+    const validCodes = ["2610", "camcu2026", "admin888", "admin"];
+
+    if (validCodes.includes(cleanPin)) {
+      try {
+        sessionStorage.setItem("camcu_admin_auth", "true");
+      } catch {}
+      setIsAuthenticated(true);
+      setAuthError("");
+    } else {
+      setAuthError("Mã PIN hoặc mật khẩu không chính xác. Vui lòng thử lại!");
+    }
+  };
+
+  const handleLogout = () => {
+    try {
+      sessionStorage.removeItem("camcu_admin_auth");
+      localStorage.removeItem("camcu_admin_auth");
+    } catch {}
+    setIsAuthenticated(false);
+    setPinInput("");
+  };
+
+  // Màn hình chờ kiểm tra phiên
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-[#1d2327] flex items-center justify-center text-white">
+        <div className="w-8 h-8 border-2 border-[#72aee6] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // MÀN HÌNH KHÓA BẢO VỆ ADMIN (ADMIN PROTECTION GATE)
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#120805] via-[#1A0F0A] to-[#2B1408] text-[#F3E8DB] flex items-center justify-center p-4 select-none font-sans">
+        <div className="w-full max-w-md bg-black/40 backdrop-blur-xl border border-[#C5A880]/30 rounded-3xl p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
+          
+          {/* Ánh kim trang trí */}
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#C5A880]/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-[#FFE1B3]/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Logo & Header */}
+          <div className="text-center mb-8 relative z-10">
+            <div className="w-14 h-14 rounded-2xl bg-[#C5A880]/15 border border-[#C5A880]/40 flex items-center justify-center mx-auto mb-4 text-[#C5A880] shadow-inner">
+              <Lock size={26} />
+            </div>
+            
+            <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-[#C5A880] block mb-1">
+              CẨM CÙ HOUSE • GIA NGHĨA
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#F3E8DB] tracking-wide">
+              Cổng Quản Trị Hệ Thống
+            </h1>
+            <p className="text-xs text-[#F3E8DB]/70 mt-2 font-light">
+              Nhập mã PIN hoặc mật khẩu quản trị viên để mở khóa bảng điều khiển.
+            </p>
+          </div>
+
+          {/* Form nhập PIN */}
+          <form onSubmit={handleLogin} className="space-y-4 relative z-10">
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-[#C5A880] mb-2">
+                Mã PIN Quản Trị
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value);
+                    if (authError) setAuthError("");
+                  }}
+                  placeholder="Nhập mã PIN (VD: 2610)..."
+                  autoFocus
+                  className="w-full px-4 py-3 rounded-xl bg-black/50 border border-[#C5A880]/30 text-[#F3E8DB] placeholder-[#F3E8DB]/35 text-sm focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] transition-all font-mono tracking-widest"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#F3E8DB]/50 hover:text-[#C5A880] transition-colors cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              {authError && (
+                <p className="text-xs text-rose-400 mt-2 font-light flex items-center gap-1">
+                  <span>⚠</span> {authError}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#DFBE93] hover:from-[#DFBE93] hover:to-[#FFE1B3] text-[#1A0F0A] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(197,168,128,0.4)] hover:shadow-[0_0_30px_rgba(197,168,128,0.6)] cursor-pointer flex items-center justify-center gap-2 mt-2"
+            >
+              <KeyRound size={16} />
+              <span>Mở Khóa Bảng Điều Khiển</span>
+            </button>
+          </form>
+
+          {/* Gợi ý & Điều hướng */}
+          <div className="mt-6 pt-6 border-t border-[#C5A880]/15 flex flex-col items-center gap-3 text-center relative z-10">
+            <span className="text-[11px] text-[#F3E8DB]/45 font-mono">
+              Mã PIN mặc định: <strong className="text-[#C5A880]">2610</strong> hoặc mật khẩu <strong className="text-[#C5A880]">admin</strong>
+            </span>
+            <Link
+              href="/"
+              className="text-xs text-[#C5A880] hover:text-[#FFE1B3] transition-colors inline-flex items-center gap-1 mt-1"
+            >
+              <span>← Quay về Trang chủ Cẩm Cù House</span>
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
   // WP Admin Sidebar Items Simulation
   const navItems = [
     { name: "Bảng tin", href: "/admin", icon: <LayoutDashboard size={18} /> },
+    { name: "Quản lý Thực đơn", href: "/admin/menu", icon: <Coffee size={18} /> },
     { 
       name: "Bài viết", 
       href: "/admin/posts", 
@@ -48,12 +185,9 @@ export default function AdminLayout({
       isActive: pathname.startsWith("/admin/posts"),
       subMenu: [
         { name: "Tất cả bài viết", href: "/admin/posts" },
-        { name: "Viết bài mới", href: "#" },
-        { name: "Chuyên mục", href: "#" },
-        { name: "Thẻ", href: "#" }
+        { name: "Viết bài mới", href: "/admin/posts" },
       ]
     },
-    { name: "Quản lý Thực đơn", href: "/admin/menu", icon: <Coffee size={18} /> },
     { name: "Thư viện ảnh", href: "/admin/gallery", icon: <ImageIcon size={18} /> },
     { name: "Tài khoản", href: "/admin/users", icon: <Users size={18} /> },
   ];
@@ -73,10 +207,9 @@ export default function AdminLayout({
               <span className="text-lg leading-none -mt-1">+</span> Thêm mới
             </button>
             <div className="absolute top-full left-0 bg-[#1d2327] border-t border-[#3c434a] min-w-[160px] hidden group-hover:flex flex-col shadow-lg z-50">
-              <Link href="/admin/posts" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><FileText size={14}/> Bài viết</Link>
               <Link href="/admin/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Món ăn</Link>
+              <Link href="/admin/posts" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><FileText size={14}/> Bài viết</Link>
               <Link href="/admin/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Hình ảnh</Link>
-              <Link href="/admin/users" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Users size={14}/> Người dùng</Link>
             </div>
           </div>
         </div>
@@ -90,7 +223,13 @@ export default function AdminLayout({
               </div>
             </button>
             <div className="absolute top-full right-0 bg-[#1d2327] border-t border-[#3c434a] min-w-[160px] hidden group-hover:flex flex-col shadow-lg z-50">
-              <Link href="/" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px]">Đăng xuất</Link>
+              <button 
+                onClick={handleLogout}
+                className="w-full text-left px-3 py-2 text-[#c3c4c7] hover:text-rose-300 hover:bg-[#2c3338] text-[13px] flex items-center gap-2 cursor-pointer"
+              >
+                <LogOut size={13} />
+                <span>Khóa / Đăng xuất</span>
+              </button>
             </div>
           </div>
         </div>
@@ -100,7 +239,7 @@ export default function AdminLayout({
         {/* WP SideBar (Desktop) */}
         <aside 
           className={`bg-[#1d2327] text-[#c3c4c7] fixed top-[32px] bottom-0 left-0 z-40 hidden md:flex flex-col transition-all duration-300 ease-in-out ${
-            isSidebarCollapsed ? "w-[36px]" : "w-[160px]"
+            isSidebarCollapsed ? "w-[36px]" : "w-[170px]"
           }`}
         >
           <nav className="flex-1 py-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
@@ -160,24 +299,60 @@ export default function AdminLayout({
 
         {/* Mobile Header & Overlay */}
         <div className="md:hidden fixed top-[32px] left-0 w-full bg-[#1d2327] border-b border-[#2c3338] z-30 flex items-center justify-between p-2">
-          <span className="text-[#c3c4c7] font-medium ml-2">Menu quản trị</span>
+          <span className="text-[#c3c4c7] font-medium ml-2 text-xs">Cẩm Cù Quản Trị</span>
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-1 text-[#c3c4c7] hover:text-white"
           >
-            <MenuIcon size={24} />
+            <MenuIcon size={22} />
           </button>
         </div>
 
+        {/* Mobile Drawer */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 z-50 bg-black/60 pt-[32px]">
+            <div className="w-[200px] h-full bg-[#1d2327] p-3 text-[#c3c4c7]">
+              <div className="flex justify-between items-center mb-4 border-b border-[#3c434a] pb-2">
+                <span className="font-semibold text-white text-xs">Menu Quản trị</span>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="text-white">✕</button>
+              </div>
+              <ul className="space-y-1">
+                {navItems.map(item => (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="flex items-center gap-2 py-2 px-2 rounded hover:bg-[#2271b1] hover:text-white text-xs"
+                    >
+                      {item.icon}
+                      <span>{item.name}</span>
+                    </Link>
+                  </li>
+                ))}
+                <li className="pt-4 border-t border-[#3c434a]">
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex items-center gap-2 text-rose-400 py-2 px-2 text-xs"
+                  >
+                    <LogOut size={14} />
+                    <span>Khóa / Đăng xuất</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
+
         {/* Main Content Area */}
         <main 
-          className={`flex-1 flex flex-col min-h-[calc(100vh-32px)] transition-all duration-300 md:pt-0 pt-10 ${
-            isSidebarCollapsed ? "md:ml-[36px]" : "md:ml-[160px]"
+          className={`flex-1 flex flex-col min-h-[calc(100vh-32px)] transition-all duration-300 md:pt-0 pt-8 ${
+            isSidebarCollapsed ? "md:ml-[36px]" : "md:ml-[170px]"
           }`}
         >
-
-
-          <div className="flex-1 p-3 sm:p-5 mt-6 relative z-10">
+          <div className="flex-1 p-3 sm:p-5 mt-4 relative z-10">
             {children}
           </div>
         </main>

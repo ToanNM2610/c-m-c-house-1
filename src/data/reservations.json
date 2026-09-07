@@ -1,0 +1,38 @@
+[
+  {
+    "id": "res-1",
+    "name": "Nguyễn Hoàng Minh",
+    "phone": "0912 345 678",
+    "email": "minh.nguyen@gmail.com",
+    "date": "2026-09-08",
+    "time": "09:30",
+    "guests": 4,
+    "note": "Cho mình đặt bàn gần bờ suối view thoáng mát nhé.",
+    "status": "pending",
+    "createdAt": "2026-09-07T08:15:00.000Z"
+  },
+  {
+    "id": "res-2",
+    "name": "Trần Thị Mai Phương",
+    "phone": "0988 765 432",
+    "email": "phuong.tran@yahoo.com",
+    "date": "2026-09-08",
+    "time": "14:00",
+    "guests": 2,
+    "note": "Đặt 1 phần Cà phê kem trứng và 1 Trà đào cam sả trước.",
+    "status": "confirmed",
+    "createdAt": "2026-09-06T15:20:00.000Z"
+  },
+  {
+    "id": "res-3",
+    "name": "Lê Văn Tuấn",
+    "phone": "0903 888 999",
+    "email": "tuan.le@outlook.com",
+    "date": "2026-09-07",
+    "time": "16:30",
+    "guests": 6,
+    "note": "Gia đình ghé chơi, nhờ quán xếp bàn dài khu vực hiên gỗ.",
+    "status": "completed",
+    "createdAt": "2026-09-06T10:00:00.000Z"
+  }
+]
