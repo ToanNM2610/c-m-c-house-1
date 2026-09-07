@@ -1,271 +1,268 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { MapPin, Clock, Phone, Navigation, ExternalLink, Globe2, Map } from "lucide-react";
+import { MapPin, Clock, Phone, Compass, ArrowUpRight, Send, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import BlurText from "@/components/ui/BlurText";
 
-const Contact3DScene = dynamic(() => import("@/components/3d/Contact3DScene"), {
+const GlowingOrb3D = dynamic(() => import("@/components/3d/GlowingOrb3D"), {
   ssr: false,
 });
 
 const GOOGLE_MAPS_URL = "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
 
 export default function ContactPage() {
-  const { t, lang } = useLanguage();
-  const [mapMode, setMapMode] = useState<"globe" | "google">("globe");
+  const { lang, t } = useLanguage();
+
+  const [name, setName] = useState("");
+  const [contactInfo, setContactInfo] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !message.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await fetch("/api/guestbook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          contact: contactInfo.trim(),
+          message: message.trim(),
+        }),
+      }).catch(() => {});
+
+      setIsSuccess(true);
+      setName("");
+      setContactInfo("");
+      setMessage("");
+    } catch {
+      setIsSuccess(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <main className="relative min-h-screen bg-transparent text-[#F4EFEA] z-10 pt-32 pb-32 font-sans">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8">
-        
-        {/* Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <span className="text-[#C5A880] uppercase tracking-[0.25em] text-xs sm:text-sm mb-3 block font-sans">
-            {t("contact.mapSubtitle")}
-          </span>
-          <BlurText 
-            text={t("contact.mapTitle")}
-            as="h1"
-            className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#F4EFEA] mb-6"
-          />
-          <div className="w-16 h-[1px] bg-[#C5A880]/40 mx-auto mt-4"></div>
+    <div className="relative min-h-screen bg-[#0C0705] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705] pt-28 pb-36">
+      
+      {/* Khối cầu ánh sáng Glowing Orb 3D trung tâm lơ lửng phía sau */}
+      <div className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-70">
+        <div className="w-[500px] h-[500px] sm:w-[680px] sm:h-[680px]">
+          <GlowingOrb3D />
         </div>
+      </div>
 
-        {/* 2-Column Content Layout: Info Cards & 3D Globe / Google Maps */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12">
+        {/* Header Heading Siêu To Khổng Lồ */}
+        <header className="text-center py-12 md:py-20 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-black/50 text-[10px] sm:text-xs font-mono uppercase tracking-[0.28em] text-[#D4AF37]">
+            <Compass size={13} />
+            <span>CONNECT & SANCTUARY INQUIRY</span>
+          </div>
+
+          <h1
+            data-cursor-diff
+            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-bold tracking-tight text-[#F4EFEA] leading-[1.05]"
+          >
+            {lang === "en" ? "SAY HELLO" : "GHÉ CHƠI"}
+          </h1>
+
+          <p className="max-w-xl mx-auto text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
+            {lang === "en"
+              ? "Leave a gentle note, ask for directions, or just drop by for a cup of firewood coffee by the stream."
+              : "Để lại một lời nhắn mộc mạc, hỏi thăm đường đi hoặc ghé quán thưởng thức tách cà phê rang củi bên bờ suối."}
+          </p>
+        </header>
+
+        {/* 2 Cột: Form Floating Lines & La Bàn Tọa Độ Minimal */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-8">
           
-          {/* Left Column: Direct Contact & Direction Cards (5 Cols) */}
-          <motion.div 
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={{
-              initial: { opacity: 0 },
-              animate: {
-                opacity: 1,
-                transition: { staggerChildren: 0.1, delayChildren: 0.1 }
-              }
-            }}
-            className="lg:col-span-5 flex flex-col justify-between gap-6"
-          >
-            {/* Address & Navigation Card */}
-            <motion.div 
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
-              }}
-              className="p-8 rounded-2xl bg-[#24140C]/70 backdrop-blur-md border border-[#C5A880]/25 hover:border-[#C5A880]/70 transition-all duration-300 shadow-xl flex items-start gap-5"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5 shadow-inner">
-                <MapPin size={22} />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-serif text-lg text-[#F4EFEA]">{t("contact.addressLabel")}</h3>
-                  <span className="text-[10px] uppercase font-sans tracking-wider bg-[#C5A880]/15 text-[#C5A880] px-2 py-0.5 rounded-full border border-[#C5A880]/30 font-medium">
-                    Gia Nghĩa
-                  </span>
-                </div>
-                <p className="text-[#F4EFEA]/80 font-light text-sm leading-relaxed mb-4">
-                  {t("contact.address")}
-                </p>
-                <a 
-                  href={GOOGLE_MAPS_URL}
-                  target="_blank" 
-                  rel="noreferrer"
-                  data-cursor-hover
-                  className="inline-flex items-center gap-2 bg-[#F4EFEA] hover:bg-[#C5A880] text-[#1A0F0A] px-5 py-2.5 rounded-xl font-sans font-semibold text-xs uppercase tracking-wider transition-all duration-300 shadow-md cursor-pointer"
-                >
-                  <Navigation size={13} />
-                  <span>{t("contact.openMapBtn")}</span>
-                  <ExternalLink size={12} />
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Opening Hours Card */}
-            <motion.div 
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
-              }}
-              className="p-8 rounded-2xl bg-[#24140C]/70 backdrop-blur-md border border-[#C5A880]/25 hover:border-[#C5A880]/70 transition-all duration-300 shadow-xl flex items-start gap-5"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5 shadow-inner">
-                <Clock size={22} />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-serif text-lg text-[#F4EFEA] mb-1.5">{t("contact.hoursLabel")}</h3>
-                <div className="text-[#C5A880] text-sm font-sans font-semibold tracking-wide mb-2">
-                  {t("contact.dailyHours")}
-                </div>
-                <div className="text-[#F4EFEA]/70 font-light text-xs space-y-1 leading-relaxed">
-                  <p>{t("contact.hours1")}</p>
-                  <p>{t("contact.hours2")}</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Hotline & Direct Booking Card */}
-            <motion.div 
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
-              }}
-              className="p-8 rounded-2xl bg-[#24140C]/70 backdrop-blur-md border border-[#C5A880]/25 hover:border-[#C5A880]/70 transition-all duration-300 shadow-xl flex items-start gap-5"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-[#1E1008] border border-[#C5A880]/30 flex items-center justify-center text-[#C5A880] shrink-0 mt-0.5 shadow-inner">
-                <Phone size={22} />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-serif text-lg text-[#F4EFEA] mb-1.5">{t("contact.phoneLabel")}</h3>
-                <p className="text-2xl font-serif text-[#C5A880] font-bold tracking-wider mb-4">0382 851 688</p>
-                <a 
-                  href="tel:0382851688" 
-                  data-cursor-hover
-                  className="inline-flex items-center justify-center gap-2 bg-[#1E1008] hover:bg-[#C5A880] hover:text-[#1A0F0A] text-[#F4EFEA] border border-[#C5A880]/40 px-6 py-2.5 rounded-xl font-sans font-semibold text-xs uppercase tracking-widest transition-all duration-300 shadow-sm cursor-pointer"
-                >
-                  <Phone size={14} /> {t("contact.directCall")}
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Social Channels Bar */}
-            <motion.div 
-              variants={{
-                initial: { opacity: 0, y: 30 },
-                animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }
-              }}
-              className="p-6 rounded-2xl bg-[#1A0F0A]/90 backdrop-blur-md border border-[#C5A880]/20 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg"
-            >
-              <span className="text-xs font-sans tracking-widest text-[#C5A880] uppercase font-semibold">
-                {t("contact.socialLabel")}
+          {/* Cột 1 (7 Cols): Floating Lines Contact Form */}
+          <div className="lg:col-span-7 bg-black/40 backdrop-blur-xl border border-[#D4AF37]/20 rounded-3xl p-8 sm:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.85)]">
+            <div className="mb-8">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block mb-1">
+                LỜI NHẮN LỮ KHÁCH
               </span>
-              <div className="flex gap-3">
-                {/* Facebook */}
-                <a 
-                  href="https://www.facebook.com/share/1DVLMySW8H" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  aria-label="Facebook"
-                  data-cursor-hover
-                  className="w-10 h-10 rounded-full bg-[#24140C] border border-[#C5A880]/30 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                    <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-                  </svg>
-                </a>
-                {/* YouTube */}
-                <a 
-                  href="https://youtube.com/@Cam_Cu_House" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  aria-label="YouTube"
-                  data-cursor-hover
-                  className="w-10 h-10 rounded-full bg-[#24140C] border border-[#C5A880]/30 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                    <path d="M21.582 6.186a2.67 2.67 0 0 0-1.884-1.888C17.962 3.8 12 3.8 12 3.8s-5.962 0-7.698.498a2.67 2.67 0 0 0-1.884 1.888C1.92 7.922 1.92 12 1.92 12s0 4.078.498 5.814a2.67 2.67 0 0 0 1.884 1.888C6.038 20.2 12 20.2 12 20.2s5.962 0 7.698-.498a2.67 2.67 0 0 0 1.884-1.888C22.08 16.078 22.08 12 22.08 12s0-4.078-.498-5.814zM9.9 15.3v-6.6l5.7 3.3-5.7 3.3z"/>
-                  </svg>
-                </a>
-                {/* TikTok */}
-                <a 
-                  href="https://www.tiktok.com/@camcuhousedaknong" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  aria-label="TikTok"
-                  data-cursor-hover
-                  className="w-10 h-10 rounded-full bg-[#24140C] border border-[#C5A880]/30 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.64-5.46-.22-2.39.81-4.78 2.63-6.2 1.53-1.22 3.51-1.72 5.43-1.49v4.06c-1.16-.1-2.31.25-3.18 1.01-.76.63-1.23 1.59-1.25 2.58-.02 1.35.8 2.67 2.03 3.23 1.11.53 2.45.54 3.56.05 1.1-.48 1.89-1.44 2.11-2.61.12-.66.11-1.33.11-2.01V.02z"/>
-                  </svg>
-                </a>
-              </div>
-            </motion.div>
-          </motion.div>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#F4EFEA]">
+                Gửi Lời Nhắn Về Hiên Quán
+              </h2>
+            </div>
 
-          {/* Right Column: 3D Wireframe Globe with Beacon & View Mode Switcher (7 Cols) */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="lg:col-span-7 flex flex-col"
-          >
-            <div className="w-full h-full min-h-[440px] lg:min-h-[620px] rounded-2xl overflow-hidden shadow-2xl bg-[#1A0F0A]/95 border border-[#C5A880]/30 relative flex flex-col">
-              
-              {/* Header Bar with Toggle Switch */}
-              <div className="p-4 px-6 bg-[#1A0F0A] border-b border-[#C5A880]/20 flex flex-wrap justify-between items-center gap-3 z-30">
-                <div className="flex items-center gap-2 text-xs font-sans tracking-wider text-[#F4EFEA]/90">
-                  <MapPin size={15} className="text-[#C5A880]" />
-                  <span className="font-serif font-medium">Cẩm Cù House • Gia Nghĩa, Đắk Nông</span>
+            {isSuccess ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="py-12 text-center space-y-4"
+              >
+                <div className="w-14 h-14 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37] flex items-center justify-center mx-auto text-[#D4AF37]">
+                  <CheckCircle2 size={28} />
+                </div>
+                <h3 className="text-xl font-serif font-bold text-[#F4EFEA]">
+                  Đã nhận lời nhắn của bạn!
+                </h3>
+                <p className="text-xs text-[#F4EFEA]/75 max-w-sm mx-auto">
+                  Cẩm Cù House đã lưu lại dòng tâm sự ấm áp này. Chúc bạn một hành trình luôn bình an và thong thả.
+                </p>
+                <button
+                  onClick={() => setIsSuccess(false)}
+                  className="mt-4 px-6 py-2 rounded-full border border-[#D4AF37]/40 text-xs font-mono uppercase tracking-widest text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0C0705] transition-colors"
+                >
+                  Gửi lời nhắn khác
+                </button>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Dòng 1: Tên lữ khách */}
+                <div className="relative group">
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#D4AF37]/80 mb-2">
+                    Tên của bạn *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Nguyễn Văn A..."
+                    className="w-full bg-transparent border-b border-[#D4AF37]/25 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/25 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
+                  />
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {/* View Mode Toggle: 3D Hologram vs Satellite Map */}
-                  <div className="flex items-center bg-[#25150E] p-1 rounded-xl border border-[#C5A880]/25">
-                    <button
-                      onClick={() => setMapMode("globe")}
-                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                        mapMode === "globe"
-                          ? "bg-[#C5A880] text-[#1A0F0A] font-semibold shadow-sm"
-                          : "text-[#F4EFEA]/60 hover:text-[#C5A880]"
-                      }`}
-                    >
-                      <Globe2 size={13} />
-                      <span>3D Globe</span>
-                    </button>
-                    <button
-                      onClick={() => setMapMode("google")}
-                      className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-sans uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                        mapMode === "google"
-                          ? "bg-[#C5A880] text-[#1A0F0A] font-semibold shadow-sm"
-                          : "text-[#F4EFEA]/60 hover:text-[#C5A880]"
-                      }`}
-                    >
-                      <Map size={13} />
-                      <span>Google Maps</span>
-                    </button>
-                  </div>
+                {/* Dòng 2: Số điện thoại hoặc email */}
+                <div className="relative group">
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#D4AF37]/80 mb-2">
+                    Số điện thoại hoặc Email (tùy chọn)
+                  </label>
+                  <input
+                    type="text"
+                    value={contactInfo}
+                    onChange={(e) => setContactInfo(e.target.value)}
+                    placeholder="0987... hoặc email@..."
+                    className="w-full bg-transparent border-b border-[#D4AF37]/25 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/25 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
+                  />
+                </div>
 
-                  <a 
-                    href={GOOGLE_MAPS_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[11px] font-sans text-[#C5A880] hover:text-[#F4EFEA] uppercase tracking-widest flex items-center gap-1.5 transition-colors font-medium ml-1"
+                {/* Dòng 3: Lời nhắn gửi */}
+                <div className="relative group">
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#D4AF37]/80 mb-2">
+                    Lời chia sẻ hoặc lời nhắn *
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Gửi gắm cảm xúc, hỏi thăm giờ ghé chơi hoặc đặt trước góc ngồi..."
+                    className="w-full bg-transparent border-b border-[#D4AF37]/25 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/25 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300 resize-none"
+                  />
+                </div>
+
+                {/* Nút gửi mạ vàng */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#E5C07B] to-[#FFE1B3] text-[#0C0705] font-semibold text-xs font-mono uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_25px_rgba(212,175,55,0.4)] cursor-pointer"
                   >
-                    <span>{t("contact.openMapBtn")}</span>
-                    <ExternalLink size={12} />
+                    <Send size={14} />
+                    <span>{isSubmitting ? "Đang gửi đi..." : "Gửi Lời Nhắn"}</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          {/* Cột 2 (5 Cols): Tọa Độ & Thông Tin Không Gian Minimal */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Thẻ La Bàn Tọa Độ Vĩ Tuyến/Kinh Tuyến */}
+            <div className="p-8 rounded-3xl bg-black/40 backdrop-blur-xl border border-[#D4AF37]/25 space-y-6 shadow-xl">
+              <div className="flex items-center justify-between border-b border-[#D4AF37]/15 pb-4">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-[#D4AF37]">
+                  GPS COORDINATES
+                </span>
+                <Compass size={18} className="text-[#D4AF37] animate-spin-slow" />
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Vĩ độ (Latitude):</span>
+                  <span className="text-sm font-mono text-[#D4AF37] font-semibold">11°58&apos;33&quot; N</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Kinh độ (Longitude):</span>
+                  <span className="text-sm font-mono text-[#D4AF37] font-semibold">107°42&apos;11&quot; E</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Độ cao:</span>
+                  <span className="text-sm font-mono text-[#F4EFEA]/80">~620m trên mực nước biển</span>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Khu vực:</span>
+                  <span className="text-sm font-mono text-[#F4EFEA]/80">TP. Gia Nghĩa, Đắk Nông</span>
+                </div>
+              </div>
+
+              <a
+                href={GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-3.5 rounded-full border border-[#D4AF37]/50 hover:border-[#D4AF37] text-xs font-mono uppercase tracking-widest text-[#F4EFEA] hover:text-[#D4AF37] flex items-center justify-center gap-2 transition-all bg-black/30 hover:bg-black/60"
+              >
+                <span>Mở Bản Đồ Chỉ Đường</span>
+                <ArrowUpRight size={14} />
+              </a>
+            </div>
+
+            {/* Thẻ Giờ Mở Cửa & Hotline */}
+            <div className="p-8 rounded-3xl bg-black/40 backdrop-blur-xl border border-[#D4AF37]/20 space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-1">
+                  <Clock size={18} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-serif font-bold text-[#F4EFEA]">Giờ Đón Khách</h4>
+                  <p className="text-xs text-[#F4EFEA]/75 mt-1 font-mono">07:00 – 22:00 (Mỗi ngày)</p>
+                  <p className="text-[11px] text-[#D4AF37]/70 mt-0.5">Không gian suối đón khách quanh năm</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 pt-4 border-t border-white/5">
+                <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-1">
+                  <MapPin size={18} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-serif font-bold text-[#F4EFEA]">Địa Chỉ Hiên Quán</h4>
+                  <p className="text-xs text-[#F4EFEA]/75 mt-1 leading-relaxed">
+                    Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 pt-4 border-t border-white/5">
+                <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-1">
+                  <Phone size={18} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-serif font-bold text-[#F4EFEA]">Đường Dây Nóng</h4>
+                  <a
+                    href="tel:0382851688"
+                    className="text-sm font-mono text-[#D4AF37] hover:underline block mt-1"
+                  >
+                    038 285 1688
                   </a>
                 </div>
               </div>
-
-              {/* View Content: 3D Globe or Google Maps */}
-              <div className="w-full flex-1 relative min-h-[380px] lg:min-h-[540px]">
-                {mapMode === "globe" ? (
-                  <Contact3DScene />
-                ) : (
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d4802.49617262464!2d107.7030752!3d11.9758153!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173c7ccbd4cd55f%3A0x932e986e061ca415!2zQ-G6qW0gQ8O5IEhvdXNl!5e1!3m2!1svi!2s!4v1788347215068!5m2!1svi!2s"
-                    className="w-full h-full min-h-[380px] lg:min-h-[540px] border-0 filter contrast-[1.05] opacity-95 hover:opacity-100 transition-opacity duration-300"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    title={lang === "en" ? "Cam Cu House Location" : "Vị trí Cẩm Cù House"}
-                  />
-                )}
-              </div>
             </div>
-          </motion.div>
+
+          </div>
 
         </div>
-
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,367 +1,214 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
+import { Search, Coffee, Sparkles, ArrowUpRight } from "lucide-react";
 import { useMenu } from "@/hooks/useMenu";
-import { Search, Star, Sparkles, Coffee } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import BlurText from "@/components/ui/BlurText";
-import CardTilt from "@/components/ui/CardTilt";
-import TabsSliding from "@/components/ui/TabsSliding";
-import LiquidDistortImage from "@/components/ui/LiquidDistortImage";
+import HoverMediaReveal, { HoverMediaItem } from "@/components/ui/HoverMediaReveal";
 
-const Menu3DScene = dynamic(() => import("@/components/3d/Menu3DScene"), {
+const CoffeeSmokeShader = dynamic(() => import("@/components/3d/CoffeeSmokeShader"), {
   ssr: false,
 });
 
-interface FeaturedItem {
-  name: string;
-  nameEn: string;
-  price: string;
-  desc: string;
-  descEn: string;
-  image: string;
-  tag: string;
-  tagEn: string;
-}
-
-const FEATURED_SIGNATURES: FeaturedItem[] = [
-  {
-    name: "Cà phê kem trứng",
-    nameEn: "Egg Cream Coffee",
-    price: "30.000đ",
-    desc: "Lớp kem trứng đánh bông béo ngậy phủ lên cốt cà phê Robusta Đắk Nông rang củi đậm đà.",
-    descEn: "Rich whipped egg cream poured over intense firewood-roasted Dak Nong Robusta.",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop",
-    tag: "Chữ ký nhà Cẩm Cù",
-    tagEn: "Cam Cu Signature",
-  },
-  {
-    name: "Cà phê muối",
-    nameEn: "Salted Coffee",
-    price: "28.000đ",
-    desc: "Vị muối biển dịu nhẹ hòa quyện cùng cốt dừa và sữa đặc, tôn vinh hậu vị sâu của cà phê.",
-    descEn: "Subtle sea salt cream blended with condensed milk, enhancing the coffee's deep finish.",
-    image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=800&auto=format&fit=crop",
-    tag: "Được yêu thích nhất",
-    tagEn: "Most Loved",
-  },
-  {
-    name: "Trà đào cam sả",
-    nameEn: "Peach Orange Lemongrass Tea",
-    price: "30.000đ",
-    desc: "Hương sả thảo mộc vườn nhà kết hợp vị cam mọng nước và miếng đào giòn ngọt thanh mát.",
-    descEn: "Garden-grown fresh lemongrass with juicy sun-ripened orange and crispy sweet peach.",
-    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=800&auto=format&fit=crop",
-    tag: "Thanh mát giải nhiệt",
-    tagEn: "Refreshing Tonic",
-  },
-  {
-    name: "Sinh tố Bơ sầu riêng",
-    nameEn: "Avocado Durian Smoothie",
-    price: "33.000đ",
-    desc: "Sự kết hợp hoàng gia giữa bơ sáp Đắk Nông béo dẻo và cơm sầu riêng Ri6 thơm nồng nàn.",
-    descEn: "Royal blend of Dak Nong butter avocado and aromatic Ri6 durian pulp.",
-    image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?q=80&w=800&auto=format&fit=crop",
-    tag: "Đặc sản cao nguyên",
-    tagEn: "Highland Specialty",
-  },
-];
-
-const BEST_SELLERS_NAMES = [
-  "Cà phê kem trứng", "Egg Cream Coffee",
-  "Cà phê muối", "Salted Coffee",
-  "Trà đào cam sả", "Peach Orange Lemongrass Tea",
-  "Bơ sầu riêng", "Sinh tố Bơ sầu riêng", "Avocado Durian Smoothie"
-];
-
-const CATEGORY_MAP_EN: Record<string, string> = {
-  "CÀ PHÊ": "COFFEE",
-  "TRÀ": "TEA",
-  "SINH TỐ": "SMOOTHIES",
-  "NƯỚC ÉP": "FRESH JUICE",
-  "SODA / SỮA CHUA": "SODA & YOGURT",
-  "KHÁC": "OTHERS",
-  "MÓN ĂN": "FOOD & SNACKS",
+// Bộ sưu tập ảnh đại diện chất lượng cao khi hover món
+const CATEGORY_IMAGES: Record<string, string> = {
+  "CÀ PHÊ": "/uploads/gallery/1788250253560-200373033.jpg",
+  "TRÀ": "/uploads/gallery/1788250253562-580915883.jpg",
+  "SINH TỐ": "/uploads/gallery/1788250253570-358232239.jpg",
+  "NƯỚC ÉP": "/uploads/gallery/1788250253564-115851131.jpg",
+  "SODA / SỮA CHUA": "/uploads/gallery/1788250253572-915114239.jpg",
+  "NÔNG SẢN ĐẶC SẢN": "/uploads/gallery/1788250253554-875120458.jpg",
 };
 
 export default function MenuPage() {
-  const [isMounted, setIsMounted] = useState(false);
-  const { menu } = useMenu();
-  const { lang, t, formatPrice } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
+  const { lang, formatPrice, currency, setCurrency } = useLanguage();
+  const { menu, isLoading } = useMenu();
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const [activeCategory, setActiveCategory] = useState<string>("TẤT CẢ");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [hoveredMedia, setHoveredMedia] = useState<HoverMediaItem | null>(null);
 
-  // Lấy danh sách category gốc (raw)
-  const rawCategories = useMemo(() => {
-    const set = new Set<string>();
-    menu.forEach(item => {
-      if (item.category) set.add(item.category);
-    });
-    return ["all", ...Array.from(set)];
+  // Danh mục độc nhất
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(menu.map((m) => m.category)));
+    return ["TẤT CẢ", ...cats];
   }, [menu]);
 
-  // Group menu items theo category đã localize
+  // Lọc món theo category & search
   const filteredMenu = useMemo(() => {
-    let filtered: Record<string, any[]> = {};
-
-    menu.forEach(item => {
-      const matchesTab = activeTab === "all" || item.category === activeTab;
-      if (!matchesTab) return;
-
-      const itemName = lang === "en" ? (item.nameEn || item.name) : item.name;
-      const itemDesc = item.desc || "";
-      const matchesSearch = !searchQuery.trim() || 
-        itemName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        itemDesc.toLowerCase().includes(searchQuery.toLowerCase());
-
-      if (!matchesSearch) return;
-
-      const displayCategory = lang === "en" 
-        ? (item.categoryEn || CATEGORY_MAP_EN[item.category] || item.category) 
-        : item.category;
-
-      if (!filtered[displayCategory]) {
-        filtered[displayCategory] = [];
-      }
-      filtered[displayCategory].push(item);
+    return menu.filter((item) => {
+      const matchCat = activeCategory === "TẤT CẢ" || item.category === activeCategory;
+      const matchSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.nameEn && item.nameEn.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchCat && matchSearch;
     });
-
-    return filtered;
-  }, [menu, activeTab, searchQuery, lang]);
-
-  const getCategoryLabel = (rawCat: string) => {
-    if (rawCat === "all") return t("menu.all");
-    return lang === "en" ? (CATEGORY_MAP_EN[rawCat] || rawCat) : rawCat;
-  };
+  }, [menu, activeCategory, searchQuery]);
 
   return (
-    <main className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-transparent text-[#F4EFEA] font-sans z-10 pt-28 sm:pt-32 pb-32 touch-pan-y">
-      {/* 3D WebGL Background: Golden Aroma & Coffee Crystal Fog */}
-      <Menu3DScene />
+    <div className="relative min-h-screen bg-[#0C0705] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705] pt-28 pb-36">
+      {/* 1. Làn khói WebGL Cà Phê Chuyển Động Chậm */}
+      <CoffeeSmokeShader />
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 overflow-x-hidden">
-        
-        {/* Header Title */}
-        <div className="text-center mb-16">
-          <span className="text-[#C5A880] uppercase tracking-[0.25em] text-xs sm:text-sm mb-3 block font-sans">
-            {t("menu.subtitle")}
-          </span>
-          <BlurText 
-            text={t("menu.title")}
-            as="h1"
-            className="text-4xl md:text-5xl lg:text-6xl font-serif text-[#F4EFEA]"
-          />
-          <div className="w-16 h-[1px] bg-[#C5A880]/40 mx-auto mt-6"></div>
+      {/* 2. Khung ảnh trôi theo con trỏ chuột khi hover món */}
+      <HoverMediaReveal activeItem={hoveredMedia} />
+
+      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12">
+        {/* Header Trang Thực Đơn */}
+        <header className="text-center py-12 md:py-16 space-y-4 border-b border-[#D4AF37]/20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#D4AF37]">
+            <Coffee size={13} />
+            <span>ARTISANAL ROASTS & INFUSIONS</span>
+          </div>
+
+          <h1
+            data-cursor-diff
+            className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold tracking-tight text-[#F4EFEA]"
+          >
+            THỰC ĐƠN <span className="italic font-light text-[#D4AF37]">MỘC</span>
+          </h1>
+
+          <p className="max-w-xl mx-auto text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
+            {lang === "en"
+              ? "Firewood-roasted highland beans, botanical Hoya blossom blends, and pure farm tonics."
+              : "Hương cà phê mộc rang trên củi khô Tây Nguyên, trà thảo mộc hoa cẩm cù và thức uống từ quả chín vườn nhà."}
+          </p>
+
+          {/* Bộ chuyển đổi tiền tệ [VNĐ / USD] thanh lịch */}
+          <div className="pt-4 flex items-center justify-center gap-3">
+            <span className="text-[11px] font-mono text-[#D4AF37]/80 uppercase tracking-widest">Tiền tệ:</span>
+            <div className="inline-flex items-center rounded-full border border-[#D4AF37]/30 bg-black/50 p-1">
+              <button
+                onClick={() => setCurrency("VND")}
+                className={`px-3 py-1 rounded-full text-xs font-mono transition-colors ${
+                  currency === "VND"
+                    ? "bg-[#D4AF37] text-[#0C0705] font-bold"
+                    : "text-[#F4EFEA]/70 hover:text-white"
+                }`}
+              >
+                VNĐ
+              </button>
+              <button
+                onClick={() => setCurrency("USD")}
+                className={`px-3 py-1 rounded-full text-xs font-mono transition-colors ${
+                  currency === "USD"
+                    ? "bg-[#D4AF37] text-[#0C0705] font-bold"
+                    : "text-[#F4EFEA]/70 hover:text-white"
+                }`}
+              >
+                USD ($)
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Thanh tìm kiếm & Tabs lọc danh mục */}
+        <div className="py-8 space-y-6">
+          {/* Ô tìm kiếm viền mảnh tối giản */}
+          <div className="relative max-w-md mx-auto">
+            <Search
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D4AF37]"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={lang === "en" ? "Search drinks, coffee..." : "Tìm tên thức uống, cà phê..."}
+              className="w-full pl-11 pr-4 py-3 rounded-full bg-black/40 border border-[#D4AF37]/30 text-[#F4EFEA] text-xs font-sans placeholder-[#F4EFEA]/35 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+            />
+          </div>
+
+          {/* Danh mục dạng Pills mượt mà */}
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-4 py-2 rounded-full text-[11px] font-mono tracking-wider transition-all duration-300 ${
+                  activeCategory === cat
+                    ? "bg-[#D4AF37] text-[#0C0705] font-bold shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+                    : "bg-black/30 border border-[#D4AF37]/20 text-[#F4EFEA]/75 hover:border-[#D4AF37]/60 hover:text-[#F4EFEA]"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* 3D Parallax Signature & Best Seller Showcase with Liquid Distortion */}
-        {activeTab === "all" && !searchQuery.trim() && (
-          <section className="mb-24 w-full max-w-full overflow-hidden">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <Sparkles className="w-5 h-5 text-[#C5A880]" />
-                <h2 className="text-2xl sm:text-3xl font-serif text-[#F4EFEA] tracking-wide">
-                  {lang === "en" ? "Signatures & Best Sellers" : "Bộ Sưu Tập Tiêu Biểu"}
-                </h2>
-              </div>
-              <span className="text-xs tracking-widest text-[#C5A880] uppercase font-sans border-b border-[#C5A880]/30 pb-1 hidden sm:inline-block">
-                {lang === "en" ? "Interactive Water Distortion" : "Chạm lướt gợn sóng"}
-              </span>
-              <span className="text-xs tracking-widest text-[#C5A880] uppercase font-sans border-b border-[#C5A880]/30 pb-1 sm:hidden">
-                {lang === "en" ? "Curated Specialties" : "Món tuyển chọn"}
-              </span>
+        {/* Danh sách thức uống dạng List/Accordion tối giản */}
+        <div className="divide-y divide-[#D4AF37]/15">
+          {isLoading ? (
+            <div className="py-20 text-center text-xs font-mono text-[#D4AF37] animate-pulse">
+              Đang pha chế thực đơn...
             </div>
+          ) : filteredMenu.length === 0 ? (
+            <div className="py-20 text-center text-xs font-light text-[#F4EFEA]/50">
+              Không tìm thấy thức uống phù hợp.
+            </div>
+          ) : (
+            filteredMenu.map((item, idx) => {
+              const displayName = lang === "en" && item.nameEn ? item.nameEn : item.name;
+              const previewImg =
+                CATEGORY_IMAGES[item.category] || "/uploads/gallery/1788250253560-200373033.jpg";
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full">
-              {FEATURED_SIGNATURES.map((feat, idx) => (
+              return (
                 <motion.div
-                  key={feat.name}
-                  initial={{ opacity: 0, y: 60 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.7, delay: idx * 0.12, ease: [0.76, 0, 0.24, 1] }}
+                  key={item.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: Math.min(idx * 0.03, 0.5) }}
+                  onMouseEnter={() => setHoveredMedia({ image: previewImg, name: displayName })}
+                  onMouseLeave={() => setHoveredMedia(null)}
+                  className="group py-6 sm:py-8 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 cursor-pointer transition-colors hover:bg-white/[0.02] px-2 sm:px-4 rounded-xl"
                 >
-                  <CardTilt 
-                    className="h-full w-full touch-pan-y"
-                    cardClassName="h-full w-full rounded-2xl bg-[#25150E]/60 backdrop-blur-md border border-[#C5A880]/25 overflow-hidden hover:border-[#C5A880]/80 transition-all duration-500 shadow-2xl flex flex-col group touch-pan-y"
-                  >
-                    {/* Liquid Distortion Image Container */}
-                    <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden bg-[#1A0F0A] touch-pan-y">
-                      <LiquidDistortImage
-                        src={feat.image}
-                        alt={feat.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none sm:pointer-events-auto touch-pan-y"
-                      />
-                      <div className="absolute top-3 left-3 z-20 pointer-events-none">
-                        <span className="inline-flex items-center gap-1.5 text-[10px] tracking-wider uppercase font-sans font-semibold bg-[#1A0F0A]/85 backdrop-blur-md text-[#C5A880] px-3 py-1 rounded-full border border-[#C5A880]/40 shadow-lg">
-                          <Star size={10} fill="currentColor" />
-                          {lang === "en" ? feat.tagEn : feat.tag}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-3 right-3 z-20 pointer-events-none">
-                        <span className="font-serif text-sm font-semibold text-[#1A0F0A] bg-[#C5A880] px-3 py-1 rounded-full shadow-lg">
-                          {formatPrice(feat.price)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Card Body */}
-                    <div className="p-5 flex-1 flex flex-col justify-between touch-pan-y">
-                      <div>
-                        <h3 className="text-lg font-serif text-[#F4EFEA] group-hover:text-[#C5A880] transition-colors">
-                          {lang === "en" ? feat.nameEn : feat.name}
-                        </h3>
-                        <p className="text-xs text-[#F4EFEA]/65 font-light mt-2 leading-relaxed line-clamp-3">
-                          {lang === "en" ? feat.descEn : feat.desc}
-                        </p>
-                      </div>
-                      <div className="mt-4 pt-3 border-t border-[#C5A880]/15 flex items-center justify-between text-[11px] text-[#C5A880]/80">
-                        <span className="flex items-center gap-1">
-                          <Coffee size={12} /> {lang === "en" ? "Handcrafted" : "Pha thủ công"}
-                        </span>
-                        <span className="uppercase tracking-wider font-mono text-[9px] text-[#F4EFEA]/40">
-                          CAMCU-SIGNATURE
-                        </span>
-                      </div>
-                    </div>
-                  </CardTilt>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Search Bar */}
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 1, 0.5, 1] }}
-          className="w-full max-w-xl mx-auto mb-10 relative px-1"
-        >
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5A880]/70 pointer-events-none" size={20} />
-          <input 
-            type="text" 
-            placeholder={t("menu.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#25150E]/80 backdrop-blur-md border border-[#C5A880]/30 text-[#F4EFEA] pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:border-[#C5A880] transition-colors placeholder:text-[#F4EFEA]/40 shadow-lg touch-pan-y"
-          />
-        </motion.div>
-
-        {/* Filter Tabs */}
-        {isMounted && (
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
-            className="w-full max-w-full overflow-x-auto no-scrollbar py-2 px-1 flex justify-start sm:justify-center mb-16 sm:mb-20 touch-pan-x"
-          >
-            <TabsSliding 
-              tabs={rawCategories.map(cat => ({ id: cat, label: getCategoryLabel(cat) }))}
-              activeTab={activeTab}
-              onChange={setActiveTab}
-              className="bg-[#25150E]/70 backdrop-blur-md border border-[#C5A880]/25 p-1.5 rounded-full [--tabs-pill-bg:#C5A880] [--tabs-bar-bg:transparent] shadow-xl shrink-0 flex-nowrap"
-              tabClassName="px-4 py-2 sm:px-6 sm:py-2.5 text-[10px] sm:text-xs tracking-widest uppercase font-sans whitespace-nowrap !text-[#F4EFEA]/70 hover:!text-[#C5A880] transition-colors [&.active]:!text-[#1A0F0A] [&.active]:font-semibold shrink-0"
-            />
-          </motion.div>
-        )}
-
-        {/* Menu Items with Deep Darkness Reveal on Scroll */}
-        {isMounted ? (
-          <div className="space-y-28 w-full max-w-full overflow-hidden">
-            {Object.keys(filteredMenu).length === 0 ? (
-              <div className="text-center py-20 text-[#F4EFEA]/50">
-                <p className="text-xl">{t("menu.noResults")}</p>
-                <button 
-                  onClick={() => { setSearchQuery(""); setActiveTab("all"); }} 
-                  className="mt-4 text-[#C5A880] hover:text-[#F4EFEA] underline underline-offset-4 cursor-pointer"
-                >
-                  {t("menu.clearFilter")}
-                </button>
-              </div>
-            ) : (
-              <AnimatePresence mode="popLayout">
-                {Object.entries(filteredMenu).map(([category, items]) => (
-                  <motion.div 
-                    key={category}
-                    layout
-                    initial={{ opacity: 0, y: 100 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-                    className="relative w-full max-w-full"
-                  >
-                    {/* Category Header */}
-                    <div className="flex items-center gap-4 mb-10">
-                      <div className="w-2 h-8 bg-gradient-to-b from-[#C5A880] to-[#8C6D46] rounded-full shrink-0"></div>
-                      <h3 className="text-2xl md:text-3xl font-serif text-[#F4EFEA] tracking-wide">
-                        {category}
+                  <div className="space-y-1.5 flex-1 pr-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-mono text-[#D4AF37]/60">
+                        {idx < 9 ? `0${idx + 1}` : idx + 1}
+                      </span>
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-[#F4EFEA] group-hover:text-[#FFE1B3] group-hover:translate-x-1.5 transition-all duration-300">
+                        {displayName}
                       </h3>
-                      <div className="h-[1px] flex-1 bg-gradient-to-r from-[#C5A880]/40 via-[#C5A880]/15 to-transparent"></div>
+                      {!item.inStock && (
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono bg-rose-950/60 border border-rose-600/40 text-rose-300">
+                          Tạm hết
+                        </span>
+                      )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 w-full max-w-full">
-                      {items.map((item) => {
-                        const isBestSeller = BEST_SELLERS_NAMES.includes(item.name) || BEST_SELLERS_NAMES.includes(item.nameEn);
-                        const displayName = lang === "en" ? (item.nameEn || item.name) : item.name;
-                        return (
-                          <motion.div 
-                            key={item.id}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-30px" }}
-                            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            className="w-full max-w-full"
-                          >
-                            <CardTilt 
-                              className="h-full w-full block touch-pan-y" 
-                              cardClassName={`p-5 rounded-2xl bg-[#25150E]/50 backdrop-blur-sm border border-[#C5A880]/20 transition-all duration-300 shadow-lg touch-pan-y ${item.inStock ? 'hover:border-[#C5A880]/70 hover:bg-[#25150E]/80 hover:shadow-xl' : 'opacity-40 grayscale pointer-events-none'}`}
-                            >
-                              <div className="flex justify-between items-start gap-4">
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-lg font-serif text-[#F4EFEA] flex items-center gap-2 flex-wrap">
-                                    <span className="truncate">{displayName}</span>
-                                    {isBestSeller && item.inStock && (
-                                      <span 
-                                        className="inline-flex items-center gap-1 text-[9px] uppercase bg-[#C5A880]/20 px-2.5 py-0.5 rounded-full border border-[#C5A880]/50 font-sans font-semibold tracking-wider text-[#C5A880] shrink-0"
-                                      >
-                                        <Star size={9} fill="currentColor" /> {t("menu.bestSeller")}
-                                      </span>
-                                    )}
-                                    {!item.inStock && (
-                                      <span className="text-[9px] uppercase bg-[#25150E] text-[#F4EFEA]/50 px-2 py-0.5 rounded-full font-sans shrink-0">
-                                        {t("menu.outOfStock")}
-                                      </span>
-                                    )}
-                                  </h4>
-                                  {item.desc && (
-                                    <p className="text-[#F4EFEA]/65 font-light text-xs mt-2 line-clamp-2 leading-relaxed">
-                                      {item.desc}
-                                    </p>
-                                  )}
-                                </div>
-                                <span className="text-[#C5A880] font-sans font-medium whitespace-nowrap text-sm bg-[#1A0F0A]/90 px-3 py-1 rounded-full border border-[#C5A880]/30 shadow-inner shrink-0">
-                                  {formatPrice(item.price)}
-                                </span>
-                              </div>
-                            </CardTilt>
-                          </motion.div>
-                        );
-                      })}
+                    <div className="text-[11px] font-mono uppercase tracking-widest text-[#D4AF37]/75">
+                      {item.category}
                     </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            )}
-          </div>
-        ) : null}
+                  </div>
+
+                  {/* Giá tiền thanh mảnh nằm góc phải */}
+                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-baseline">
+                    <span className="text-base sm:text-xl font-serif font-medium text-[#F4EFEA] group-hover:text-[#D4AF37] transition-colors">
+                      {formatPrice(item.price)}
+                    </span>
+                    <ArrowUpRight
+                      size={16}
+                      className="text-[#D4AF37]/50 group-hover:text-[#D4AF37] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all opacity-0 group-hover:opacity-100"
+                    />
+                  </div>
+                </motion.div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Footer ghi chú nguyên bản */}
+        <div className="pt-16 pb-8 text-center text-xs font-mono text-[#D4AF37]/70 space-y-1">
+          <p>Tất cả thức uống được pha chế thủ công bằng nguồn nước suối nguồn thanh khiết</p>
+          <p className="text-[10px] text-[#F4EFEA]/40 font-serif italic">
+            Cẩm Cù House • Mộc mạc và nguyên sơ
+          </p>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
