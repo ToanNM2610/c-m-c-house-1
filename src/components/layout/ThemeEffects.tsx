@@ -18,6 +18,7 @@ export default function ThemeEffects() {
         <div className="orb orb-3"></div>
       </div>
       <div className="grain-overlay shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]"></div>
+      <div className="cinematic-vignette"></div>
     </>
   );
 }

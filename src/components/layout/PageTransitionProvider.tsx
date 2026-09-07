@@ -26,9 +26,9 @@ export default function PageTransitionProvider({
         transition={{ duration: 0.45, ease: [0.76, 0, 0.24, 1] }}
         className="w-full relative"
       >
-        {/* Bức màn đen obsidian che màn hình và mở ra mượt mà khi chuyển trang */}
+        {/* Bức màn đen espresso che màn hình và mở ra mượt mà khi chuyển trang */}
         <motion.div
-          className="fixed inset-0 bg-[#0C0705] z-[99990] pointer-events-none"
+          className="fixed inset-0 bg-[#0A0908] z-[99990] pointer-events-none"
           initial={{ scaleY: 1 }}
           animate={{ scaleY: 0 }}
           exit={{ scaleY: 1 }}

@@ -1,18 +1,13 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import dynamic from "next/dynamic";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Coffee, Sparkles, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, Coffee, ArrowUpRight } from "lucide-react";
 import { useMenu } from "@/hooks/useMenu";
 import { useLanguage } from "@/context/LanguageContext";
 import HoverMediaReveal, { HoverMediaItem } from "@/components/ui/HoverMediaReveal";
 
-const CoffeeSmokeShader = dynamic(() => import("@/components/3d/CoffeeSmokeShader"), {
-  ssr: false,
-});
-
-// Bộ sưu tập ảnh đại diện chất lượng cao khi hover món
+// Bộ ảnh chụp chất lượng cao cho từng danh mục thức uống
 const CATEGORY_IMAGES: Record<string, string> = {
   "CÀ PHÊ": "/uploads/gallery/1788250253560-200373033.jpg",
   "TRÀ": "/uploads/gallery/1788250253562-580915883.jpg",
@@ -48,89 +43,86 @@ export default function MenuPage() {
   }, [menu, activeCategory, searchQuery]);
 
   return (
-    <div className="relative min-h-screen bg-[#0C0705] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705] pt-28 pb-36">
-      {/* 1. Làn khói WebGL Cà Phê Chuyển Động Chậm */}
-      <CoffeeSmokeShader />
-
-      {/* 2. Khung ảnh trôi theo con trỏ chuột khi hover món */}
+    <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
+      
+      {/* Micro-interaction: Khung ảnh trôi theo con trỏ chuột khi rê chuột vào tên món */}
       <HoverMediaReveal activeItem={hoveredMedia} />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12">
-        {/* Header Trang Thực Đơn */}
-        <header className="text-center py-12 md:py-16 space-y-4 border-b border-[#D4AF37]/20">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#D4AF37]">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-12">
+        {/* Header Tối Giản & Tĩnh Lặng */}
+        <header className="text-center py-12 md:py-20 space-y-4 border-b border-white/10">
+          <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#D4AF37]">
             <Coffee size={13} />
-            <span>ARTISANAL ROASTS & INFUSIONS</span>
+            <span>ARTISANAL ROASTS • TĨNH LẶNG & THÔ MỘC</span>
           </div>
 
           <h1
             data-cursor-diff
-            className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold tracking-tight text-[#F4EFEA]"
+            className="text-4xl sm:text-6xl md:text-7xl font-serif font-light tracking-tight text-[#F4EFEA]"
           >
             THỰC ĐƠN <span className="italic font-light text-[#D4AF37]">MỘC</span>
           </h1>
 
-          <p className="max-w-xl mx-auto text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
+          <p className="max-w-md mx-auto text-xs sm:text-sm font-light text-[#F4EFEA]/70 leading-relaxed">
             {lang === "en"
-              ? "Firewood-roasted highland beans, botanical Hoya blossom blends, and pure farm tonics."
-              : "Hương cà phê mộc rang trên củi khô Tây Nguyên, trà thảo mộc hoa cẩm cù và thức uống từ quả chín vườn nhà."}
+              ? "Firewood-roasted highland beans, pure spring water, and wild botanical infusions. Nothing artificial."
+              : "Hạt cà phê rang củi Đắk Nông, nước suối nguồn thanh sạch và thảo mộc tự nhiên. Không hương liệu nhân tạo."}
           </p>
 
-          {/* Bộ chuyển đổi tiền tệ [VNĐ / USD] thanh lịch */}
-          <div className="pt-4 flex items-center justify-center gap-3">
-            <span className="text-[11px] font-mono text-[#D4AF37]/80 uppercase tracking-widest">Tiền tệ:</span>
-            <div className="inline-flex items-center rounded-full border border-[#D4AF37]/30 bg-black/50 p-1">
-              <button
-                onClick={() => setCurrency("VND")}
-                className={`px-3 py-1 rounded-full text-xs font-mono transition-colors ${
-                  currency === "VND"
-                    ? "bg-[#D4AF37] text-[#0C0705] font-bold"
-                    : "text-[#F4EFEA]/70 hover:text-white"
-                }`}
-              >
-                VNĐ
-              </button>
-              <button
-                onClick={() => setCurrency("USD")}
-                className={`px-3 py-1 rounded-full text-xs font-mono transition-colors ${
-                  currency === "USD"
-                    ? "bg-[#D4AF37] text-[#0C0705] font-bold"
-                    : "text-[#F4EFEA]/70 hover:text-white"
-                }`}
-              >
-                USD ($)
-              </button>
-            </div>
+          {/* Bộ chuyển đổi tiền tệ [VNĐ / USD] tối giản */}
+          <div className="pt-4 flex items-center justify-center gap-2 text-xs font-mono">
+            <span className="text-[#F4EFEA]/40 uppercase tracking-widest text-[10px]">Đơn vị:</span>
+            <button
+              onClick={() => setCurrency("VND")}
+              className={`px-3 py-1 transition-colors ${
+                currency === "VND"
+                  ? "text-[#D4AF37] font-semibold border-b border-[#D4AF37]"
+                  : "text-[#F4EFEA]/40 hover:text-[#F4EFEA]"
+              }`}
+            >
+              VNĐ
+            </button>
+            <span className="text-[#F4EFEA]/20">/</span>
+            <button
+              onClick={() => setCurrency("USD")}
+              className={`px-3 py-1 transition-colors ${
+                currency === "USD"
+                  ? "text-[#D4AF37] font-semibold border-b border-[#D4AF37]"
+                  : "text-[#F4EFEA]/40 hover:text-[#F4EFEA]"
+              }`}
+            >
+              USD ($)
+            </button>
           </div>
         </header>
 
-        {/* Thanh tìm kiếm & Tabs lọc danh mục */}
-        <div className="py-8 space-y-6">
-          {/* Ô tìm kiếm viền mảnh tối giản */}
-          <div className="relative max-w-md mx-auto">
+        {/* Thanh tìm kiếm & Tabs lọc tối giản */}
+        <div className="py-10 space-y-6">
+          {/* Ô tìm kiếm dạng gạch dưới thanh mảnh */}
+          <div className="relative max-w-sm mx-auto">
             <Search
-              size={16}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D4AF37]"
+              size={15}
+              className="absolute left-0 top-1/2 -translate-y-1/2 text-[#D4AF37]"
             />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={lang === "en" ? "Search drinks, coffee..." : "Tìm tên thức uống, cà phê..."}
-              className="w-full pl-11 pr-4 py-3 rounded-full bg-black/40 border border-[#D4AF37]/30 text-[#F4EFEA] text-xs font-sans placeholder-[#F4EFEA]/35 focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-all"
+              placeholder={lang === "en" ? "Search drinks, coffee..." : "Tìm tên thức uống..."}
+              className="w-full pl-7 pr-4 py-2 bg-transparent border-b border-white/15 text-[#F4EFEA] text-xs font-sans placeholder-[#F4EFEA]/30 focus:outline-none focus:border-[#D4AF37] transition-colors"
             />
           </div>
 
-          {/* Danh mục dạng Pills mượt mà */}
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+          {/* Danh mục dạng Text Tabs phẳng */}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-2">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-[11px] font-mono tracking-wider transition-all duration-300 ${
+                className={`text-[11px] font-mono tracking-widest uppercase transition-colors duration-300 pb-1 ${
                   activeCategory === cat
-                    ? "bg-[#D4AF37] text-[#0C0705] font-bold shadow-[0_0_20px_rgba(212,175,55,0.4)]"
-                    : "bg-black/30 border border-[#D4AF37]/20 text-[#F4EFEA]/75 hover:border-[#D4AF37]/60 hover:text-[#F4EFEA]"
+                    ? "text-[#D4AF37] border-b-2 border-[#D4AF37] font-semibold"
+                    : "text-[#F4EFEA]/50 hover:text-[#F4EFEA]"
                 }`}
               >
                 {cat}
@@ -139,15 +131,15 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* Danh sách thức uống dạng List/Accordion tối giản */}
-        <div className="divide-y divide-[#D4AF37]/15">
+        {/* Danh sách thức uống Text-Focused Tinh Tế Tuyệt Đối */}
+        <div className="divide-y divide-white/5">
           {isLoading ? (
-            <div className="py-20 text-center text-xs font-mono text-[#D4AF37] animate-pulse">
-              Đang pha chế thực đơn...
+            <div className="py-24 text-center text-xs font-mono text-[#D4AF37] animate-pulse">
+              Đang chuẩn bị thức uống mộc...
             </div>
           ) : filteredMenu.length === 0 ? (
-            <div className="py-20 text-center text-xs font-light text-[#F4EFEA]/50">
-              Không tìm thấy thức uống phù hợp.
+            <div className="py-24 text-center text-xs font-light text-[#F4EFEA]/40">
+              Không có thức uống phù hợp.
             </div>
           ) : (
             filteredMenu.map((item, idx) => {
@@ -158,41 +150,35 @@ export default function MenuPage() {
               return (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35, delay: Math.min(idx * 0.03, 0.5) }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: Math.min(idx * 0.02, 0.4) }}
                   onMouseEnter={() => setHoveredMedia({ image: previewImg, name: displayName })}
                   onMouseLeave={() => setHoveredMedia(null)}
-                  className="group py-6 sm:py-8 flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 cursor-pointer transition-colors hover:bg-white/[0.02] px-2 sm:px-4 rounded-xl"
+                  className="group py-6 sm:py-7 flex items-baseline justify-between gap-6 cursor-pointer hover:bg-white/[0.015] px-2 sm:px-4 transition-colors duration-300"
                 >
-                  <div className="space-y-1.5 flex-1 pr-4">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[11px] font-mono text-[#D4AF37]/60">
-                        {idx < 9 ? `0${idx + 1}` : idx + 1}
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-[10px] font-mono text-[#F4EFEA]/30 w-6">
+                      {idx < 9 ? `0${idx + 1}` : idx + 1}
+                    </span>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-[#F4EFEA] group-hover:text-[#D4AF37] group-hover:translate-x-2 transition-all duration-300">
+                      {displayName}
+                    </h3>
+                    {!item.inStock && (
+                      <span className="text-[9px] font-mono text-rose-400/70 border border-rose-800/40 px-2 py-0.5 rounded-full">
+                        Hết
                       </span>
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-[#F4EFEA] group-hover:text-[#FFE1B3] group-hover:translate-x-1.5 transition-all duration-300">
-                        {displayName}
-                      </h3>
-                      {!item.inStock && (
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono bg-rose-950/60 border border-rose-600/40 text-rose-300">
-                          Tạm hết
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="text-[11px] font-mono uppercase tracking-widest text-[#D4AF37]/75">
-                      {item.category}
-                    </div>
+                    )}
                   </div>
 
                   {/* Giá tiền thanh mảnh nằm góc phải */}
-                  <div className="flex items-center gap-3 shrink-0 self-end sm:self-baseline">
-                    <span className="text-base sm:text-xl font-serif font-medium text-[#F4EFEA] group-hover:text-[#D4AF37] transition-colors">
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-sm sm:text-base font-mono text-[#D4AF37] group-hover:text-[#FFE1B3] transition-colors">
                       {formatPrice(item.price)}
                     </span>
                     <ArrowUpRight
-                      size={16}
-                      className="text-[#D4AF37]/50 group-hover:text-[#D4AF37] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all opacity-0 group-hover:opacity-100"
+                      size={14}
+                      className="text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity"
                     />
                   </div>
                 </motion.div>
@@ -201,11 +187,11 @@ export default function MenuPage() {
           )}
         </div>
 
-        {/* Footer ghi chú nguyên bản */}
-        <div className="pt-16 pb-8 text-center text-xs font-mono text-[#D4AF37]/70 space-y-1">
-          <p>Tất cả thức uống được pha chế thủ công bằng nguồn nước suối nguồn thanh khiết</p>
-          <p className="text-[10px] text-[#F4EFEA]/40 font-serif italic">
-            Cẩm Cù House • Mộc mạc và nguyên sơ
+        {/* Footer ghi chú mộc mạc */}
+        <div className="pt-20 pb-8 text-center text-[11px] font-mono text-[#F4EFEA]/40 space-y-1">
+          <p>Tất cả thức uống được pha chế thủ công tại hiên nhà</p>
+          <p className="text-[10px] text-[#D4AF37]/60 font-serif italic">
+            Cẩm Cù House • Gia Nghĩa, Đắk Nông
           </p>
         </div>
       </div>

@@ -154,7 +154,7 @@ export default function SpacePage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#0C0705] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705]">
+    <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]">
       
       {/* ========================================================= */}
       {/* 1. INTRO EDITORIAL HEADER                                 */}
@@ -194,7 +194,7 @@ export default function SpacePage() {
       {/* ========================================================= */}
       <section
         ref={horizontalSectionRef}
-        className="relative w-full overflow-hidden bg-[#0C0705] py-16 md:py-0"
+        className="relative w-full overflow-hidden bg-[#0A0908] py-16 md:py-0"
       >
         <div
           ref={horizontalTrackRef}

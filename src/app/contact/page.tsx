@@ -6,14 +6,24 @@ import { motion } from "framer-motion";
 import { MapPin, Clock, Phone, Compass, ArrowUpRight, Send, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-const GlowingOrb3D = dynamic(() => import("@/components/3d/GlowingOrb3D"), {
+const Contact3DScene = dynamic(() => import("@/components/3d/Contact3DScene"), {
   ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[480px] flex items-center justify-center bg-[#0A0908]">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border border-[#D4AF37]/30 border-t-[#D4AF37] rounded-full animate-spin" />
+        <p className="text-[11px] font-mono text-[#D4AF37]/70 uppercase tracking-widest">
+          Khởi tạo Quả Địa Cầu 3D...
+        </p>
+      </div>
+    </div>
+  ),
 });
 
 const GOOGLE_MAPS_URL = "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
 
 export default function ContactPage() {
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
 
   const [name, setName] = useState("");
   const [contactInfo, setContactInfo] = useState("");
@@ -49,78 +59,77 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#0C0705] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0C0705] pt-28 pb-36">
+    <div className="relative min-h-screen bg-[#0A0908] text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908] pt-32 pb-36">
       
-      {/* Khối cầu ánh sáng Glowing Orb 3D trung tâm lơ lửng phía sau */}
-      <div className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center opacity-70">
-        <div className="w-[500px] h-[500px] sm:w-[680px] sm:h-[680px]">
-          <GlowingOrb3D />
-        </div>
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12">
-        {/* Header Heading Siêu To Khổng Lồ */}
-        <header className="text-center py-12 md:py-20 space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-black/50 text-[10px] sm:text-xs font-mono uppercase tracking-[0.28em] text-[#D4AF37]">
+        {/* ========================================================= */}
+        {/* 1. HEADER: LỜI TỰ TÌNH CỦA CHỦ QUÁN                       */}
+        {/* ========================================================= */}
+        <header className="py-12 md:py-16 max-w-4xl space-y-6">
+          <div className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-mono uppercase tracking-[0.35em] text-[#D4AF37]">
             <Compass size={13} />
-            <span>CONNECT & SANCTUARY INQUIRY</span>
+            <span>THE BEACON • GIA NGHĨA, ĐẮK NÔNG (11.98° N, 107.70° E)</span>
           </div>
 
           <h1
             data-cursor-diff
-            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-bold tracking-tight text-[#F4EFEA] leading-[1.05]"
+            className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight text-[#F4EFEA] leading-[1.05]"
           >
-            {lang === "en" ? "SAY HELLO" : "GHÉ CHƠI"}
+            TỪ GIA NGHĨA, <br />
+            <span className="italic font-light text-[#D4AF37]">TÔI CHỜ ĐÓN BẠN.</span>
           </h1>
 
-          <p className="max-w-xl mx-auto text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
+          <p className="text-sm sm:text-lg font-light text-[#F4EFEA]/80 leading-relaxed max-w-2xl">
             {lang === "en"
-              ? "Leave a gentle note, ask for directions, or just drop by for a cup of firewood coffee by the stream."
-              : "Để lại một lời nhắn mộc mạc, hỏi thăm đường đi hoặc ghé quán thưởng thức tách cà phê rang củi bên bờ suối."}
+              ? "Wherever you may journey from on this Earth, Cẩm Cù House keeps a quiet timber patio and a warm cup of firewood coffee waiting for your soul."
+              : "Dù bạn đến từ đâu trên quả địa cầu này, Cẩm Cù House luôn dành sẵn một góc hiên nhà và một tách cà phê mộc cho tâm hồn bạn."}
           </p>
         </header>
 
-        {/* 2 Cột: Form Floating Lines & La Bàn Tọa Độ Minimal */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-8">
+
+        {/* ========================================================= */}
+        {/* 2. CHIA ĐÔI MÀN HÌNH: FORM TỐI GIẢN & QUẢ ĐỊA CẦU 3D      */}
+        {/* ========================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start mt-4">
           
-          {/* Cột 1 (7 Cols): Floating Lines Contact Form */}
-          <div className="lg:col-span-7 bg-black/40 backdrop-blur-xl border border-[#D4AF37]/20 rounded-3xl p-8 sm:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.85)]">
-            <div className="mb-8">
+          {/* CỘT 1 (6 Cols): FORM GỬI LỜI NHẮN DẠNG FLOATING LINES */}
+          <div className="lg:col-span-6 space-y-8">
+            <div className="border-b border-white/10 pb-4">
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block mb-1">
-                LỜI NHẮN LỮ KHÁCH
+                SỔ LƯU BÚT LỮ KHÁCH
               </span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#F4EFEA]">
+              <h2 className="text-2xl sm:text-3xl font-serif font-light text-[#F4EFEA]">
                 Gửi Lời Nhắn Về Hiên Quán
               </h2>
             </div>
 
             {isSuccess ? (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="py-12 text-center space-y-4"
+                className="py-12 space-y-4"
               >
-                <div className="w-14 h-14 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37] flex items-center justify-center mx-auto text-[#D4AF37]">
-                  <CheckCircle2 size={28} />
+                <div className="w-12 h-12 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37] flex items-center justify-center text-[#D4AF37]">
+                  <CheckCircle2 size={24} />
                 </div>
-                <h3 className="text-xl font-serif font-bold text-[#F4EFEA]">
-                  Đã nhận lời nhắn của bạn!
+                <h3 className="text-xl font-serif font-medium text-[#F4EFEA]">
+                  Đã lưu lại lời nhắn của bạn!
                 </h3>
-                <p className="text-xs text-[#F4EFEA]/75 max-w-sm mx-auto">
-                  Cẩm Cù House đã lưu lại dòng tâm sự ấm áp này. Chúc bạn một hành trình luôn bình an và thong thả.
+                <p className="text-xs text-[#F4EFEA]/70 max-w-md leading-relaxed">
+                  Cẩm Cù House đã nhận được dòng tâm tình này. Cảm ơn bạn và mong sớm được đón tiếp bạn bên bờ suối.
                 </p>
                 <button
                   onClick={() => setIsSuccess(false)}
-                  className="mt-4 px-6 py-2 rounded-full border border-[#D4AF37]/40 text-xs font-mono uppercase tracking-widest text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0C0705] transition-colors"
+                  className="mt-4 text-xs font-mono uppercase tracking-widest text-[#D4AF37] hover:underline"
                 >
-                  Gửi lời nhắn khác
+                  ← Gửi lời nhắn khác
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-10">
                 {/* Dòng 1: Tên lữ khách */}
                 <div className="relative group">
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#D4AF37]/80 mb-2">
+                  <label className="block text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]/70 mb-2">
                     Tên của bạn *
                   </label>
                   <input
@@ -128,137 +137,94 @@ export default function ContactPage() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Nguyễn Văn A..."
-                    className="w-full bg-transparent border-b border-[#D4AF37]/25 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/25 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
+                    placeholder="Bạn tên là gì..."
+                    className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/20 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
                   />
                 </div>
 
                 {/* Dòng 2: Số điện thoại hoặc email */}
                 <div className="relative group">
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#D4AF37]/80 mb-2">
-                    Số điện thoại hoặc Email (tùy chọn)
+                  <label className="block text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]/70 mb-2">
+                    Cách liên hệ lại (Số điện thoại / Email - tùy chọn)
                   </label>
                   <input
                     type="text"
                     value={contactInfo}
                     onChange={(e) => setContactInfo(e.target.value)}
-                    placeholder="0987... hoặc email@..."
-                    className="w-full bg-transparent border-b border-[#D4AF37]/25 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/25 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
+                    placeholder="Để lại số điện thoại hoặc email nếu cần phản hồi..."
+                    className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/20 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300"
                   />
                 </div>
 
-                {/* Dòng 3: Lời nhắn gửi */}
+                {/* Dòng 3: Lời nhắn */}
                 <div className="relative group">
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-[#D4AF37]/80 mb-2">
-                    Lời chia sẻ hoặc lời nhắn *
+                  <label className="block text-[10px] font-mono uppercase tracking-widest text-[#D4AF37]/70 mb-2">
+                    Lời nhắn gửi *
                   </label>
                   <textarea
                     required
                     rows={4}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Gửi gắm cảm xúc, hỏi thăm giờ ghé chơi hoặc đặt trước góc ngồi..."
-                    className="w-full bg-transparent border-b border-[#D4AF37]/25 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/25 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300 resize-none"
+                    placeholder="Chia sẻ đôi dòng tâm sự, hỏi thăm đường đi hay góc bàn bên bờ suối..."
+                    className="w-full bg-transparent border-b border-white/20 pb-3 text-sm font-sans text-[#F4EFEA] placeholder-[#F4EFEA]/20 focus:outline-none focus:border-[#D4AF37] transition-colors duration-300 resize-none"
                   />
                 </div>
 
-                {/* Nút gửi mạ vàng */}
-                <div className="pt-2">
+                {/* Nút gửi tối giản */}
+                <div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#E5C07B] to-[#FFE1B3] text-[#0C0705] font-semibold text-xs font-mono uppercase tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_25px_rgba(212,175,55,0.4)] cursor-pointer"
+                    className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#0A0908] bg-[#D4AF37] hover:bg-[#FFE1B3] px-8 py-3.5 rounded-full font-semibold transition-colors duration-300 cursor-pointer shadow-lg"
                   >
-                    <Send size={14} />
-                    <span>{isSubmitting ? "Đang gửi đi..." : "Gửi Lời Nhắn"}</span>
+                    <Send size={13} />
+                    <span>{isSubmitting ? "Đang gửi..." : "Gửi Về Cẩm Cù House"}</span>
                   </button>
                 </div>
               </form>
             )}
+
+            {/* Thông tin tọa độ & liên hệ vắn tắt */}
+            <div className="pt-8 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block">
+                  ĐỊA CHỈ HIÊN QUÁN
+                </span>
+                <p className="font-light text-[#F4EFEA]/80 leading-relaxed">
+                  Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
+                </p>
+                <a
+                  href={GOOGLE_MAPS_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] font-mono text-[#D4AF37] hover:underline pt-1"
+                >
+                  <span>Chỉ đường trên Google Maps</span>
+                  <ArrowUpRight size={11} />
+                </a>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block">
+                  GIỜ MỞ CỬA & HOTLINE
+                </span>
+                <p className="font-light text-[#F4EFEA]/80">07:00 – 22:00 (Mỗi ngày)</p>
+                <a
+                  href="tel:0382851688"
+                  className="block font-mono text-[#D4AF37] hover:underline pt-1"
+                >
+                  038 285 1688
+                </a>
+              </div>
+            </div>
           </div>
 
-          {/* Cột 2 (5 Cols): Tọa Độ & Thông Tin Không Gian Minimal */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Thẻ La Bàn Tọa Độ Vĩ Tuyến/Kinh Tuyến */}
-            <div className="p-8 rounded-3xl bg-black/40 backdrop-blur-xl border border-[#D4AF37]/25 space-y-6 shadow-xl">
-              <div className="flex items-center justify-between border-b border-[#D4AF37]/15 pb-4">
-                <span className="text-[11px] font-mono uppercase tracking-widest text-[#D4AF37]">
-                  GPS COORDINATES
-                </span>
-                <Compass size={18} className="text-[#D4AF37] animate-spin-slow" />
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between items-baseline">
-                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Vĩ độ (Latitude):</span>
-                  <span className="text-sm font-mono text-[#D4AF37] font-semibold">11°58&apos;33&quot; N</span>
-                </div>
-                <div className="flex justify-between items-baseline">
-                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Kinh độ (Longitude):</span>
-                  <span className="text-sm font-mono text-[#D4AF37] font-semibold">107°42&apos;11&quot; E</span>
-                </div>
-                <div className="flex justify-between items-baseline">
-                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Độ cao:</span>
-                  <span className="text-sm font-mono text-[#F4EFEA]/80">~620m trên mực nước biển</span>
-                </div>
-                <div className="flex justify-between items-baseline">
-                  <span className="text-xs text-[#F4EFEA]/60 font-mono">Khu vực:</span>
-                  <span className="text-sm font-mono text-[#F4EFEA]/80">TP. Gia Nghĩa, Đắk Nông</span>
-                </div>
-              </div>
-
-              <a
-                href={GOOGLE_MAPS_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-3.5 rounded-full border border-[#D4AF37]/50 hover:border-[#D4AF37] text-xs font-mono uppercase tracking-widest text-[#F4EFEA] hover:text-[#D4AF37] flex items-center justify-center gap-2 transition-all bg-black/30 hover:bg-black/60"
-              >
-                <span>Mở Bản Đồ Chỉ Đường</span>
-                <ArrowUpRight size={14} />
-              </a>
+          {/* CỘT 2 (6 Cols): WEBGL 3D EARTH GLOBE VỚI BEACON ĐẮK NÔNG */}
+          <div className="lg:col-span-6 sticky top-28">
+            <div className="w-full h-[460px] sm:h-[560px] rounded-3xl overflow-hidden border border-white/10 bg-black/60 shadow-[0_20px_60px_rgba(0,0,0,0.9)] relative">
+              <Contact3DScene />
             </div>
-
-            {/* Thẻ Giờ Mở Cửa & Hotline */}
-            <div className="p-8 rounded-3xl bg-black/40 backdrop-blur-xl border border-[#D4AF37]/20 space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-1">
-                  <Clock size={18} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-serif font-bold text-[#F4EFEA]">Giờ Đón Khách</h4>
-                  <p className="text-xs text-[#F4EFEA]/75 mt-1 font-mono">07:00 – 22:00 (Mỗi ngày)</p>
-                  <p className="text-[11px] text-[#D4AF37]/70 mt-0.5">Không gian suối đón khách quanh năm</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 pt-4 border-t border-white/5">
-                <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-1">
-                  <MapPin size={18} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-serif font-bold text-[#F4EFEA]">Địa Chỉ Hiên Quán</h4>
-                  <p className="text-xs text-[#F4EFEA]/75 mt-1 leading-relaxed">
-                    Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4 pt-4 border-t border-white/5">
-                <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-1">
-                  <Phone size={18} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-serif font-bold text-[#F4EFEA]">Đường Dây Nóng</h4>
-                  <a
-                    href="tel:0382851688"
-                    className="text-sm font-mono text-[#D4AF37] hover:underline block mt-1"
-                  >
-                    038 285 1688
-                  </a>
-                </div>
-              </div>
-            </div>
-
           </div>
 
         </div>

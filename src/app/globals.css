@@ -2,12 +2,12 @@
 @import "./transitions.css";
 
 :root {
-  --background: #1A0F0A; /* Deep Espresso Brown */
-  --foreground: #F4EFEA; /* Warm Beige */
-  --primary: #1A0F0A;
+  --background: #0A0908; /* Deep Obsidian Espresso */
+  --foreground: #F4EFEA; /* Warm Beige / Champagne */
+  --primary: #0A0908;
   --secondary: #F4EFEA;
   --accent: #4A5D4E;    /* Olive Green */
-  --gold: #C5A880;      /* Muted Gold */
+  --gold: #D4AF37;      /* Muted Gold / Champagne */
 
   /* ── Motion tokens — shared scale ────────────────────────────── */
   --duration-stagger: 40ms;
@@ -358,15 +358,24 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Texture & Grain Mộc Mạc */
+/* Texture & Grain Mộc Mạc 35mm */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 40;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.035;
+  opacity: 0.04;
   mix-blend-mode: overlay;
+}
+
+/* 4-Corner Cinematic Vignette */
+.cinematic-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 41;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(10, 9, 8, 0.75) 100%);
 }
 
 /* Ambient Cinematic Orbs (Pure Radial Gradient - Zero CPU/GPU Filter Blur Overhead) */
@@ -376,7 +385,7 @@ html.lenis, html.lenis body {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  background: #1A0F0A;
+  background: #0A0908;
 }
 
 .orb {
