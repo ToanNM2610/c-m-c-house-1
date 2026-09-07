@@ -93,14 +93,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang="vi" className="scroll-smooth max-w-[100vw] w-full overflow-x-hidden touch-pan-y" data-scroll-behavior="smooth">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${cormorant.variable} ${plusJakarta.variable} ${playfair.variable} antialiased font-sans bg-transparent text-[#F4EFEA] select-none`}>
+      <body className={`${cormorant.variable} ${plusJakarta.variable} ${playfair.variable} antialiased font-sans bg-transparent text-[#F4EFEA] select-none max-w-[100vw] w-full overflow-x-hidden touch-pan-y`}>
         <SecurityShield>
           <LanguageProvider>
             <BodyCursorController />
@@ -109,7 +109,7 @@ export default function RootLayout({
             <SmoothScroll>
               <ThemeEffects />
               <Header />
-              <main className="w-full min-h-screen">
+              <main className="w-full max-w-[100vw] overflow-x-hidden min-h-screen touch-pan-y">
                 {children}
               </main>
               <Footer />

@@ -33,7 +33,13 @@
 }
 
 /* 2. Card Hover Tilt */
-.t-tilt { touch-action: none; }
+.t-tilt { touch-action: pan-y; }
+@media (pointer: coarse), (max-width: 767px) {
+  .t-tilt,
+  .t-tilt-card {
+    touch-action: pan-y !important;
+  }
+}
 .t-tilt-card {
   position: relative;
   overflow: hidden;

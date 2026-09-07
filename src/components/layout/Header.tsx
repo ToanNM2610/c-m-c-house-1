@@ -155,7 +155,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[9999] w-full transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+        className={`fixed top-0 left-0 right-0 z-[9999] w-full max-w-[100vw] overflow-x-hidden transition-all duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] ${
           showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
         } ${
           isSubPage || isScrolled
@@ -163,7 +163,7 @@ export default function Header() {
             : "bg-transparent border-b border-transparent py-4 sm:py-5"
         } px-4 sm:px-8 md:px-10`}
       >
-        <div className="max-w-7xl mx-auto flex justify-between items-center gap-3">
+        <div className="w-full max-w-7xl mx-auto flex justify-between items-center gap-2 sm:gap-3">
           {/* Logo Thương hiệu: min-w-0 và truncate để không ép văng nút mobile trên màn hình hẹp */}
           <Link
             href="/"

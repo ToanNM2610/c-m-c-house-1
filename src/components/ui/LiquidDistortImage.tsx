@@ -39,7 +39,10 @@ export default function LiquidDistortImage({
     <div
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
-      className={`relative overflow-hidden rounded-2xl group cursor-pointer ${aspect} ${className}`}
+      className={`relative overflow-hidden rounded-2xl group ${
+        isMobile ? "pointer-events-none" : "cursor-pointer"
+      } touch-pan-y ${aspect} ${className}`}
+      style={{ touchAction: "pan-y" }}
     >
       {/* SVG Liquid Distortion Filter ẩn trong DOM - Chỉ render trên Desktop để bảo vệ GPU mobile */}
       {!isMobile && (
@@ -75,11 +78,14 @@ export default function LiquidDistortImage({
 
       {/* Ảnh món ăn: Trên Mobile dùng CSS transition nhẹ mượt mà, trên Desktop dùng hiệu ứng mặt nước */}
       <div
-        className="w-full h-full relative transition-transform duration-700 ease-out group-hover:scale-105"
+        className={`w-full h-full relative transition-transform duration-700 ease-out group-hover:scale-105 touch-pan-y ${
+          isMobile ? "pointer-events-none" : ""
+        }`}
         style={{
           filter: !isMobile && isHovered ? `url(#${filterId})` : "none",
           transition: !isMobile ? "filter 0.4s ease, transform 0.6s ease" : "transform 0.5s ease",
           willChange: isMobile ? "transform" : "auto",
+          touchAction: "pan-y",
         }}
       >
         <Image
@@ -87,7 +93,7 @@ export default function LiquidDistortImage({
           alt={alt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover pointer-events-none"
         />
       </div>
 

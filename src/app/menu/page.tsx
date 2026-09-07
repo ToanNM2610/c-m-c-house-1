@@ -141,11 +141,11 @@ export default function MenuPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans z-10 pt-32 pb-32">
+    <main className="relative min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-transparent text-[#F4EFEA] font-sans z-10 pt-28 sm:pt-32 pb-32 touch-pan-y">
       {/* 3D WebGL Background: Golden Aroma & Coffee Crystal Fog */}
       <Menu3DScene />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 overflow-x-hidden">
         
         {/* Header Title */}
         <div className="text-center mb-16">
@@ -162,7 +162,7 @@ export default function MenuPage() {
 
         {/* 3D Parallax Signature & Best Seller Showcase with Liquid Distortion */}
         {activeTab === "all" && !searchQuery.trim() && (
-          <section className="mb-24">
+          <section className="mb-24 w-full max-w-full overflow-hidden">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <Sparkles className="w-5 h-5 text-[#C5A880]" />
@@ -178,7 +178,7 @@ export default function MenuPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-full">
               {FEATURED_SIGNATURES.map((feat, idx) => (
                 <motion.div
                   key={feat.name}
@@ -188,23 +188,23 @@ export default function MenuPage() {
                   transition={{ duration: 0.7, delay: idx * 0.12, ease: [0.76, 0, 0.24, 1] }}
                 >
                   <CardTilt 
-                    className="h-full w-full"
-                    cardClassName="h-full rounded-2xl bg-[#25150E]/60 backdrop-blur-md border border-[#C5A880]/25 overflow-hidden hover:border-[#C5A880]/80 transition-all duration-500 shadow-2xl flex flex-col group"
+                    className="h-full w-full touch-pan-y"
+                    cardClassName="h-full w-full rounded-2xl bg-[#25150E]/60 backdrop-blur-md border border-[#C5A880]/25 overflow-hidden hover:border-[#C5A880]/80 transition-all duration-500 shadow-2xl flex flex-col group touch-pan-y"
                   >
                     {/* Liquid Distortion Image Container */}
-                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#1A0F0A]">
+                    <div className="relative aspect-[4/3] w-full max-w-full overflow-hidden bg-[#1A0F0A] touch-pan-y">
                       <LiquidDistortImage
                         src={feat.image}
                         alt={feat.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 pointer-events-none sm:pointer-events-auto touch-pan-y"
                       />
-                      <div className="absolute top-3 left-3 z-20">
+                      <div className="absolute top-3 left-3 z-20 pointer-events-none">
                         <span className="inline-flex items-center gap-1.5 text-[10px] tracking-wider uppercase font-sans font-semibold bg-[#1A0F0A]/85 backdrop-blur-md text-[#C5A880] px-3 py-1 rounded-full border border-[#C5A880]/40 shadow-lg">
                           <Star size={10} fill="currentColor" />
                           {lang === "en" ? feat.tagEn : feat.tag}
                         </span>
                       </div>
-                      <div className="absolute bottom-3 right-3 z-20">
+                      <div className="absolute bottom-3 right-3 z-20 pointer-events-none">
                         <span className="font-serif text-sm font-semibold text-[#1A0F0A] bg-[#C5A880] px-3 py-1 rounded-full shadow-lg">
                           {formatPrice(feat.price)}
                         </span>
@@ -212,7 +212,7 @@ export default function MenuPage() {
                     </div>
 
                     {/* Card Body */}
-                    <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div className="p-5 flex-1 flex flex-col justify-between touch-pan-y">
                       <div>
                         <h3 className="text-lg font-serif text-[#F4EFEA] group-hover:text-[#C5A880] transition-colors">
                           {lang === "en" ? feat.nameEn : feat.name}
@@ -242,15 +242,15 @@ export default function MenuPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 1, 0.5, 1] }}
-          className="max-w-xl mx-auto mb-10 relative"
+          className="w-full max-w-xl mx-auto mb-10 relative px-1"
         >
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5A880]/70" size={20} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5A880]/70 pointer-events-none" size={20} />
           <input 
             type="text" 
             placeholder={t("menu.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#25150E]/80 backdrop-blur-md border border-[#C5A880]/30 text-[#F4EFEA] pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:border-[#C5A880] transition-colors placeholder:text-[#F4EFEA]/40 shadow-lg"
+            className="w-full bg-[#25150E]/80 backdrop-blur-md border border-[#C5A880]/30 text-[#F4EFEA] pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:border-[#C5A880] transition-colors placeholder:text-[#F4EFEA]/40 shadow-lg touch-pan-y"
           />
         </motion.div>
 
@@ -260,21 +260,21 @@ export default function MenuPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
-            className="flex justify-center mb-20"
+            className="w-full max-w-full overflow-x-auto no-scrollbar py-2 px-1 flex justify-start sm:justify-center mb-16 sm:mb-20 touch-pan-x"
           >
             <TabsSliding 
               tabs={rawCategories.map(cat => ({ id: cat, label: getCategoryLabel(cat) }))}
               activeTab={activeTab}
               onChange={setActiveTab}
-              className="bg-[#25150E]/70 backdrop-blur-md border border-[#C5A880]/25 p-1.5 rounded-full [--tabs-pill-bg:#C5A880] [--tabs-bar-bg:transparent] shadow-xl"
-              tabClassName="px-4 py-2 sm:px-6 sm:py-2.5 text-[10px] sm:text-xs tracking-widest uppercase font-sans whitespace-nowrap !text-[#F4EFEA]/70 hover:!text-[#C5A880] transition-colors [&.active]:!text-[#1A0F0A] [&.active]:font-semibold"
+              className="bg-[#25150E]/70 backdrop-blur-md border border-[#C5A880]/25 p-1.5 rounded-full [--tabs-pill-bg:#C5A880] [--tabs-bar-bg:transparent] shadow-xl shrink-0 flex-nowrap"
+              tabClassName="px-4 py-2 sm:px-6 sm:py-2.5 text-[10px] sm:text-xs tracking-widest uppercase font-sans whitespace-nowrap !text-[#F4EFEA]/70 hover:!text-[#C5A880] transition-colors [&.active]:!text-[#1A0F0A] [&.active]:font-semibold shrink-0"
             />
           </motion.div>
         )}
 
         {/* Menu Items with Deep Darkness Reveal on Scroll */}
         {isMounted ? (
-          <div className="space-y-28">
+          <div className="space-y-28 w-full max-w-full overflow-hidden">
             {Object.keys(filteredMenu).length === 0 ? (
               <div className="text-center py-20 text-[#F4EFEA]/50">
                 <p className="text-xl">{t("menu.noResults")}</p>
@@ -295,18 +295,18 @@ export default function MenuPage() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-80px" }}
                     transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-                    className="relative"
+                    className="relative w-full max-w-full"
                   >
                     {/* Category Header */}
                     <div className="flex items-center gap-4 mb-10">
-                      <div className="w-2 h-8 bg-gradient-to-b from-[#C5A880] to-[#8C6D46] rounded-full"></div>
+                      <div className="w-2 h-8 bg-gradient-to-b from-[#C5A880] to-[#8C6D46] rounded-full shrink-0"></div>
                       <h3 className="text-2xl md:text-3xl font-serif text-[#F4EFEA] tracking-wide">
                         {category}
                       </h3>
                       <div className="h-[1px] flex-1 bg-gradient-to-r from-[#C5A880]/40 via-[#C5A880]/15 to-transparent"></div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 w-full max-w-full">
                       {items.map((item) => {
                         const isBestSeller = BEST_SELLERS_NAMES.includes(item.name) || BEST_SELLERS_NAMES.includes(item.nameEn);
                         const displayName = lang === "en" ? (item.nameEn || item.name) : item.name;
@@ -317,24 +317,25 @@ export default function MenuPage() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-30px" }}
                             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                            className="w-full max-w-full"
                           >
                             <CardTilt 
-                              className="h-full w-full block" 
-                              cardClassName={`p-5 rounded-2xl bg-[#25150E]/50 backdrop-blur-sm border border-[#C5A880]/20 transition-all duration-300 shadow-lg ${item.inStock ? 'hover:border-[#C5A880]/70 hover:bg-[#25150E]/80 hover:shadow-xl' : 'opacity-40 grayscale pointer-events-none'}`}
+                              className="h-full w-full block touch-pan-y" 
+                              cardClassName={`p-5 rounded-2xl bg-[#25150E]/50 backdrop-blur-sm border border-[#C5A880]/20 transition-all duration-300 shadow-lg touch-pan-y ${item.inStock ? 'hover:border-[#C5A880]/70 hover:bg-[#25150E]/80 hover:shadow-xl' : 'opacity-40 grayscale pointer-events-none'}`}
                             >
                               <div className="flex justify-between items-start gap-4">
-                                <div className="flex-1">
+                                <div className="flex-1 min-w-0">
                                   <h4 className="text-lg font-serif text-[#F4EFEA] flex items-center gap-2 flex-wrap">
-                                    {displayName}
+                                    <span className="truncate">{displayName}</span>
                                     {isBestSeller && item.inStock && (
                                       <span 
-                                        className="inline-flex items-center gap-1 text-[9px] uppercase bg-[#C5A880]/20 px-2.5 py-0.5 rounded-full border border-[#C5A880]/50 font-sans font-semibold tracking-wider text-[#C5A880]"
+                                        className="inline-flex items-center gap-1 text-[9px] uppercase bg-[#C5A880]/20 px-2.5 py-0.5 rounded-full border border-[#C5A880]/50 font-sans font-semibold tracking-wider text-[#C5A880] shrink-0"
                                       >
                                         <Star size={9} fill="currentColor" /> {t("menu.bestSeller")}
                                       </span>
                                     )}
                                     {!item.inStock && (
-                                      <span className="text-[9px] uppercase bg-[#25150E] text-[#F4EFEA]/50 px-2 py-0.5 rounded-full font-sans">
+                                      <span className="text-[9px] uppercase bg-[#25150E] text-[#F4EFEA]/50 px-2 py-0.5 rounded-full font-sans shrink-0">
                                         {t("menu.outOfStock")}
                                       </span>
                                     )}
@@ -345,7 +346,7 @@ export default function MenuPage() {
                                     </p>
                                   )}
                                 </div>
-                                <span className="text-[#C5A880] font-sans font-medium whitespace-nowrap text-sm bg-[#1A0F0A]/90 px-3 py-1 rounded-full border border-[#C5A880]/30 shadow-inner">
+                                <span className="text-[#C5A880] font-sans font-medium whitespace-nowrap text-sm bg-[#1A0F0A]/90 px-3 py-1 rounded-full border border-[#C5A880]/30 shadow-inner shrink-0">
                                   {formatPrice(item.price)}
                                 </span>
                               </div>

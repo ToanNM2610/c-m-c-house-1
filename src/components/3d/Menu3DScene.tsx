@@ -107,7 +107,10 @@ export default function Menu3DScene() {
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
+    <div
+      className="fixed inset-0 w-full h-full pointer-events-none z-0 touch-pan-y"
+      style={{ pointerEvents: "none", touchAction: "pan-y" }}
+    >
       <Canvas
         camera={{ position: [0, 0, 7], fov: 48 }}
         dpr={isMobile ? [1, 1.1] : [1, 1.8]}
@@ -116,6 +119,8 @@ export default function Menu3DScene() {
           alpha: false,
           powerPreference: isMobile ? "default" : "high-performance",
         }}
+        className="pointer-events-none w-full h-full"
+        style={{ pointerEvents: "none", touchAction: "pan-y" }}
       >
         <color attach="background" args={["#1A0F0A"]} />
         <fog attach="fog" args={["#1A0F0A", 4, 25]} />

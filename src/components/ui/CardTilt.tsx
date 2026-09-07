@@ -69,10 +69,10 @@ export default function CardTilt({ children, className = "", cardClassName = "" 
   }, [track, reset]);
 
   return (
-    <div ref={tiltRef} className={`t-tilt ${className}`}>
-      <div ref={cardRef} className={`t-tilt-card ${cardClassName}`}>
+    <div ref={tiltRef} className={`t-tilt touch-pan-y ${className}`} style={{ touchAction: "pan-y" }}>
+      <div ref={cardRef} className={`t-tilt-card touch-pan-y ${cardClassName}`} style={{ touchAction: "pan-y" }}>
         {children}
-        <div className="t-tilt-glare" />
+        <div className="t-tilt-glare pointer-events-none" />
       </div>
     </div>
   );

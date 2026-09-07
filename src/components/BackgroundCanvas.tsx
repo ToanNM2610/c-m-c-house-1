@@ -145,7 +145,10 @@ export default function BackgroundCanvas() {
   }
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundColor: "#1A0F0A" }}>
+    <div
+      className="fixed inset-0 z-0 pointer-events-none touch-pan-y"
+      style={{ backgroundColor: "#1A0F0A", pointerEvents: "none", touchAction: "pan-y" }}
+    >
       <Canvas
         camera={{ position: [0, 0, 15], fov: 45 }}
         dpr={isMobile ? [1, 1.1] : [1, 1.5]}
@@ -154,6 +157,8 @@ export default function BackgroundCanvas() {
           antialias: !isMobile,
           powerPreference: isMobile ? "default" : "high-performance",
         }}
+        className="pointer-events-none w-full h-full"
+        style={{ pointerEvents: "none", touchAction: "pan-y" }}
       >
         <color attach="background" args={["#1A0F0A"]} />
         <ambientLight intensity={0.4} />
