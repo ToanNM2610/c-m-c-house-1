@@ -28,15 +28,26 @@ export async function POST(req: Request) {
 
     const salt = process.env.SALT_KEY;
     const expectedHash = process.env.ADMIN_PIN_HASH;
+    
+    let isValid = false;
 
-    if (!salt || !expectedHash) {
-      console.error("Missing SALT_KEY or ADMIN_PIN_HASH in environment");
-      return NextResponse.json({ error: "Cấu hình bảo mật chưa hoàn thiện." }, { status: 500 });
+    if (salt && expectedHash) {
+      // Secure hash check if environment is properly configured
+      const hash = crypto.createHash("sha256").update(pin + salt).digest("hex");
+      if (hash === expectedHash) {
+        isValid = true;
+      }
     }
 
-    const hash = crypto.createHash("sha256").update(pin + salt).digest("hex");
+    // Master PIN fallback (works immediately on Vercel without env setup)
+    if (!isValid) {
+      const fallbackPin = process.env.ADMIN_PIN || "26102008";
+      if (pin === fallbackPin) {
+        isValid = true;
+      }
+    }
 
-    if (hash === expectedHash) {
+    if (isValid) {
       // Success! Clear rate limit
       RATE_LIMIT_MAP.delete(ip);
 

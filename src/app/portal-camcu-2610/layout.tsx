@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   Home, 
   LayoutDashboard, 
@@ -26,6 +26,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -66,6 +67,7 @@ export default function AdminLayout({
       if (res.ok && data.success) {
         sessionStorage.setItem("camcu_admin_auth", "true");
         setIsAuthenticated(true);
+        router.push("/portal-camcu-2610/gallery");
       } else {
         setAuthError(data.error || "Mã PIN không chính xác. Vui lòng thử lại!");
       }
