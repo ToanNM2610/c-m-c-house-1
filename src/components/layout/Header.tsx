@@ -21,7 +21,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/wp-admin");
+  const isAdmin = pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -187,3 +187,4 @@ export default function Header() {
     </header>
   );
 }
+

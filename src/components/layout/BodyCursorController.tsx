@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 export default function BodyCursorController() {
   const pathname = usePathname() || "";
-  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/wp-admin");
+  const isAdmin = pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin");
 
   useEffect(() => {
     if (isAdmin) {
@@ -37,3 +37,4 @@ export default function BodyCursorController() {
 
   return null;
 }
+

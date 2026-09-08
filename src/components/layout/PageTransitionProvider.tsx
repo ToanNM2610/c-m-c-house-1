@@ -10,7 +10,7 @@ export default function PageTransitionProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin") || pathname?.startsWith("/wp-admin");
+  const isAdmin = pathname?.startsWith("/portal-camcu-2610") || pathname?.startsWith("/wp-admin");
 
   if (isAdmin) {
     return <>{children}</>;
@@ -35,3 +35,4 @@ export default function PageTransitionProvider({
     </AnimatePresence>
   );
 }
+

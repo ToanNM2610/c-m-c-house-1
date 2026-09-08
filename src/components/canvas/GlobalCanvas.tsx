@@ -33,7 +33,7 @@ export default function GlobalCanvas() {
   }, []);
 
   // Don't render Canvas in Admin area
-  if (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin")) {
+  if (pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin")) {
     return null;
   }
 
@@ -80,3 +80,4 @@ export default function GlobalCanvas() {
     </div>
   );
 }
+

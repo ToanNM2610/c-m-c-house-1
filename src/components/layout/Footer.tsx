@@ -66,7 +66,7 @@ export default function Footer() {
   const pathname = usePathname() || "";
   const { t } = useLanguage();
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin")) {
+  if (pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin")) {
     return null;
   }
 
@@ -229,3 +229,4 @@ export default function Footer() {
     </footer>
   );
 }
+

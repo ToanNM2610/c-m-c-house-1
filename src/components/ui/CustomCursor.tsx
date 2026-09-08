@@ -6,7 +6,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
   const pathname = usePathname() || "";
-  const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/wp-admin");
+  const isAdmin = pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin");
 
   const [isVisible, setIsVisible] = useState(false);
   const [cursorText, setCursorText] = useState("");
@@ -164,3 +164,4 @@ export default function CustomCursor() {
     </div>
   );
 }
+

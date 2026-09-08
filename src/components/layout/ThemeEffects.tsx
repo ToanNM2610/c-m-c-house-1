@@ -6,7 +6,7 @@ export default function ThemeEffects() {
   const pathname = usePathname();
 
   // Tắt hoàn toàn hiệu ứng ở trang admin
-  if (pathname && (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin"))) {
+  if (pathname && (pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin"))) {
     return null;
   }
 
@@ -22,3 +22,4 @@ export default function ThemeEffects() {
     </>
   );
 }
+

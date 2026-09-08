@@ -35,6 +35,8 @@ export default function AdminLayout({
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     try {
       const isAuth =
@@ -46,25 +48,37 @@ export default function AdminLayout({
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanPin = pinInput.trim();
-    // Chấp nhận các mã PIN / Mật khẩu hợp lệ
-    const validCodes = ["2610", "camcu2026", "admin888", "admin"];
+    if (!pinInput.trim()) return;
+    
+    setIsLoading(true);
+    setAuthError("");
 
-    if (validCodes.includes(cleanPin)) {
-      try {
+    try {
+      const res = await fetch("/api/auth/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: pinInput.trim() }),
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
         sessionStorage.setItem("camcu_admin_auth", "true");
-      } catch {}
-      setIsAuthenticated(true);
-      setAuthError("");
-    } else {
-      setAuthError("Mã PIN hoặc mật khẩu không chính xác. Vui lòng thử lại!");
+        setIsAuthenticated(true);
+      } else {
+        setAuthError(data.error || "Mã PIN không chính xác. Vui lòng thử lại!");
+      }
+    } catch (err) {
+      setAuthError("Lỗi kết nối máy chủ. Vui lòng thử lại!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
+      await fetch("/api/auth/logout", { method: "POST" });
       sessionStorage.removeItem("camcu_admin_auth");
       localStorage.removeItem("camcu_admin_auth");
     } catch {}
@@ -122,9 +136,9 @@ export default function AdminLayout({
                     setPinInput(e.target.value);
                     if (authError) setAuthError("");
                   }}
-                  placeholder="Nhập mã PIN (VD: 2610)..."
-                  autoFocus
                   className="w-full px-4 py-3 rounded-xl bg-black/50 border border-[#C5A880]/30 text-[#F3E8DB] placeholder-[#F3E8DB]/35 text-sm focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] transition-all font-mono tracking-widest"
+                  placeholder="Nhập mã xác thực quản trị..."
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
@@ -145,18 +159,20 @@ export default function AdminLayout({
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#DFBE93] hover:from-[#DFBE93] hover:to-[#FFE1B3] text-[#1A0F0A] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(197,168,128,0.4)] hover:shadow-[0_0_30px_rgba(197,168,128,0.6)] cursor-pointer flex items-center justify-center gap-2 mt-2"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#C5A880] to-[#DFBE93] hover:from-[#DFBE93] hover:to-[#FFE1B3] text-[#1A0F0A] font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(197,168,128,0.4)] hover:shadow-[0_0_30px_rgba(197,168,128,0.6)] cursor-pointer flex items-center justify-center gap-2 mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <KeyRound size={16} />
-              <span>Mở Khóa Bảng Điều Khiển</span>
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-[#1A0F0A] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <KeyRound size={16} />
+              )}
+              <span>{isLoading ? "Đang xác thực..." : "Mở Khóa Bảng Điều Khiển"}</span>
             </button>
           </form>
 
           {/* Gợi ý & Điều hướng */}
           <div className="mt-6 pt-6 border-t border-[#C5A880]/15 flex flex-col items-center gap-3 text-center relative z-10">
-            <span className="text-[11px] text-[#F3E8DB]/45 font-mono">
-              Mã PIN mặc định: <strong className="text-[#C5A880]">2610</strong> hoặc mật khẩu <strong className="text-[#C5A880]">admin</strong>
-            </span>
             <Link
               href="/"
               className="text-xs text-[#C5A880] hover:text-[#FFE1B3] transition-colors inline-flex items-center gap-1 mt-1"
@@ -179,10 +195,10 @@ export default function AdminLayout({
 
   // Admin Sidebar Items
   const navItems: AdminNavItem[] = [
-    { name: "Không gian tổng quan", href: "/admin", icon: <LayoutDashboard size={18} /> },
-    { name: "Thư viện ảnh", href: "/admin/gallery", icon: <ImageIcon size={18} /> },
-    { name: "Thực đơn mộc", href: "/admin/menu", icon: <Coffee size={18} /> },
-    { name: "Người đồng hành", href: "/admin/users", icon: <Users size={18} /> },
+    { name: "Không gian tổng quan", href: "/portal-camcu-2610", icon: <LayoutDashboard size={18} /> },
+    { name: "Thư viện ảnh", href: "/portal-camcu-2610/gallery", icon: <ImageIcon size={18} /> },
+    { name: "Thực đơn mộc", href: "/portal-camcu-2610/menu", icon: <Coffee size={18} /> },
+    { name: "Người đồng hành", href: "/portal-camcu-2610/users", icon: <Users size={18} /> },
   ];
 
   return (
@@ -200,8 +216,8 @@ export default function AdminLayout({
               <span className="text-lg leading-none -mt-1">+</span> Thêm mới
             </button>
             <div className="absolute top-full left-0 bg-[#1d2327] border-t border-[#3c434a] min-w-[160px] hidden group-hover:flex flex-col shadow-lg z-50">
-              <Link href="/admin/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Tải ảnh mới</Link>
-              <Link href="/admin/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Thêm món mộc</Link>
+              <Link href="/portal-camcu-2610/gallery" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><ImageIcon size={14}/> Tải ảnh mới</Link>
+              <Link href="/portal-camcu-2610/menu" className="px-3 py-2 text-[#c3c4c7] hover:text-[#72aee6] hover:bg-[#2c3338] text-[13px] flex items-center gap-2"><Coffee size={14}/> Thêm món mộc</Link>
             </div>
           </div>
         </div>
