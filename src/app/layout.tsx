@@ -11,6 +11,7 @@ import { Analytics } from "@vercel/analytics/next";
 import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
 
 import GlobalCanvas from "@/components/canvas/GlobalCanvas";
+import UltraIntro from "@/components/intro/UltraIntro";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -101,6 +102,8 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${beVietnamPro.variable} antialiased font-sans bg-[#0C0D0B] text-[#FDFBF7] selection:bg-[#C88A4B] selection:text-[#0C0D0B] max-w-[100vw] w-full overflow-x-hidden`}
       >
+        <UltraIntro />
+        
         {/* Global Canvas Singleton - Vĩnh cửu, không re-mount khi chuyển trang */}
         <GlobalCanvas />
 
