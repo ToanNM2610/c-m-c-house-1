@@ -1,95 +1,150 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
+import { MapPin, Phone, Mail, Clock, Compass, ArrowUpRight } from "lucide-react";
+
+const GOOGLE_MAPS_URL =
+  "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
 
 export default function Footer() {
-  const pathname = usePathname();
-  const { t } = useLanguage();
+  const pathname = usePathname() || "";
+  const { lang } = useLanguage();
 
-  // Hide on Admin, Home, and Full-Viewport Contact page
-  if (pathname === "/" || pathname === "/contact" || (pathname && pathname.startsWith("/admin"))) {
+  if (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin")) {
     return null;
   }
 
   return (
-    <footer className="relative z-10 bg-[#120805] text-[#F4EFEA]/70 py-16 px-6 border-t border-[#C5A880]/15 font-sans">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-        {/* Brand */}
+    <footer className="w-full bg-[#2D4A3E] text-[#FDFBF7] pt-16 pb-12 px-6 sm:px-12 font-sans border-t border-[#3A5D4F]">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
+        {/* CỘT 1: THƯƠNG HIỆU */}
         <div className="space-y-4">
-          <Link href="/" className="text-2xl font-serif text-[#F4EFEA] font-bold tracking-wider inline-block mb-2 hover:text-[#C5A880] transition-colors">
-            Cẩm Cù House
+          <Link href="/" className="inline-block">
+            <span className="font-serif text-3xl font-bold text-[#FDFBF7] tracking-tight hover:text-[#C88A4B] transition-colors">
+              Cẩm Cù House
+            </span>
+            <span className="block text-xs font-sans uppercase tracking-[0.2em] text-[#C88A4B] mt-0.5">
+              coffee &amp; Food
+            </span>
           </Link>
-          <p className="font-light text-sm leading-relaxed max-w-sm text-[#F4EFEA]/75">
-            {t("footer.slogan")}
+
+          <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/80 leading-relaxed">
+            {lang === "en"
+              ? "Immerse yourself in nature beside the crystal pebble stream of Gia Nghia. An eco-friendly botanical retreat with wood-roasted coffee."
+              : "Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa. Không gian sinh thái mộc mạc gìn giữ vị cà phê rang củi nguyên bản."}
           </p>
+
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1F342B] text-[11px] font-mono text-[#C88A4B]">
+            <Compass size={13} />
+            <span>11.99° N, 107.69° E • Gia Nghĩa</span>
+          </div>
         </div>
 
-        {/* Links */}
+        {/* CỘT 2: ĐIỀU HƯỚNG NHANH */}
         <div className="space-y-4">
-          <h4 className="text-[#F4EFEA] font-medium tracking-[0.2em] uppercase text-xs mb-6 font-sans">
-            {t("footer.quickLinks")}
+          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#3A5D4F] pb-2">
+            {lang === "en" ? "Navigation" : "Khám Phá"}
           </h4>
-          <ul className="space-y-3 font-light text-sm">
-            <li><Link href="/about" className="hover:text-[#C5A880] transition-colors">{t("nav.about")}</Link></li>
-            <li><Link href="/menu" className="hover:text-[#C5A880] transition-colors">{t("nav.menu")}</Link></li>
-            <li><Link href="/space" className="hover:text-[#C5A880] transition-colors">{t("nav.space")}</Link></li>
-            <li><Link href="/contact" className="hover:text-[#C5A880] transition-colors">{t("nav.contact")}</Link></li>
+          <ul className="space-y-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/85">
+            <li>
+              <Link href="/" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
+                <span>{lang === "en" ? "Home" : "Trang chủ"}</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
+                <span>{lang === "en" ? "Our Story" : "Giới thiệu & Câu chuyện"}</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/space" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
+                <span>{lang === "en" ? "Botanical Space" : "Không gian & Trải nghiệm"}</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/menu" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
+                <span>{lang === "en" ? "Menu & Food" : "Thực đơn tươi mộc"}</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
+                <span>{lang === "en" ? "Contact & Booking" : "Liên hệ & Đặt bàn"}</span>
+              </Link>
+            </li>
           </ul>
         </div>
 
-        {/* Social */}
+        {/* CỘT 3: THỜI GIAN & LIÊN HỆ */}
         <div className="space-y-4">
-          <h4 className="text-[#F4EFEA] font-medium tracking-[0.2em] uppercase text-xs mb-6 font-sans">
-            {t("footer.connect")}
+          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#3A5D4F] pb-2">
+            {lang === "en" ? "Contact & Hours" : "Thông Tin & Giờ Mở Cửa"}
           </h4>
-          <div className="flex gap-4">
-            {/* Facebook SVG */}
-            <a 
-              href="https://www.facebook.com/share/1DVLMySW8H" 
-              target="_blank" 
-              rel="noreferrer" 
-              aria-label="Facebook"
-              data-cursor="explore"
-              className="w-10 h-10 rounded-full bg-[#1E110A] border border-[#C5A880]/25 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300 shadow-sm"
+          <div className="space-y-3 text-xs sm:text-sm font-light text-[#FDFBF7]/85">
+            <div className="flex items-start gap-2.5">
+              <Clock size={15} className="text-[#C88A4B] shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-[#FDFBF7]">Giờ mở cửa đón khách:</p>
+                <p className="text-xs text-[#FDFBF7]/75">T2 - T5: 07:00 - 18:00</p>
+                <p className="text-xs text-[#FDFBF7]/75">T6 - CN: 07:00 - 22:00</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 pt-1">
+              <Phone size={15} className="text-[#C88A4B] shrink-0" />
+              <div className="flex items-center gap-2">
+                <a href="tel:0382851688" className="hover:text-[#C88A4B] transition-colors">
+                  038 285 1688
+                </a>
+                <span>/</span>
+                <a href="tel:0774659000" className="hover:text-[#C88A4B] transition-colors">
+                  077 465 9000
+                </a>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <Mail size={15} className="text-[#C88A4B] shrink-0" />
+              <a href="mailto:thuynhu8788@gmail.com" className="hover:text-[#C88A4B] transition-colors break-all">
+                thuynhu8788@gmail.com
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* CỘT 4: ĐỊA CHỈ & BẢN ĐỒ THU NHỎ */}
+        <div className="space-y-4">
+          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#3A5D4F] pb-2">
+            {lang === "en" ? "Location" : "Địa Chỉ Quán"}
+          </h4>
+          <div className="flex items-start gap-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/85">
+            <MapPin size={16} className="text-[#C88A4B] shrink-0 mt-0.5" />
+            <p>Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP Gia Nghĩa, Đắk Nông</p>
+          </div>
+
+          {/* Nút mở Google Maps chỉ đường */}
+          <div className="pt-2">
+            <a
+              href={GOOGLE_MAPS_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1F342B] hover:bg-[#C88A4B] hover:text-white transition-all text-xs font-medium text-[#FDFBF7] border border-[#3A5D4F]"
             >
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-              </svg>
-            </a>
-            {/* YouTube SVG */}
-            <a 
-              href="https://youtube.com/@Cam_Cu_House" 
-              target="_blank" 
-              rel="noreferrer" 
-              aria-label="YouTube"
-              data-cursor="explore"
-              className="w-10 h-10 rounded-full bg-[#1E110A] border border-[#C5A880]/25 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300 shadow-sm"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path d="M21.582 6.186a2.67 2.67 0 0 0-1.884-1.888C17.962 3.8 12 3.8 12 3.8s-5.962 0-7.698.498a2.67 2.67 0 0 0-1.884 1.888C1.92 7.922 1.92 12 1.92 12s0 4.078.498 5.814a2.67 2.67 0 0 0 1.884 1.888C6.038 20.2 12 20.2 12 20.2s5.962 0 7.698-.498a2.67 2.67 0 0 0 1.884-1.888C22.08 16.078 22.08 12 22.08 12s0-4.078-.498-5.814zM9.9 15.3v-6.6l5.7 3.3-5.7 3.3z"/>
-              </svg>
-            </a>
-            {/* TikTok SVG */}
-            <a 
-              href="https://www.tiktok.com/@camcuhousedaknong" 
-              target="_blank" 
-              rel="noreferrer" 
-              aria-label="TikTok"
-              data-cursor="explore"
-              className="w-10 h-10 rounded-full bg-[#1E110A] border border-[#C5A880]/25 flex items-center justify-center text-[#F4EFEA]/80 hover:text-[#1A0F0A] hover:bg-[#C5A880] hover:border-[#C5A880] transition-all duration-300 shadow-sm"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.64-5.46-.22-2.39.81-4.78 2.63-6.2 1.53-1.22 3.51-1.72 5.43-1.49v4.06c-1.16-.1-2.31.25-3.18 1.01-.76.63-1.23 1.59-1.25 2.58-.02 1.35.8 2.67 2.03 3.23 1.11.53 2.45.54 3.56.05 1.1-.48 1.89-1.44 2.11-2.61.12-.66.11-1.33.11-2.01V.02z"/>
-              </svg>
+              <span>Xem trên Google Maps</span>
+              <ArrowUpRight size={14} />
             </a>
           </div>
         </div>
       </div>
-      
-      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-[#C5A880]/15 text-center text-xs text-[#F4EFEA]/50 font-light">
-        <p>&copy; {new Date().getFullYear()} {t("footer.rights")}</p>
+
+      {/* DÒNG BẢN QUYỀN */}
+      <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-[#3A5D4F]/60 flex flex-col sm:flex-row items-center justify-between text-xs text-[#FDFBF7]/60 gap-3">
+        <p>© 2026 Cẩm Cù House. Tất cả các quyền được bảo lưu.</p>
+        <p className="text-[11px] font-mono text-[#C88A4B]/80">
+          WARM BOTANICAL &amp; MODERN RUSTIC SANCTUARY
+        </p>
       </div>
     </footer>
   );

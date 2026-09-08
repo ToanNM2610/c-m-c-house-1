@@ -2,107 +2,154 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, X, ArrowRight, Eye, Sparkles } from "lucide-react";
+import {
+  Wifi,
+  Car,
+  Trees,
+  Dog,
+  Briefcase,
+  X,
+  Eye,
+  Sparkles,
+  Compass,
+} from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-interface SpaceSpot {
+interface SpaceItem {
   id: string;
-  url: string;
+  category: "Trong nhà" | "Ngoài trời / Bờ suối" | "Góc Check-in";
   titleVi: string;
   titleEn: string;
-  tagVi: string;
-  tagEn: string;
   descVi: string;
   descEn: string;
+  image: string;
   aspect: string;
 }
 
-const SPACE_SPOTS: SpaceSpot[] = [
+const SPACE_GALLERY: SpaceItem[] = [
   {
-    id: "spot-1",
-    url: "/uploads/gallery/1788250253554-875120458.jpg",
-    titleVi: "Hiên Gỗ Đón Nắng",
-    titleEn: "Morning Sun Timber Veranda",
-    tagVi: "HIÊN MỘC",
-    tagEn: "TIMBER PATIO",
-    descVi:
-      "Từng vạt nắng sớm xiên qua tán cây, chiếu rọi bàn gỗ mộc bên tách cà phê rang củi ấm nồng.",
-    descEn:
-      "Early morning rays filtering through broad leaves onto handcrafted timber tables.",
-    aspect: "aspect-[4/5]",
-  },
-  {
-    id: "spot-2",
-    url: "/uploads/gallery/1788250253560-200373033.jpg",
-    titleVi: "Bàn Đá Dưới Tán Râm",
-    titleEn: "Stone Table Under Highland Canopy",
-    tagVi: "TÁN RÂM",
-    tagEn: "CANOPY SHADE",
-    descVi:
-      "Góc ngồi dưới bóng mát đại ngàn râm mát, nơi lý tưởng để đọc sách, nhâm nhi ly trà mộc và ngắm suối.",
-    descEn:
-      "Shaded rocky nook to read, sip herbal tea, and listen to the murmuring mountain stream.",
-    aspect: "aspect-square",
-  },
-  {
-    id: "spot-3",
-    url: "/uploads/gallery/1788250253557-29323827.jpg",
-    titleVi: "Góc Hoa Cẩm Cù",
-    titleEn: "Native Hoya Sanctuary Corner",
-    tagVi: "VƯỜN HOA",
-    tagEn: "BOTANICAL",
-    descVi:
-      "Thánh đường thực vật nơi hàng trăm giò hoa cẩm cù bản địa đơm hoa hình ngôi sao sáp ngọc bích.",
-    descEn:
-      "Botanical collection of native wax flower blooms diffusing delicate natural fragrance.",
-    aspect: "aspect-[3/4]",
-  },
-  {
-    id: "spot-4",
-    url: "/uploads/gallery/1788250253564-115851131.jpg",
-    titleVi: "Hoàng Hôn Buông Suối",
-    titleEn: "Sunset Over Stream Waters",
-    tagVi: "HOÀNG HÔN",
-    tagEn: "DUSK HORIZON",
-    descVi:
-      "Khi ánh tà dương nhuộm đỏ ráng mây thung lũng, mặt suối lấp lánh sắc vàng ấm cúng và thơ mộng.",
-    descEn:
-      "Dusk washing over the valley stream in amber tones as lanterns warm up the retreat.",
-    aspect: "aspect-[16/9]",
-  },
-  {
-    id: "spot-5",
-    url: "/uploads/gallery/1788250253551-943009233.jpg",
-    titleVi: "Bờ Suối Thung Lũng",
-    titleEn: "Pebble Stream Valley",
-    tagVi: "BỜ SUỐI",
-    tagEn: "VALLEY BROOK",
-    descVi:
-      "Dòng nước nguồn mát lành từ đỉnh đồi bazan Đắk Nông len qua bãi đá cuội rêu phong ngàn năm.",
-    descEn:
-      "Cool highland stream water flowing smoothly over ancient mossy boulders.",
+    id: "sp-1",
+    category: "Ngoài trời / Bờ suối",
+    titleVi: "Bờ Suối Đá Thung Lũng",
+    titleEn: "Valley Pebble Brook",
+    descVi: "Dòng suối trong vắt len lỏi qua bãi đá cuội rêu phong ngàn năm, nơi tiếng nước ngân nga xua tan mọi âu lo.",
+    descEn: "Crystal-clear stream weaving over ancient mossy rocks.",
+    image: "/uploads/gallery/1788250253551-943009233.jpg",
     aspect: "aspect-[4/3]",
   },
   {
-    id: "spot-6",
-    url: "/uploads/gallery/1788250253566-618481408.jpg",
-    titleVi: "Khoảng Lặng Giữa Rừng",
-    titleEn: "Forest Solitude",
-    tagVi: "TĨNH TẠI",
-    tagEn: "TRANQUILITY",
-    descVi:
-      "Chốn tĩnh lặng chỉ có tiếng gió reo và hơi thở tinh khôi của núi rừng Tây Nguyên.",
-    descEn:
-      "Tranquil clearing surrounded by fresh highland air and soothing forest sounds.",
+    id: "sp-2",
+    category: "Trong nhà",
+    titleVi: "Hiên Gỗ Đón Nắng Sớm",
+    titleEn: "Sunlit Timber Veranda",
+    descVi: "Góc hiên gỗ mộc ấm cúng đón trọn vạt nắng đầu ngày, ngát hương cà phê mới rang.",
+    descEn: "Warm timber porch capturing morning light and coffee aroma.",
+    image: "/uploads/gallery/1788250253554-875120458.jpg",
     aspect: "aspect-[3/4]",
+  },
+  {
+    id: "sp-3",
+    category: "Góc Check-in",
+    titleVi: "Thánh Đường Hoa Cẩm Cù",
+    titleEn: "Indigenous Hoya Haven",
+    descVi: "Hàng trăm loài hoa cẩm cù bản địa đơm bông hình ngôi sao sáp ngọc bích tỏa hương dịu mát.",
+    descEn: "Clusters of wax flowers blooming with delicate fragrance.",
+    image: "/uploads/gallery/1788250253557-29323827.jpg",
+    aspect: "aspect-square",
+  },
+  {
+    id: "sp-4",
+    category: "Ngoài trời / Bờ suối",
+    titleVi: "Bàn Đá Dưới Tán Râm",
+    titleEn: "Canopy Shaded Table",
+    descVi: "Góc ngồi lý tưởng dưới tán lá rừng xanh mát để đọc sách, trò chuyện và lắng nghe chim hót.",
+    descEn: "Shaded forest clearing to read, talk, and relax.",
+    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    aspect: "aspect-[4/5]",
+  },
+  {
+    id: "sp-5",
+    category: "Trong nhà",
+    titleVi: "Góc Đọc Sách Yên Tĩnh",
+    titleEn: "Quiet Reading Nook",
+    descVi: "Bàn gỗ tự nhiên với ánh sáng ấm cúng, thích hợp cho những ai muốn tìm một khoảng lặng làm việc.",
+    descEn: "Rustic desk and warm light for focused, mindful work.",
+    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    aspect: "aspect-[16/9]",
+  },
+  {
+    id: "sp-6",
+    category: "Góc Check-in",
+    titleVi: "Hoàng Hôn Nhuộm Đỏ Suối",
+    titleEn: "Sunset Over Stream",
+    descVi: "Ánh chiều tà buông xuống thung lũng tạo nên khung cảnh nên thơ tuyệt mỹ đầy chất điện ảnh.",
+    descEn: "Amber dusk settling peacefully over the river valley.",
+    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    aspect: "aspect-[4/3]",
+  },
+  {
+    id: "sp-7",
+    category: "Ngoài trời / Bờ suối",
+    titleVi: "Lối Đi Ven Suối Thơ Mộng",
+    titleEn: "Pebble Stream Path",
+    descVi: "Những bậc đá tự nhiên uốn lượn theo bờ nước rợp bóng thông cao nguyên.",
+    descEn: "Natural stepping stones winding gracefully beside the brook.",
+    image: "/uploads/gallery/1788250253566-618481408.jpg",
+    aspect: "aspect-[3/4]",
+  },
+  {
+    id: "sp-8",
+    category: "Góc Check-in",
+    titleVi: "Góc Vườn Thảo Mộc Bản Địa",
+    titleEn: "Highland Herbal Flora",
+    descVi: "Các loài cây hoa dại khoe sắc tự nhiên tạo nên phông nền chụp ảnh xanh mướt.",
+    descEn: "Vibrant wild flora providing a lush botanical backdrop.",
+    image: "/uploads/gallery/1788250253568-69250175.jpg",
+    aspect: "aspect-square",
   },
 ];
 
+const AMENITIES = [
+  {
+    icon: Wifi,
+    title: "Wifi Tốc Độ Cao",
+    desc: "Phủ sóng toàn bộ trong nhà & sân suối",
+  },
+  {
+    icon: Car,
+    title: "Chỗ Đậu Ô Tô Rộng Rãi",
+    desc: "Bãi đỗ an ninh, thuận tiện quay đầu",
+  },
+  {
+    icon: Trees,
+    title: "Không Gian Thoáng Đãng",
+    desc: "Gió mát tự nhiên từ thung lũng",
+  },
+  {
+    icon: Dog,
+    title: "Thân Thiện Thú Cưng",
+    desc: "Chào đón các bé cưng ngoan ngoãn",
+  },
+  {
+    icon: Briefcase,
+    title: "Bàn Làm Việc Yên Tĩnh",
+    desc: "Ổ cắm tiện lợi, góc ngồi tập trung",
+  },
+];
+
+type FilterTab = "Tất cả" | "Trong nhà" | "Ngoài trời / Bờ suối" | "Góc Check-in";
+const TABS: FilterTab[] = ["Tất cả", "Trong nhà", "Ngoài trời / Bờ suối", "Góc Check-in"];
+
 export default function SpacePage() {
   const { lang } = useLanguage();
-  const [selectedSpot, setSelectedSpot] = useState<SpaceSpot | null>(null);
+  const [activeTab, setActiveTab] = useState<FilterTab>("Tất cả");
+  const [selectedSpot, setSelectedSpot] = useState<SpaceItem | null>(null);
+
+  const filteredGallery = SPACE_GALLERY.filter((item) => {
+    if (activeTab === "Tất cả") return true;
+    return item.category === activeTab;
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -119,79 +166,102 @@ export default function SpacePage() {
   }, [selectedSpot]);
 
   return (
-    <div className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]">
+    <div className="w-full bg-[#FDFBF7] text-[#222222]">
       
       {/* ========================================================= */}
-      {/* PHẦN 1: GIỚI THIỆU CẢNH QUAN                              */}
+      {/* 1. BANNER: KHÔNG GIAN & TRẢI NGHIỆM                      */}
       {/* ========================================================= */}
-      <section className="pt-32 sm:pt-40 pb-14 px-6 sm:px-12 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-[#D4AF37]/20 relative z-10">
-        <div className="space-y-4 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#0A0908]/90 text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#D4AF37] shadow-sm">
-            <Compass size={13} />
-            <span>KHÔNG GIAN SINH THÁI THÔ MỘC</span>
-          </div>
-
-          <h1
-            data-cursor-diff
-            className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold tracking-tight text-[#F4EFEA] leading-[1.08]"
-          >
-            KHÔNG GIAN <br />
-            <span className="italic font-light text-[#D4AF37]">Bên Bờ Suối</span>
-          </h1>
+      <section className="relative py-24 sm:py-32 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#EAE6DF]">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/uploads/gallery/1788250253551-943009233.jpg"
+            alt="Không gian suối đá Cẩm Cù House"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7]/90 via-[#FDFBF7]/85 to-[#FDFBF7]" />
         </div>
 
-        <div className="max-w-md space-y-3 text-xs sm:text-sm font-light text-[#F4EFEA]/80 leading-relaxed">
-          <p className="font-serif italic text-sm sm:text-base text-[#FFE1B3]/90">
-            &ldquo;Tiếng suối chảy róc rách, hương hoa cẩm cù và gió cao nguyên.&rdquo;
+        <div className="relative z-10 max-w-3xl mx-auto space-y-4">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 text-xs font-semibold text-[#2D4A3E]">
+            <Compass size={14} className="text-[#C88A4B]" />
+            <span>THÁNH ĐƯỜNG BÊN SUỐI ĐÁ</span>
+          </span>
+
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#2D4A3E] tracking-tight">
+            Không Gian &amp; Trải Nghiệm
+          </h1>
+
+          <p className="text-base sm:text-lg font-light text-[#222222]/80 leading-relaxed">
+            Dạo bước qua từng góc hiên gỗ, suối đá cuội và khu vườn hoa cẩm cù rực
+            rỡ. Mỗi góc nhỏ tại Cẩm Cù House đều mang đến sự thư thái tuyệt đối.
           </p>
-          <div className="flex items-center gap-2 text-[11px] font-mono text-[#D4AF37]/85 pt-1">
-            <Sparkles size={12} />
-            <span>Chạm vào từng bức ảnh để xem góc nhìn toàn cảnh</span>
-          </div>
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* PHẦN 2: THƯ VIỆN ẢNH (Masonry Grid - Next/Image Tối Ưu)   */}
+      {/* 2. BỘ LỌC PHÂN LOẠI (FILTER TABS)                         */}
       {/* ========================================================= */}
-      <section className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 py-16">
-        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
-          {SPACE_SPOTS.map((spot, idx) => (
+      <section className="py-8 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center">
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 p-1.5 rounded-full bg-[#EAE6DF]/60 border border-[#EAE6DF]">
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                activeTab === tab
+                  ? "bg-[#2D4A3E] text-white shadow-xs font-semibold"
+                  : "text-[#222222]/70 hover:text-[#2D4A3E]"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* 3. THƯ VIỆN MASONRY GRID (NEXT/IMAGE + LIGHTBOX)         */}
+      {/* ========================================================= */}
+      <section className="pb-24 px-6 sm:px-12 max-w-7xl mx-auto">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+          {filteredGallery.map((spot, idx) => (
             <div
               key={spot.id}
               onClick={() => setSelectedSpot(spot)}
-              className="break-inside-avoid group relative rounded-2xl overflow-hidden border border-[#D4AF37]/20 hover:border-[#D4AF37]/70 transition-all duration-300 bg-[#120805]/95 shadow-xl cursor-pointer"
+              className="break-inside-avoid group card-warm overflow-hidden bg-white cursor-pointer relative"
             >
-              {/* Khung ảnh tối ưu Next/Image */}
-              <div className={`w-full relative overflow-hidden ${spot.aspect} bg-black/60`}>
+              {/* Khung ảnh Next/Image */}
+              <div className={`relative w-full overflow-hidden ${spot.aspect} bg-[#FDFBF7]`}>
                 <Image
-                  src={spot.url}
+                  src={spot.image}
                   alt={spot.titleVi}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority={idx === 0}
-                  loading={idx === 0 ? "eager" : "lazy"}
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  priority={idx < 2}
+                  className="object-cover group-hover:scale-105 transition-transform duration-600 ease-out"
                 />
               </div>
 
-              {/* Overlay Chú Thích */}
-              <div className="p-5 bg-gradient-to-t from-[#0E0604] via-[#0E0604]/90 to-transparent flex flex-col justify-end transition-all duration-300">
-                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] mb-1.5">
-                  <span>{lang === "en" ? spot.tagEn : spot.tagVi}</span>
-                </div>
+              {/* Chú thích thông tin */}
+              <div className="p-5 space-y-2">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
+                  {spot.category}
+                </span>
 
-                <h3 className="text-lg sm:text-xl font-serif font-bold text-[#F4EFEA] group-hover:text-[#FFE1B3] transition-colors mb-1">
+                <h3 className="font-serif text-xl font-bold text-[#2D4A3E] group-hover:text-[#C88A4B] transition-colors">
                   {lang === "en" ? spot.titleEn : spot.titleVi}
                 </h3>
 
-                <p className="text-xs font-light text-[#F4EFEA]/75 line-clamp-2 leading-relaxed">
+                <p className="text-xs font-light text-[#222222]/75 leading-relaxed line-clamp-2">
                   {lang === "en" ? spot.descEn : spot.descVi}
                 </p>
 
-                <div className="pt-3 flex items-center gap-1.5 text-[10px] font-mono text-[#D4AF37] group-hover:translate-x-1 transition-transform">
-                  <Eye size={12} />
-                  <span>{lang === "en" ? "View full" : "Xem chi tiết"}</span>
+                <div className="pt-2 flex items-center gap-1 text-xs font-medium text-[#2D4A3E] group-hover:translate-x-1 transition-transform">
+                  <Eye size={13} />
+                  <span>Xem ảnh lớn</span>
                 </div>
               </div>
             </div>
@@ -199,7 +269,49 @@ export default function SpacePage() {
         </div>
       </section>
 
-      {/* LIGHTBOX PHÓNG TO CHI TIẾT */}
+      {/* ========================================================= */}
+      {/* 4. TIỆN ÍCH & DỊCH VỤ (HÀNG ICON RÕ NÉT)                  */}
+      {/* ========================================================= */}
+      <section className="py-20 bg-[#F7F4EE] px-6 sm:px-12 border-t border-[#EAE6DF]">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+              TIỆN NGHI CHU ĐÁO
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#2D4A3E]">
+              Tiện Ích &amp; Dịch Vụ
+            </h2>
+            <p className="text-sm font-light text-[#222222]/75">
+              Được chuẩn bị tươm tất để bạn có trải nghiệm trọn vẹn và thoải mái
+              nhất.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {AMENITIES.map((amenity, idx) => {
+              const IconComp = amenity.icon;
+              return (
+                <div
+                  key={idx}
+                  className="bg-white p-6 rounded-2xl border border-[#EAE6DF] shadow-xs text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] transition-colors"
+                >
+                  <div className="w-12 h-12 rounded-full bg-[#2D4A3E]/10 flex items-center justify-center text-[#2D4A3E]">
+                    <IconComp size={22} />
+                  </div>
+                  <h3 className="font-serif font-bold text-sm text-[#2D4A3E]">
+                    {amenity.title}
+                  </h3>
+                  <p className="text-[11px] font-light text-[#222222]/70 leading-relaxed">
+                    {amenity.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* LIGHTBOX MODAL */}
       <AnimatePresence>
         {selectedSpot && (
           <motion.div
@@ -207,54 +319,45 @@ export default function SpacePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedSpot(null)}
-            className="fixed inset-0 z-[99999] bg-[#0A0908]/95 flex items-center justify-center p-4 sm:p-8 cursor-pointer"
+            className="fixed inset-0 z-[9999] bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 sm:p-8 cursor-pointer"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-5xl w-full bg-[#120805] border border-[#D4AF37]/40 rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.9)] cursor-default"
+              className="relative max-w-4xl w-full bg-[#FDFBF7] rounded-3xl overflow-hidden shadow-2xl border border-[#EAE6DF] cursor-default"
             >
               <button
                 onClick={() => setSelectedSpot(null)}
-                aria-label="Close modal"
-                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/70 border border-[#D4AF37]/40 flex items-center justify-center text-[#F4EFEA] hover:text-[#D4AF37] transition-colors"
+                aria-label="Đóng popup"
+                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/90 border border-[#EAE6DF] flex items-center justify-center text-[#222222] hover:text-[#2D4A3E] transition-colors shadow-md"
               >
                 <X size={18} />
               </button>
 
               <div className="grid grid-cols-1 md:grid-cols-12">
-                <div className="md:col-span-8 relative aspect-[4/3] md:aspect-auto md:min-h-[460px] overflow-hidden bg-black">
+                <div className="md:col-span-7 relative aspect-[4/3] md:aspect-auto md:min-h-[420px] bg-black">
                   <Image
-                    src={selectedSpot.url}
+                    src={selectedSpot.image}
                     alt={selectedSpot.titleVi}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 60vw"
                   />
                 </div>
-                <div className="md:col-span-4 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+                <div className="md:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6">
                   <div className="space-y-3">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] block">
-                      {lang === "en" ? selectedSpot.tagEn : selectedSpot.tagVi}
+                    <span className="text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
+                      {selectedSpot.category}
                     </span>
-                    <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#F4EFEA]">
+                    <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#2D4A3E]">
                       {lang === "en" ? selectedSpot.titleEn : selectedSpot.titleVi}
                     </h3>
-                    <p className="text-xs sm:text-sm font-light text-[#F4EFEA]/80 leading-relaxed pt-2">
+                    <p className="text-xs sm:text-sm font-light text-[#222222]/80 leading-relaxed pt-2">
                       {lang === "en" ? selectedSpot.descEn : selectedSpot.descVi}
                     </p>
                   </div>
 
-                  <div className="pt-6 border-t border-[#D4AF37]/20 space-y-3">
-                    <div className="text-[11px] font-mono text-[#D4AF37]">
-                      11.99° N, 107.69° E • Gia Nghĩa, Đắk Nông
-                    </div>
-                    <Link
-                      href="/contact"
-                      className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#F4EFEA] hover:text-[#D4AF37] transition-colors"
-                    >
-                      <span>Đường ghé chơi quán</span>
-                      <ArrowRight size={13} />
-                    </Link>
+                  <div className="pt-4 border-t border-[#EAE6DF] text-xs text-[#2D4A3E]/70">
+                    Cẩm Cù House • Bờ suối đá Gia Nghĩa, Đắk Nông
                   </div>
                 </div>
               </div>

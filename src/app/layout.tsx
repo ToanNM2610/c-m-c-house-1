@@ -1,68 +1,58 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Playfair_Display, Be_Vietnam_Pro } from "next/font/google";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import SmoothScroll from "@/components/SmoothScroll";
-import ThemeEffects from "@/components/layout/ThemeEffects";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import IntroLoader from "@/components/IntroLoader";
-import CustomCursor from "@/components/ui/CustomCursor";
-import BodyCursorController from "@/components/layout/BodyCursorController";
 import SecurityShield from "@/components/ui/SecurityShield";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { CanvasProvider } from "@/context/CanvasContext";
-import { Analytics } from '@vercel/analytics/next';
-import Global3DCanvas from "@/components/3d/Global3DCanvas";
+import { Analytics } from "@vercel/analytics/next";
 import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-cormorant",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-sans",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
-  variable: "--font-playfair",
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
+
+const beVietnamPro = Be_Vietnam_Pro({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-body",
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://camcuhouse.vercel.app'),
+  metadataBase: new URL("https://camcuhouse.vercel.app"),
   title: {
-    default: "Cẩm Cù House | Cinematic Eco-coffee Sanctuary Đắk Nông",
+    default: "Cẩm Cù House coffee & Food | Gia Nghĩa, Đắk Nông",
     template: "%s | Cẩm Cù House",
   },
-  description: "Không gian sinh thái mộc mạc bên bờ suối Gia Nghĩa, Đắk Nông. Thưởng thức hương vị cà phê rang mộc nguyên bản và nông sản Tây Nguyên.",
+  description:
+    "Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa. Thưởng thức hương vị cà phê rang củi mộc nguyên bản và nông sản Tây Nguyên tươi lành.",
   openGraph: {
-    title: "Cẩm Cù House | Cinematic Eco-coffee Sanctuary Đắk Nông",
-    description: "Không gian sinh thái mộc mạc bên bờ suối Gia Nghĩa, Đắk Nông. Thưởng thức hương vị cà phê rang mộc nguyên bản và nông sản Tây Nguyên.",
-    url: 'https://camcuhouse.vercel.app',
-    siteName: 'Cẩm Cù House',
-    locale: 'vi_VN',
-    type: 'website',
+    title: "Cẩm Cù House coffee & Food | Gia Nghĩa, Đắk Nông",
+    description:
+      "Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa. Thưởng thức hương vị cà phê rang củi mộc nguyên bản và nông sản Tây Nguyên tươi lành.",
+    url: "https://camcuhouse.vercel.app",
+    siteName: "Cẩm Cù House",
+    locale: "vi_VN",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: "Cẩm Cù House | Eco-coffee Sanctuary",
-    description: "Không gian sinh thái mộc mạc bên bờ suối Gia Nghĩa, Đắk Nông.",
+    card: "summary_large_image",
+    title: "Cẩm Cù House | Warm Botanical Sanctuary",
+    description: "Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa, Đắk Nông.",
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CafeOrCoffeeShop",
-  "name": "Cẩm Cù House",
-  "image": "https://camcuhouse.vercel.app/images/hero.jpg",
+  "name": "Cẩm Cù House coffee & Food",
+  "image": "https://camcuhouse.vercel.app/uploads/gallery/1788250253554-875120458.jpg",
   "@id": "https://camcuhouse.vercel.app",
   "url": "https://camcuhouse.vercel.app",
   "telephone": "0382851688",
@@ -72,22 +62,22 @@ const jsonLd = {
     "addressLocality": "Phường Nghĩa Trung, TP Gia Nghĩa",
     "addressRegion": "Đắk Nông",
     "postalCode": "640000",
-    "addressCountry": "VN"
+    "addressCountry": "VN",
   },
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday"],
       "opens": "07:00",
-      "closes": "18:00"
+      "closes": "18:00",
     },
     {
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": ["Friday", "Saturday", "Sunday"],
       "opens": "07:00",
-      "closes": "22:00"
-    }
-  ]
+      "closes": "22:00",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -96,37 +86,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="scroll-smooth max-w-[100vw] w-full overflow-x-hidden touch-pan-y" data-scroll-behavior="smooth">
+    <html
+      lang="vi"
+      className="scroll-smooth max-w-[100vw] w-full overflow-x-hidden touch-pan-y"
+    >
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${cormorant.variable} ${plusJakarta.variable} ${playfair.variable} antialiased font-sans bg-transparent text-[#F4EFEA] select-none max-w-[100vw] w-full overflow-x-hidden touch-pan-y`}>
+      <body
+        className={`${playfair.variable} ${beVietnamPro.variable} antialiased font-sans bg-[#FDFBF7] text-[#222222] selection:bg-[#C88A4B] selection:text-white max-w-[100vw] w-full overflow-x-hidden`}
+      >
         <SecurityShield>
           <LanguageProvider>
-            <CanvasProvider>
-              <BodyCursorController />
-              <CustomCursor />
-              <IntroLoader />
-              <Global3DCanvas />
-              <SmoothScroll>
-                <ThemeEffects />
-                <Header />
-                <main className="w-full max-w-[100vw] overflow-x-hidden min-h-screen touch-pan-y relative z-10">
-                  <PageTransitionProvider>
-                    {children}
-                  </PageTransitionProvider>
-                </main>
-                <Footer />
-              </SmoothScroll>
-            </CanvasProvider>
+            <SmoothScroll>
+              <Header />
+              <main className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
+                <PageTransitionProvider>{children}</PageTransitionProvider>
+              </main>
+              <Footer />
+            </SmoothScroll>
           </LanguageProvider>
         </SecurityShield>
         <Analytics />
+        <GoogleAnalytics gaId="G-F1E55KL26P" />
       </body>
-      <GoogleAnalytics gaId="G-F1E55KL26P" />
     </html>
   );
 }

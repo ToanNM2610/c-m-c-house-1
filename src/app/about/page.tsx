@@ -1,193 +1,289 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import { Compass, Sprout, Coffee, Sparkles, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  Sprout,
+  Coffee,
+  Heart,
+  Users,
+  Compass,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
-const EASE_AWWWARDS = [0.76, 0, 0.24, 1] as const;
+const CORE_VALUES = [
+  {
+    icon: Sprout,
+    step: "01",
+    title: "Thân Thiện Môi Trường",
+    desc: "Gìn giữ dòng suối ngàn năm và thảm cây rừng nguyên bản. Tuyệt đối không can thiệp cơ giới nặng nề làm biến đổi địa hình tự nhiên.",
+  },
+  {
+    icon: Coffee,
+    step: "02",
+    title: "Nguyên Liệu Xanh Sạch",
+    desc: "Cà phê mộc chất lượng cao thu hoạch chín mọng từ nông hộ bazan Đắk Nông, rang củi thủ công và không sử dụng bất kỳ hóa chất phụ gia nào.",
+  },
+  {
+    icon: Heart,
+    step: "03",
+    title: "Dịch Vụ Tận Tâm",
+    desc: "Đón tiếp chân thành, ấm áp như người nhà trở về. Mỗi vị khách ghé thăm đều là một người bạn tâm giao cùng chia sẻ tình yêu thiên nhiên.",
+  },
+];
 
 export default function AboutPage() {
   const { lang } = useLanguage();
 
   return (
-    <div className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]">
+    <div className="w-full bg-[#FDFBF7] text-[#222222]">
       
       {/* ========================================================= */}
-      {/* PHẦN 1: TUYÊN NGÔN TRIẾT LÝ (Chiếm trọn màn hình 100vh)   */}
+      {/* 1. BANNER: CÂU CHUYỆN CỦA CHÚNG TÔI                       */}
       {/* ========================================================= */}
-      <section className="min-h-screen w-full flex flex-col justify-between items-center py-24 sm:py-32 px-6 sm:px-12 text-center relative z-10">
-        {/* Tagline */}
-        <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: EASE_AWWWARDS }}
-          className="pt-6"
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#D4AF37] border border-[#D4AF37]/30 bg-[#0A0908]/90 shadow-md">
-            <Compass size={13} />
-            <span>TRIẾT LÝ KHỞI TẠO • GIA NGHĨA, ĐẮK NÔNG</span>
-          </span>
-        </motion.div>
-
-        {/* Dòng Typography chiếm trọn màn hình */}
-        <div className="max-w-6xl mx-auto my-auto py-10 space-y-4 sm:space-y-6">
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.15, ease: EASE_AWWWARDS }}
-            data-cursor-diff
-            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif font-light tracking-tight text-[#F4EFEA] leading-[1.05]"
-          >
-            TỪ BỎ ỒN ÀO.
-          </motion.h1>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.3, ease: EASE_AWWWARDS }}
-            data-cursor-diff
-            className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-serif italic font-light text-[#D4AF37] tracking-tight leading-[1.05]"
-          >
-            TÌM VỀ NGUYÊN BẢN.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.5, ease: EASE_AWWWARDS }}
-            className="max-w-2xl mx-auto mt-6 sm:mt-10 text-xs sm:text-base md:text-lg font-light text-[#F4EFEA]/80 leading-relaxed tracking-wide"
-          >
-            {lang === "en"
-              ? "Leave behind city haste. Retreat to ancient mossy rocks, highland pine breezes, and a warm cup of wood-roasted Robusta by the mountain brook."
-              : "Rời khỏi những xô bồ phố thị, ghé lại góc hiên mộc bên suối để tìm về sự tĩnh lặng thuần khiết trong từng giọt cà phê rang củi."}
-          </motion.p>
+      <section className="relative py-24 sm:py-32 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#EAE6DF]">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/uploads/gallery/1788250253554-875120458.jpg"
+            alt="Cẩm Cù House mộc mạc bên bờ suối"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF7]/90 via-[#FDFBF7]/85 to-[#FDFBF7]" />
         </div>
 
-        {/* Scroll cue */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.0, delay: 0.8 }}
-          className="flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]/80 pb-4"
-        >
-          <span>Cuộn để khám phá 3 giá trị mộc</span>
-          <div className="w-[1px] h-10 bg-gradient-to-b from-[#D4AF37]/50 to-transparent" />
-        </motion.div>
-      </section>
-
-      {/* ========================================================= */}
-      {/* PHẦN 2: BA GIÁ TRỊ MỘC (3 cột trên PC, 1 cột trên Mobile)  */}
-      {/* ========================================================= */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 sm:px-12 py-24 sm:py-32 border-t border-[#D4AF37]/20">
-        <div className="text-center max-w-2xl mx-auto mb-16 sm:mb-20 space-y-3">
-          <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-[#D4AF37]">
-            GIÁ TRỊ CỐT LÕI
+        <div className="relative z-10 max-w-3xl mx-auto space-y-4">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 text-xs font-semibold text-[#2D4A3E]">
+            <Compass size={14} className="text-[#C88A4B]" />
+            <span>HÀNH TRÌNH KHỞI NGUYÊN</span>
           </span>
-          <h2 className="text-3xl sm:text-5xl font-serif font-light text-[#F4EFEA]">
-            Ba Giá Trị Mộc
-          </h2>
-          <p className="text-xs sm:text-sm font-light text-[#F4EFEA]/70 leading-relaxed">
-            Nguyên tắc bất biến trong kiến tạo không gian và phục vụ tách cà phê tại Cẩm Cù House.
+
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#2D4A3E] tracking-tight">
+            Câu Chuyện Của Chúng Tôi
+          </h1>
+
+          <p className="text-base sm:text-lg font-light text-[#222222]/80 leading-relaxed">
+            Từ một góc suối đá hoang sơ tại thung lũng Gia Nghĩa, chúng tôi kiến
+            tạo nên chốn dừng chân bình dị nơi hương hoa cẩm cù hòa cùng vị cà
+            phê mộc nguyên bản.
           </p>
         </div>
+      </section>
 
-        {/* Layout 3 cột trên PC, 1 cột trên Mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
-          {/* Cột 1: Thuận theo tự nhiên */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1, ease: EASE_AWWWARDS }}
-            className="p-8 sm:p-10 rounded-2xl bg-[#120805]/95 border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 space-y-5 shadow-xl flex flex-col justify-between group"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
-                <Sprout size={22} />
-              </div>
-              <span className="text-[10px] font-mono text-[#D4AF37] tracking-widest uppercase block">
-                GIÁ TRỊ 01
-              </span>
-              <h3 className="text-xl sm:text-2xl font-serif font-semibold text-[#F4EFEA] group-hover:text-[#FFE1B3] transition-colors">
-                Thuận Theo Tự Nhiên
-              </h3>
-              <p className="text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
-                Không san ủi dốc đá, giữ nguyên lòng suối ngàn năm và bảo tồn thảm thực vật bản địa Đắk Nông. Mỗi nhành cây, viên đá cuội đều được nâng niu vẹn nguyên.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-white/5 text-[11px] font-mono text-[#D4AF37]/70">
-              Địa hình nguyên bản • Tự nhiên che chở
-            </div>
-          </motion.div>
-
-          {/* Cột 2: Cà phê xanh sạch */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2, ease: EASE_AWWWARDS }}
-            className="p-8 sm:p-10 rounded-2xl bg-[#120805]/95 border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 space-y-5 shadow-xl flex flex-col justify-between group"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
-                <Coffee size={22} />
-              </div>
-              <span className="text-[10px] font-mono text-[#D4AF37] tracking-widest uppercase block">
-                GIÁ TRỊ 02
-              </span>
-              <h3 className="text-xl sm:text-2xl font-serif font-semibold text-[#F4EFEA] group-hover:text-[#FFE1B3] transition-colors">
-                Cà Phê Xanh Sạch
-              </h3>
-              <p className="text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
-                Robusta mộc sấy tự nhiên từ nông hộ địa phương, rang củi thủ công trên than củi gỗ cà phê già. Tuyệt đối không hương liệu phụ gia hay chất bảo quản.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-white/5 text-[11px] font-mono text-[#D4AF37]/70">
-              100% Robusta Đắk Nông • Rang củi mộc
-            </div>
-          </motion.div>
-
-          {/* Cột 3: Khoảng lặng chữa lành */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3, ease: EASE_AWWWARDS }}
-            className="p-8 sm:p-10 rounded-2xl bg-[#120805]/95 border border-[#D4AF37]/20 hover:border-[#D4AF37]/60 transition-all duration-300 space-y-5 shadow-xl flex flex-col justify-between group"
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
-                <Sparkles size={22} />
-              </div>
-              <span className="text-[10px] font-mono text-[#D4AF37] tracking-widest uppercase block">
-                GIÁ TRỊ 03
-              </span>
-              <h3 className="text-xl sm:text-2xl font-serif font-semibold text-[#F4EFEA] group-hover:text-[#FFE1B3] transition-colors">
-                Khoảng Lặng Chữa Lành
-              </h3>
-              <p className="text-xs sm:text-sm font-light text-[#F4EFEA]/75 leading-relaxed">
-                Chốn dừng chân an yên, không xô bồ, không bán hàng ồn ã. Nơi bạn có thể ngồi hàng giờ ngắm hoa cẩm cù nở, lắng nghe tiếng suối và tìm lại nhịp điệu nội tâm.
-              </p>
-            </div>
-            <div className="pt-4 border-t border-white/5 text-[11px] font-mono text-[#D4AF37]/70">
-              Không xô bồ • Nơi tâm trí bình yên
-            </div>
-          </motion.div>
+      {/* ========================================================= */}
+      {/* 2. HÀNH TRÌNH & SỨ MỆNH (BỐ CỤC XEN KẼ Z-SHAPE)          */}
+      {/* ========================================================= */}
+      <section className="py-20 sm:py-28 px-6 sm:px-12 max-w-7xl mx-auto space-y-24 sm:space-y-32">
+        
+        {/* HÀNG 1: Khởi nguồn từ bờ suối đá */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#EAE6DF] shadow-md">
+            <Image
+              src="/uploads/gallery/1788250253551-943009233.jpg"
+              alt="Khởi nguồn từ bờ suối đá Cẩm Cù"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover hover:scale-104 transition-transform duration-700 ease-out"
+            />
+          </div>
+          <div className="lg:col-span-6 space-y-4">
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+              CHƯƠNG 01 • KHỞI NGUỒN
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#2D4A3E]">
+              Khởi Nguồn Từ Bờ Suối Đá
+            </h2>
+            <p className="text-sm sm:text-base font-light text-[#222222]/80 leading-relaxed">
+              Cẩm Cù House bắt đầu từ một buổi sáng tĩnh lặng bên con suối róc
+              rách chảy qua những tảng đá cuội rêu phong tại Hẻm 437 Hùng Vương.
+              Nhận thấy vẻ đẹp nguyên sơ hiếm có giữa nhịp sống hối hả, chúng tôi
+              quyết định dựng một mái hiên gỗ mộc mạc làm nơi dừng chân.
+            </p>
+            <p className="text-sm sm:text-base font-light text-[#222222]/80 leading-relaxed">
+              Mỗi mét vuông không gian đều nương tựa vào dáng dấp của tự nhiên,
+              không đắp bờ bê tông nhân tạo, giữ cho dòng nước suối luôn lưu
+              chuyển tự do và trong vắt quanh năm.
+            </p>
+          </div>
         </div>
 
-        {/* CTA chuyển tiếp sang Không Gian */}
-        <div className="mt-20 text-center">
-          <Link
-            href="/space"
-            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-[#D4AF37]/40 bg-[#0A0908]/85 text-xs font-mono uppercase tracking-widest text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0A0908] transition-all duration-300 shadow-lg"
-          >
-            <span>Khám Phá Không Gian Bờ Suối</span>
-            <ArrowRight size={13} />
-          </Link>
+        {/* HÀNG 2: Gìn giữ hệ sinh thái bản địa */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="lg:col-span-6 space-y-4 order-2 lg:order-1">
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+              CHƯƠNG 02 • THÁNH ĐƯỜNG THỰC VẬT
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#2D4A3E]">
+              Gìn Giữ Hệ Sinh Thái Bản Địa
+            </h2>
+            <p className="text-sm sm:text-base font-light text-[#222222]/80 leading-relaxed">
+              Hoa Cẩm Cù (Hoya) - loài hoa ngọc bích hình ngôi sao sáp bản địa
+              nở rộ mỗi mùa nắng sớm đã trở thành linh hồn của chốn này. Quanh
+              hiên nhà, hàng trăm loài thực vật Tây Nguyên cùng cỏ dại được chăm
+              sóc tự nhiên, tạo nên một vành đai xanh tươi mát và thanh lọc bầu
+              không khí.
+            </p>
+            <p className="text-sm sm:text-base font-light text-[#222222]/80 leading-relaxed">
+              Khách đến đây được ngồi dưới tán lá râm mát, lắng nghe tiếng chim hót
+              và tận hưởng sự kết nối dịu dàng với cỏ cây hoa lá.
+            </p>
+          </div>
+          <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#EAE6DF] shadow-md order-1 lg:order-2">
+            <Image
+              src="/uploads/gallery/1788250253557-29323827.jpg"
+              alt="Hệ sinh thái hoa Cẩm Cù bản địa"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover hover:scale-104 transition-transform duration-700 ease-out"
+            />
+          </div>
+        </div>
+
+        {/* HÀNG 3: Văn hóa cà phê xanh sạch */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#EAE6DF] shadow-md">
+            <Image
+              src="/uploads/gallery/1788250253560-200373033.jpg"
+              alt="Cà phê mộc rang củi thủ công"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover hover:scale-104 transition-transform duration-700 ease-out"
+            />
+          </div>
+          <div className="lg:col-span-6 space-y-4">
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+              CHƯƠNG 03 • HƯƠNG VỊ MỘC
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#2D4A3E]">
+              Văn Hóa Cà Phê Rang Củi Xanh Sạch
+            </h2>
+            <p className="text-sm sm:text-base font-light text-[#222222]/80 leading-relaxed">
+              Chúng tôi trân trọng hạt Robusta được nuôi dưỡng bởi lớp đất đỏ bazan
+              màu mỡ Đắk Nông. Không rang công nghiệp số lượng lớn, Cẩm Cù House
+              chọn rang từng mẻ nhỏ trên ngọn lửa than củi từ những cành cà phê già
+              đã hết chu kỳ sinh trưởng.
+            </p>
+            <p className="text-sm sm:text-base font-light text-[#222222]/80 leading-relaxed">
+              Không bơ, không hương liệu tổng hợp, từng giọt cà phê chắt chiu vị
+              đậm đà, hậu vị ngọt thanh tao và thơm nồng khói gỗ tự nhiên.
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+      {/* ========================================================= */}
+      {/* 3. GIÁ TRỊ CỐT LÕI (3 CỘT THẺ NỀN TRẮNG VIỀN #EAE6DF)     */}
+      {/* ========================================================= */}
+      <section className="py-20 bg-[#F7F4EE] px-6 sm:px-12 border-t border-b border-[#EAE6DF]">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+              NGUYÊN TẮC HOẠT ĐỘNG
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D4A3E]">
+              Giá Trị Cốt Lõi
+            </h2>
+            <p className="text-sm font-light text-[#222222]/75">
+              Ba trụ cột định hình mọi trải nghiệm của khách hàng tại Cẩm Cù House.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {CORE_VALUES.map((val, idx) => {
+              const IconComp = val.icon;
+              return (
+                <div
+                  key={idx}
+                  className="bg-white p-8 rounded-2xl border border-[#EAE6DF] shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between space-y-6"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-xl bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 flex items-center justify-center text-[#2D4A3E]">
+                        <IconComp size={22} />
+                      </div>
+                      <span className="text-xs font-mono font-bold text-[#C88A4B]">
+                        {val.step}
+                      </span>
+                    </div>
+
+                    <h3 className="font-serif text-xl font-bold text-[#2D4A3E]">
+                      {val.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-sm font-light text-[#222222]/80 leading-relaxed">
+                      {val.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-[#EAE6DF] text-xs font-medium text-[#C88A4B]">
+                    Cam kết trọn vẹn từ trái tim
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
+
+      {/* ========================================================= */}
+      {/* 4. ĐỘI NGŨ / CON NGƯỜI & LỜI TRI ÂN                       */}
+      {/* ========================================================= */}
+      <section className="py-20 sm:py-28 px-6 sm:px-12 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-white p-8 sm:p-14 rounded-3xl border border-[#EAE6DF] shadow-md">
+          {/* Ảnh đội ngũ */}
+          <div className="lg:col-span-6 relative aspect-[4/3] rounded-2xl overflow-hidden border border-[#EAE6DF]">
+            <Image
+              src="/uploads/gallery/1788250253554-875120458.jpg"
+              alt="Đội ngũ pha chế và phục vụ Cẩm Cù House"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+
+          {/* Lời tri ân */}
+          <div className="lg:col-span-6 space-y-5">
+            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold">
+              <Users size={14} />
+              <span>CON NGƯỜI CẨM CÙ</span>
+            </div>
+
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#2D4A3E]">
+              Gặp Gỡ Đội Ngũ Tận Tâm
+            </h2>
+
+            <p className="text-sm sm:text-base font-light text-[#222222]/85 leading-relaxed">
+              Phía sau mỗi ly cà phê ấm nóng và chiếc bàn sạch sẽ dưới tán râm là
+              sự tận tụy của những con người chất phác đất Tây Nguyên. Chúng tôi
+              học cách lắng nghe nhịp thở của tự nhiên, pha chế bằng tất cả tình
+              yêu thương và luôn sẵn lòng đón chào bạn với nụ cười thân quen nhất.
+            </p>
+
+            <blockquote className="p-4 rounded-xl bg-[#FDFBF7] border-l-4 border-[#C88A4B] italic text-xs sm:text-sm font-serif text-[#2D4A3E]">
+              &ldquo;Cảm ơn bạn đã ghé thăm và trở thành một phần tươi đẹp trong
+              hành trình gìn giữ màu xanh bờ suối của Cẩm Cù House.&rdquo;
+            </blockquote>
+
+            <div className="pt-2">
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#2D4A3E] hover:bg-[#1F342B] text-white text-xs sm:text-sm font-medium transition-colors shadow-sm"
+              >
+                <span>Ghé chơi cùng chúng tôi</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
