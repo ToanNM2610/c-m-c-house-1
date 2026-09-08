@@ -10,10 +10,25 @@ import {
   Sparkles,
   ChevronRight,
   ChevronLeft,
-  Compass,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
+/* ===== Animation Variants ===== */
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.12 },
+  }),
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+/* ===== Data ===== */
 const FEATURED_SIGNATURES = [
   {
     id: "cf-3",
@@ -49,7 +64,7 @@ const FEATURED_SIGNATURES = [
   },
 ];
 
-const EXPERIENCES_16_9 = [
+const EXPERIENCES = [
   {
     title: "Bờ Suối Đá Róc Rách Ngàn Năm",
     subtitle: "DÒNG NƯỚC TỰ NHIÊN",
@@ -98,94 +113,102 @@ export default function HomePage() {
   const { lang } = useLanguage();
   const [currentReview, setCurrentReview] = useState(0);
 
-  const nextReview = () => {
-    setCurrentReview((prev) => (prev + 1) % REVIEWS.length);
-  };
-  const prevReview = () => {
-    setCurrentReview((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
-  };
+  const nextReview = () => setCurrentReview((p) => (p + 1) % REVIEWS.length);
+  const prevReview = () => setCurrentReview((p) => (p - 1 + REVIEWS.length) % REVIEWS.length);
 
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ========================================================= */}
-      {/* 1. HERO SECTION - Để hở nền cho Organic Faceted Wireframe */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 1. HERO — Transparent to reveal 3D Organic Wireframe behind  */}
+      {/* ============================================================ */}
       <section className="relative min-h-[90vh] sm:min-h-screen flex items-center justify-center px-6 sm:px-12 py-20 overflow-hidden">
-        {/* Lớp gradient mờ nhẹ không che phủ WebGL */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0C0D0B]/40 via-transparent to-[#0C0D0B]/90 pointer-events-none" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0C0D0B]/30 via-transparent to-[#0C0D0B]/85 pointer-events-none" />
 
-        <div className="relative z-10 max-w-5xl mx-auto w-full text-center space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="space-y-6 flex flex-col items-center"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17]/80 border border-[#222520] text-xs font-mono font-medium text-[#C88A4B]">
-              <Sparkles size={14} />
-              <span>AWWWARDS 3D BOTANICAL RETREAT • GIA NGHĨA</span>
-            </div>
-
-            {/* Tiêu đề lớn Playfair Display */}
-            <h1 className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.08]">
-              CẨM CÙ HOUSE
-            </h1>
-
-            {/* Slogan */}
-            <p className="text-base sm:text-xl font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed">
-              Chốn dừng chân mộc mạc bên bờ suối đá Gia Nghĩa.
-            </p>
-
-            {/* 2 nút CTA viền mỏng theo yêu cầu */}
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/menu"
-                className="px-8 py-3.5 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 shadow-md active:scale-98"
-              >
-                Khám phá Thực Đơn
-              </Link>
-
-              <Link
-                href="/space"
-                className="px-8 py-3.5 rounded-full border border-[#FDFBF7]/40 text-[#FDFBF7] hover:border-[#2D4A3E] hover:bg-[#2D4A3E] text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 active:scale-98"
-              >
-                Không Gian
-              </Link>
-            </div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="relative z-10 max-w-5xl mx-auto w-full text-center space-y-8"
+        >
+          <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17]/80 border border-[#222520] text-xs font-mono font-medium text-[#C88A4B]">
+            <Sparkles size={14} />
+            <span>BOTANICAL RETREAT • BỜ SUỐI ĐÁ GIA NGHĨA</span>
           </motion.div>
-        </div>
+
+          <motion.h1
+            variants={fadeUp}
+            custom={1}
+            className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.06]"
+          >
+            CẨM CÙ HOUSE
+          </motion.h1>
+
+          <motion.p
+            variants={fadeUp}
+            custom={2}
+            className="text-base sm:text-xl font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
+          >
+            Chốn dừng chân mộc mạc bên bờ suối đá Gia Nghĩa.
+          </motion.p>
+
+          <motion.div variants={fadeUp} custom={3} className="pt-4 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/menu"
+              className="px-8 py-3.5 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 shadow-md active:scale-[0.98]"
+            >
+              Khám phá Thực Đơn
+            </Link>
+            <Link
+              href="/space"
+              className="px-8 py-3.5 rounded-full border border-[#FDFBF7]/40 text-[#FDFBF7] hover:border-[#2D4A3E] hover:bg-[#2D4A3E] text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 active:scale-[0.98]"
+            >
+              Không Gian
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 2. SECTION TRẢI NGHIỆM (THẺ ẢNH TỶ LỆ 16:9)              */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 2. TRẢI NGHIỆM — 3 thẻ ảnh 16:9 với stagger reveal          */}
+      {/* ============================================================ */}
       <section className="py-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12"
+        >
           <div className="space-y-2">
-            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+            <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
               TRẢI NGHIỆM ĐẮK NÔNG
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
+            </motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
               Hòa Nhịp Cùng Thiên Nhiên
-            </h2>
+            </motion.h2>
           </div>
-          <Link
-            href="/space"
-            className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#C88A4B] hover:underline"
-          >
-            <span>Xem toàn bộ góc không gian</span>
-            <ArrowRight size={14} />
-          </Link>
-        </div>
+          <motion.div variants={fadeUp} custom={2}>
+            <Link href="/space" className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#C88A4B] hover:underline">
+              <span>Xem toàn bộ góc không gian</span>
+              <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+        </motion.div>
 
-        {/* 3 Thẻ ảnh tỷ lệ 16:9 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {EXPERIENCES_16_9.map((item, idx) => (
-            <div
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerContainer}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          {EXPERIENCES.map((item, idx) => (
+            <motion.div
               key={idx}
+              variants={fadeUp}
+              custom={idx}
               className="card-dark overflow-hidden flex flex-col group"
             >
-              {/* Ảnh tỷ lệ 16:9 */}
               <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#1A1D17]">
                 <Image
                   src={item.image}
@@ -195,7 +218,6 @@ export default function HomePage() {
                   className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
-
               <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
                 <div>
                   <span className="text-[10px] font-mono tracking-widest text-[#C88A4B] uppercase block">
@@ -208,37 +230,50 @@ export default function HomePage() {
                     {item.desc}
                   </p>
                 </div>
-
                 <div className="pt-4 border-t border-[#222520] flex items-center justify-between text-xs text-[#C88A4B]">
                   <span>Khám phá thêm</span>
                   <ArrowRight size={13} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 3. MÓN TIÊU BIỂU (FEATURED SIGNATURE DRINKS)              */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 3. MÓN TIÊU BIỂU — 4 signature cards                       */}
+      {/* ============================================================ */}
       <section className="py-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10 border-t border-[#222520]">
-        <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
-          <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="text-center max-w-2xl mx-auto space-y-3 mb-14"
+        >
+          <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
             MÓN SIGNATURE TIÊU BIỂU
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
+          </motion.span>
+          <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
             Thức Uống Đặc Trưng Được Yêu Thích
-          </h2>
-          <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/70">
+          </motion.h2>
+          <motion.p variants={fadeUp} custom={2} className="text-xs sm:text-sm font-light text-[#FDFBF7]/70">
             Bốn hương vị kết tinh từ hạt cà phê Đắk Nông và thảo mộc đại ngàn.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURED_SIGNATURES.map((item) => (
-            <div
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={staggerContainer}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {FEATURED_SIGNATURES.map((item, idx) => (
+            <motion.div
               key={item.id}
+              variants={fadeUp}
+              custom={idx}
               className="card-dark p-4 flex flex-col group overflow-hidden"
             >
               <div className="relative aspect-square w-full rounded-xl overflow-hidden mb-3 bg-[#1A1D17]">
@@ -253,7 +288,6 @@ export default function HomePage() {
                   {item.tag}
                 </span>
               </div>
-
               <div className="space-y-1.5 flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex items-baseline justify-between gap-1">
@@ -268,7 +302,6 @@ export default function HomePage() {
                     {item.desc}
                   </p>
                 </div>
-
                 <div className="pt-3 border-t border-[#222520] text-right">
                   <Link
                     href="/menu"
@@ -279,11 +312,17 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-12 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-12 text-center"
+        >
           <Link
             href="/menu"
             className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all"
@@ -291,22 +330,28 @@ export default function HomePage() {
             <span>Khám phá toàn bộ thực đơn</span>
             <ArrowRight size={14} />
           </Link>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 4. CUSTOMER REVIEWS (SLIDER 5 SAO ẤM ÁP)                  */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 4. CUSTOMER REVIEWS — Slider with star ratings               */}
+      {/* ============================================================ */}
       <section className="py-24 px-6 sm:px-12 max-w-4xl mx-auto relative z-10 border-t border-[#222520]">
-        <div className="space-y-8 text-center">
-          <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerContainer}
+          className="space-y-8 text-center"
+        >
+          <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
             CẢM NHẬN KHÁCH HÀNG
-          </span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
+          </motion.span>
+          <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
             Những Lời Nhắn Ấm Áp
-          </h2>
+          </motion.h2>
 
-          <div className="card-dark p-8 sm:p-12 relative">
+          <motion.div variants={fadeUp} custom={2} className="card-dark p-8 sm:p-12 relative">
             <div className="flex items-center justify-center gap-1 text-[#C88A4B] mb-4">
               {[...Array(REVIEWS[currentReview].stars)].map((_, i) => (
                 <Star key={i} size={18} className="fill-[#C88A4B]" />
@@ -353,8 +398,8 @@ export default function HomePage() {
                 <ChevronRight size={16} />
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
     </div>
   );

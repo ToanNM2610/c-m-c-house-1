@@ -14,6 +14,20 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1 },
+  }),
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
 type FilterArea =
   | "Tất cả"
   | "Bờ suối ngoài trời"
@@ -174,30 +188,35 @@ export default function SpacePage() {
 
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ========================================================= */}
-      {/* 1. BANNER TIÊU ĐỀ KHÔNG GIAN                              */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 1. BANNER                                                    */}
+      {/* ============================================================ */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
-        <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="relative z-10 max-w-3xl mx-auto space-y-4"
+        >
+          <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
             <Compass size={14} />
             <span>THÁNH ĐƯỜNG BÊN SUỐI ĐÁ</span>
-          </span>
+          </motion.span>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
+          <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
             Không Gian &amp; Trải Nghiệm
-          </h1>
+          </motion.h1>
 
-          <p className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
+          <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
             Dạo bước qua từng góc hiên gỗ, suối đá cuội và khu vườn hoa cẩm cù rực
             rỡ. Mỗi góc nhỏ tại Cẩm Cù House đều mang đến sự thư thái tuyệt đối.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 2. BỘ LỌC KHU VỰC (FILTER TABS)                           */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 2. FILTER TABS                                               */}
+      {/* ============================================================ */}
       <section className="py-8 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center relative z-10">
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520]">
           {FILTER_TABS.map((tab) => (
@@ -216,18 +235,25 @@ export default function SpacePage() {
         </div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 3. THƯ VIỆN MASONRY GRID & LIGHTBOX                      */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 3. MASONRY GRID                                              */}
+      {/* ============================================================ */}
       <section className="pb-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.05 }}
+          variants={staggerContainer}
+          className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+        >
           {filteredPhotos.map((photo, idx) => (
-            <div
+            <motion.div
               key={photo.id}
+              variants={fadeUp}
+              custom={idx}
               onClick={() => setSelectedPhoto(photo)}
               className="break-inside-avoid group card-dark overflow-hidden cursor-pointer relative"
             >
-              {/* Ảnh tối ưu qua Next/Image */}
               <div className={`relative w-full overflow-hidden ${photo.aspect} bg-[#1A1D17]`}>
                 <Image
                   src={photo.image}
@@ -238,52 +264,61 @@ export default function SpacePage() {
                   className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
-
-              {/* Thông tin góc quán */}
               <div className="p-5 space-y-2">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
                   {photo.category}
                 </span>
-
                 <h3 className="font-serif text-xl font-bold text-[#FDFBF7] group-hover:text-[#C88A4B] transition-colors">
                   {lang === "en" ? photo.titleEn : photo.titleVi}
                 </h3>
-
                 <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed line-clamp-2">
                   {lang === "en" ? photo.descEn : photo.descVi}
                 </p>
-
                 <div className="pt-2 flex items-center gap-1.5 text-xs font-medium text-[#C88A4B] group-hover:translate-x-1 transition-transform">
                   <Eye size={13} />
                   <span>Xem ảnh lớn</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 4. TIỆN ÍCH THỰC TẾ (4 BIỂU TƯỢNG RÕ NÉT)                */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 4. AMENITIES                                                 */}
+      {/* ============================================================ */}
       <section className="py-24 px-6 sm:px-12 border-t border-[#222520] relative z-10">
         <div className="max-w-7xl mx-auto space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+            className="text-center max-w-2xl mx-auto space-y-3"
+          >
+            <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
               TIỆN NGHI CHU ĐÁO
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
+            </motion.span>
+            <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               Tiện Ích &amp; Dịch Vụ
-            </h2>
-            <p className="text-sm font-light text-[#FDFBF7]/70">
+            </motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-sm font-light text-[#FDFBF7]/70">
               Được chuẩn bị tươm tất để bạn có trải nghiệm trọn vẹn và thoải mái nhất.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
             {AMENITIES.map((amenity, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={fadeUp}
+                custom={idx}
                 className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] transition-colors"
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
@@ -295,15 +330,15 @@ export default function SpacePage() {
                 <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed">
                   {amenity.desc}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 5. LIGHTBOX MODAL PHÓNG TO ẢNH                           */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 5. LIGHTBOX MODAL                                            */}
+      {/* ============================================================ */}
       <AnimatePresence>
         {selectedPhoto && (
           <motion.div
@@ -313,7 +348,11 @@ export default function SpacePage() {
             onClick={() => setSelectedPhoto(null)}
             className="fixed inset-0 z-[9999] bg-[#0C0D0B]/90 flex items-center justify-center p-4 sm:p-8 cursor-pointer"
           >
-            <div
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
               className="relative max-w-4xl w-full bg-[#141612] rounded-3xl overflow-hidden shadow-2xl border border-[#222520] cursor-default"
             >
@@ -338,7 +377,7 @@ export default function SpacePage() {
                 <div className="md:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6">
                   <div className="space-y-3">
                     <span className="text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
-                      {photoCategoryLabel(selectedPhoto.category)}
+                      {selectedPhoto.category}
                     </span>
                     <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#FDFBF7]">
                       {lang === "en" ? selectedPhoto.titleEn : selectedPhoto.titleVi}
@@ -347,20 +386,15 @@ export default function SpacePage() {
                       {lang === "en" ? selectedPhoto.descEn : selectedPhoto.descVi}
                     </p>
                   </div>
-
                   <div className="pt-4 border-t border-[#222520] text-xs text-[#C88A4B]">
                     Cẩm Cù House • Bờ suối đá Gia Nghĩa, Đắk Nông
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
-}
-
-function photoCategoryLabel(cat: FilterArea) {
-  return cat;
 }

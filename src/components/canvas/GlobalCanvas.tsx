@@ -1,29 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
+import { PerformanceMonitor } from "@react-three/drei";
 import { usePathname } from "next/navigation";
 import SceneController from "./SceneController";
 
 export default function GlobalCanvas() {
   const [mounted, setMounted] = useState(false);
-  const [isLowPower, setIsLowPower] = useState(false);
+  const [dpr, setDpr] = useState(1);
   const pathname = usePathname() || "";
 
   useEffect(() => {
     setMounted(true);
-    // Nhận diện thiết bị di động / màn hình nhỏ / GPU yếu
+    // Set initial DPR based on device capability
     const isMobile =
       typeof window !== "undefined" &&
       (window.innerWidth < 768 ||
         window.matchMedia("(pointer: coarse)").matches ||
         "ontouchstart" in window ||
         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
-
-    setIsLowPower(!!isMobile);
+    setDpr(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
   }, []);
 
-  // Không hiển thị Canvas trong giao diện Admin
+  // PerformanceMonitor callbacks for adaptive quality
+  const handleIncline = useCallback(() => {
+    setDpr((prev) => Math.min(prev + 0.25, 1.5));
+  }, []);
+
+  const handleDecline = useCallback(() => {
+    setDpr((prev) => Math.max(prev - 0.25, 0.75));
+  }, []);
+
+  // Don't render Canvas in Admin area
   if (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin")) {
     return null;
   }
@@ -45,16 +54,25 @@ export default function GlobalCanvas() {
     >
       <Canvas
         camera={{ position: [0, 0, 5], fov: 45 }}
-        dpr={isLowPower ? [1, 1] : [1, 1.5]}
+        dpr={dpr}
         gl={{
           powerPreference: "high-performance",
           antialias: false,
           alpha: true,
           depth: true,
           stencil: false,
+          failIfMajorPerformanceCaveat: false,
         }}
+        frameloop="always"
         className="w-full h-full pointer-events-none"
       >
+        {/* Adaptive performance: auto-adjust DPR based on FPS */}
+        <PerformanceMonitor
+          onIncline={handleIncline}
+          onDecline={handleDecline}
+          flipflops={3}
+          bounds={(refreshrate) => [refreshrate * 0.5, refreshrate * 0.9]}
+        />
         <SceneController />
       </Canvas>
     </div>

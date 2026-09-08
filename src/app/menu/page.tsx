@@ -2,8 +2,23 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Coffee, CheckCircle2, Leaf, HeartHandshake } from "lucide-react";
 import { REAL_MENU_DATA } from "@/data/menu";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.06 },
+  }),
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+};
 
 type MenuCategoryTab =
   | "TẤT CẢ"
@@ -36,30 +51,35 @@ export default function MenuPage() {
 
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ========================================================= */}
-      {/* 1. BANNER: THỰC ĐƠN QUÁN                                  */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 1. BANNER                                                    */}
+      {/* ============================================================ */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
-        <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="relative z-10 max-w-3xl mx-auto space-y-4"
+        >
+          <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
             <Coffee size={14} />
             <span>NGUYÊN LIỆU MỘC &amp; TƯƠI LÀNH</span>
-          </span>
+          </motion.span>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
+          <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
             Thực Đơn Quán
-          </h1>
+          </motion.h1>
 
-          <p className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
+          <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
             Hơn 40 món đồ uống và món ăn ngon miệng được pha chế tỉ mỉ, mộc mạc và
             ấm áp bên bờ suối Gia Nghĩa.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 2. THANH PHÂN LOẠI DANH MỤC (STICKY TOP KHÔNG BLUR)      */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 2. STICKY CATEGORY TABS (NO BLUR)                            */}
+      {/* ============================================================ */}
       <section className="py-6 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center sticky top-20 z-30 bg-[#0C0D0B]/95 border-b border-[#222520]/50">
         <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520] max-w-full overflow-x-auto">
           {CATEGORY_TABS.map((tab) => (
@@ -78,22 +98,30 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 3. MENU GRID CARD (DANH SÁCH MÓN ĂN ĐẦY ĐỦ)              */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 3. MENU GRID - FULL REAL DATA                                */}
+      {/* ============================================================ */}
       <section className="pb-24 pt-8 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <div className="mb-6 text-xs text-[#FDFBF7]/60 font-mono">
           Hiển thị {filteredItems.length} món trong danh mục{" "}
           <strong className="text-[#C88A4B]">{activeCategory}</strong>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredItems.map((item) => (
-            <div
+        <motion.div
+          key={activeCategory}
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          {filteredItems.map((item, idx) => (
+            <motion.div
               key={item.id}
+              variants={fadeUp}
+              custom={idx}
               className="card-dark overflow-hidden flex flex-col p-4 group hover:border-[#C88A4B] transition-all duration-300"
             >
-              {/* Ảnh vuông 1:1 */}
+              {/* Square image */}
               <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-3.5 bg-[#1A1D17]">
                 <Image
                   src={item.image}
@@ -102,8 +130,6 @@ export default function MenuPage() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
-
-                {/* Nhãn Best-seller / Signature */}
                 {item.tag && (
                   <span
                     className={`absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase shadow-sm ${
@@ -117,7 +143,7 @@ export default function MenuPage() {
                 )}
               </div>
 
-              {/* Thông tin món */}
+              {/* Item info */}
               <div className="space-y-2 flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-2">
@@ -128,14 +154,12 @@ export default function MenuPage() {
                       {item.priceFormatted}
                     </span>
                   </div>
-
                   {item.desc && (
                     <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed mt-1.5 line-clamp-2">
                       {item.desc}
                     </p>
                   )}
                 </div>
-
                 <div className="pt-2.5 border-t border-[#222520] flex items-center justify-between text-[11px] text-[#C88A4B] font-medium">
                   <span className="inline-flex items-center gap-1">
                     <CheckCircle2 size={12} className="text-[#C88A4B]" />
@@ -146,16 +170,22 @@ export default function MenuPage() {
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* ========================================================= */}
-      {/* 4. GHI CHÚ CHÂN TRANG                                     */}
-      {/* ========================================================= */}
+      {/* ============================================================ */}
+      {/* 4. SPECIAL NOTES FOOTER                                      */}
+      {/* ============================================================ */}
       <section className="pb-20 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
-        <div className="card-dark rounded-3xl p-8 sm:p-10 border border-[#222520] flex flex-col md:flex-row items-center gap-8 justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="card-dark rounded-3xl p-8 sm:p-10 border border-[#222520] flex flex-col md:flex-row items-center gap-8 justify-between"
+        >
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold">
               <Leaf size={14} />
@@ -192,7 +222,7 @@ export default function MenuPage() {
               Hãy dặn nhân viên khi gọi món để chúng tôi chuẩn bị đúng khẩu vị của bạn nhé!
             </p>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
