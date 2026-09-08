@@ -93,7 +93,7 @@ export default function SpacePage() {
 
     return images.map((img, index) => {
       // Auto assign diverse aspect ratios for Masonry grid
-      const aspect = index % 3 === 0 ? "tall" : index % 5 === 0 ? "square" : "wide";
+      const aspect = index % 2 === 0 ? "tall" : "square";
       
       let mapKey = img.caption || "";
       if (mapKey === "t8") mapKey = "1 (31)"; // Normalize fallback
@@ -203,7 +203,7 @@ export default function SpacePage() {
   return (
     <div className="w-full text-[#FDFBF7]">
       {/* 1. HERO SHOWCASE TỰ ĐỘNG THAY ĐỔI ẢNH */}
-      <section className="relative w-full h-[60vh] sm:h-[75vh] md:h-[85vh] overflow-hidden bg-[#0C0D0B] border-b border-[#222520]">
+      <section className="relative w-full max-w-7xl mx-auto h-[40vh] max-h-[300px] md:max-h-[360px] overflow-hidden rounded-2xl bg-[#0C0D0B] border border-[#222520] mt-6 sm:mt-8 px-4 sm:px-6 lg:px-8">
         <AnimatePresence mode="sync">
           {carouselPhotos.length > 0 && (
             <motion.div
@@ -223,27 +223,27 @@ export default function SpacePage() {
                 sizes="100vw"
               />
               {/* Cinematic Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D0B] via-[#0C0D0B]/40 to-transparent opacity-90" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D0B] via-[#0C0D0B]/60 to-transparent opacity-90" />
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Hero Content */}
-        <div className="absolute inset-0 flex flex-col justify-end items-center text-center pb-20 sm:pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 pointer-events-none">
+        <div className="absolute inset-0 flex flex-col justify-end items-center text-center pb-12 sm:pb-16 px-4 z-10 pointer-events-none">
           <motion.span 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17]/80 backdrop-blur-sm border border-[#222520] text-xs font-mono text-[#C88A4B] mb-4"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1A1D17]/80 backdrop-blur-sm border border-[#222520] text-[10px] font-mono text-[#C88A4B] mb-3"
           >
-            <Compass size={14} />
+            <Compass size={12} />
             <span>{t("space.heroTag")}</span>
           </motion.span>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold text-[#FDFBF7] tracking-tight drop-shadow-xl max-w-4xl"
+            className="font-serif text-2xl md:text-3xl font-bold text-[#FDFBF7] tracking-tight drop-shadow-xl max-w-xl"
           >
             {t("space.heroTitle")}
           </motion.h1>
@@ -251,7 +251,7 @@ export default function SpacePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-sm sm:text-base md:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mt-4 drop-shadow-md"
+            className="text-xs sm:text-sm font-light text-[#FDFBF7]/80 max-w-md mt-3 drop-shadow-md"
           >
             {t("space.heroDesc")}
           </motion.p>
@@ -259,28 +259,28 @@ export default function SpacePage() {
 
         {/* Carousel Controls */}
         {carouselPhotos.length > 1 && (
-          <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 flex justify-center items-center gap-6 z-20">
-            <div className="flex gap-2">
+          <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex justify-center items-center gap-4 z-20">
+            <div className="flex gap-1.5">
               <button 
                 onClick={() => setCurrentSlide((prev) => (prev > 0 ? prev - 1 : carouselPhotos.length - 1))}
-                className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
+                className="w-8 h-8 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
               >
-                <ChevronLeft size={18} />
+                <ChevronLeft size={14} />
               </button>
               <button 
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
+                className="w-8 h-8 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
               >
-                {isPlaying ? <Pause size={16} /> : <Play size={16} className="ml-1" />}
+                {isPlaying ? <Pause size={12} /> : <Play size={12} className="ml-1" />}
               </button>
               <button 
                 onClick={() => setCurrentSlide((prev) => (prev + 1) % carouselPhotos.length)}
-                className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
+                className="w-8 h-8 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={14} />
               </button>
             </div>
-            <div className="text-xs font-mono font-medium tracking-widest text-[#FDFBF7]/80">
+            <div className="text-[10px] font-mono font-medium tracking-widest text-[#FDFBF7]/80">
               [ {String(currentSlide + 1).padStart(2, '0')} / {String(carouselPhotos.length).padStart(2, '0')} ]
             </div>
           </div>
@@ -321,21 +321,19 @@ export default function SpacePage() {
               {lang === "en" ? "No photos found in this category." : "Không có ảnh nào trong chuyên mục này."}
             </motion.div>
           ) : (
-            <motion.div
+              <motion.div
               key={activeTab}
               initial="hidden"
               whileInView="visible"
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
               viewport={{ once: true, amount: 0.05 }}
               variants={staggerContainer}
-              className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 sm:gap-8 space-y-6 sm:space-y-8"
+              className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-2.5 sm:gap-3 md:gap-4 space-y-2.5 sm:space-y-3 md:space-y-4"
             >
               {filteredPhotos.map((photo, idx) => {
                 // Determine aspect ratio class
                 const aspectClass = 
-                  photo.aspectRatio === "tall" ? "aspect-[3/4]" : 
-                  photo.aspectRatio === "square" ? "aspect-square" : 
-                  "aspect-[4/3]";
+                  photo.aspectRatio === "tall" ? "aspect-[4/5]" : "aspect-square";
                   
                 return (
                   <motion.div
@@ -343,7 +341,7 @@ export default function SpacePage() {
                     variants={fadeUp}
                     custom={idx}
                     onClick={() => setSelectedPhotoIndex(idx)}
-                    className="break-inside-avoid group relative rounded-2xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer bg-[#0C0D0B] mb-6 sm:mb-8"
+                    className="break-inside-avoid group relative rounded-xl border border-white/10 shadow-md overflow-hidden cursor-pointer bg-[#0C0D0B] mb-2.5 sm:mb-3 md:mb-4 hover:shadow-xl hover:shadow-[#C88A4B]/10 transition-all duration-300"
                   >
                     <div className={`relative w-full overflow-hidden ${aspectClass} bg-[#1A1D17]`}>
                       <Image
@@ -351,25 +349,15 @@ export default function SpacePage() {
                         alt={photo.titleVi}
                         fill
                         loading="lazy"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                        className="object-cover group-hover:scale-[1.02] transition-transform duration-[0.6s] ease-out"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                        className="object-cover group-hover:scale-[1.03] transition-transform duration-[0.6s] ease-out"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                       
-                      <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#C88A4B]/20 border border-[#C88A4B]/30 backdrop-blur-md w-fit">
-                          <Compass size={10} className="text-[#C88A4B]" />
-                          <span className="text-[9px] font-mono font-semibold uppercase tracking-widest text-[#C88A4B]">
-                            {lang === "en" ? FILTER_KEYS.find(k => k.key === photo.category)?.labelEn : FILTER_KEYS.find(k => k.key === photo.category)?.labelVi}
-                          </span>
-                        </div>
-                        <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] drop-shadow-md leading-tight">
+                      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 space-y-1 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end">
+                        <h3 className="font-serif text-xs sm:text-sm font-bold text-[#FDFBF7] drop-shadow-md leading-tight tracking-wider line-clamp-2">
                           {lang === "en" ? photo.titleEn : photo.titleVi}
                         </h3>
-                        <div className="pt-1 flex items-center gap-1.5 text-[10px] font-medium text-white/70">
-                          <Eye size={12} />
-                          <span className="uppercase tracking-widest">{t("space.viewPhoto")}</span>
-                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -477,7 +465,7 @@ export default function SpacePage() {
             )}
 
             {/* Main Image Container */}
-            <div className="relative w-full h-full max-w-[90vw] max-h-[80vh] flex items-center justify-center">
+            <div className="relative w-full h-full max-w-xl md:max-w-2xl max-h-[75vh] flex items-center justify-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedPhotoIndex}
@@ -500,12 +488,12 @@ export default function SpacePage() {
             </div>
 
             {/* Bottom Info Bar */}
-            <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
-              <div className="bg-[#1A1D17]/80 backdrop-blur-md border border-white/10 px-8 py-4 rounded-3xl text-center max-w-2xl">
-                <h3 className="font-serif text-2xl font-bold text-[#FDFBF7] mb-1">
+            <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 flex justify-center z-20">
+              <div className="bg-[#1A1D17]/80 backdrop-blur-md border border-white/10 px-6 sm:px-8 py-3 sm:py-4 rounded-3xl text-center max-w-sm md:max-w-md">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] mb-1 line-clamp-1">
                   {lang === "en" ? filteredPhotos[selectedPhotoIndex].titleEn : filteredPhotos[selectedPhotoIndex].titleVi}
                 </h3>
-                <p className="text-xs font-mono uppercase tracking-widest text-[#C88A4B]">
+                <p className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#C88A4B]">
                   {t("space.lightboxFooter")}
                 </p>
               </div>
