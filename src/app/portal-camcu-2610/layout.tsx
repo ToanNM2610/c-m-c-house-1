@@ -117,7 +117,7 @@ export default function AdminLayout({
               CẨM CÙ HOUSE • GIA NGHĨA
             </span>
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#F3E8DB] tracking-wide">
-              Cổng Quản Trị Hệ Thống
+              Cổng Quản Trị Cẩm Cù House
             </h1>
             <p className="text-xs text-[#F3E8DB]/70 mt-2 font-light">
               Nhập mã PIN hoặc mật khẩu quản trị viên để mở khóa bảng điều khiển.
@@ -296,7 +296,7 @@ export default function AdminLayout({
 
         {/* Mobile Header & Overlay */}
         <div className="md:hidden fixed top-[32px] left-0 w-full bg-[#1d2327] border-b border-[#2c3338] z-30 flex items-center justify-between p-2">
-          <span className="text-[#c3c4c7] font-medium ml-2 text-xs">Cẩm Cù Quản Trị</span>
+          <span className="text-[#c3c4c7] font-medium ml-2 text-xs">Cẩm Cù House Quản Trị</span>
           <button 
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-1 text-[#c3c4c7] hover:text-white"

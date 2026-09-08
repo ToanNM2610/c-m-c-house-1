@@ -7,7 +7,7 @@ export default function GuestLayout({
     <div className="relative w-full">
       {/* Header mộc mạc cho Khách */}
       <header className="absolute top-0 left-0 w-full z-50 p-6 flex justify-between items-center bg-transparent">
-        <div className="text-xl font-serif text-stone-100 drop-shadow-md">Cẩm Cù</div>
+        <div className="text-xl font-serif text-stone-100 drop-shadow-md">Cẩm Cù House</div>
         <nav className="flex gap-8 text-stone-200 text-sm tracking-widest font-light drop-shadow-md">
           <a href="/about" className="hover:text-white transition">CHUYỆN NHÀ</a>
           <a href="/menu" className="hover:text-white transition">THỰC ĐƠN</a>

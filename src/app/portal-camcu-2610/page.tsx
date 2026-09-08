@@ -145,7 +145,7 @@ export default function AdminCleanSanctuaryDashboard() {
               >
                 <img
                   src={img.url}
-                  alt={img.caption || "Góc quán Cẩm Cù"}
+                  alt={img.caption || "Góc quán Cẩm Cù House"}
                   className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-300"
                   loading="lazy"
                 />

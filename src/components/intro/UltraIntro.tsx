@@ -580,7 +580,7 @@ export default function UltraIntro() {
                 >
                   <span>COFFEE & FOOD</span>
                   <span className="w-1 h-1 rounded-full bg-[#FFB84D]" />
-                  <span>GIA NGHĨA, ĐẮK NÔNG</span>
+                  <span>GIA NGHĨA</span>
                 </motion.div>
               </motion.div>
             )}
