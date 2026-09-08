@@ -243,33 +243,45 @@ function InteractiveDotGlobe({ active }: { active: boolean }) {
 function FloatingParticles() {
   const particlesRef = useRef<THREE.Points>(null);
 
-  const { particlesGeo, phases } = useMemo(() => {
-    const count = 200;
+  const { particlesGeo, basePositions, phases, speeds } = useMemo(() => {
+    const count = 180;
     const positions = new Float32Array(count * 3);
+    const basePos = new Float32Array(count * 3);
     const phaseArr = new Float32Array(count);
+    const speedArr = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 15;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      const x = (Math.random() - 0.5) * 16;
+      const y = (Math.random() - 0.5) * 12;
+      const z = (Math.random() - 0.5) * 10;
+      positions[i * 3] = x;
+      positions[i * 3 + 1] = y;
+      positions[i * 3 + 2] = z;
+      basePos[i * 3] = x;
+      basePos[i * 3 + 1] = y;
+      basePos[i * 3 + 2] = z;
       phaseArr[i] = Math.random() * Math.PI * 2;
+      speedArr[i] = 0.3 + Math.random() * 0.6;
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    return { particlesGeo: geo, phases: phaseArr };
+    return { particlesGeo: geo, basePositions: basePos, phases: phaseArr, speeds: speedArr };
   }, []);
 
   useFrame((state) => {
     if (!particlesRef.current) return;
     const time = state.clock.elapsedTime;
-    
-    // Slow overall ambient rotation
-    particlesRef.current.rotation.y = time * 0.015;
-    particlesRef.current.rotation.x = Math.sin(time * 0.1) * 0.02;
 
-    // Organic sine wave vertical drift
-    const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
-    for (let i = 0; i < 200; i++) {
-      positions[i * 3 + 1] += Math.sin(time * 0.8 + phases[i]) * 0.0015;
+    // Slow overall ambient rotation
+    particlesRef.current.rotation.y = time * 0.012;
+
+    // Organic sine-wave drift from base positions (no accumulation)
+    const pos = particlesRef.current.geometry.attributes.position.array as Float32Array;
+    for (let i = 0; i < 180; i++) {
+      const phase = phases[i];
+      const speed = speeds[i];
+      pos[i * 3]     = basePositions[i * 3]     + Math.sin(time * speed * 0.4 + phase) * 0.3;
+      pos[i * 3 + 1] = basePositions[i * 3 + 1] + Math.sin(time * speed * 0.6 + phase) * 0.4;
+      pos[i * 3 + 2] = basePositions[i * 3 + 2] + Math.cos(time * speed * 0.3 + phase) * 0.2;
     }
     particlesRef.current.geometry.attributes.position.needsUpdate = true;
   });
@@ -278,9 +290,9 @@ function FloatingParticles() {
     <points ref={particlesRef} geometry={particlesGeo}>
       <pointsMaterial
         color="#C88A4B"
-        size={0.03}
+        size={0.028}
         transparent
-        opacity={0.5}
+        opacity={0.45}
         sizeAttenuation
         blending={THREE.AdditiveBlending}
         depthWrite={false}
@@ -296,6 +308,7 @@ function CameraRig({ pathname }: { pathname: string }) {
   const scrollProgress = useRef(0);
   const targetPos = useRef(new THREE.Vector3(0, 0, 5));
   const targetLook = useRef(new THREE.Vector3(0, 0, 0));
+  const currentLookAt = useRef(new THREE.Vector3(0, 0, 0));
 
   useEffect(() => {
     const onScroll = () => {
@@ -309,29 +322,28 @@ function CameraRig({ pathname }: { pathname: string }) {
   useFrame((state, delta) => {
     const d = Math.min(delta, 0.05);
     const sp = scrollProgress.current;
+    const lerpFactor = d * 2.0;
 
     if (pathname === "/") {
-      // Home: straight on, scroll tilts up slightly (camera moves down)
-      targetPos.current.set(0, -sp * 1.5, 5 + sp * 1.2);
-      targetLook.current.set(0, sp * 0.5, 0);
+      targetPos.current.set(0, -sp * 1.2, 5 + sp * 0.8);
+      targetLook.current.set(0, sp * 0.4, 0);
     } else if (pathname === "/space" || pathname === "/menu") {
-      // Space/Menu: Camera dolly to the side, tilt right
-      targetPos.current.set(-1.5, 0.2, 5.5);
-      targetLook.current.set(1.0, 0, 0);
+      targetPos.current.set(-1.2, 0.15, 5.5);
+      targetLook.current.set(0.8, 0, 0);
+    } else if (pathname === "/about") {
+      targetPos.current.set(0.6, 0.1, 5.2);
+      targetLook.current.set(-0.4, 0, 0);
     } else if (pathname === "/contact") {
-      targetPos.current.set(1.5, 0, 5);
-      targetLook.current.set(-1.0, 0, 0);
+      targetPos.current.set(1.2, 0, 5);
+      targetLook.current.set(-0.8, 0, 0);
     } else {
       targetPos.current.set(0, 0, 5);
       targetLook.current.set(0, 0, 0);
     }
 
-    state.camera.position.lerp(targetPos.current, d * 2.0);
-    
-    // Manually interpolate lookAt target
-    const currentLookAt = new THREE.Vector3(0, 0, -1).applyQuaternion(state.camera.quaternion).add(state.camera.position);
-    currentLookAt.lerp(targetLook.current, d * 2.0);
-    state.camera.lookAt(currentLookAt);
+    state.camera.position.lerp(targetPos.current, lerpFactor);
+    currentLookAt.current.lerp(targetLook.current, lerpFactor);
+    state.camera.lookAt(currentLookAt.current);
   });
 
   return null;

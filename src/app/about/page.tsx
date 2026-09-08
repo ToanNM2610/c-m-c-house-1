@@ -11,6 +11,26 @@ const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.12 } }),
 };
+
+const kineticReveal = {
+  hidden: { y: "120%", opacity: 0 },
+  visible: (i: number) => ({
+    y: "0%",
+    opacity: 1,
+    transition: { duration: 0.8, delay: i * 0.08 },
+  }),
+};
+
+const cardFanOut = {
+  hidden: { opacity: 0, y: 50, rotateZ: -3 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    rotateZ: 0,
+    transition: { duration: 0.7, delay: i * 0.1 },
+  }),
+};
+
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
 const VALUE_EMOJIS = ["☕", "🌿", "❤️"];
@@ -23,25 +43,29 @@ export default function AboutPage() {
       {/* ── 1. BANNER ── */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
         <motion.div initial="hidden" animate="visible" variants={stagger} className="relative z-10 max-w-4xl mx-auto space-y-6">
-          <motion.span variants={fadeUp} custom={0}
+          <motion.span variants={kineticReveal} custom={0}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]"
           >
             <Compass size={14} />
             <span>{t("about.heroTag")}</span>
           </motion.span>
 
-          <motion.h1 variants={fadeUp} custom={1}
-            className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight"
-          >
-            {t("about.heroTitle1")} <br />
-            <span className="text-[#C88A4B] italic">{t("about.heroTitle2")}</span>
-          </motion.h1>
+          <div className="overflow-hidden pb-2">
+            <motion.h1 variants={kineticReveal} custom={1}
+              className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight"
+            >
+              {t("about.heroTitle1")} <br />
+              <span className="text-[#C88A4B] italic">{t("about.heroTitle2")}</span>
+            </motion.h1>
+          </div>
 
-          <motion.p variants={fadeUp} custom={2}
-            className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
-          >
-            {t("about.heroDesc")}
-          </motion.p>
+          <div className="overflow-hidden">
+            <motion.p variants={kineticReveal} custom={2}
+              className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
+            >
+              {t("about.heroDesc")}
+            </motion.p>
+          </div>
         </motion.div>
       </section>
 
@@ -121,8 +145,8 @@ export default function AboutPage() {
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
             {([1, 2, 3] as const).map((n, idx) => (
-              <motion.div key={n} variants={fadeUp} custom={idx}
-                className="card-dark p-8 rounded-3xl flex flex-col justify-between space-y-6 hover:border-[#C88A4B] transition-colors"
+              <motion.div key={n} variants={cardFanOut} custom={idx}
+                className="card-dark p-8 rounded-3xl flex flex-col justify-between space-y-6 hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">

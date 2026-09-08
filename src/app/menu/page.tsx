@@ -16,6 +16,15 @@ const fadeUp = {
   }),
 };
 
+const kineticReveal = {
+  hidden: { y: "120%", opacity: 0 },
+  visible: (i: number) => ({
+    y: "0%",
+    opacity: 1,
+    transition: { duration: 0.8, delay: i * 0.08 },
+  }),
+};
+
 const cardFanOut = {
   hidden: { opacity: 0, y: 50, rotateZ: -3 },
   visible: (i: number) => ({
@@ -82,18 +91,22 @@ export default function MenuPage() {
           variants={staggerContainer}
           className="relative z-10 max-w-3xl mx-auto space-y-4"
         >
-          <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
+          <motion.span variants={kineticReveal} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
             <Coffee size={14} />
             <span>{t("menu.heroTag")}</span>
           </motion.span>
 
-          <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
-            {t("menu.heroTitle")}
-          </motion.h1>
+          <div className="overflow-hidden pb-2">
+            <motion.h1 variants={kineticReveal} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
+              {t("menu.heroTitle")}
+            </motion.h1>
+          </div>
 
-          <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
-            {t("menu.heroDesc")}
-          </motion.p>
+          <div className="overflow-hidden">
+            <motion.p variants={kineticReveal} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
+              {t("menu.heroDesc")}
+            </motion.p>
+          </div>
         </motion.div>
       </section>
 
