@@ -61,11 +61,37 @@ export default function SpacePage() {
       // Auto assign diverse aspect ratios for Masonry grid
       const aspect = index % 3 === 0 ? "tall" : index % 5 === 0 ? "square" : "wide";
       
+      // Check if caption is raw filename like "1 (3)", "t5", or "image12"
+      let titleVi = img.caption || "";
+      let titleEn = img.caption || "";
+      
+      const isRawFilename = !titleVi || /^(t\d+|\d+\s*\(\d+\)|image\d+|img_\d+)$/i.test(titleVi);
+      
+      if (isRawFilename) {
+        const aestheticNamesVi = {
+          stream: "Bờ Suối Rì Rào",
+          veranda: "Góc Hiên Đón Nắng",
+          flower: "Giàn Cẩm Cù Rực Rỡ",
+          festive: "Góc Lễ Hội Sắc Màu",
+          peaceful: "Chốn Tĩnh Lặng An Yên"
+        };
+        const aestheticNamesEn = {
+          stream: "Rocky Stream Bank",
+          veranda: "Sunlit Veranda",
+          flower: "Blooming Hoya",
+          festive: "Festive Colors",
+          peaceful: "Peaceful Nook"
+        };
+        const counter = Math.floor(index / cats.length) + 1;
+        titleVi = `${aestheticNamesVi[category]} ${counter}`;
+        titleEn = `${aestheticNamesEn[category]} ${counter}`;
+      }
+      
       return {
         id: img.id,
         src: img.url,
-        titleVi: img.caption || `Không gian ${index + 1}`,
-        titleEn: img.caption || `Space ${index + 1}`,
+        titleVi: titleVi,
+        titleEn: titleEn,
         category: category,
         aspectRatio: aspect
       };
@@ -256,9 +282,10 @@ export default function SpacePage() {
 
       {/* 3. MASONRY GRID (EXPANDED) */}
       <section className="pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {filteredPhotos.length === 0 ? (
             <motion.div
+              key="empty"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -268,8 +295,10 @@ export default function SpacePage() {
             </motion.div>
           ) : (
             <motion.div
+              key={activeTab}
               initial="hidden"
               whileInView="visible"
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
               viewport={{ once: true, amount: 0.05 }}
               variants={staggerContainer}
               className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 sm:gap-8 space-y-6 sm:space-y-8"

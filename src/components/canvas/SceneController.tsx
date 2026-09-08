@@ -84,13 +84,13 @@ function OrganicWireframe({ pathname }: { pathname: string }) {
       // Space: pushed far back, very subtle
       tX = -3.0 + mx * 0.1;
       tY = 1.0 + my * 0.1;
-      tZ = -5.0;
+      tZ = -8.0;
       tScale = 0.4;
     } else if (pathname === "/menu") {
       // Menu: top-right corner, dim
       tX = 2.0 + mx * 0.08;
       tY = 0.9 + my * 0.05;
-      tZ = -1.8;
+      tZ = -8.0;
       tScale = 0.45;
     } else if (pathname === "/contact") {
       // Contact: far left, complements the globe

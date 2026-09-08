@@ -26,7 +26,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 20000,
     priceFormatted: "20.000 VNĐ",
     desc: "Cà phê phin truyền thống rang mộc từ hạt Robusta Đắk Nông nguyên bản.",
-    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-2",
@@ -35,7 +35,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 25000,
     priceFormatted: "25.000 VNĐ",
     desc: "Vị cà phê sữa đá ngọt bùi, đậm đà theo phong vị quen thuộc của phố thị.",
-    image: "/uploads/gallery/1788250253554-875120458.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-3",
@@ -45,7 +45,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "28.000 VNĐ",
     tag: "Best-seller",
     desc: "Lớp kem muối béo nhẹ mằn mặn đánh bông tươi mới hòa cùng cà phê đen rang mộc.",
-    image: "/uploads/gallery/1788250253554-875120458.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-4",
@@ -54,7 +54,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Cốt dừa đá xay béo ngậy rót trên cốt cà phê nguyên chất thanh mát sảng khoái.",
-    image: "/uploads/gallery/1788250253566-618481408.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-5",
@@ -64,7 +64,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "30.000 VNĐ",
     tag: "Signature",
     desc: "Lớp kem trứng gà tươi đánh bông sánh mịn phủ lên cà phê nóng đậm đà, thơm lừng không tanh.",
-    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-6",
@@ -73,7 +73,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 25000,
     priceFormatted: "25.000 VNĐ",
     desc: "Nhiều sữa ít cà phê, béo ngọt dịu dàng phù hợp cho những ai thích vị ngọt ngào.",
-    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-7",
@@ -82,7 +82,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 25000,
     priceFormatted: "25.000 VNĐ",
     desc: "Bột cacao Đắk Lắk nguyên chất pha cùng sữa đặc thơm nồng béo ngọt.",
-    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-8",
@@ -91,7 +91,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Sự kết hợp độc đáo giữa vị đậm ngọt của cacao và lớp kem mằn mặn êm ái.",
-    image: "/uploads/gallery/1788250253554-875120458.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
   {
     id: "cf-9",
@@ -100,7 +100,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Cacao ấm nóng kết hợp kem trứng bồng bềnh béo mịn thơm lừng.",
-    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    image: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=800&q=80",
   },
 
   // ================= TRÀ =================
@@ -111,7 +111,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 25000,
     priceFormatted: "25.000 VNĐ",
     desc: "Gừng sẻ cay thơm đập dập hòa cùng mật ong hoa cà phê Gia Nghĩa ấm nóng sưởi ấm cơ thể.",
-    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-2",
@@ -120,7 +120,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Trà thảo mộc thanh nhiệt điểm xuyết cam vàng, kỷ tử và cam thảo thanh tao.",
-    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-3",
@@ -129,7 +129,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Nước trà thanh mát kết hợp quả vải giòn ngọt mọng nước sảng khoái.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-4",
@@ -138,7 +138,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Miếng đào giòn ngọt thơm lừng trên nền cốt trà đen đậm đà tươi mới.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-5",
@@ -148,7 +148,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "30.000 VNĐ",
     tag: "Best-seller",
     desc: "Hương sả the mát quyện cùng vị chua thanh của cam vàng và vị ngọt giòn của đào.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-6",
@@ -157,7 +157,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Trà xanh Thái Lan đậm vị kết hợp sữa tươi béo thơm thanh mát mát lạnh.",
-    image: "/uploads/gallery/1788250253570-358232239.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-7",
@@ -166,7 +166,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 25000,
     priceFormatted: "25.000 VNĐ",
     desc: "Cốt hồng trà ủ đậm đà hòa cùng sữa thơm béo chuẩn vị truyền thống.",
-    image: "/uploads/gallery/1788250253572-915114239.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-8",
@@ -175,7 +175,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Trà sữa béo ngậy được phủ lớp sốt kem trứng sánh mịn thơm bùi ngất ngây.",
-    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-9",
@@ -184,7 +184,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Bông cúc vàng sấy lạnh thanh khiết, giúp ngủ ngon và thư thái tinh thần.",
-    image: "/uploads/gallery/1788250253557-29323827.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
   {
     id: "tr-10",
@@ -194,7 +194,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "28.000 VNĐ",
     tag: "Signature",
     desc: "Đặc sản dược liệu quý của vùng đất Tây Nguyên chưng cùng mật ong rừng, thanh giọng bổ phế.",
-    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
   },
 
   // ================= SINH TỐ =================
@@ -205,7 +205,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Mãng cầu xiêm chua ngọt dẻo dai xay nhuyễn cùng sữa thanh ngọt.",
-    image: "/uploads/gallery/1788250253570-358232239.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-2",
@@ -214,7 +214,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Sapoche chín ngọt lịm thơm bùi tự nhiên, bổ dưỡng và thanh mát.",
-    image: "/uploads/gallery/1788250253572-915114239.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-3",
@@ -223,7 +223,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Xoài chín vàng ươm ngọt lịm, dậy vị nhiệt đới mát lạnh.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-4",
@@ -232,7 +232,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Cùi dừa non xay cùng sữa đặc và đá nhuyễn, béo ngậy thơm mát.",
-    image: "/uploads/gallery/1788250253566-618481408.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-5",
@@ -241,7 +241,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Bơ sáp đất đỏ bazan dẻo quánh đặc trưng, béo bùi tự nhiên.",
-    image: "/uploads/gallery/1788250253570-358232239.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-6",
@@ -250,7 +250,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Hạt đậu đỏ ninh nhừ bùi béo xay mịn cùng sữa tươi dinh dưỡng.",
-    image: "/uploads/gallery/1788250253572-915114239.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-7",
@@ -259,7 +259,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 28000,
     priceFormatted: "28.000 VNĐ",
     desc: "Trái mọng tươi chua ngọt giàu chất chống oxy hóa và vitamin.",
-    image: "/uploads/gallery/1788250253568-69250175.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-8",
@@ -269,7 +269,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "33.000 VNĐ",
     tag: "Best-seller",
     desc: "Sự kết hợp đỉnh cao giữa bơ sáp béo ngậy và cơm sầu riêng chín cây thơm nức mũi.",
-    image: "/uploads/gallery/1788250253570-358232239.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
   {
     id: "st-9",
@@ -278,7 +278,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 33000,
     priceFormatted: "33.000 VNĐ",
     desc: "Hạt sen tươi hầm mềm bùi thơm béo nhẹ, thanh nhiệt và bồi bổ sức khỏe.",
-    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    image: "https://images.unsplash.com/photo-1628557044797-f21a177c37ec?w=800&q=80",
   },
 
   // ================= NƯỚC ÉP =================
@@ -289,7 +289,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Trái cây tươi ép nguyên chất giữ nguyên vitamin và khoáng chất tự nhiên.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80",
   },
   {
     id: "ne-2",
@@ -298,7 +298,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Vị chua ngọt thanh mát tự nhiên, giải nhiệt ngày nắng cao nguyên.",
-    image: "/uploads/gallery/1788250253572-915114239.jpg",
+    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80",
   },
   {
     id: "ne-3",
@@ -307,7 +307,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Dưa hấu ngọt lịm hoặc rau kale xanh tươi thanh lọc detox cơ thể.",
-    image: "/uploads/gallery/1788250253568-69250175.jpg",
+    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80",
   },
   {
     id: "ne-4",
@@ -317,7 +317,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "35.000 VNĐ",
     tag: "Best-seller",
     desc: "Tự do kết hợp 2-3 loại trái cây/rau củ theo sở thích cá nhân của bạn.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80",
   },
 
   // ================= SODA / SỮA CHUA =================
@@ -328,7 +328,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Đài hoa Hibiscus đỏ thắm chua ngọt giòn sần sật sủi bọt mát rượi.",
-    image: "/uploads/gallery/1788250253568-69250175.jpg",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
   },
   {
     id: "sd-2",
@@ -337,7 +337,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Lá bạc hà tươi giã dập cùng chanh xanh và soda sủi tăm sảng khoái.",
-    image: "/uploads/gallery/1788250253564-115851131.jpg",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
   },
   {
     id: "sd-3",
@@ -346,7 +346,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Sốt quả mọng tự nhiên cùng soda mát lạnh giải khát tức thì.",
-    image: "/uploads/gallery/1788250253572-915114239.jpg",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
   },
   {
     id: "sc-1",
@@ -355,7 +355,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 23000,
     priceFormatted: "23.000 VNĐ",
     desc: "Sữa chua lên men tự nhiên dầm đá truyền thống chua dịu thanh tao.",
-    image: "/uploads/gallery/1788250253597-677832947.jpg",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
   },
   {
     id: "sc-2",
@@ -364,7 +364,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Nếp cẩm ủ rượu thơm dẻo hoặc sốt hoa quả tươi phủ trên nền sữa chua mịn màng.",
-    image: "/uploads/gallery/1788250253597-677832947.jpg",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
   },
   {
     id: "sc-3",
@@ -374,7 +374,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "30.000 VNĐ",
     tag: "Best-seller",
     desc: "Hạt đác rừng rim đường phèn dẻo dai sần sật hòa cùng sữa chua sánh béo.",
-    image: "/uploads/gallery/1788250253597-677832947.jpg",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
   },
 
   // ================= OTHER (KHÁC) =================
@@ -385,7 +385,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Món nước tuổi thơ mộc mạc chua ngọt mằn mặn rắc đậu phộng rang giòn.",
-    image: "/uploads/gallery/1788250253572-915114239.jpg",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
   },
   {
     id: "ot-2",
@@ -394,7 +394,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 22000,
     priceFormatted: "22.000 VNĐ",
     desc: "Trái dừa xiêm hái tại vườn ngọt mát lành thanh khiết tự nhiên.",
-    image: "/uploads/gallery/1788250253566-618481408.jpg",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
   },
   {
     id: "ot-3",
@@ -403,7 +403,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 25000,
     priceFormatted: "25.000 VNĐ",
     desc: "Thức uống giải cảm và dịu cổ họng từ chanh ngâm truyền thống.",
-    image: "/uploads/gallery/1788250253562-580915883.jpg",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
   },
   {
     id: "ot-4",
@@ -412,7 +412,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Dưa hấu đỏ mọng xay cùng trái tắc the nhẹ, thơm mát bừng tỉnh ngày nắng.",
-    image: "/uploads/gallery/1788250253568-69250175.jpg",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
   },
   {
     id: "ot-5",
@@ -421,7 +421,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 27000,
     priceFormatted: "27.000 VNĐ",
     desc: "Bột trà xanh thơm ngát hòa cùng sữa tươi thanh trùng đánh bọt mịn màng.",
-    image: "/uploads/gallery/1788250253570-358232239.jpg",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
   },
   {
     id: "ot-6",
@@ -430,7 +430,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Matcha đậu đỏ bùi béo hoặc bánh Oreo xay tuyết phủ kem béo ngọt ngào.",
-    image: "/uploads/gallery/1788250253560-200373033.jpg",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=80",
   },
 
   // ================= FOOD (MÓN ĂN) =================
@@ -441,7 +441,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 30000,
     priceFormatted: "30.000 VNĐ",
     desc: "Bánh mì nướng giòn rụm ăn cùng trứng ốp la lòng đào và xúc xích rán nóng hổi.",
-    image: "/uploads/gallery/1788250253578-396525469.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-2",
@@ -450,7 +450,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 35000,
     priceFormatted: "35.000 VNĐ",
     desc: "Sợi mì Ý luộc vừa tới quyện trong nước sốt cà chua thịt bò bằm thảo mộc đậm đà.",
-    image: "/uploads/gallery/1788250253579-355700743.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-3",
@@ -460,7 +460,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "45.000 VNĐ",
     tag: "Best-seller",
     desc: "Thịt bắp bò mềm mọng ninh cùng cà rốt và sả thảo mộc thơm nức mũi, chấm cùng bánh mì giòn.",
-    image: "/uploads/gallery/1788250253583-466696218.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-4",
@@ -470,7 +470,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "45.000 VNĐ",
     tag: "Signature",
     desc: "Thịt gà đồi săn chắc nấu cùng nước cốt dừa, khoai lang ngọt và sốt cà ri béo ngậy.",
-    image: "/uploads/gallery/1788250253581-551654423.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-5",
@@ -479,7 +479,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 12000,
     priceFormatted: "12.000 VNĐ",
     desc: "Bánh tráng dẻo Trảng Bàng cuộn muối tôm, hành phi giòn và sốt sa tế cay xé lưỡi.",
-    image: "/uploads/gallery/1788250253587-81750666.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-6",
@@ -488,7 +488,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 20000,
     priceFormatted: "20.000 VNĐ",
     desc: "Phô mai kéo sợi béo ngậy hoặc khoai tây chiên giòn tan rắc phô mai chấm tương cà.",
-    image: "/uploads/gallery/1788250253590-409844081.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-7",
@@ -497,7 +497,7 @@ export const REAL_MENU_DATA: MenuItem[] = [
     price: 20000,
     priceFormatted: "20.000 VNĐ",
     desc: "Viên chiên dai giòn nóng hổi ăn kèm dưa leo, rau răm và tương đen đậm đà.",
-    image: "/uploads/gallery/1788250253592-73071293.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
   {
     id: "fd-8",
@@ -507,6 +507,6 @@ export const REAL_MENU_DATA: MenuItem[] = [
     priceFormatted: "25.000 VNĐ",
     tag: "Best-seller",
     desc: "Món ăn vặt thơm ngon nướng vàng xém giòn, ăn vặt cùng bạn bè bên bờ suối.",
-    image: "/uploads/gallery/1788250253595-367274421.jpg",
+    image: "https://images.unsplash.com/photo-1548943487-a2e4f43b4850?w=800&q=80",
   },
 ];

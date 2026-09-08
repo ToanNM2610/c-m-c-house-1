@@ -49,7 +49,7 @@ export default function GlobalCanvas() {
       style={{
         width: "100vw",
         height: "100vh",
-        backgroundColor: "#0C0D0B",
+        backgroundColor: "#0a0908",
       }}
     >
       <Canvas
@@ -65,7 +65,7 @@ export default function GlobalCanvas() {
         }}
         frameloop="always"
         className={`w-full h-full pointer-events-none transition-opacity duration-1000 ease-in-out ${
-          pathname === "/space" ? "opacity-30" : "opacity-100"
+          (pathname === "/space" || pathname === "/menu") ? "opacity-15" : "opacity-100"
         }`}
       >
         {/* Adaptive performance: auto-adjust DPR based on FPS */}
