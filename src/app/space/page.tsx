@@ -430,73 +430,82 @@ export default function SpacePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[9999] bg-[#0C0D0B]/95 backdrop-blur-xl flex flex-col items-center justify-center cursor-default"
+            onClick={() => setSelectedPhotoIndex(null)}
+            className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6"
           >
-            {/* Top Bar */}
-            <div className="absolute top-0 left-0 right-0 p-6 flex justify-between items-center z-20">
-              <div className="text-[#C88A4B] font-mono text-sm font-medium tracking-widest bg-[#1A1D17]/80 px-4 py-2 rounded-full border border-white/10">
-                {String(selectedPhotoIndex + 1).padStart(2, '0')} / {String(filteredPhotos.length).padStart(2, '0')}
-              </div>
+            {/* Modal Box */}
+            <div 
+              onClick={(e) => e.stopPropagation()} 
+              className="relative w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto flex flex-col items-center"
+            >
+              
+              {/* Close Button Top Right */}
               <button
                 onClick={() => setSelectedPhotoIndex(null)}
-                className="w-12 h-12 rounded-full bg-[#1A1D17]/80 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all"
+                className="absolute -top-10 -right-2 sm:-right-8 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-[#FDFBF7] transition-all z-50"
                 aria-label="Close"
               >
-                <X size={24} />
+                <X size={16} />
               </button>
-            </div>
 
-            {/* Left/Right Navigation */}
-            {filteredPhotos.length > 1 && (
-              <>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                  className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1A1D17]/50 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all z-20"
-                >
-                  <ChevronLeft size={32} />
-                </button>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                  className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1A1D17]/50 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all z-20"
-                >
-                  <ChevronRight size={32} />
-                </button>
-              </>
-            )}
+              {/* Main Image Frame */}
+              <div className="relative w-full h-[50vh] max-h-[55vh] md:max-h-[60vh] rounded-3xl overflow-hidden border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] bg-[#0C0D0B]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedPhotoIndex}
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    className="relative w-full h-full"
+                  >
+                    <Image
+                      src={filteredPhotos[selectedPhotoIndex].src}
+                      alt={filteredPhotos[selectedPhotoIndex].titleVi}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 90vw, 600px"
+                      priority
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-            {/* Main Image Container */}
-            <div className="relative w-full h-full max-w-xl md:max-w-2xl max-h-[75vh] flex items-center justify-center">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={selectedPhotoIndex}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative w-full h-full"
-                >
-                  <Image
-                    src={filteredPhotos[selectedPhotoIndex].src}
-                    alt={filteredPhotos[selectedPhotoIndex].titleVi}
-                    fill
-                    className="object-contain"
-                    sizes="90vw"
-                    priority
-                  />
-                </motion.div>
-              </AnimatePresence>
-            </div>
+              {/* Left/Right Navigation */}
+              {filteredPhotos.length > 1 && (
+                <>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                    className="absolute left-2 sm:-left-12 top-1/2 -translate-y-1/2 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-[#FDFBF7] transition-all z-20 shadow-lg backdrop-blur-md"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                    className="absolute right-2 sm:-right-12 top-1/2 -translate-y-1/2 w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 flex items-center justify-center text-[#FDFBF7] transition-all z-20 shadow-lg backdrop-blur-md"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </>
+              )}
 
-            {/* Bottom Info Bar */}
-            <div className="absolute bottom-4 sm:bottom-8 left-0 right-0 flex justify-center z-20">
-              <div className="bg-[#1A1D17]/80 backdrop-blur-md border border-white/10 px-6 sm:px-8 py-3 sm:py-4 rounded-3xl text-center max-w-sm md:max-w-md">
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] mb-1 line-clamp-1">
+              {/* Caption Bar */}
+              <div className="w-full mt-4 bg-[#141414]/90 backdrop-blur-md border border-white/10 rounded-2xl p-3.5 text-center shadow-lg">
+                <div className="flex items-center justify-center gap-1.5 mb-1 text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#C88A4B]">
+                  <Compass size={12} />
+                  <span>
+                    {lang === "en" ? FILTER_KEYS.find(k => k.key === filteredPhotos[selectedPhotoIndex].category)?.labelEn : FILTER_KEYS.find(k => k.key === filteredPhotos[selectedPhotoIndex].category)?.labelVi}
+                  </span>
+                  <span className="opacity-50 mx-1">•</span>
+                  <span>
+                    {String(selectedPhotoIndex + 1).padStart(2, '0')} / {String(filteredPhotos.length).padStart(2, '0')}
+                  </span>
+                </div>
+                <h3 className="font-serif text-sm md:text-base font-medium text-[#FDFBF7] line-clamp-1">
                   {lang === "en" ? filteredPhotos[selectedPhotoIndex].titleEn : filteredPhotos[selectedPhotoIndex].titleVi}
                 </h3>
-                <p className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-[#C88A4B]">
-                  {t("space.lightboxFooter")}
-                </p>
               </div>
+              
             </div>
           </motion.div>
         )}
