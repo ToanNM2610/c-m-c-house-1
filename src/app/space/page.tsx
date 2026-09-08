@@ -18,7 +18,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 interface SpaceItem {
   id: string;
-  category: "Trong nhà" | "Ngoài trời / Bờ suối" | "Góc Check-in";
+  category: "Sân Vườn / Ngoài Trời" | "Trong Nhà Ấm Cúng" | "Bàn Làm Việc";
   titleVi: string;
   titleEn: string;
   descVi: string;
@@ -30,7 +30,7 @@ interface SpaceItem {
 const SPACE_GALLERY: SpaceItem[] = [
   {
     id: "sp-1",
-    category: "Ngoài trời / Bờ suối",
+    category: "Sân Vườn / Ngoài Trời",
     titleVi: "Bờ Suối Đá Thung Lũng",
     titleEn: "Valley Pebble Brook",
     descVi: "Dòng suối trong vắt len lỏi qua bãi đá cuội rêu phong ngàn năm, nơi tiếng nước ngân nga xua tan mọi âu lo.",
@@ -40,7 +40,7 @@ const SPACE_GALLERY: SpaceItem[] = [
   },
   {
     id: "sp-2",
-    category: "Trong nhà",
+    category: "Trong Nhà Ấm Cúng",
     titleVi: "Hiên Gỗ Đón Nắng Sớm",
     titleEn: "Sunlit Timber Veranda",
     descVi: "Góc hiên gỗ mộc ấm cúng đón trọn vạt nắng đầu ngày, ngát hương cà phê mới rang.",
@@ -50,7 +50,7 @@ const SPACE_GALLERY: SpaceItem[] = [
   },
   {
     id: "sp-3",
-    category: "Góc Check-in",
+    category: "Sân Vườn / Ngoài Trời",
     titleVi: "Thánh Đường Hoa Cẩm Cù",
     titleEn: "Indigenous Hoya Haven",
     descVi: "Hàng trăm loài hoa cẩm cù bản địa đơm bông hình ngôi sao sáp ngọc bích tỏa hương dịu mát.",
@@ -60,7 +60,7 @@ const SPACE_GALLERY: SpaceItem[] = [
   },
   {
     id: "sp-4",
-    category: "Ngoài trời / Bờ suối",
+    category: "Sân Vườn / Ngoài Trời",
     titleVi: "Bàn Đá Dưới Tán Râm",
     titleEn: "Canopy Shaded Table",
     descVi: "Góc ngồi lý tưởng dưới tán lá rừng xanh mát để đọc sách, trò chuyện và lắng nghe chim hót.",
@@ -70,41 +70,41 @@ const SPACE_GALLERY: SpaceItem[] = [
   },
   {
     id: "sp-5",
-    category: "Trong nhà",
-    titleVi: "Góc Đọc Sách Yên Tĩnh",
-    titleEn: "Quiet Reading Nook",
-    descVi: "Bàn gỗ tự nhiên với ánh sáng ấm cúng, thích hợp cho những ai muốn tìm một khoảng lặng làm việc.",
-    descEn: "Rustic desk and warm light for focused, mindful work.",
+    category: "Bàn Làm Việc",
+    titleVi: "Bàn Làm Việc Yên Tĩnh Bên Cửa",
+    titleEn: "Quiet Workspace by the Window",
+    descVi: "Bàn gỗ tự nhiên với ánh sáng chan hòa, ổ cắm từng bàn và wifi tốc độ cao giúp bạn làm việc tập trung.",
+    descEn: "Rustic desk, power outlet and fast wifi for focused, mindful work.",
     image: "/uploads/gallery/1788250253562-580915883.jpg",
     aspect: "aspect-[16/9]",
   },
   {
     id: "sp-6",
-    category: "Góc Check-in",
+    category: "Sân Vườn / Ngoài Trời",
     titleVi: "Hoàng Hôn Nhuộm Đỏ Suối",
     titleEn: "Sunset Over Stream",
-    descVi: "Ánh chiều tà buông xuống thung lũng tạo nên khung cảnh nên thơ tuyệt mỹ đầy chất điện ảnh.",
+    descVi: "Ánh chiều tà buông xuống thung lũng tạo nên khung cảnh nên thơ tuyệt mỹ bên bờ suối.",
     descEn: "Amber dusk settling peacefully over the river valley.",
     image: "/uploads/gallery/1788250253564-115851131.jpg",
     aspect: "aspect-[4/3]",
   },
   {
     id: "sp-7",
-    category: "Ngoài trời / Bờ suối",
+    category: "Sân Vườn / Ngoài Trời",
     titleVi: "Lối Đi Ven Suối Thơ Mộng",
     titleEn: "Pebble Stream Path",
-    descVi: "Những bậc đá tự nhiên uốn lượn theo bờ nước rợp bóng thông cao nguyên.",
+    descVi: "Những bậc đá tự nhiên uốn lượn theo bờ nước rợp bóng cây xanh cao nguyên.",
     descEn: "Natural stepping stones winding gracefully beside the brook.",
     image: "/uploads/gallery/1788250253566-618481408.jpg",
     aspect: "aspect-[3/4]",
   },
   {
     id: "sp-8",
-    category: "Góc Check-in",
-    titleVi: "Góc Vườn Thảo Mộc Bản Địa",
-    titleEn: "Highland Herbal Flora",
-    descVi: "Các loài cây hoa dại khoe sắc tự nhiên tạo nên phông nền chụp ảnh xanh mướt.",
-    descEn: "Vibrant wild flora providing a lush botanical backdrop.",
+    category: "Trong Nhà Ấm Cúng",
+    titleVi: "Gian Phòng Trầm Ấm",
+    titleEn: "Cozy Indoor Ambience",
+    descVi: "Không gian trong nhà êm đềm với nội thất gỗ mộc, mùi hương cà phê và âm nhạc acoustic du dương.",
+    descEn: "Gentle timber interiors filled with comforting coffee aroma.",
     image: "/uploads/gallery/1788250253568-69250175.jpg",
     aspect: "aspect-square",
   },
@@ -113,33 +113,32 @@ const SPACE_GALLERY: SpaceItem[] = [
 const AMENITIES = [
   {
     icon: Wifi,
-    title: "Wifi Tốc Độ Cao",
-    desc: "Phủ sóng toàn bộ trong nhà & sân suối",
-  },
-  {
-    icon: Car,
-    title: "Chỗ Đậu Ô Tô Rộng Rãi",
-    desc: "Bãi đỗ an ninh, thuận tiện quay đầu",
-  },
-  {
-    icon: Trees,
-    title: "Không Gian Thoáng Đãng",
-    desc: "Gió mát tự nhiên từ thung lũng",
-  },
-  {
-    icon: Dog,
-    title: "Thân Thiện Thú Cưng",
-    desc: "Chào đón các bé cưng ngoan ngoãn",
+    emoji: "📶",
+    title: "Wifi tốc độ cao",
+    desc: "Đường truyền cáp quang ổn định toàn bộ khuôn viên quán",
   },
   {
     icon: Briefcase,
-    title: "Bàn Làm Việc Yên Tĩnh",
-    desc: "Ổ cắm tiện lợi, góc ngồi tập trung",
+    emoji: "🔌",
+    title: "Ổ cắm điện từng bàn",
+    desc: "Bố trí sẵn sàng cho laptop, điện thoại làm việc cả ngày",
+  },
+  {
+    icon: Car,
+    emoji: "🅿️",
+    title: "Chỗ đậu xe máy/ô tô thoải mái",
+    desc: "Bãi đỗ xe rộng rãi, an ninh và thuận tiện quay đầu ô tô",
+  },
+  {
+    icon: Trees,
+    emoji: "🌳",
+    title: "Khu vực ngoài trời ven suối thoáng mát",
+    desc: "Không khí tự nhiên trong lành, rợp bóng mát cây xanh",
   },
 ];
 
-type FilterTab = "Tất cả" | "Trong nhà" | "Ngoài trời / Bờ suối" | "Góc Check-in";
-const TABS: FilterTab[] = ["Tất cả", "Trong nhà", "Ngoài trời / Bờ suối", "Góc Check-in"];
+type FilterTab = "Tất cả" | "Sân Vườn / Ngoài Trời" | "Trong Nhà Ấm Cúng" | "Bàn Làm Việc";
+const TABS: FilterTab[] = ["Tất cả", "Sân Vườn / Ngoài Trời", "Trong Nhà Ấm Cúng", "Bàn Làm Việc"];
 
 export default function SpacePage() {
   const { lang } = useLanguage();
@@ -287,7 +286,7 @@ export default function SpacePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {AMENITIES.map((amenity, idx) => {
               const IconComp = amenity.icon;
               return (
@@ -295,13 +294,13 @@ export default function SpacePage() {
                   key={idx}
                   className="bg-white p-6 rounded-2xl border border-[#EAE6DF] shadow-xs text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] transition-colors"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#2D4A3E]/10 flex items-center justify-center text-[#2D4A3E]">
-                    <IconComp size={22} />
+                  <div className="w-14 h-14 rounded-2xl bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 flex items-center justify-center text-2xl">
+                    <span>{amenity.emoji}</span>
                   </div>
-                  <h3 className="font-serif font-bold text-sm text-[#2D4A3E]">
+                  <h3 className="font-serif font-bold text-base text-[#2D4A3E]">
                     {amenity.title}
                   </h3>
-                  <p className="text-[11px] font-light text-[#222222]/70 leading-relaxed">
+                  <p className="text-xs font-light text-[#222222]/70 leading-relaxed">
                     {amenity.desc}
                   </p>
                 </div>

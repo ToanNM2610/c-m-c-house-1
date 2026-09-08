@@ -32,8 +32,11 @@ export default function AdminMenuPage() {
 
   const categories = ["ALL", ...Array.from(new Set(menu.map(i => i.category)))];
 
-  const getUsdEstimate = (priceStr: string) => {
-    const cleanNum = parseInt(priceStr.replace(/[^0-9]/g, ""), 10);
+  const getUsdEstimate = (priceInput: string | number) => {
+    const cleanNum =
+      typeof priceInput === "number"
+        ? priceInput
+        : parseInt(priceInput.replace(/[^0-9]/g, ""), 10);
     if (isNaN(cleanNum)) return "";
     const usd = Math.round((cleanNum / 25000) * 20) / 20;
     return `$${usd.toFixed(2)}`;
@@ -363,7 +366,7 @@ export default function AdminMenuPage() {
                           onClick={() => { 
                             setEditingId(item.id); 
                             setEditName(item.name); 
-                            setEditPrice(item.price); 
+                            setEditPrice(item.priceFormatted || String(item.price)); 
                           }}
                           className="text-[#2271b1] hover:underline cursor-pointer inline-flex items-center gap-0.5"
                         >

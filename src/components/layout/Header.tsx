@@ -113,13 +113,12 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Nút CTA "Đặt bàn / Liên hệ" màu xanh #2D4A3E, chữ trắng */}
+          {/* Nút CTA góc phải: "Xem Menu" bo tròn viền xanh #2D4A3E */}
           <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2D4A3E] hover:bg-[#1F342B] text-white text-xs sm:text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 active:scale-98"
+            href="/menu"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#2D4A3E] text-[#2D4A3E] hover:bg-[#2D4A3E] hover:text-white text-xs sm:text-sm font-medium transition-all duration-200 shadow-xs hover:shadow-sm"
           >
-            <Calendar size={15} />
-            <span>{lang === "en" ? "Book a table / Contact" : "Đặt bàn / Liên hệ"}</span>
+            <span>{lang === "en" ? "Explore Menu" : "Xem Menu"}</span>
           </Link>
         </div>
 
@@ -175,11 +174,10 @@ export default function Header() {
 
             <div className="mt-6 pt-4 flex flex-col gap-3">
               <Link
-                href="/contact"
-                className="w-full py-3 rounded-full bg-[#2D4A3E] text-white text-center text-sm font-medium shadow-sm flex items-center justify-center gap-2"
+                href="/menu"
+                className="w-full py-3 rounded-full border border-[#2D4A3E] text-[#2D4A3E] text-center text-sm font-medium shadow-xs flex items-center justify-center gap-2"
               >
-                <Calendar size={16} />
-                <span>{lang === "en" ? "Book a table / Contact" : "Đặt bàn / Liên hệ"}</span>
+                <span>{lang === "en" ? "Explore Menu" : "Xem Menu"}</span>
               </Link>
 
               <a

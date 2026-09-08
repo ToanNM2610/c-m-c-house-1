@@ -17,22 +17,25 @@ import { useLanguage } from "@/context/LanguageContext";
 
 const CORE_VALUES = [
   {
-    icon: Sprout,
+    icon: Coffee,
     step: "01",
-    title: "Thân Thiện Môi Trường",
-    desc: "Gìn giữ dòng suối ngàn năm và thảm cây rừng nguyên bản. Tuyệt đối không can thiệp cơ giới nặng nề làm biến đổi địa hình tự nhiên.",
+    emoji: "☕",
+    title: "Hạt Cà Phê Mộc",
+    desc: "Rang mộc nguyên bản, chắt chiu từ hạt Robusta Đắk Nông chín đỏ, không pha tạp, không hương liệu hay chất bảo quản.",
   },
   {
-    icon: Coffee,
+    icon: Sprout,
     step: "02",
-    title: "Nguyên Liệu Xanh Sạch",
-    desc: "Cà phê mộc chất lượng cao thu hoạch chín mọng từ nông hộ bazan Đắk Nông, rang củi thủ công và không sử dụng bất kỳ hóa chất phụ gia nào.",
+    emoji: "🌿",
+    title: "Không Gian Xanh",
+    desc: "Thuận theo tự nhiên, gìn giữ trọn vẹn bờ suối đá róc rách, thảm hoa cẩm cù bản địa và làn gió cao nguyên trong lành mát rượi.",
   },
   {
     icon: Heart,
     step: "03",
-    title: "Dịch Vụ Tận Tâm",
-    desc: "Đón tiếp chân thành, ấm áp như người nhà trở về. Mỗi vị khách ghé thăm đều là một người bạn tâm giao cùng chia sẻ tình yêu thiên nhiên.",
+    emoji: "❤️",
+    title: "Tận Tâm",
+    desc: "Chân thành, hiếu khách như trở về nhà. Mỗi tách cà phê trao gửi bằng tất cả sự tỉ mỉ và ấm áp của người pha chế.",
   },
 ];
 
@@ -43,13 +46,13 @@ export default function AboutPage() {
     <div className="w-full bg-[#FDFBF7] text-[#222222]">
       
       {/* ========================================================= */}
-      {/* 1. BANNER: CÂU CHUYỆN CỦA CHÚNG TÔI                       */}
+      {/* 1. BANNER: CÂU CHUYỆN CÀ PHÊ CỦA CHÚNG TÔI                */}
       {/* ========================================================= */}
       <section className="relative py-24 sm:py-32 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#EAE6DF]">
         <div className="absolute inset-0 z-0">
           <Image
             src="/uploads/gallery/1788250253554-875120458.jpg"
-            alt="Cẩm Cù House mộc mạc bên bờ suối"
+            alt="Cẩm Cù House mộc mạc bên bờ suối Gia Nghĩa"
             fill
             priority
             sizes="100vw"
@@ -65,7 +68,7 @@ export default function AboutPage() {
           </span>
 
           <h1 className="font-serif text-4xl sm:text-6xl font-bold text-[#2D4A3E] tracking-tight">
-            Câu Chuyện Của Chúng Tôi
+            Câu Chuyện Cà Phê Của Chúng Tôi
           </h1>
 
           <p className="text-base sm:text-lg font-light text-[#222222]/80 leading-relaxed">
@@ -205,16 +208,17 @@ export default function AboutPage() {
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="w-12 h-12 rounded-xl bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 flex items-center justify-center text-[#2D4A3E]">
-                        <IconComp size={22} />
+                      <div className="w-12 h-12 rounded-xl bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 flex items-center justify-center text-[#2D4A3E] text-xl">
+                        <span className="mr-1">{val.emoji}</span>
                       </div>
                       <span className="text-xs font-mono font-bold text-[#C88A4B]">
                         {val.step}
                       </span>
                     </div>
 
-                    <h3 className="font-serif text-xl font-bold text-[#2D4A3E]">
-                      {val.title}
+                    <h3 className="font-serif text-xl font-bold text-[#2D4A3E] flex items-center gap-2">
+                      <span>{val.emoji}</span>
+                      <span>{val.title}</span>
                     </h3>
 
                     <p className="text-xs sm:text-sm font-light text-[#222222]/80 leading-relaxed">

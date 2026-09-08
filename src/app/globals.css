@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+  --color-bg-cream: #FDFBF7;
+  --color-brand-primary: #2D4A3E;
+  --color-brand-accent: #C88A4B;
+  --color-text-main: #222222;
   --color-background: #FDFBF7;
   --color-primary: #2D4A3E;
   --color-accent: #C88A4B;
-  --color-text-main: #222222;
   --color-card-border: #EAE6DF;
   --font-serif: var(--font-heading), "Playfair Display", Georgia, serif;
   --font-sans: var(--font-body), "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
