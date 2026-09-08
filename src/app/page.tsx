@@ -33,9 +33,9 @@ const FEATURED_IDS = [
 
 /* ── Experience keys ── */
 const EXP_KEYS = [
-  { subtitleKey: "home.exp1Subtitle", titleKey: "home.exp1Title", descKey: "home.exp1Desc", image: "/images/spaces/1 (1).jpg" },
-  { subtitleKey: "home.exp2Subtitle", titleKey: "home.exp2Title", descKey: "home.exp2Desc", image: "/images/spaces/1 (2).jpg" },
-  { subtitleKey: "home.exp3Subtitle", titleKey: "home.exp3Title", descKey: "home.exp3Desc", image: "/images/spaces/1 (3).jpg" },
+  { subtitleKey: "home.exp1Subtitle", titleKey: "home.exp1Title", descKey: "home.exp1Desc", image: "/uploads/gallery/1788250253551-943009233.jpg" }, // 1 (1).jpg
+  { subtitleKey: "home.exp2Subtitle", titleKey: "home.exp2Title", descKey: "home.exp2Desc", image: "/uploads/gallery/1788250253554-875120458.jpg" }, // 1 (2).jpg
+  { subtitleKey: "home.exp3Subtitle", titleKey: "home.exp3Title", descKey: "home.exp3Desc", image: "/uploads/gallery/1788250253557-29323827.jpg" }, // 1 (3).jpg
 ];
 
 /* ── Review keys ── */
@@ -116,13 +116,20 @@ export default function HomePage() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           {EXP_KEYS.map((exp, idx) => (
-            <motion.div key={idx} variants={fadeUp} custom={idx} className="card-dark overflow-hidden flex flex-col group">
-              <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#1A1D17]">
-                <Image src={exp.image} alt={t(exp.titleKey)} fill sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            <motion.div key={idx} variants={fadeUp} custom={idx} className="card-dark overflow-hidden flex flex-col group p-2">
+              <div className="relative w-full h-52 sm:h-60 overflow-hidden rounded-2xl bg-[#1A1D17]">
+                <Image 
+                  src={exp.image} 
+                  alt={t(exp.titleKey)} 
+                  fill 
+                  priority 
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+                {/* Lớp gradient nhẹ phủ chân ảnh để làm nổi bật thẻ tag */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
               </div>
-              <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+              <div className="p-4 sm:p-6 space-y-3 flex-1 flex flex-col justify-between">
                 <div>
                   <span className="text-[10px] font-mono tracking-widest text-[#C88A4B] uppercase block">{t(exp.subtitleKey)}</span>
                   <h3 className="font-serif text-xl font-bold text-[#FDFBF7] group-hover:text-[#C88A4B] transition-colors mt-1">{t(exp.titleKey)}</h3>
