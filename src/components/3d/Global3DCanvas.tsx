@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sparkles, Preload } from "@react-three/drei";
+import { Sparkles, Preload, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import { useCanvas } from "@/context/CanvasContext";
 import CelestialCore from "@/components/3d/CelestialCore";
@@ -72,6 +72,7 @@ function SceneContent() {
 export default function Global3DCanvas() {
   const { sceneMode, isMobile } = useCanvas();
   const [isMounted, setIsMounted] = useState(false);
+  const [dpr, setDpr] = useState(1);
 
   useEffect(() => {
     setIsMounted(true);
@@ -84,13 +85,14 @@ export default function Global3DCanvas() {
       <Canvas
         className="w-full h-full pointer-events-none"
         camera={{ position: [0, 0, isMobile ? 7.0 : 6.2], fov: 50 }}
-        dpr={[1, 1.5]}
+        dpr={dpr}
         gl={{
           powerPreference: "high-performance",
           alpha: true,
-          antialias: true,
+          antialias: dpr > 1, // Disable antialias on low performance
         }}
       >
+        <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(1)} />
         <fog attach="fog" args={["#0A0908", 8, 45]} />
 
         <Suspense fallback={null}>

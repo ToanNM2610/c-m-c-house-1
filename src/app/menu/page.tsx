@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, Coffee, ArrowUpRight } from "lucide-react";
 import { useMenu } from "@/hooks/useMenu";
 import { useLanguage } from "@/context/LanguageContext";
@@ -24,6 +24,7 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState<string>("TẤT CẢ");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [hoveredMedia, setHoveredMedia] = useState<HoverMediaItem | null>(null);
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
 
   // Danh mục độc nhất
   const categories = useMemo(() => {
@@ -146,42 +147,67 @@ export default function MenuPage() {
               const displayName = lang === "en" && item.nameEn ? item.nameEn : item.name;
               const previewImg =
                 CATEGORY_IMAGES[item.category] || "/uploads/gallery/1788250253560-200373033.jpg";
+              const isExpanded = expandedItemId === item.id;
 
               return (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: Math.min(idx * 0.02, 0.4) }}
-                  onMouseEnter={() => setHoveredMedia({ image: previewImg, name: displayName })}
-                  onMouseLeave={() => setHoveredMedia(null)}
-                  className="group py-6 sm:py-7 flex items-baseline justify-between gap-6 cursor-pointer hover:bg-white/[0.015] px-2 sm:px-4 transition-colors duration-300"
-                >
-                  <div className="flex items-baseline gap-4">
-                    <span className="text-[10px] font-mono text-[#F4EFEA]/30 w-6">
-                      {idx < 9 ? `0${idx + 1}` : idx + 1}
-                    </span>
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-[#F4EFEA] group-hover:text-[#D4AF37] group-hover:translate-x-2 transition-all duration-300">
-                      {displayName}
-                    </h3>
-                    {!item.inStock && (
-                      <span className="text-[9px] font-mono text-rose-400/70 border border-rose-800/40 px-2 py-0.5 rounded-full">
-                        Hết
-                      </span>
-                    )}
-                  </div>
+                <div key={item.id}>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: Math.min(idx * 0.02, 0.4) }}
+                    onMouseEnter={() => setHoveredMedia({ image: previewImg, name: displayName })}
+                    onMouseLeave={() => setHoveredMedia(null)}
+                    onClick={() => setExpandedItemId(isExpanded ? null : item.id)}
+                    className="group py-6 sm:py-7 flex flex-col cursor-pointer hover:bg-white/[0.015] px-2 sm:px-4 transition-colors duration-300"
+                  >
+                    <div className="flex items-baseline justify-between gap-6 w-full">
+                      <div className="flex items-baseline gap-4">
+                        <span className="text-[10px] font-mono text-[#F4EFEA]/30 w-6 shrink-0">
+                          {idx < 9 ? `0${idx + 1}` : idx + 1}
+                        </span>
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-light text-[#F4EFEA] group-hover:text-[#D4AF37] group-hover:translate-x-2 transition-all duration-300">
+                          {displayName}
+                        </h3>
+                        {!item.inStock && (
+                          <span className="text-[9px] font-mono text-rose-400/70 border border-rose-800/40 px-2 py-0.5 rounded-full shrink-0">
+                            Hết
+                          </span>
+                        )}
+                      </div>
 
-                  {/* Giá tiền thanh mảnh nằm góc phải */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-sm sm:text-base font-mono text-[#D4AF37] group-hover:text-[#FFE1B3] transition-colors">
-                      {formatPrice(item.price)}
-                    </span>
-                    <ArrowUpRight
-                      size={14}
-                      className="text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                  </div>
-                </motion.div>
+                      {/* Giá tiền thanh mảnh nằm góc phải */}
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-sm sm:text-base font-mono text-[#D4AF37] group-hover:text-[#FFE1B3] transition-colors">
+                          {formatPrice(item.price)}
+                        </span>
+                        <ArrowUpRight
+                          size={14}
+                          className="text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Accordion Mobile Effect */}
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="md:hidden overflow-hidden px-4"
+                      >
+                        <div className="pb-6">
+                          <img
+                            src={previewImg}
+                            alt={displayName}
+                            className="w-full aspect-[4/3] object-cover rounded-xl border border-[#D4AF37]/20 shadow-lg"
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               );
             })
           )}

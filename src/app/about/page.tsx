@@ -112,12 +112,13 @@ export default function AboutPage() {
               transition={{ duration: 1.0, ease: EASE_AWWWARDS }}
               className="md:col-span-7 relative group rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] bg-black/50"
             >
-              <motion.div style={{ y: parallaxY1 }} className="aspect-[16/11] overflow-hidden">
+              <motion.div style={{ y: parallaxY1 }} className="aspect-[16/11] overflow-hidden relative">
                 <img
                   src="/uploads/gallery/1788250253551-943009233.jpg"
                   alt="Bờ suối đá Cẩm Cù House"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
                 />
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
               </motion.div>
             </motion.div>
 
@@ -169,12 +170,13 @@ export default function AboutPage() {
               transition={{ duration: 1.0, delay: 0.2, ease: EASE_AWWWARDS }}
               className="md:col-span-7 relative group rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] bg-black/50 order-1 md:order-2"
             >
-              <motion.div style={{ y: parallaxY2 }} className="aspect-[16/11] overflow-hidden">
+              <motion.div style={{ y: parallaxY2 }} className="aspect-[16/11] overflow-hidden relative">
                 <img
                   src="/uploads/gallery/1788250253554-875120458.jpg"
                   alt="Hiên mộc rang củi"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
                 />
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
               </motion.div>
             </motion.div>
           </div>
@@ -188,12 +190,13 @@ export default function AboutPage() {
               transition={{ duration: 1.0, ease: EASE_AWWWARDS }}
               className="md:col-span-7 relative group rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] bg-black/50"
             >
-              <motion.div style={{ y: parallaxY3 }} className="aspect-[16/11] overflow-hidden">
+              <motion.div style={{ y: parallaxY3 }} className="aspect-[16/11] overflow-hidden relative">
                 <img
                   src="/uploads/gallery/1788250253557-29323827.jpg"
                   alt="Hoa Cẩm Cù nở rộ"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
                 />
+                <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
               </motion.div>
             </motion.div>
 

@@ -208,13 +208,13 @@ export default function CelestialCore(props: CelestialCoreProps) {
     }
 
     if (groupRef.current) {
-      // Tự xoay 3 trục nhẹ nhàng (breathe & float)
-      groupRef.current.rotation.y = time * 0.12 + mouseCurrent.current.x * 0.35;
-      groupRef.current.rotation.x = Math.sin(time * 0.08) * 0.15 + mouseCurrent.current.y * 0.25;
-      groupRef.current.rotation.z = Math.cos(time * 0.06) * 0.1;
+      // Tự xoay 3 trục cực kỳ nhẹ nhàng (breathe & float)
+      groupRef.current.rotation.y = time * 0.04 + mouseCurrent.current.x * 0.2;
+      groupRef.current.rotation.x = Math.sin(time * 0.03) * 0.1 + mouseCurrent.current.y * 0.15;
+      groupRef.current.rotation.z = Math.cos(time * 0.02) * 0.05;
 
-      // Trôi nổi hữu cơ (Organic Floating Motion)
-      groupRef.current.position.y = Math.sin(time * 0.7) * 0.12;
+      // Trôi nổi hữu cơ (Organic Floating Motion) cực chậm
+      groupRef.current.position.y = Math.sin(time * 0.3) * 0.08;
 
       // Phóng to theo tiến độ cuộn trang (từ 1.2x đến 5.2x)
       const targetScale = (isMobile ? 1.0 : 1.3) + scroll * (isMobile ? 3.2 : 4.6);

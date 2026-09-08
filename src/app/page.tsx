@@ -288,30 +288,20 @@ export default function UltraPremiumHomePage() {
                 : "Chốn dừng chân mộc mạc bên dòng suối đá — Nơi thời gian tĩnh lặng trôi."}
             </motion.p>
 
-            {/* Cụm 2 nút CTA sang trọng */}
+            {/* Nút CTA: Khung viền chỉ vàng mỏng */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 1.0, ease: EASE_AWWWARDS }}
-              className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 sm:mt-10"
+              className="flex items-center justify-center mt-12"
             >
-              <Link
-                href="/menu"
-                data-cursor-magnetic
-                className="group relative inline-flex items-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-[#D4AF37] via-[#E5C07B] to-[#FFE1B3] text-[#0C0705] font-semibold text-xs sm:text-sm uppercase tracking-widest transition-all duration-500 shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:shadow-[0_0_45px_rgba(212,175,55,0.7)] hover:scale-105 active:scale-95 cursor-pointer font-sans"
-              >
-                <Coffee size={16} />
-                <span>{lang === "en" ? "Explore Menu" : "Xem Thực Đơn"}</span>
-                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-
               <Link
                 href="/space"
                 data-cursor-magnetic
-                className="group inline-flex items-center gap-2.5 px-7 sm:px-9 py-3.5 sm:py-4 rounded-full border border-[#D4AF37]/50 hover:border-[#D4AF37] text-[#F4EFEA] hover:text-[#FFE1B3] font-medium text-xs sm:text-sm uppercase tracking-widest transition-all duration-500 bg-black/80 hover:bg-black/95 cursor-pointer font-sans shadow-lg hover:scale-105 active:scale-95"
+                className="group inline-flex flex-col items-center gap-3 px-8 py-4 rounded-full border border-[#D4AF37]/40 text-[#F4EFEA] hover:text-[#FFE1B3] hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 transition-all duration-500 cursor-pointer font-sans"
               >
-                <span>{lang === "en" ? "Our Sanctuary" : "Khám Phá Không Gian"}</span>
-                <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-[#D4AF37]" />
+                <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.2em]">{lang === "en" ? "Explore Sanctuary" : "Khám phá không gian"}</span>
+                <ArrowRight size={14} className="group-hover:translate-y-1 rotate-90 transition-transform text-[#D4AF37]" />
               </Link>
             </motion.div>
           </div>
@@ -578,17 +568,18 @@ export default function UltraPremiumHomePage() {
         {/* ======================================================= */}
         {/* SECTION 5: FOOTER PARALLAX UNCOVER (REVEAL EFFECT)      */}
         {/* ======================================================= */}
-        <div className="relative z-20 bg-[#0C0705] shadow-[0_50px_100px_rgba(0,0,0,0.95)]">
-          {/* Vùng đệm tạo chiều sâu trước khi mở ra Footer */}
-          <div className="h-16 w-full bg-gradient-to-b from-transparent to-[#0C0705]" />
-        </div>
+      </div>
 
-        {/* Footer Cố định lộ ra bên dưới (Uncover Stage Effect) */}
-        <footer className="sticky bottom-0 z-10 w-full bg-gradient-to-b from-[#120805] to-[#080403] border-t border-[#D4AF37]/25 text-[#F4EFEA] py-16 sm:py-24 px-6 sm:px-12 font-sans overflow-hidden">
+      {/* Footer Parallax Container */}
+      <div className="relative w-full overflow-hidden bg-[#0a0908]">
+        <motion.footer 
+          style={{ y: useTransform(scrollYProgress, [0.8, 1], ["-50%", "0%"]) }}
+          className="w-full bg-gradient-to-b from-[#120805] to-[#080403] border-t border-[#D4AF37]/25 text-[#F4EFEA] py-16 sm:py-24 px-6 sm:px-12 font-sans overflow-hidden flex flex-col justify-between z-0 relative"
+        >
           {/* Nền ánh kim mờ */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 sm:gap-16 relative z-10">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 sm:gap-16 relative z-10 w-full">
             {/* Cột 1: Thương hiệu */}
             <div className="space-y-4 md:col-span-1">
               <Link
@@ -679,11 +670,11 @@ export default function UltraPremiumHomePage() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-[#F4EFEA]/40 gap-4">
+          <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-[#F4EFEA]/40 gap-4 w-full">
             <span>© 2026 CẨM CÙ HOUSE • GIA NGHĨA, ĐẮK NÔNG. ALL RIGHTS RESERVED.</span>
             <span className="text-[#D4AF37]/60">CRAFTED FOR SLOW & MINDFUL LIVING</span>
           </div>
-        </footer>
+        </motion.footer>
       </div>
 
       {/* Keyframe Animation cho Marquee vô tận */}

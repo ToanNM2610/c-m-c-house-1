@@ -97,9 +97,6 @@ export default function SpacePage() {
   const { lang } = useLanguage();
   const [selectedSpot, setSelectedSpot] = useState<SanctuarySpot | null>(null);
 
-  const horizontalSectionRef = useRef<HTMLDivElement>(null);
-  const horizontalTrackRef = useRef<HTMLDivElement>(null);
-
   // Lắng nghe phím ESC để đóng Lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -115,41 +112,7 @@ export default function SpacePage() {
     };
   }, [selectedSpot]);
 
-  // Thiết lập GSAP Horizontal Scroll Pin trên Desktop có ctx.revert()
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const section = horizontalSectionRef.current;
-    const track = horizontalTrackRef.current;
-    if (!section || !track) return;
-
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-
-      mm.add("(min-width: 768px)", () => {
-        const getScrollAmount = () => track.scrollWidth - window.innerWidth;
-
-        gsap.to(track, {
-          x: () => -getScrollAmount(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            pin: true,
-            scrub: 1.2,
-            start: "top top",
-            end: () => `+=${getScrollAmount()}`,
-            invalidateOnRefresh: true,
-          },
-        });
-      });
-    }, horizontalSectionRef);
-
-    return () => {
-      ctx.revert();
-    };
-  }, []);
+  // Các hiệu ứng cuộn hoặc tương tác (nếu có) có thể được định nghĩa ở đây
 
   return (
     <div className="relative min-h-screen bg-transparent text-[#F4EFEA] font-sans overflow-x-hidden selection:bg-[#D4AF37] selection:text-[#0A0908]">
@@ -188,74 +151,49 @@ export default function SpacePage() {
 
 
       {/* ========================================================= */}
-      {/* 2. GSAP PINNED HORIZONTAL WALKTHROUGH                     */}
+      {/* 2. MASONRY GRID GALLERY                                   */}
       {/* ========================================================= */}
-      <section
-        ref={horizontalSectionRef}
-        className="relative w-full overflow-hidden bg-[#0A0908] py-16 md:py-0"
-      >
-        <div
-          ref={horizontalTrackRef}
-          className="flex flex-col md:flex-row md:h-screen items-center px-6 md:px-20 gap-8 md:gap-16 w-full md:w-max"
-        >
-          {SANCTUARY_SPOTS.map((spot, idx) => (
-            <div
-              key={spot.id}
-              onClick={() => setSelectedSpot(spot)}
-              data-cursor-text={lang === "en" ? "EXPLORE" : "XEM THÊM"}
-              className="shrink-0 w-full sm:w-[420px] md:w-[480px] group relative rounded-2xl overflow-hidden border border-[#D4AF37]/25 hover:border-[#D4AF37] transition-all duration-500 bg-black/40 shadow-2xl cursor-pointer"
-            >
-              {/* Ảnh với WebGL Liquid Wave Distortion */}
-              <div className="w-full aspect-[4/5] overflow-hidden">
-                <LiquidDistortionImage
-                  src={spot.url}
-                  alt={spot.titleVi}
-                  aspectRatio="aspect-[4/5]"
-                />
-              </div>
+      <section className="relative w-full max-w-7xl mx-auto px-4 sm:px-8 py-16">
+        <div className="columns-1 sm:columns-2 md:columns-3 gap-6 space-y-6">
+          {SANCTUARY_SPOTS.map((spot, idx) => {
+            // Tạo kích thước so le cho lưới Masonry
+            const aspectRatios = ["aspect-[4/5]", "aspect-square", "aspect-[3/4]", "aspect-[16/9]"];
+            const aspect = aspectRatios[idx % aspectRatios.length];
 
-              {/* Magnetic Caption Reveal Overlay */}
-              <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-[#0C0705] via-[#0C0705]/85 to-transparent flex flex-col justify-end transition-all duration-500">
-                <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-[#D4AF37] mb-2">
-                  <span>{lang === "en" ? spot.tagEn : spot.tagVi}</span>
-                  <span>0{idx + 1} / 0{SANCTUARY_SPOTS.length}</span>
+            return (
+              <div
+                key={spot.id}
+                onClick={() => setSelectedSpot(spot)}
+                data-cursor-text={lang === "en" ? "EXPLORE" : "XEM THÊM"}
+                className="break-inside-avoid group relative rounded-2xl overflow-hidden border border-[#D4AF37]/25 hover:border-[#D4AF37] transition-all duration-500 bg-black/40 shadow-xl cursor-pointer"
+              >
+                {/* Ảnh với WebGL Liquid Wave Distortion */}
+                <div className={`w-full overflow-hidden ${aspect}`}>
+                  <LiquidDistortionImage
+                    src={spot.url}
+                    alt={spot.titleVi}
+                    aspectRatio={aspect}
+                  />
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#F4EFEA] group-hover:text-[#FFE1B3] transition-colors mb-2">
-                  {lang === "en" ? spot.titleEn : spot.titleVi}
-                </h3>
+                {/* Magnetic Caption Reveal Overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-[#0C0705] via-[#0C0705]/85 to-transparent flex flex-col justify-end transition-all duration-500">
+                  <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-[#D4AF37] mb-1.5">
+                    <span>{lang === "en" ? spot.tagEn : spot.tagVi}</span>
+                  </div>
 
-                <p className="text-xs font-light text-[#F4EFEA]/70 leading-relaxed line-clamp-2">
-                  {lang === "en" ? spot.descEn : spot.descVi}
-                </p>
+                  <h3 className="text-lg sm:text-xl font-serif font-bold text-[#F4EFEA] group-hover:text-[#FFE1B3] transition-colors mb-1.5">
+                    {lang === "en" ? spot.titleEn : spot.titleVi}
+                  </h3>
 
-                <div className="pt-3 flex items-center gap-1.5 text-[11px] font-mono text-[#D4AF37] group-hover:translate-x-1 transition-transform">
-                  <Eye size={13} />
-                  <span>{lang === "en" ? "Click to view full dimension" : "Bấm để chiêm ngưỡng trọn vẹn"}</span>
-                  <ArrowRight size={12} />
+                  <div className="pt-2 flex items-center gap-1.5 text-[10px] font-mono text-[#D4AF37] group-hover:translate-x-1 transition-transform">
+                    <Eye size={12} />
+                    <span>{lang === "en" ? "View full" : "Xem trọn vẹn"}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-
-          {/* Card kết thúc cuộn ngang */}
-          <div className="shrink-0 w-full md:w-[320px] flex flex-col items-center justify-center p-8 text-center border border-dashed border-[#D4AF37]/30 rounded-2xl bg-black/30">
-            <span className="text-4xl font-serif text-[#D4AF37] italic mb-4">❖</span>
-            <h4 className="text-xl font-serif text-[#F4EFEA] mb-2">
-              {lang === "en" ? "Ready for a Taste?" : "Muốn Thưởng Thức?"}
-            </h4>
-            <p className="text-xs font-light text-[#F4EFEA]/70 mb-6 max-w-xs">
-              {lang === "en"
-                ? "Experience our firewood-roasted artisan coffee on the stream shore."
-                : "Thưởng thức ly cà phê rang củi bên tiếng suối reo đại ngàn."}
-            </p>
-            <Link
-              href="/menu"
-              className="px-8 py-3 rounded-full text-xs font-mono uppercase tracking-widest bg-gradient-to-r from-[#D4AF37] to-[#FFE1B3] text-[#0C0705] font-semibold hover:scale-105 transition-transform"
-            >
-              {lang === "en" ? "Explore Menu" : "Xem Thực Đơn"}
-            </Link>
-          </div>
+            );
+          })}
         </div>
       </section>
 

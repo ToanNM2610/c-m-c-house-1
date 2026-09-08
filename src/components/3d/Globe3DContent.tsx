@@ -114,87 +114,28 @@ function DakNongBeacon({ radius }: { radius: number }) {
   );
 }
 
-function RealisticEarthSphere({ radius = 2.4 }: { radius?: number }) {
-  const [dayMap, normalMap, specularMap] = useTexture([
-    "/textures/earth_atmos_2048.jpg",
-    "/textures/earth_normal_2048.jpg",
-    "/textures/earth_specular_2048.jpg",
-  ]);
+function DotWireframeSphere({ radius = 2.4 }: { radius?: number }) {
+  const geomRef = useRef<THREE.IcosahedronGeometry>(null);
 
-  useMemo(() => {
-    dayMap.colorSpace = THREE.SRGBColorSpace;
-    dayMap.anisotropy = 4;
-  }, [dayMap]);
-
-  return (
-    <mesh castShadow receiveShadow>
-      <sphereGeometry args={[radius, 48, 48]} />
-      <meshPhongMaterial
-        map={dayMap}
-        normalMap={normalMap}
-        normalScale={new THREE.Vector2(0.85, 0.85)}
-        specularMap={specularMap}
-        specular={new THREE.Color("#68829E")}
-        shininess={22}
-      />
-    </mesh>
-  );
-}
-
-function CloudsLayer({ radius = 2.4 }: { radius?: number }) {
-  const cloudsRef = useRef<THREE.Mesh>(null);
-  const cloudsMap = useTexture("/textures/earth_clouds_2048.png");
-
-  useMemo(() => {
-    cloudsMap.colorSpace = THREE.SRGBColorSpace;
-  }, [cloudsMap]);
-
-  useFrame((_, delta) => {
-    if (cloudsRef.current) {
-      cloudsRef.current.rotation.y += delta * 0.015;
-    }
-  });
-
-  return (
-    <mesh ref={cloudsRef}>
-      <sphereGeometry args={[radius * 1.014, 48, 48]} />
-      <meshStandardMaterial
-        map={cloudsMap}
-        transparent
-        opacity={0.42}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-      />
-    </mesh>
-  );
-}
-
-function AtmosphereRimLight({ radius = 2.4 }: { radius?: number }) {
-  return (
-    <mesh>
-      <sphereGeometry args={[radius * 1.026, 36, 36]} />
-      <meshBasicMaterial
-        color="#5FA8D3"
-        transparent
-        opacity={0.18}
-        side={THREE.BackSide}
-        blending={THREE.AdditiveBlending}
-      />
-    </mesh>
-  );
-}
-
-function GlobeFallbackSphere({ radius = 2.4 }: { radius?: number }) {
   return (
     <group>
+      {/* Khối cầu đen mờ bên trong để chắn sáng */}
       <mesh>
-        <sphereGeometry args={[radius, 24, 24]} />
-        <meshStandardMaterial color="#16222F" roughness={0.7} />
+        <sphereGeometry args={[radius * 0.98, 32, 32]} />
+        <meshBasicMaterial color="#0A0908" />
       </mesh>
+
+      {/* Wireframe bọc ngoài */}
       <mesh>
-        <sphereGeometry args={[radius * 1.006, 16, 16]} />
-        <meshBasicMaterial color="#C5A880" wireframe transparent opacity={0.15} />
+        <icosahedronGeometry ref={geomRef} args={[radius, 4]} />
+        <meshBasicMaterial color="#D4AF37" wireframe transparent opacity={0.15} />
       </mesh>
+
+      {/* Dấu chấm tại các đỉnh */}
+      <points>
+        <icosahedronGeometry args={[radius, 4]} />
+        <pointsMaterial color="#D4AF37" size={0.03} transparent opacity={0.4} />
+      </points>
     </group>
   );
 }
@@ -270,15 +211,7 @@ export default function Globe3DContent() {
       <Float speed={1.1} rotationIntensity={0.06} floatIntensity={0.15}>
         <group rotation={[0.12, 0, 0.38]}>
           <group ref={globeGroupRef} rotation={[0, initialRotationY, 0]}>
-            <Suspense fallback={<GlobeFallbackSphere radius={radius} />}>
-              <RealisticEarthSphere radius={radius} />
-            </Suspense>
-
-            <Suspense fallback={null}>
-              <CloudsLayer radius={radius} />
-            </Suspense>
-
-            <AtmosphereRimLight radius={radius} />
+            <DotWireframeSphere radius={radius} />
             <DakNongBeacon radius={radius} />
           </group>
         </group>
