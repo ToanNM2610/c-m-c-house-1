@@ -8,16 +8,16 @@ import { Menu, X, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = [
-  { href: "/", labelVi: "Trang chủ", labelEn: "Home" },
-  { href: "/about", labelVi: "Giới thiệu", labelEn: "About" },
-  { href: "/space", labelVi: "Không gian", labelEn: "Space" },
-  { href: "/menu", labelVi: "Thực đơn", labelEn: "Menu" },
-  { href: "/contact", labelVi: "Liên hệ", labelEn: "Contact" },
+  { href: "/", labelKey: "nav.home" },
+  { href: "/about", labelKey: "nav.about" },
+  { href: "/space", labelKey: "nav.space" },
+  { href: "/menu", labelKey: "nav.menu" },
+  { href: "/contact", labelKey: "nav.contact" },
 ];
 
 export default function Header() {
   const pathname = usePathname() || "";
-  const { lang, setLang } = useLanguage();
+  const { lang, setLang, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -70,7 +70,7 @@ export default function Header() {
                     : "text-[#FDFBF7]/75 hover:text-[#FDFBF7]"
                 }`}
               >
-                {lang === "en" ? item.labelEn : item.labelVi}
+                {t(item.labelKey)}
                 {isActive && (
                   <motion.div
                     layoutId="activeNavIndicator"
@@ -114,7 +114,7 @@ export default function Header() {
             href="/menu"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-[#C88A4B]/70 text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-medium transition-all duration-200 shadow-xs"
           >
-            <span>{lang === "en" ? "Explore Menu" : "Xem Menu"}</span>
+            <span>{t("nav.viewMenu")}</span>
           </Link>
         </div>
 
@@ -160,7 +160,7 @@ export default function Header() {
                         : "text-[#FDFBF7]/80 hover:text-[#C88A4B]"
                     }`}
                   >
-                    <span>{lang === "en" ? item.labelEn : item.labelVi}</span>
+                    <span>{t(item.labelKey)}</span>
                     <ArrowRight size={16} className="text-[#C88A4B]" />
                   </Link>
                 );
@@ -172,7 +172,7 @@ export default function Header() {
                 href="/menu"
                 className="w-full py-3 rounded-full border border-[#C88A4B] text-[#C88A4B] text-center text-sm font-medium flex items-center justify-center gap-2"
               >
-                <span>{lang === "en" ? "Explore Menu" : "Xem Menu"}</span>
+                <span>{t("nav.viewMenu")}</span>
               </Link>
               <a
                 href="tel:0382851688"

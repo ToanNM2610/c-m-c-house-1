@@ -1,123 +1,205 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import translationsData from "@/data/translations.json";
 
 export type Language = "vi" | "en";
 export type Currency = "VND" | "USD";
+
+// Exchange rate: 25,000 VND = 1 USD
+const USD_RATE = 25000;
+
+interface MenuItemTranslation {
+  name: string;
+  desc: string;
+}
 
 interface LanguageContextType {
   lang: Language;
   currency: Currency;
   setLang: (lang: Language) => void;
   setCurrency: (currency: Currency) => void;
+  /** Format a VND price number/string to locale-appropriate display */
   formatPrice: (price: string | number) => string;
+  /** Translate a dot-path key, e.g. t("nav.home") */
   t: (key: string) => string;
+  /** Get translated menu item name + desc by item ID */
+  tMenuItem: (id: string) => MenuItemTranslation;
+  /** Category tabs: map VN category name → localised display */
+  tCat: (viCategory: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// VND → rounded USD specialty-coffee style ($X.XX rounded to nearest $0.05)
+function vndToUsd(vnd: number): string {
+  const raw = vnd / USD_RATE;
+  const rounded = Math.round(raw * 20) / 20; // nearest $0.05
+  return `$${rounded.toFixed(2)}`;
+}
+
+// Category map: VN → EN tab label in UI
+const CAT_MAP_VI_TO_EN: Record<string, string> = {
+  "Cà Phê": "COFFEE",
+  "Trà": "TEA",
+  "Sinh Tố": "SMOOTHIES",
+  "Nước Ép": "FRESH JUICES",
+  "Soda & Sữa Chua": "SODA & YOGURT",
+  "Khác": "OTHERS",
+  "Món Ăn": "FOOD",
+};
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // Mặc định ban đầu là Tiếng Việt ('vi' / VND)
   const [lang, setLangState] = useState<Language>("vi");
   const [currency, setCurrencyState] = useState<Currency>("VND");
-  const [, setIsMounted] = useState(false);
 
+  // Restore saved locale from localStorage on mount
   useEffect(() => {
     try {
-      const savedLang = localStorage.getItem("camcu-lang") as Language;
-      if (savedLang === "vi" || savedLang === "en") {
-        setLangState(savedLang);
-        setCurrencyState(savedLang === "en" ? "USD" : "VND");
+      const saved = localStorage.getItem("camcu-lang") as Language;
+      if (saved === "vi" || saved === "en") {
+        setLangState(saved);
+        setCurrencyState(saved === "en" ? "USD" : "VND");
       }
-    } catch (e) {
-      // Ignore localStorage errors (e.g. incognito)
+    } catch {
+      // Ignore in incognito / SSR
     }
-    setIsMounted(true);
   }, []);
 
-  const setLang = (newLang: Language) => {
-    setLangState(newLang);
-    // Chuyển đổi tiền tệ đồng bộ: 'en' -> USD, 'vi' -> VND
+  /** Switch language & currency atomically, persist to localStorage */
+  const setLang = useCallback((newLang: Language) => {
     const newCurrency: Currency = newLang === "en" ? "USD" : "VND";
+    setLangState(newLang);
     setCurrencyState(newCurrency);
     try {
       localStorage.setItem("camcu-lang", newLang);
       localStorage.setItem("camcu-currency", newCurrency);
-    } catch (e) {}
-  };
+    } catch {
+      // Ignore
+    }
+  }, []);
 
-  const setCurrency = (newCurrency: Currency) => {
+  const setCurrency = useCallback((newCurrency: Currency) => {
     setCurrencyState(newCurrency);
     try {
       localStorage.setItem("camcu-currency", newCurrency);
-    } catch (e) {}
-  };
+    } catch {}
+  }, []);
 
   /**
-   * Chuyển đổi định dạng giá linh hoạt theo tiền tệ và ngôn ngữ:
-   * - Tiếng Việt: Giữ nguyên VNĐ (ví dụ: "28.000đ")
-   * - Tiếng Anh: Quy đổi sang USD theo tỷ giá 25.000đ ≈ 1$ (ví dụ: "$1.10", "$1.20", "$2.50")
+   * Format a price value (number or "xx.000 VNĐ" string) to locale currency:
+   * - vi/VND → "20.000đ"  (Vietnamese dot-thousands format)
+   * - en/USD → "$0.80"    (converted at 25,000 VND = $1.00, rounded to $0.05)
    */
-  const formatPrice = (price: string | number): string => {
-    if (price === undefined || price === null || price === "") return "";
+  const formatPrice = useCallback(
+    (price: string | number): string => {
+      if (price === undefined || price === null || price === "") return "";
 
-    const rawStr = String(price);
-    const cleanStr = rawStr.replace(/[^0-9]/g, "");
-    if (!cleanStr) return rawStr;
+      // Extract numeric value (strip any non-digit chars)
+      const numeric =
+        typeof price === "number"
+          ? price
+          : parseInt(String(price).replace(/[^0-9]/g, ""), 10);
 
-    const numericVnd = parseInt(cleanStr, 10);
-    if (isNaN(numericVnd)) return rawStr;
+      if (isNaN(numeric)) return String(price);
 
-    if (currency === "USD" || lang === "en") {
-      // Tỷ giá quy đổi: 25.000 VND ≈ $1.00 USD
-      // Làm tròn 5 cent chuẩn phong cách Specialty Coffee Menu ($1.10, $1.20, $1.40, v.v.)
-      const usd = Math.round((numericVnd / 25000) * 20) / 20;
-      return `$${usd.toFixed(2)}`;
-    }
-
-    // Định dạng VNĐ
-    if (rawStr.includes("đ") || rawStr.includes("₫")) {
-      return rawStr;
-    }
-    return `${numericVnd.toLocaleString("vi-VN")}đ`;
-  };
-
-  const translateWithLang = (key: string, currentLang: Language): string => {
-    const keys = key.split(".");
-    let current: any = (translationsData as any)[currentLang];
-
-    for (const k of keys) {
-      if (current === undefined || current === null) {
-        // Fallback to 'vi'
-        let fallback: any = (translationsData as any)["vi"];
-        for (const fbKey of keys) {
-          if (fallback === undefined || fallback === null) return key;
-          fallback = fallback[fbKey];
-        }
-        return fallback || key;
+      if (lang === "en" || currency === "USD") {
+        return vndToUsd(numeric);
       }
-      current = current[k];
-    }
 
-    return current !== undefined && current !== null ? current : key;
-  };
+      // Vietnamese format: 20,000 → "20.000đ"
+      return numeric.toLocaleString("vi-VN") + "đ";
+    },
+    [lang, currency]
+  );
 
-  const t = (key: string): string => {
-    return translateWithLang(key, lang);
-  };
+  /**
+   * Translate a dot-notation key from translations.json.
+   * Falls back to "vi" if key not found in current lang, then returns the raw key.
+   */
+  const t = useCallback(
+    (key: string): string => {
+      const keys = key.split(".");
+      const traverse = (obj: unknown): string | undefined => {
+        let cur: unknown = obj;
+        for (const k of keys) {
+          if (cur === null || typeof cur !== "object") return undefined;
+          cur = (cur as Record<string, unknown>)[k];
+        }
+        return typeof cur === "string" ? cur : undefined;
+      };
+
+      const localeObj = (translationsData as Record<string, unknown>)[lang];
+      const result = traverse(localeObj);
+      if (result !== undefined) return result;
+
+      // Fallback to Vietnamese
+      const fallback = traverse(
+        (translationsData as Record<string, unknown>)["vi"]
+      );
+      return fallback ?? key;
+    },
+    [lang]
+  );
+
+  /**
+   * Get translated menu item name + desc by item id (e.g. "cf-3").
+   * Falls back to Vietnamese if English not found.
+   */
+  const tMenuItem = useCallback(
+    (id: string): MenuItemTranslation => {
+      const localeItems = (
+        (translationsData as Record<string, unknown>)[lang] as Record<
+          string,
+          unknown
+        >
+      )?.["menuItems"] as Record<string, MenuItemTranslation> | undefined;
+
+      if (localeItems?.[id]) return localeItems[id];
+
+      // Fallback to vi
+      const viItems = (
+        (translationsData as Record<string, unknown>)["vi"] as Record<
+          string,
+          unknown
+        >
+      )?.["menuItems"] as Record<string, MenuItemTranslation> | undefined;
+
+      return viItems?.[id] ?? { name: id, desc: "" };
+    },
+    [lang]
+  );
+
+  /**
+   * Given a Vietnamese category name (as stored in menu.ts), return the
+   * localised display string for the current language.
+   */
+  const tCat = useCallback(
+    (viCategory: string): string => {
+      if (lang === "vi") return viCategory;
+      return CAT_MAP_VI_TO_EN[viCategory] ?? viCategory;
+    },
+    [lang]
+  );
 
   return (
-    <LanguageContext.Provider value={{ lang, currency, setLang, setCurrency, formatPrice, t }}>
+    <LanguageContext.Provider
+      value={{ lang, currency, setLang, setCurrency, formatPrice, t, tMenuItem, tCat }}
+    >
       {children}
     </LanguageContext.Provider>
   );
 }
 
 export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
-  }
-  return context;
+  const ctx = useContext(LanguageContext);
+  if (!ctx) throw new Error("useLanguage must be used within a LanguageProvider");
+  return ctx;
 }

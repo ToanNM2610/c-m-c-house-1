@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Coffee, CheckCircle2, Leaf, HeartHandshake } from "lucide-react";
 import { REAL_MENU_DATA } from "@/data/menu";
+import { useLanguage } from "@/context/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -41,7 +42,19 @@ const CATEGORY_TABS: MenuCategoryTab[] = [
   "MÓN ĂN",
 ];
 
+const CAT_KEYS_MAP: Record<string, string> = {
+  "TẤT CẢ": "menu.catAll",
+  "CÀ PHÊ": "menu.catCoffee",
+  "TRÀ": "menu.catTea",
+  "SINH TỐ": "menu.catSmoothie",
+  "NƯỚC ÉP": "menu.catJuice",
+  "SODA & SỮA CHUA": "menu.catSoda",
+  "KHÁC": "menu.catOther",
+  "MÓN ĂN": "menu.catFood",
+};
+
 export default function MenuPage() {
+  const { t, tMenuItem, formatPrice, tCat } = useLanguage();
   const [activeCategory, setActiveCategory] = useState<MenuCategoryTab>("TẤT CẢ");
 
   const filteredItems = REAL_MENU_DATA.filter((item) => {
@@ -51,9 +64,7 @@ export default function MenuPage() {
 
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ============================================================ */}
-      {/* 1. BANNER                                                    */}
-      {/* ============================================================ */}
+      {/* 1. BANNER */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
         <motion.div
           initial="hidden"
@@ -63,25 +74,22 @@ export default function MenuPage() {
         >
           <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
             <Coffee size={14} />
-            <span>NGUYÊN LIỆU MỘC &amp; TƯƠI LÀNH</span>
+            <span>{t("menu.heroTag")}</span>
           </motion.span>
 
           <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
-            Thực Đơn Quán
+            {t("menu.heroTitle")}
           </motion.h1>
 
           <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
-            Hơn 40 món đồ uống và món ăn ngon miệng được pha chế tỉ mỉ, mộc mạc và
-            ấm áp bên bờ suối Gia Nghĩa.
+            {t("menu.heroDesc")}
           </motion.p>
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 2. STICKY CATEGORY TABS (NO BLUR)                            */}
-      {/* ============================================================ */}
+      {/* 2. STICKY CATEGORY TABS */}
       <section className="py-6 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center sticky top-20 z-30 bg-[#0C0D0B]/95 border-b border-[#222520]/50">
-        <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520] max-w-full overflow-x-auto">
+        <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520] max-w-full overflow-x-auto scrollbar-hide">
           {CATEGORY_TABS.map((tab) => (
             <button
               key={tab}
@@ -92,19 +100,17 @@ export default function MenuPage() {
                   : "text-[#FDFBF7]/70 hover:text-[#FDFBF7]"
               }`}
             >
-              {tab}
+              {t(CAT_KEYS_MAP[tab])}
             </button>
           ))}
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 3. MENU GRID - FULL REAL DATA                                */}
-      {/* ============================================================ */}
+      {/* 3. MENU GRID */}
       <section className="pb-24 pt-8 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <div className="mb-6 text-xs text-[#FDFBF7]/60 font-mono">
-          Hiển thị {filteredItems.length} món trong danh mục{" "}
-          <strong className="text-[#C88A4B]">{activeCategory}</strong>
+          {t("menu.showing")} {filteredItems.length} {t("menu.itemsIn")}{" "}
+          <strong className="text-[#C88A4B]">{t(CAT_KEYS_MAP[activeCategory])}</strong>
         </div>
 
         <motion.div
@@ -114,70 +120,69 @@ export default function MenuPage() {
           variants={staggerContainer}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
-          {filteredItems.map((item, idx) => (
-            <motion.div
-              key={item.id}
-              variants={fadeUp}
-              custom={idx}
-              className="card-dark overflow-hidden flex flex-col p-4 group hover:border-[#C88A4B] transition-all duration-300"
-            >
-              {/* Square image */}
-              <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-3.5 bg-[#1A1D17]">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                />
-                {item.tag && (
-                  <span
-                    className={`absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase shadow-sm ${
-                      item.tag === "Signature"
-                        ? "bg-[#C88A4B] text-[#0C0D0B] font-bold"
-                        : "bg-[#2D4A3E] text-[#FDFBF7]"
-                    }`}
-                  >
-                    {item.tag}
-                  </span>
-                )}
-              </div>
-
-              {/* Item info */}
-              <div className="space-y-2 flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-serif text-lg font-bold text-[#FDFBF7] group-hover:text-[#C88A4B] transition-colors leading-snug">
-                      {item.name}
-                    </h3>
-                    <span className="font-mono text-sm font-bold text-[#C88A4B] shrink-0 pt-0.5">
-                      {item.priceFormatted}
+          {filteredItems.map((item, idx) => {
+            const trItem = tMenuItem(item.id);
+            return (
+              <motion.div
+                key={item.id}
+                variants={fadeUp}
+                custom={idx}
+                className="card-dark overflow-hidden flex flex-col p-4 group hover:border-[#C88A4B] transition-all duration-300"
+              >
+                <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-3.5 bg-[#1A1D17]">
+                  <Image
+                    src={item.image}
+                    alt={trItem.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                  {item.tag && (
+                    <span
+                      className={`absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase shadow-sm ${
+                        item.tag === "Signature"
+                          ? "bg-[#C88A4B] text-[#0C0D0B] font-bold"
+                          : "bg-[#2D4A3E] text-[#FDFBF7]"
+                      }`}
+                    >
+                      {item.tag === "Signature" ? t("menu.tagSignature") : t("menu.tagBestSeller")}
                     </span>
-                  </div>
-                  {item.desc && (
-                    <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed mt-1.5 line-clamp-2">
-                      {item.desc}
-                    </p>
                   )}
                 </div>
-                <div className="pt-2.5 border-t border-[#222520] flex items-center justify-between text-[11px] text-[#C88A4B] font-medium">
-                  <span className="inline-flex items-center gap-1">
-                    <CheckCircle2 size={12} className="text-[#C88A4B]" />
-                    <span>{item.category}</span>
-                  </span>
-                  <span className="text-[10px] text-[#FDFBF7]/50 font-mono">
-                    Phục vụ tại bàn
-                  </span>
+
+                <div className="space-y-2 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-serif text-lg font-bold text-[#FDFBF7] group-hover:text-[#C88A4B] transition-colors leading-snug">
+                        {trItem.name}
+                      </h3>
+                      <span className="font-mono text-sm font-bold text-[#C88A4B] shrink-0 pt-0.5">
+                        {formatPrice(item.price)}
+                      </span>
+                    </div>
+                    {trItem.desc && (
+                      <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed mt-1.5 line-clamp-2">
+                        {trItem.desc}
+                      </p>
+                    )}
+                  </div>
+                  <div className="pt-2.5 border-t border-[#222520] flex items-center justify-between text-[11px] text-[#C88A4B] font-medium">
+                    <span className="inline-flex items-center gap-1">
+                      <CheckCircle2 size={12} className="text-[#C88A4B]" />
+                      <span>{tCat(item.category)}</span>
+                    </span>
+                    <span className="text-[10px] text-[#FDFBF7]/50 font-mono">
+                      {t("menu.servedAtTable")}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 4. SPECIAL NOTES FOOTER                                      */}
-      {/* ============================================================ */}
+      {/* 4. SPECIAL NOTES FOOTER */}
       <section className="pb-20 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -189,26 +194,22 @@ export default function MenuPage() {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold">
               <Leaf size={14} />
-              <span>GHI CHÚ THỰC ĐƠN • SPECIAL NOTES</span>
+              <span>{t("menu.notesTag")}</span>
             </div>
 
             <h3 className="font-serif text-2xl font-bold text-[#FDFBF7]">
-              Tùy Chỉnh Theo Khẩu Vị Của Bạn
+              {t("menu.notesTitle")}
             </h3>
 
             <ul className="space-y-2 text-xs sm:text-sm font-light text-[#FDFBF7]/75 leading-relaxed list-disc list-inside">
               <li>
-                <strong>Tùy chọn độ ngọt &amp; lượng đá:</strong> Quý khách hoàn
-                toàn có thể dặn barista giảm ngọt, không đá hoặc dùng nước ấm
-                theo mong muốn.
+                <strong>{t("menu.note1Bold")}</strong> {t("menu.note1")}
               </li>
               <li>
-                <strong>Sữa hạt thay thế theo yêu cầu:</strong> Sẵn sàng thay đổi
-                sang sữa thực vật hoặc sữa tươi thanh trùng không đường.
+                <strong>{t("menu.note2Bold")}</strong> {t("menu.note2")}
               </li>
               <li>
-                <strong>Nguyên liệu mộc:</strong> Cà phê 100% Robusta Đắk Nông
-                rang củi không phụ gia; trà và nước ép từ hoa quả tươi trong ngày.
+                <strong>{t("menu.note3Bold")}</strong> {t("menu.note3")}
               </li>
             </ul>
           </div>
@@ -216,10 +217,10 @@ export default function MenuPage() {
           <div className="shrink-0 p-6 rounded-2xl bg-[#1A1D17] border border-[#222520] text-center space-y-2 max-w-xs">
             <HeartHandshake size={28} className="text-[#C88A4B] mx-auto" />
             <p className="font-serif font-bold text-sm text-[#FDFBF7]">
-              Phục vụ tận tâm
+              {t("menu.serveTitle")}
             </p>
             <p className="text-[11px] text-[#FDFBF7]/60">
-              Hãy dặn nhân viên khi gọi món để chúng tôi chuẩn bị đúng khẩu vị của bạn nhé!
+              {t("menu.serveDesc")}
             </p>
           </div>
         </motion.div>

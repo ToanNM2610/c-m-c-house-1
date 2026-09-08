@@ -11,7 +11,7 @@ const GOOGLE_MAPS_URL =
 
 export default function Footer() {
   const pathname = usePathname() || "";
-  const { lang } = useLanguage();
+  const { t } = useLanguage();
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/wp-admin")) {
     return null;
@@ -32,46 +32,44 @@ export default function Footer() {
           </Link>
 
           <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/70 leading-relaxed">
-            {lang === "en"
-              ? "Immerse in nature beside the crystal pebble stream of Gia Nghia. Wood-roasted coffee and serene highland atmosphere."
-              : "Chốn dừng chân mộc mạc bên bờ suối đá Gia Nghĩa. Giữ trọn vị cà phê rang củi nguyên bản và không gian sinh thái hoang sơ."}
+            {t("footer.slogan")}
           </p>
 
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-[11px] font-mono text-[#C88A4B]">
             <Compass size={13} />
-            <span>11.99° N, 107.69° E • Gia Nghĩa</span>
+            <span>{t("footer.coords")}</span>
           </div>
         </div>
 
         {/* CỘT 2: ĐIỀU HƯỚNG NHANH */}
         <div className="space-y-4">
           <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#222520] pb-2">
-            {lang === "en" ? "Explore" : "Khám Phá"}
+            {t("footer.explore")}
           </h4>
           <ul className="space-y-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/75">
             <li>
               <Link href="/" className="hover:text-[#C88A4B] transition-colors">
-                {lang === "en" ? "Home" : "Trang chủ"}
+                {t("nav.home")}
               </Link>
             </li>
             <li>
               <Link href="/about" className="hover:text-[#C88A4B] transition-colors">
-                {lang === "en" ? "Our Story" : "Giới thiệu & Triết lý"}
+                {t("nav.about")}
               </Link>
             </li>
             <li>
               <Link href="/space" className="hover:text-[#C88A4B] transition-colors">
-                {lang === "en" ? "Botanical Space" : "Không gian & Trải nghiệm"}
+                {t("nav.space")}
               </Link>
             </li>
             <li>
               <Link href="/menu" className="hover:text-[#C88A4B] transition-colors">
-                {lang === "en" ? "Menu & Food" : "Thực đơn tươi mộc"}
+                {t("nav.menu")}
               </Link>
             </li>
             <li>
               <Link href="/contact" className="hover:text-[#C88A4B] transition-colors">
-                {lang === "en" ? "Contact & Connect" : "Liên hệ & Kết nối"}
+                {t("nav.contact")}
               </Link>
             </li>
           </ul>
@@ -80,15 +78,15 @@ export default function Footer() {
         {/* CỘT 3: THỜI GIAN & LIÊN HỆ */}
         <div className="space-y-4">
           <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#222520] pb-2">
-            {lang === "en" ? "Contact & Hours" : "Thông Tin & Giờ Mở Cửa"}
+            {t("footer.contactHours")}
           </h4>
           <div className="space-y-3 text-xs sm:text-sm font-light text-[#FDFBF7]/75">
             <div className="flex items-start gap-2.5">
               <Clock size={15} className="text-[#C88A4B] shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-[#FDFBF7]">Giờ phục vụ đón khách:</p>
-                <p className="text-xs text-[#FDFBF7]/60">T2 - T5: 07:00 - 18:00</p>
-                <p className="text-xs text-[#FDFBF7]/60">T6 - CN: 07:00 - 22:00</p>
+                <p className="font-medium text-[#FDFBF7]">{t("contact.hoursTitle")}:</p>
+                <p className="text-xs text-[#FDFBF7]/60">{t("footer.hours1")}</p>
+                <p className="text-xs text-[#FDFBF7]/60">{t("footer.hours2")}</p>
               </div>
             </div>
 
@@ -117,11 +115,11 @@ export default function Footer() {
         {/* CỘT 4: ĐỊA CHỈ & BẢN ĐỒ THU NHỎ */}
         <div className="space-y-4">
           <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#222520] pb-2">
-            {lang === "en" ? "Location" : "Địa Chỉ Quán"}
+            {t("footer.location")}
           </h4>
           <div className="flex items-start gap-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/75">
             <MapPin size={16} className="text-[#C88A4B] shrink-0 mt-0.5" />
-            <p>Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP Gia Nghĩa, Đắk Nông</p>
+            <p>{t("contact.addressDesc")}</p>
           </div>
 
           <div className="pt-2">
@@ -131,7 +129,7 @@ export default function Footer() {
               rel="noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A1D17] hover:bg-[#C88A4B] hover:text-[#0C0D0B] transition-all text-xs font-medium text-[#FDFBF7] border border-[#222520]"
             >
-              <span>Xem trên Google Maps</span>
+              <span>{t("footer.viewMap")}</span>
               <ArrowUpRight size={14} />
             </a>
           </div>
@@ -140,9 +138,9 @@ export default function Footer() {
 
       {/* BẢN QUYỀN */}
       <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-[#222520] flex flex-col sm:flex-row items-center justify-between text-xs text-[#FDFBF7]/50 gap-3">
-        <p>© 2026 Cẩm Cù House. Tất cả các quyền được bảo lưu.</p>
+        <p>{t("footer.rights")}</p>
         <p className="text-[11px] font-mono text-[#C88A4B]">
-          AWWWARDS STANDARD WEBGL 3D EXPERIENCE
+          {t("footer.awwwards")}
         </p>
       </div>
     </footer>

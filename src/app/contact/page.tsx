@@ -10,6 +10,7 @@ import {
   Car,
   ShieldCheck,
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -28,25 +29,27 @@ const staggerContainer = {
 const GOOGLE_MAPS_URL =
   "https://maps.google.com/?cid=10605553198031545365&q=C%E1%BA%A9m+C%C3%B9+House";
 
-const ENTRANCE_PARKING_PHOTOS = [
-  {
-    title: "Lối Vào Quán Rợp Bóng Mát",
-    desc: "Đường hẻm rộng rãi, rải đá mộc mạc dẫn thẳng vào không gian suối đá Cẩm Cù.",
-    image: "/uploads/gallery/1788250253566-618481408.jpg",
-  },
-  {
-    title: "Bãi Đậu Xe Ô Tô & Xe Máy Thoải Mái",
-    desc: "Khu đất bằng phẳng, an ninh, có người hỗ trợ hướng dẫn và thuận tiện quay đầu xe.",
-    image: "/uploads/gallery/1788250253554-875120458.jpg",
-  },
-];
-
 export default function ContactPage() {
+  const { t } = useLanguage();
+
+  const ENTRANCE_PARKING_PHOTOS = [
+    {
+      tag: t("contact.entrance1Tag"),
+      title: t("contact.entrance1Title"),
+      desc: t("contact.entrance1Desc"),
+      image: "/uploads/gallery/1788250253566-618481408.jpg",
+    },
+    {
+      tag: t("contact.entrance2Tag"),
+      title: t("contact.entrance2Title"),
+      desc: t("contact.entrance2Desc"),
+      image: "/uploads/gallery/1788250253554-875120458.jpg",
+    },
+  ];
+
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ============================================================ */}
-      {/* 1. HEADER BANNER                                             */}
-      {/* ============================================================ */}
+      {/* 1. HEADER BANNER */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 text-center border-b border-[#222520]">
         <motion.div
           initial="hidden"
@@ -56,24 +59,21 @@ export default function ContactPage() {
         >
           <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
             <Compass size={14} />
-            <span>TỌA ĐỘ 11.99° N, 107.69° E • GIA NGHĨA</span>
+            <span>{t("contact.heroTag")}</span>
           </motion.span>
 
           <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
-            TỪ GIA NGHĨA, <br />
-            <span className="text-[#C88A4B] italic">TÔI CHỜ ĐÓN BẠN.</span>
+            {t("contact.heroTitle1")} <br />
+            <span className="text-[#C88A4B] italic">{t("contact.heroTitle2")}</span>
           </motion.h1>
 
           <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed">
-            Dù bạn đến từ bất kỳ đâu, Cẩm Cù House luôn dành sẵn một góc hiên nhà
-            mộc mạc, tiếng suối reo và tách cà phê ấm chờ bạn ghé thăm.
+            {t("contact.heroDesc")}
           </motion.p>
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 2. CONTACT INFO 4-COLUMN CARDS                               */}
-      {/* ============================================================ */}
+      {/* 2. CONTACT INFO 4-COLUMN CARDS */}
       <section className="py-20 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <motion.div
           initial="hidden"
@@ -89,10 +89,10 @@ export default function ContactPage() {
                 <span>📍</span>
               </div>
               <h3 className="font-serif font-bold text-lg text-[#FDFBF7]">
-                Địa Chỉ Quán
+                {t("contact.addressTitle")}
               </h3>
               <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/75 leading-relaxed">
-                Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP Gia Nghĩa, Đắk Nông.
+                {t("contact.addressDesc")}
               </p>
             </div>
             <a
@@ -101,7 +101,7 @@ export default function ContactPage() {
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C88A4B] hover:underline pt-2 border-t border-[#222520]"
             >
-              <span>Xem vị trí quán</span>
+              <span>{t("contact.addressLink")}</span>
               <ArrowUpRight size={14} />
             </a>
           </motion.div>
@@ -113,7 +113,7 @@ export default function ContactPage() {
                 <span>📞</span>
               </div>
               <h3 className="font-serif font-bold text-lg text-[#FDFBF7]">
-                Hotline (Bấm Gọi Ngay)
+                {t("contact.hotlineTitle")}
               </h3>
               <div className="space-y-2 pt-1">
                 <a
@@ -124,7 +124,7 @@ export default function ContactPage() {
                     038 285 1688
                   </span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#2D4A3E] text-[#FDFBF7] font-medium">
-                    Gọi máy 1
+                    {t("contact.phone1Label")}
                   </span>
                 </a>
                 <a
@@ -135,13 +135,13 @@ export default function ContactPage() {
                     077 465 9000
                   </span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C88A4B] text-[#0C0D0B] font-bold">
-                    Gọi máy 2
+                    {t("contact.phone2Label")}
                   </span>
                 </a>
               </div>
             </div>
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
-              Chạm số để liên hệ tức thì
+              {t("contact.hotlineSub")}
             </p>
           </motion.div>
 
@@ -152,21 +152,21 @@ export default function ContactPage() {
                 <span>⏰</span>
               </div>
               <h3 className="font-serif font-bold text-lg text-[#FDFBF7]">
-                Giờ Mở Cửa
+                {t("contact.hoursTitle")}
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-light text-[#FDFBF7]/80 leading-relaxed">
                 <div className="p-2 rounded-xl bg-[#1A1D17] border border-[#222520]">
-                  <p className="font-medium text-[#FDFBF7]">Thứ 2 - Thứ 5:</p>
-                  <p className="text-[#C88A4B] font-mono font-semibold">07:00 - 18:00</p>
+                  <p className="font-medium text-[#FDFBF7]">{t("contact.hours1Day")}</p>
+                  <p className="text-[#C88A4B] font-mono font-semibold">{t("contact.hours1Time")}</p>
                 </div>
                 <div className="p-2 rounded-xl bg-[#1A1D17] border border-[#222520]">
-                  <p className="font-medium text-[#FDFBF7]">Thứ 6 - Chủ Nhật:</p>
-                  <p className="text-[#C88A4B] font-mono font-semibold">07:00 - 22:00</p>
+                  <p className="font-medium text-[#FDFBF7]">{t("contact.hours2Day")}</p>
+                  <p className="text-[#C88A4B] font-mono font-semibold">{t("contact.hours2Time")}</p>
                 </div>
               </div>
             </div>
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
-              Mở cửa đón khách quanh năm
+              {t("contact.hoursSub")}
             </p>
           </motion.div>
 
@@ -177,14 +177,14 @@ export default function ContactPage() {
                 <span>💬</span>
               </div>
               <h3 className="font-serif font-bold text-lg text-[#FDFBF7]">
-                Kênh Kết Nối
+                {t("contact.channelTitle")}
               </h3>
               <div className="space-y-2 pt-1">
                 <a
                   href="mailto:thuynhu8788@gmail.com"
                   className="block p-2 rounded-xl bg-[#1A1D17] border border-[#222520] text-xs text-[#FDFBF7]/80 hover:text-[#C88A4B] truncate"
                 >
-                  <span className="text-[#C88A4B] block text-[10px] font-mono">EMAIL:</span>
+                  <span className="text-[#C88A4B] block text-[10px] font-mono">{t("contact.emailLabel")}</span>
                   thuynhu8788@gmail.com
                 </a>
                 <div className="grid grid-cols-2 gap-2 pt-1">
@@ -208,15 +208,13 @@ export default function ContactPage() {
               </div>
             </div>
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
-              Nhắn tin phản hồi nhanh chóng
+              {t("contact.channelSub")}
             </p>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 3. GOOGLE MAPS                                               */}
-      {/* ============================================================ */}
+      {/* 3. GOOGLE MAPS */}
       <section className="w-full border-t border-b border-[#222520] relative z-10 bg-[#0C0D0B]/90">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -227,13 +225,13 @@ export default function ContactPage() {
         >
           <div className="space-y-1 text-center md:text-left">
             <span className="text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold">
-              ĐỊNH VỊ TRỰC TUYẾN
+              {t("contact.mapTag")}
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#FDFBF7]">
-              Bản Đồ Đến Cẩm Cù House
+              {t("contact.mapTitle")}
             </h2>
             <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/70">
-              Ghim tọa độ chính xác: Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP Gia Nghĩa.
+              {t("contact.mapDesc")}
             </p>
           </div>
 
@@ -244,7 +242,7 @@ export default function ContactPage() {
             className="px-8 py-4 rounded-full bg-[#C88A4B] hover:bg-[#b87c40] text-[#0C0D0B] text-sm sm:text-base font-bold shadow-lg transition-all duration-200 flex items-center gap-3 shrink-0 active:scale-[0.98]"
           >
             <Navigation size={18} />
-            <span>Chỉ đường trực tiếp trên Google Maps</span>
+            <span>{t("contact.mapBtn")}</span>
             <ArrowUpRight size={16} />
           </a>
         </motion.div>
@@ -264,9 +262,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 4. ENTRANCE & PARKING                                        */}
-      {/* ============================================================ */}
+      {/* 4. ENTRANCE & PARKING */}
       <section className="py-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <motion.div
           initial="hidden"
@@ -276,13 +272,13 @@ export default function ContactPage() {
           className="text-center max-w-2xl mx-auto space-y-3 mb-12"
         >
           <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
-            AN TÂM KHI GHÉ
+            {t("contact.parkingTag")}
           </motion.span>
           <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
-            Lối Vào &amp; Bãi Đậu Xe Thuận Tiện
+            {t("contact.parkingTitle")}
           </motion.h2>
           <motion.p variants={fadeUp} custom={2} className="text-xs sm:text-sm font-light text-[#FDFBF7]/70">
-            Đường đi êm ái, bãi đậu xe rộng rãi cho cả xe máy và ô tô mọi kích cỡ.
+            {t("contact.parkingDesc")}
           </motion.p>
         </motion.div>
 
@@ -312,7 +308,7 @@ export default function ContactPage() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-[#C88A4B]">
                   {idx === 0 ? <ShieldCheck size={16} /> : <Car size={16} />}
-                  <span>{idx === 0 ? "LỐI VÀO RỘNG RÃI" : "BÃI XE AN TOÀN"}</span>
+                  <span>{spot.tag}</span>
                 </div>
                 <h3 className="font-serif text-xl font-bold text-[#FDFBF7]">
                   {spot.title}

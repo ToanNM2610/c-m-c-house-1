@@ -4,315 +4,166 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  Sprout,
-  Coffee,
-  Heart,
-  Users,
-  Compass,
-  ArrowRight,
-} from "lucide-react";
+import { Compass, ArrowRight, Users } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, delay: i * 0.12 },
-  }),
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.12 } }),
 };
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 
-const staggerContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-};
-
-const CORE_VALUES = [
-  {
-    icon: Coffee,
-    step: "01",
-    emoji: "☕",
-    title: "Hạt Cà Phê Mộc",
-    desc: "Rang mộc nguyên bản, chắt chiu từ hạt Robusta Đắk Nông chín đỏ, không pha tạp, không hương liệu hay chất bảo quản.",
-  },
-  {
-    icon: Sprout,
-    step: "02",
-    emoji: "🌿",
-    title: "Không Gian Xanh",
-    desc: "Thuận theo tự nhiên, gìn giữ trọn vẹn bờ suối đá róc rách, thảm hoa cẩm cù bản địa và làn gió cao nguyên trong lành mát rượi.",
-  },
-  {
-    icon: Heart,
-    step: "03",
-    emoji: "❤️",
-    title: "Tận Tâm",
-    desc: "Chân thành, hiếu khách như trở về nhà. Mỗi tách cà phê trao gửi bằng tất cả sự tỉ mỉ và ấm áp của người pha chế.",
-  },
-];
+const VALUE_EMOJIS = ["☕", "🌿", "❤️"];
 
 export default function AboutPage() {
-  const { lang } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ============================================================ */}
-      {/* 1. BANNER: TUYÊN NGÔN THƯƠNG HIỆU                          */}
-      {/* ============================================================ */}
+      {/* ── 1. BANNER ── */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="relative z-10 max-w-4xl mx-auto space-y-6"
-        >
-          <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
+        <motion.div initial="hidden" animate="visible" variants={stagger} className="relative z-10 max-w-4xl mx-auto space-y-6">
+          <motion.span variants={fadeUp} custom={0}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]"
+          >
             <Compass size={14} />
-            <span>TRIẾT LÝ THƯƠNG HIỆU</span>
+            <span>{t("about.heroTag")}</span>
           </motion.span>
 
-          <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
-            TỪ BỎ ỒN ÀO. <br />
-            <span className="text-[#C88A4B] italic">TÌM VỀ NGUYÊN BẢN.</span>
+          <motion.h1 variants={fadeUp} custom={1}
+            className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight"
+          >
+            {t("about.heroTitle1")} <br />
+            <span className="text-[#C88A4B] italic">{t("about.heroTitle2")}</span>
           </motion.h1>
 
-          <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed">
-            Từ một góc suối đá hoang sơ tại thung lũng Gia Nghĩa, chúng tôi dựng
-            nên chốn dừng chân bình yên nơi hương hoa cẩm cù hòa cùng vị cà phê
-            mộc thơm nồng khói gỗ.
+          <motion.p variants={fadeUp} custom={2}
+            className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
+          >
+            {t("about.heroDesc")}
           </motion.p>
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 2. BỐ CỤC XEN KẼ Z-SHAPE                                   */}
-      {/* ============================================================ */}
+      {/* ── 2. Z-SHAPE CHAPTERS ── */}
       <section className="py-24 sm:py-32 px-6 sm:px-12 max-w-7xl mx-auto space-y-28 sm:space-y-36 relative z-10">
-        
-        {/* HÀNG 1: Khởi nguồn từ bờ suối đá */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
+
+        {/* Chapter 1 */}
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}
           className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center"
         >
           <motion.div variants={fadeUp} custom={0} className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl bg-[#1A1D17]">
-            <Image
-              src="/uploads/gallery/1788250253551-943009233.jpg"
-              alt="Khởi nguồn từ bờ suối đá Cẩm Cù"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
+            <Image src="/uploads/gallery/1788250253551-943009233.jpg" alt={t("about.ch1Title")} fill sizes="50vw"
               className="object-cover hover:scale-[1.04] transition-transform duration-700 ease-out"
             />
           </motion.div>
           <motion.div variants={fadeUp} custom={1} className="lg:col-span-6 space-y-4">
-            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
-              CHƯƠNG 01 • KHỞI NGUỒN
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
-              Tôn Trọng Dòng Suối Nguyên Sơ
-            </h2>
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Cẩm Cù House bắt đầu từ một buổi sáng tĩnh lặng bên con suối róc
-              rách chảy qua những tảng đá cuội rêu phong tại Hẻm 437 Hùng Vương.
-              Nhận thấy vẻ đẹp mộc mạc hiếm có, chúng tôi quyết định dựng mái hiên
-              gỗ mà không làm biến đổi bất kỳ phiến đá tự nhiên nào.
-            </p>
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Không can thiệp cơ giới nặng nề, dòng nước suối luôn lưu chuyển tự
-              do và trong vắt bốn mùa, phản chiếu bầu trời cao nguyên khoáng đạt.
-            </p>
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">{t("about.ch1Tag")}</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">{t("about.ch1Title")}</h2>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.ch1p1")}</p>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.ch1p2")}</p>
           </motion.div>
         </motion.div>
 
-        {/* HÀNG 2: Gìn giữ hệ sinh thái bản địa */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
+        {/* Chapter 2 */}
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}
           className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center"
         >
           <motion.div variants={fadeUp} custom={0} className="lg:col-span-6 space-y-4 order-2 lg:order-1">
-            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
-              CHƯƠNG 02 • THÁNH ĐƯỜNG THỰC VẬT
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
-              Hệ Sinh Thái Hoa Cẩm Cù Bản Địa
-            </h2>
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Hoa Cẩm Cù (Hoya) - loài hoa ngọc bích hình ngôi sao sáp bản địa
-              nở rộ mỗi mùa nắng sớm đã trở thành linh hồn của chốn này. Quanh
-              hiên nhà, hàng trăm loài thực vật Tây Nguyên cùng cỏ dại được chăm
-              sóc tự nhiên, thanh lọc bầu không khí trong lành.
-            </p>
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Ngồi dưới tán râm, ngắm hoa cẩm cù và lắng nghe tiếng chim ríu rít,
-              bạn sẽ cảm nhận được sự dịu êm của đời sống mộc.
-            </p>
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">{t("about.ch2Tag")}</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">{t("about.ch2Title")}</h2>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.ch2p1")}</p>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.ch2p2")}</p>
           </motion.div>
           <motion.div variants={fadeUp} custom={1} className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl order-1 lg:order-2 bg-[#1A1D17]">
-            <Image
-              src="/uploads/gallery/1788250253557-29323827.jpg"
-              alt="Hệ sinh thái hoa Cẩm Cù bản địa"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
+            <Image src="/uploads/gallery/1788250253557-29323827.jpg" alt={t("about.ch2Title")} fill sizes="50vw"
               className="object-cover hover:scale-[1.04] transition-transform duration-700 ease-out"
             />
           </motion.div>
         </motion.div>
 
-        {/* HÀNG 3: Cà phê mộc sấy tự nhiên rang củi */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
+        {/* Chapter 3 */}
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}
           className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center"
         >
           <motion.div variants={fadeUp} custom={0} className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl bg-[#1A1D17]">
-            <Image
-              src="/uploads/gallery/1788250253560-200373033.jpg"
-              alt="Cà phê mộc rang củi thủ công"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
+            <Image src="/uploads/gallery/1788250253560-200373033.jpg" alt={t("about.ch3Title")} fill sizes="50vw"
               className="object-cover hover:scale-[1.04] transition-transform duration-700 ease-out"
             />
           </motion.div>
           <motion.div variants={fadeUp} custom={1} className="lg:col-span-6 space-y-4">
-            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
-              CHƯƠNG 03 • HƯƠNG VỊ MỘC
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
-              Cà Phê Mộc Sấy Tự Nhiên &amp; Rang Củi
-            </h2>
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Chúng tôi chọn những hạt Robusta chín mọng nuôi dưỡng bởi đất đỏ
-              bazan màu mỡ Đắk Nông, phơi nắng tự nhiên trên giàn cao và rang trên
-              ngọn lửa than củi gỗ cà phê già đã hết chu kỳ sinh trưởng.
-            </p>
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Không bơ, không hương liệu nhân tạo, từng giọt cà phê chắt chiu vị
-              đậm đà, hậu vị ngọt thanh tao và thơm nồng mùi khói gỗ núi rừng.
-            </p>
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">{t("about.ch3Tag")}</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">{t("about.ch3Title")}</h2>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.ch3p1")}</p>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.ch3p2")}</p>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 3. GIÁ TRỊ CỐT LÕI                                         */}
-      {/* ============================================================ */}
+      {/* ── 3. CORE VALUES ── */}
       <section className="py-24 px-6 sm:px-12 border-t border-b border-[#222520] relative z-10">
         <div className="max-w-7xl mx-auto space-y-12">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={stagger}
             className="text-center max-w-2xl mx-auto space-y-3"
           >
             <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
-              NGUYÊN TẮC HOẠT ĐỘNG
+              {t("about.valuesTag")}
             </motion.span>
             <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
-              Giá Trị Cốt Lõi
+              {t("about.valuesTitle")}
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-sm font-light text-[#FDFBF7]/70">
-              Ba giá trị bền bỉ làm nên tinh thần của Cẩm Cù House.
+              {t("about.valuesDesc")}
             </motion.p>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.15 }}
-            variants={staggerContainer}
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} variants={stagger}
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
-            {CORE_VALUES.map((val, idx) => (
-              <motion.div
-                key={idx}
-                variants={fadeUp}
-                custom={idx}
+            {([1, 2, 3] as const).map((n, idx) => (
+              <motion.div key={n} variants={fadeUp} custom={idx}
                 className="card-dark p-8 rounded-3xl flex flex-col justify-between space-y-6 hover:border-[#C88A4B] transition-colors"
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="w-12 h-12 rounded-xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-xl">
-                      <span>{val.emoji}</span>
+                      {VALUE_EMOJIS[idx]}
                     </div>
-                    <span className="text-xs font-mono font-bold text-[#C88A4B]">
-                      {val.step}
-                    </span>
+                    <span className="text-xs font-mono font-bold text-[#C88A4B]">{t(`about.val${n}Step`)}</span>
                   </div>
-                  <h3 className="font-serif text-xl font-bold text-[#FDFBF7] flex items-center gap-2">
-                    <span>{val.emoji}</span>
-                    <span>{val.title}</span>
-                  </h3>
-                  <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/70 leading-relaxed">
-                    {val.desc}
-                  </p>
+                  <h3 className="font-serif text-xl font-bold text-[#FDFBF7]">{VALUE_EMOJIS[idx]} {t(`about.val${n}Title`)}</h3>
+                  <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/70 leading-relaxed">{t(`about.val${n}Desc`)}</p>
                 </div>
-                <div className="pt-4 border-t border-[#222520] text-xs font-mono text-[#C88A4B]">
-                  Cam kết mộc mạc từ trái tim
-                </div>
+                <div className="pt-4 border-t border-[#222520] text-xs font-mono text-[#C88A4B]">{t("about.valCommit")}</div>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 4. ĐỘI NGŨ / CON NGƯỜI                                      */}
-      {/* ============================================================ */}
+      {/* ── 4. TEAM ── */}
       <section className="py-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}
           className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center card-dark p-8 sm:p-14 rounded-3xl border border-[#222520]"
         >
           <motion.div variants={fadeUp} custom={0} className="lg:col-span-6 relative aspect-[4/3] rounded-2xl overflow-hidden border border-[#222520] bg-[#1A1D17]">
-            <Image
-              src="/uploads/gallery/1788250253554-875120458.jpg"
-              alt="Đội ngũ pha chế Cẩm Cù House"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
+            <Image src="/uploads/gallery/1788250253554-875120458.jpg" alt={t("about.teamTitle")} fill sizes="50vw" className="object-cover" />
           </motion.div>
 
           <motion.div variants={fadeUp} custom={1} className="lg:col-span-6 space-y-5">
             <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold">
-              <Users size={14} />
-              <span>CON NGƯỜI CẨM CÙ</span>
+              <Users size={14} /><span>{t("about.teamTag")}</span>
             </div>
-
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
-              Gặp Gỡ Đội Ngũ Tận Tâm
-            </h2>
-
-            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-              Phía sau mỗi ly cà phê ấm nóng và chiếc bàn sạch sẽ dưới tán râm là
-              sự chân thành của những con người chất phác đất Tây Nguyên. Chúng tôi
-              học cách lắng nghe nhịp thở của suối rừng và đón chào bạn như người
-              thân trở về.
-            </p>
-
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">{t("about.teamTitle")}</h2>
+            <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">{t("about.teamDesc")}</p>
             <blockquote className="p-4 rounded-xl bg-[#1A1D17] border-l-4 border-[#C88A4B] italic text-xs sm:text-sm font-serif text-[#FDFBF7]">
-              &ldquo;Cảm ơn bạn đã ghé thăm và trở thành một phần tươi đẹp trong
-              hành trình gìn giữ màu xanh bờ suối của Cẩm Cù House.&rdquo;
+              &ldquo;{t("about.teamQuote")}&rdquo;
             </blockquote>
-
             <div className="pt-2">
-              <Link
-                href="/contact"
+              <Link href="/contact"
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold uppercase tracking-wider transition-colors"
               >
-                <span>Ghé chơi cùng chúng tôi</span>
+                <span>{t("about.teamCta")}</span>
                 <ArrowRight size={14} />
               </Link>
             </div>

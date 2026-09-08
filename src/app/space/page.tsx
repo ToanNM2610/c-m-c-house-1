@@ -28,15 +28,10 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-type FilterArea =
-  | "Tất cả"
-  | "Bờ suối ngoài trời"
-  | "Hiên gỗ mộc"
-  | "Góc hoa cẩm cù";
-
 interface SpacePhoto {
   id: string;
-  category: FilterArea;
+  categoryVi: string;
+  categoryEn: string;
   titleVi: string;
   titleEn: string;
   descVi: string;
@@ -48,7 +43,8 @@ interface SpacePhoto {
 const SPACE_PHOTOS: SpacePhoto[] = [
   {
     id: "sp-1",
-    category: "Bờ suối ngoài trời",
+    categoryVi: "Bờ suối ngoài trời",
+    categoryEn: "Outdoor Streamside",
     titleVi: "Bờ Suối Đá Thung Lũng",
     titleEn: "Valley Pebble Brook",
     descVi: "Dòng suối trong vắt len lỏi qua bãi đá cuội rêu phong ngàn năm, tiếng nước chảy róc rách xua tan mọi âu lo.",
@@ -58,7 +54,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-2",
-    category: "Hiên gỗ mộc",
+    categoryVi: "Hiên gỗ mộc",
+    categoryEn: "Timber Veranda",
     titleVi: "Hiên Gỗ Đón Nắng Sớm",
     titleEn: "Sunlit Timber Veranda",
     descVi: "Góc hiên gỗ mộc ấm cúng đón trọn vạt nắng đầu ngày, ngát hương cà phê mới rang bên suối.",
@@ -68,7 +65,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-3",
-    category: "Góc hoa cẩm cù",
+    categoryVi: "Góc hoa cẩm cù",
+    categoryEn: "Hoya Garden",
     titleVi: "Thánh Đường Hoa Cẩm Cù",
     titleEn: "Indigenous Hoya Haven",
     descVi: "Hàng trăm loài hoa cẩm cù bản địa đơm bông hình ngôi sao sáp ngọc bích tỏa hương dịu mát tự nhiên.",
@@ -78,7 +76,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-4",
-    category: "Bờ suối ngoài trời",
+    categoryVi: "Bờ suối ngoài trời",
+    categoryEn: "Outdoor Streamside",
     titleVi: "Bàn Đá Dưới Tán Râm",
     titleEn: "Canopy Shaded Table",
     descVi: "Góc ngồi lý tưởng dưới tán lá rừng xanh mát để đọc sách, trò chuyện và lắng nghe chim hót.",
@@ -88,7 +87,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-5",
-    category: "Hiên gỗ mộc",
+    categoryVi: "Hiên gỗ mộc",
+    categoryEn: "Timber Veranda",
     titleVi: "Bàn Làm Việc Yên Tĩnh Bên Cửa",
     titleEn: "Quiet Workspace by the Window",
     descVi: "Bàn gỗ tự nhiên với ánh sáng chan hòa, ổ cắm từng bàn và wifi tốc độ cao giúp bạn làm việc tập trung.",
@@ -98,7 +98,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-6",
-    category: "Bờ suối ngoài trời",
+    categoryVi: "Bờ suối ngoài trời",
+    categoryEn: "Outdoor Streamside",
     titleVi: "Hoàng Hôn Nhuộm Đỏ Suối",
     titleEn: "Sunset Over Stream",
     descVi: "Ánh chiều tà buông xuống thung lũng tạo nên khung cảnh nên thơ tuyệt mỹ bên bờ suối đá.",
@@ -108,7 +109,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-7",
-    category: "Bờ suối ngoài trời",
+    categoryVi: "Bờ suối ngoài trời",
+    categoryEn: "Outdoor Streamside",
     titleVi: "Lối Đi Ven Suối Thơ Mộng",
     titleEn: "Pebble Stream Path",
     descVi: "Những bậc đá tự nhiên uốn lượn theo bờ nước rợp bóng thông và cây xanh cao nguyên.",
@@ -118,7 +120,8 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
   {
     id: "sp-8",
-    category: "Góc hoa cẩm cù",
+    categoryVi: "Góc hoa cẩm cù",
+    categoryEn: "Hoya Garden",
     titleVi: "Khu Vườn Hoa Cẩm Cù Nở Rộ",
     titleEn: "Blooming Hoya Sanctuary",
     descVi: "Vườn hoa cẩm cù đón gió cao nguyên, không gian check-in chụp ảnh yêu thích của nhiều du khách.",
@@ -128,48 +131,25 @@ const SPACE_PHOTOS: SpacePhoto[] = [
   },
 ];
 
-const FILTER_TABS: FilterArea[] = [
-  "Tất cả",
-  "Bờ suối ngoài trời",
-  "Hiên gỗ mộc",
-  "Góc hoa cẩm cù",
-];
-
-const AMENITIES = [
-  {
-    icon: Wifi,
-    emoji: "📶",
-    title: "Wifi tốc độ cao",
-    desc: "Phủ sóng internet cáp quang ổn định toàn bộ khu vực trong nhà và bờ suối",
-  },
-  {
-    icon: Briefcase,
-    emoji: "🔌",
-    title: "Ổ cắm điện từng bàn",
-    desc: "Bố trí chu đáo sẵn sàng cho laptop, máy ảnh và điện thoại làm việc cả ngày",
-  },
-  {
-    icon: Car,
-    emoji: "🅿️",
-    title: "Chỗ đậu xe máy/ô tô thoải mái",
-    desc: "Bãi đỗ xe rộng rãi, an ninh, bằng phẳng và thuận tiện quay đầu xe ô tô",
-  },
-  {
-    icon: Trees,
-    emoji: "🌳",
-    title: "Khu vực ngoài trời ven suối thoáng mát",
-    desc: "Không khí tự nhiên trong lành, rợp bóng mát cây xanh đại ngàn",
-  },
-];
+const FILTER_KEYS = ["All", "Stream", "Timber", "Hoya"] as const;
 
 export default function SpacePage() {
-  const { lang } = useLanguage();
-  const [activeTab, setActiveTab] = useState<FilterArea>("Tất cả");
+  const { t, lang } = useLanguage();
+  const [activeTab, setActiveTab] = useState<string>("All");
   const [selectedPhoto, setSelectedPhoto] = useState<SpacePhoto | null>(null);
 
+  const getCategoryEn = (key: string) => {
+    switch (key) {
+      case "Stream": return "Outdoor Streamside";
+      case "Timber": return "Timber Veranda";
+      case "Hoya": return "Hoya Garden";
+      default: return "All";
+    }
+  }
+
   const filteredPhotos = SPACE_PHOTOS.filter((photo) => {
-    if (activeTab === "Tất cả") return true;
-    return photo.category === activeTab;
+    if (activeTab === "All") return true;
+    return photo.categoryEn === getCategoryEn(activeTab);
   });
 
   useEffect(() => {
@@ -188,9 +168,7 @@ export default function SpacePage() {
 
   return (
     <div className="w-full text-[#FDFBF7]">
-      {/* ============================================================ */}
-      {/* 1. BANNER                                                    */}
-      {/* ============================================================ */}
+      {/* 1. BANNER */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
         <motion.div
           initial="hidden"
@@ -200,26 +178,23 @@ export default function SpacePage() {
         >
           <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
             <Compass size={14} />
-            <span>THÁNH ĐƯỜNG BÊN SUỐI ĐÁ</span>
+            <span>{t("space.heroTag")}</span>
           </motion.span>
 
           <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
-            Không Gian &amp; Trải Nghiệm
+            {t("space.heroTitle")}
           </motion.h1>
 
           <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
-            Dạo bước qua từng góc hiên gỗ, suối đá cuội và khu vườn hoa cẩm cù rực
-            rỡ. Mỗi góc nhỏ tại Cẩm Cù House đều mang đến sự thư thái tuyệt đối.
+            {t("space.heroDesc")}
           </motion.p>
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 2. FILTER TABS                                               */}
-      {/* ============================================================ */}
+      {/* 2. FILTER TABS */}
       <section className="py-8 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center relative z-10">
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520]">
-          {FILTER_TABS.map((tab) => (
+          {FILTER_KEYS.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -229,15 +204,13 @@ export default function SpacePage() {
                   : "text-[#FDFBF7]/70 hover:text-[#FDFBF7]"
               }`}
             >
-              {tab}
+              {t(`space.filter${tab}`)}
             </button>
           ))}
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 3. MASONRY GRID                                              */}
-      {/* ============================================================ */}
+      {/* 3. MASONRY GRID */}
       <section className="pb-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <motion.div
           initial="hidden"
@@ -266,7 +239,7 @@ export default function SpacePage() {
               </div>
               <div className="p-5 space-y-2">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
-                  {photo.category}
+                  {lang === "en" ? photo.categoryEn : photo.categoryVi}
                 </span>
                 <h3 className="font-serif text-xl font-bold text-[#FDFBF7] group-hover:text-[#C88A4B] transition-colors">
                   {lang === "en" ? photo.titleEn : photo.titleVi}
@@ -276,7 +249,7 @@ export default function SpacePage() {
                 </p>
                 <div className="pt-2 flex items-center gap-1.5 text-xs font-medium text-[#C88A4B] group-hover:translate-x-1 transition-transform">
                   <Eye size={13} />
-                  <span>Xem ảnh lớn</span>
+                  <span>{t("space.viewPhoto")}</span>
                 </div>
               </div>
             </motion.div>
@@ -284,9 +257,7 @@ export default function SpacePage() {
         </motion.div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 4. AMENITIES                                                 */}
-      {/* ============================================================ */}
+      {/* 4. AMENITIES */}
       <section className="py-24 px-6 sm:px-12 border-t border-[#222520] relative z-10">
         <div className="max-w-7xl mx-auto space-y-12">
           <motion.div
@@ -297,13 +268,13 @@ export default function SpacePage() {
             className="text-center max-w-2xl mx-auto space-y-3"
           >
             <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
-              TIỆN NGHI CHU ĐÁO
+              {t("space.amenitiesTag")}
             </motion.span>
             <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
-              Tiện Ích &amp; Dịch Vụ
+              {t("space.amenitiesTitle")}
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="text-sm font-light text-[#FDFBF7]/70">
-              Được chuẩn bị tươm tất để bạn có trải nghiệm trọn vẹn và thoải mái nhất.
+              {t("space.amenitiesDesc")}
             </motion.p>
           </motion.div>
 
@@ -314,31 +285,34 @@ export default function SpacePage() {
             variants={staggerContainer}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {AMENITIES.map((amenity, idx) => (
-              <motion.div
-                key={idx}
-                variants={fadeUp}
-                custom={idx}
-                className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] transition-colors"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
-                  <span>{amenity.emoji}</span>
-                </div>
-                <h3 className="font-serif font-bold text-base text-[#FDFBF7]">
-                  {amenity.title}
-                </h3>
-                <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed">
-                  {amenity.desc}
-                </p>
-              </motion.div>
-            ))}
+            {[1, 2, 3, 4].map((n, idx) => {
+              const icons = [Wifi, Briefcase, Car, Trees];
+              const emojis = ["📶", "🔌", "🅿️", "🌳"];
+              const Icon = icons[idx];
+              return (
+                <motion.div
+                  key={idx}
+                  variants={fadeUp}
+                  custom={idx}
+                  className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] transition-colors"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
+                    <span>{emojis[idx]}</span>
+                  </div>
+                  <h3 className="font-serif font-bold text-base text-[#FDFBF7]">
+                    {t(`space.am${n}Title`)}
+                  </h3>
+                  <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed">
+                    {t(`space.am${n}Desc`)}
+                  </p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/* 5. LIGHTBOX MODAL                                            */}
-      {/* ============================================================ */}
+      {/* 5. LIGHTBOX MODAL */}
       <AnimatePresence>
         {selectedPhoto && (
           <motion.div
@@ -358,7 +332,7 @@ export default function SpacePage() {
             >
               <button
                 onClick={() => setSelectedPhoto(null)}
-                aria-label="Đóng popup"
+                aria-label="Close popup"
                 className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-[#0C0D0B]/80 border border-[#222520] flex items-center justify-center text-[#FDFBF7] hover:text-[#C88A4B] transition-colors shadow-md cursor-pointer"
               >
                 <X size={18} />
@@ -377,7 +351,7 @@ export default function SpacePage() {
                 <div className="md:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6">
                   <div className="space-y-3">
                     <span className="text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
-                      {selectedPhoto.category}
+                      {lang === "en" ? selectedPhoto.categoryEn : selectedPhoto.categoryVi}
                     </span>
                     <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#FDFBF7]">
                       {lang === "en" ? selectedPhoto.titleEn : selectedPhoto.titleVi}
@@ -387,7 +361,7 @@ export default function SpacePage() {
                     </p>
                   </div>
                   <div className="pt-4 border-t border-[#222520] text-xs text-[#C88A4B]">
-                    Cẩm Cù House • Bờ suối đá Gia Nghĩa, Đắk Nông
+                    {t("space.lightboxFooter")}
                   </div>
                 </div>
               </div>
