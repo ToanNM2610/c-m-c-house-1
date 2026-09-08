@@ -187,22 +187,30 @@ export default function ContactPage() {
                   <span className="text-[#C88A4B] block text-[10px] font-mono">{t("contact.emailLabel")}</span>
                   thuynhu8788@gmail.com
                 </a>
-                <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="grid grid-cols-3 gap-2 pt-1">
                   <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/share/1DVLMySW8H/"
                     target="_blank"
-                    rel="noreferrer"
-                    className="py-2 px-3 rounded-xl bg-[#1877F2]/20 hover:bg-[#1877F2]/30 text-[#1877F2] text-xs font-semibold text-center transition-colors"
+                    rel="noopener noreferrer"
+                    className="py-2 px-2 rounded-xl bg-[#1877F2]/20 hover:bg-[#1877F2]/30 text-[#1877F2] text-[11px] font-semibold text-center transition-colors truncate"
                   >
                     Facebook
                   </a>
                   <a
-                    href="https://zalo.me/0382851688"
+                    href="https://www.tiktok.com/@camcuhousedaknong"
                     target="_blank"
-                    rel="noreferrer"
-                    className="py-2 px-3 rounded-xl bg-[#0068FF]/20 hover:bg-[#0068FF]/30 text-[#0068FF] text-xs font-semibold text-center transition-colors"
+                    rel="noopener noreferrer"
+                    className="py-2 px-2 rounded-xl bg-[#000000]/50 border border-[#222520] hover:bg-[#C88A4B]/20 hover:text-[#C88A4B] hover:border-[#C88A4B]/50 text-[#FDFBF7] text-[11px] font-semibold text-center transition-colors truncate"
                   >
-                    Zalo
+                    TikTok
+                  </a>
+                  <a
+                    href="https://youtube.com/@Cam_Cu_House"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-2 rounded-xl bg-[#FF0000]/20 hover:bg-[#FF0000]/30 text-[#FF0000] text-[11px] font-semibold text-center transition-colors truncate"
+                  >
+                    YouTube
                   </a>
                 </div>
               </div>
@@ -247,18 +255,14 @@ export default function ContactPage() {
           </a>
         </motion.div>
 
-        <div className="w-full h-[420px] sm:h-[500px] relative bg-[#1A1D17]">
-          <iframe
-            title="Vị trí Cẩm Cù House trên Google Maps"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15582.493822184136!2d107.68536894999999!3d11.99026775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173fe8e0e7a25b1%3A0x9330a10df768f565!2zQ-G6qW0gQ8O5IEhvdXNl!5e0!3m2!1svi!2svn!4v1700000000000!5m2!1svi!2svn"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen={false}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="w-full h-full grayscale-[30%] hover:grayscale-0 transition-all duration-500"
-          ></iframe>
+        <div className="w-full h-[450px] relative bg-[#1A1D17]">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3893.045618491873!2d107.6877977!3d11.9902641!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173f55097f4f033%3A0x89e02c0b5c1c015b!2zQ-G6q20gQ8O5IEhvdXNl!5e0!3m2!1svi!2s!4v1710000000000!5m2!1svi!2s" 
+            className="w-full h-full border-0 grayscale-[30%] hover:grayscale-0 transition-all duration-500" 
+            allowFullScreen 
+            loading="lazy" 
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
         </div>
       </section>
 
