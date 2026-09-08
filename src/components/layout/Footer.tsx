@@ -18,7 +18,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="w-full bg-[#2D4A3E] text-[#FDFBF7] pt-16 pb-12 px-6 sm:px-12 font-sans border-t border-[#3A5D4F]">
+    <footer className="w-full bg-[#0C0D0B]/95 text-[#FDFBF7] pt-16 pb-12 px-6 sm:px-12 font-sans border-t border-[#222520] relative z-10">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12">
         {/* CỘT 1: THƯƠNG HIỆU */}
         <div className="space-y-4">
@@ -26,18 +26,18 @@ export default function Footer() {
             <span className="font-serif text-3xl font-bold text-[#FDFBF7] tracking-tight hover:text-[#C88A4B] transition-colors">
               Cẩm Cù House
             </span>
-            <span className="block text-xs font-sans uppercase tracking-[0.2em] text-[#C88A4B] mt-0.5">
-              coffee &amp; Food
+            <span className="block text-xs font-sans uppercase tracking-[0.25em] text-[#C88A4B] mt-0.5">
+              Coffee &amp; Food • Gia Nghĩa
             </span>
           </Link>
 
-          <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/80 leading-relaxed">
+          <p className="text-xs sm:text-sm font-light text-[#FDFBF7]/70 leading-relaxed">
             {lang === "en"
-              ? "Immerse yourself in nature beside the crystal pebble stream of Gia Nghia. An eco-friendly botanical retreat with wood-roasted coffee."
-              : "Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa. Không gian sinh thái mộc mạc gìn giữ vị cà phê rang củi nguyên bản."}
+              ? "Immerse in nature beside the crystal pebble stream of Gia Nghia. Wood-roasted coffee and serene highland atmosphere."
+              : "Chốn dừng chân mộc mạc bên bờ suối đá Gia Nghĩa. Giữ trọn vị cà phê rang củi nguyên bản và không gian sinh thái hoang sơ."}
           </p>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1F342B] text-[11px] font-mono text-[#C88A4B]">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-[11px] font-mono text-[#C88A4B]">
             <Compass size={13} />
             <span>11.99° N, 107.69° E • Gia Nghĩa</span>
           </div>
@@ -45,33 +45,33 @@ export default function Footer() {
 
         {/* CỘT 2: ĐIỀU HƯỚNG NHANH */}
         <div className="space-y-4">
-          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#3A5D4F] pb-2">
-            {lang === "en" ? "Navigation" : "Khám Phá"}
+          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#222520] pb-2">
+            {lang === "en" ? "Explore" : "Khám Phá"}
           </h4>
-          <ul className="space-y-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/85">
+          <ul className="space-y-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/75">
             <li>
-              <Link href="/" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
-                <span>{lang === "en" ? "Home" : "Trang chủ"}</span>
+              <Link href="/" className="hover:text-[#C88A4B] transition-colors">
+                {lang === "en" ? "Home" : "Trang chủ"}
               </Link>
             </li>
             <li>
-              <Link href="/about" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
-                <span>{lang === "en" ? "Our Story" : "Giới thiệu & Câu chuyện"}</span>
+              <Link href="/about" className="hover:text-[#C88A4B] transition-colors">
+                {lang === "en" ? "Our Story" : "Giới thiệu & Triết lý"}
               </Link>
             </li>
             <li>
-              <Link href="/space" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
-                <span>{lang === "en" ? "Botanical Space" : "Không gian & Trải nghiệm"}</span>
+              <Link href="/space" className="hover:text-[#C88A4B] transition-colors">
+                {lang === "en" ? "Botanical Space" : "Không gian & Trải nghiệm"}
               </Link>
             </li>
             <li>
-              <Link href="/menu" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
-                <span>{lang === "en" ? "Menu & Food" : "Thực đơn tươi mộc"}</span>
+              <Link href="/menu" className="hover:text-[#C88A4B] transition-colors">
+                {lang === "en" ? "Menu & Food" : "Thực đơn tươi mộc"}
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="hover:text-[#C88A4B] transition-colors flex items-center gap-1.5">
-                <span>{lang === "en" ? "Contact & Booking" : "Liên hệ & Đặt bàn"}</span>
+              <Link href="/contact" className="hover:text-[#C88A4B] transition-colors">
+                {lang === "en" ? "Contact & Connect" : "Liên hệ & Kết nối"}
               </Link>
             </li>
           </ul>
@@ -79,16 +79,16 @@ export default function Footer() {
 
         {/* CỘT 3: THỜI GIAN & LIÊN HỆ */}
         <div className="space-y-4">
-          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#3A5D4F] pb-2">
+          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#222520] pb-2">
             {lang === "en" ? "Contact & Hours" : "Thông Tin & Giờ Mở Cửa"}
           </h4>
-          <div className="space-y-3 text-xs sm:text-sm font-light text-[#FDFBF7]/85">
+          <div className="space-y-3 text-xs sm:text-sm font-light text-[#FDFBF7]/75">
             <div className="flex items-start gap-2.5">
               <Clock size={15} className="text-[#C88A4B] shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-[#FDFBF7]">Giờ mở cửa đón khách:</p>
-                <p className="text-xs text-[#FDFBF7]/75">T2 - T5: 07:00 - 18:00</p>
-                <p className="text-xs text-[#FDFBF7]/75">T6 - CN: 07:00 - 22:00</p>
+                <p className="font-medium text-[#FDFBF7]">Giờ phục vụ đón khách:</p>
+                <p className="text-xs text-[#FDFBF7]/60">T2 - T5: 07:00 - 18:00</p>
+                <p className="text-xs text-[#FDFBF7]/60">T6 - CN: 07:00 - 22:00</p>
               </div>
             </div>
 
@@ -116,21 +116,20 @@ export default function Footer() {
 
         {/* CỘT 4: ĐỊA CHỈ & BẢN ĐỒ THU NHỎ */}
         <div className="space-y-4">
-          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#3A5D4F] pb-2">
+          <h4 className="font-serif text-lg font-semibold text-[#FDFBF7] tracking-wide border-b border-[#222520] pb-2">
             {lang === "en" ? "Location" : "Địa Chỉ Quán"}
           </h4>
-          <div className="flex items-start gap-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/85">
+          <div className="flex items-start gap-2.5 text-xs sm:text-sm font-light text-[#FDFBF7]/75">
             <MapPin size={16} className="text-[#C88A4B] shrink-0 mt-0.5" />
             <p>Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP Gia Nghĩa, Đắk Nông</p>
           </div>
 
-          {/* Nút mở Google Maps chỉ đường */}
           <div className="pt-2">
             <a
               href={GOOGLE_MAPS_URL}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1F342B] hover:bg-[#C88A4B] hover:text-white transition-all text-xs font-medium text-[#FDFBF7] border border-[#3A5D4F]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1A1D17] hover:bg-[#C88A4B] hover:text-[#0C0D0B] transition-all text-xs font-medium text-[#FDFBF7] border border-[#222520]"
             >
               <span>Xem trên Google Maps</span>
               <ArrowUpRight size={14} />
@@ -139,11 +138,11 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* DÒNG BẢN QUYỀN */}
-      <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-[#3A5D4F]/60 flex flex-col sm:flex-row items-center justify-between text-xs text-[#FDFBF7]/60 gap-3">
+      {/* BẢN QUYỀN */}
+      <div className="max-w-7xl mx-auto mt-12 pt-6 border-t border-[#222520] flex flex-col sm:flex-row items-center justify-between text-xs text-[#FDFBF7]/50 gap-3">
         <p>© 2026 Cẩm Cù House. Tất cả các quyền được bảo lưu.</p>
-        <p className="text-[11px] font-mono text-[#C88A4B]/80">
-          WARM BOTANICAL &amp; MODERN RUSTIC SANCTUARY
+        <p className="text-[11px] font-mono text-[#C88A4B]">
+          AWWWARDS STANDARD WEBGL 3D EXPERIENCE
         </p>
       </div>
     </footer>

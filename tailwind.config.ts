@@ -9,10 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        "bg-cream": "#FDFBF7",
+        "bg-dark": "#0C0D0B",
         "brand-primary": "#2D4A3E",
         "brand-accent": "#C88A4B",
-        "text-main": "#222222",
+        "text-main": "#FDFBF7",
+        "border-dark": "#222520",
       },
       fontFamily: {
         serif: ["var(--font-heading)", "Playfair Display", "serif"],

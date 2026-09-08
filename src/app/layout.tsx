@@ -10,6 +10,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { Analytics } from "@vercel/analytics/next";
 import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
 
+import GlobalCanvas from "@/components/canvas/GlobalCanvas";
+
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
   variable: "--font-heading",
@@ -97,8 +99,11 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${playfair.variable} ${beVietnamPro.variable} antialiased font-sans bg-[#FDFBF7] text-[#222222] selection:bg-[#C88A4B] selection:text-white max-w-[100vw] w-full overflow-x-hidden`}
+        className={`${playfair.variable} ${beVietnamPro.variable} antialiased font-sans bg-[#0C0D0B] text-[#FDFBF7] selection:bg-[#C88A4B] selection:text-[#0C0D0B] max-w-[100vw] w-full overflow-x-hidden`}
       >
+        {/* Global Canvas Singleton - Vĩnh cửu, không re-mount khi chuyển trang */}
+        <GlobalCanvas />
+
         <SecurityShield>
           <LanguageProvider>
             <SmoothScroll>

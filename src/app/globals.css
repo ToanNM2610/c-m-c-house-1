@@ -1,35 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-cream: #FDFBF7;
+  --color-bg-dark: #0C0D0B;
   --color-brand-primary: #2D4A3E;
   --color-brand-accent: #C88A4B;
-  --color-text-main: #222222;
-  --color-background: #FDFBF7;
+  --color-text-main: #FDFBF7;
+  --color-border-dark: #222520;
+  --color-background: #0C0D0B;
+  --color-foreground: #FDFBF7;
   --color-primary: #2D4A3E;
   --color-accent: #C88A4B;
-  --color-card-border: #EAE6DF;
   --font-serif: var(--font-heading), "Playfair Display", Georgia, serif;
   --font-sans: var(--font-body), "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 :root {
-  --background: #FDFBF7;
-  --foreground: #222222;
+  --background: #0C0D0B;
+  --foreground: #FDFBF7;
   --primary: #2D4A3E;
   --accent: #C88A4B;
-  --border: #EAE6DF;
+  --border: #222520;
 }
 
 html {
-  background-color: #FDFBF7;
-  color: #222222;
+  background-color: #0C0D0B;
+  color: #FDFBF7;
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: #FDFBF7;
-  color: #222222;
+  background-color: #0C0D0B;
+  color: #FDFBF7;
   font-family: var(--font-body), "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
   margin: 0;
@@ -40,55 +41,58 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   font-family: var(--font-heading), "Playfair Display", Georgia, serif;
 }
 
-/* Warm Botanical Button & Card Utilities */
-.btn-primary {
-  background-color: #2D4A3E;
-  color: #FFFFFF;
-  transition: all 0.25s ease-in-out;
+/* Custom Scrollbar for Awwwards Aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
 }
-.btn-primary:hover {
-  background-color: #1F342B;
+::-webkit-scrollbar-track {
+  background: #0C0D0B;
 }
-
-.btn-accent {
-  background-color: #C88A4B;
-  color: #FFFFFF;
-  transition: all 0.25s ease-in-out;
+::-webkit-scrollbar-thumb {
+  background: #2D4A3E;
+  border-radius: 3px;
 }
-.btn-accent:hover {
-  background-color: #B3763A;
+::-webkit-scrollbar-thumb:hover {
+  background: #C88A4B;
 }
 
-.btn-outline-primary {
-  border: 1.5px solid #2D4A3E;
-  color: #2D4A3E;
-  background-color: transparent;
-  transition: all 0.25s ease-in-out;
-}
-.btn-outline-primary:hover {
-  background-color: #2D4A3E;
-  color: #FFFFFF;
-}
-
-.card-warm {
-  background-color: #FFFFFF;
-  border: 1px solid #EAE6DF;
+/* Awwwards Dark Card & Button Utilities */
+.card-dark {
+  background-color: rgba(12, 13, 11, 0.85);
+  border: 1px solid #222520;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px -4px rgba(45, 74, 62, 0.05);
   transition: all 0.3s ease;
 }
-.card-warm:hover {
+.card-dark:hover {
   border-color: #C88A4B;
-  box-shadow: 0 8px 30px -4px rgba(45, 74, 62, 0.12);
   transform: translateY(-2px);
 }
 
-/* GPU Accelerated utility */
-.will-change-transform,
+.btn-gold-outline {
+  border: 1px solid #C88A4B;
+  color: #C88A4B;
+  background-color: transparent;
+  transition: all 0.25s ease-in-out;
+}
+.btn-gold-outline:hover {
+  background-color: #C88A4B;
+  color: #0C0D0B;
+}
+
+.btn-forest-outline {
+  border: 1px solid #2D4A3E;
+  color: #FDFBF7;
+  background-color: transparent;
+  transition: all 0.25s ease-in-out;
+}
+.btn-forest-outline:hover {
+  background-color: #2D4A3E;
+  color: #FDFBF7;
+}
+
+/* GPU Accelerated utility without CSS blur */
 .gpu-accelerate {
-  will-change: transform;
+  will-change: transform, opacity;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
