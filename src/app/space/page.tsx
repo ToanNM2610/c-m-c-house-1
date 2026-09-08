@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,10 +14,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Pause,
-  Play
+  Play,
+  Loader2
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { SPACE_PHOTOS, SpaceCategory, SpacePhoto } from "@/data/spaces";
+import { SpaceCategory, SpacePhoto } from "@/data/spaces";
+import { useGallery } from "@/hooks/useGallery";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -34,7 +36,7 @@ const staggerContainer = {
 };
 
 const FILTER_KEYS: { key: SpaceCategory | "all"; labelVi: string; labelEn: string }[] = [
-  { key: "all", labelVi: "Tất Cả (30)", labelEn: "All (30)" },
+  { key: "all", labelVi: "Tất Cả", labelEn: "All" },
   { key: "stream", labelVi: "Bờ Suối Đá", labelEn: "Rocky Stream" },
   { key: "veranda", labelVi: "Hiên Gỗ & Chòi", labelEn: "Wooden Verandas" },
   { key: "flower", labelVi: "Vườn Hoa Cẩm Cù", labelEn: "Botanical & Flowers" },
@@ -47,15 +49,40 @@ export default function SpacePage() {
   const [activeTab, setActiveTab] = useState<SpaceCategory | "all">("all");
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   
+  const { images, isLoading } = useGallery();
+
+  // Map Admin Gallery Images to SpacePhoto format
+  const dynamicPhotos = useMemo<SpacePhoto[]>(() => {
+    return images.map((img, index) => {
+      // Auto assign categories logically to ensure rich filter tabs
+      const cats: SpaceCategory[] = ["stream", "veranda", "flower", "festive", "peaceful"];
+      const category = cats[index % cats.length];
+      
+      // Auto assign diverse aspect ratios for Masonry grid
+      const aspect = index % 3 === 0 ? "tall" : index % 5 === 0 ? "square" : "wide";
+      
+      return {
+        id: img.id,
+        src: img.url,
+        titleVi: img.caption || `Không gian ${index + 1}`,
+        titleEn: img.caption || `Space ${index + 1}`,
+        category: category,
+        aspectRatio: aspect
+      };
+    });
+  }, [images]);
+
   // Carousel State
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const carouselPhotos = SPACE_PHOTOS.slice(0, 5); // Use first 5 photos for carousel
+  
+  // Use first 5 photos for carousel (or less if not enough photos)
+  const carouselPhotos = useMemo(() => dynamicPhotos.slice(0, 5), [dynamicPhotos]);
 
   // Carousel Auto-play
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isPlaying) {
+    if (isPlaying && carouselPhotos.length > 0) {
       interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % carouselPhotos.length);
       }, 4500);
@@ -63,7 +90,7 @@ export default function SpacePage() {
     return () => clearInterval(interval);
   }, [isPlaying, carouselPhotos.length]);
 
-  const filteredPhotos = SPACE_PHOTOS.filter((photo) => {
+  const filteredPhotos = dynamicPhotos.filter((photo) => {
     if (activeTab === "all") return true;
     return photo.category === activeTab;
   });
@@ -96,30 +123,56 @@ export default function SpacePage() {
     };
   }, [selectedPhotoIndex, handlePrev, handleNext]);
 
+  // LOADING STATE
+  if (isLoading) {
+    return (
+      <div className="w-full min-h-screen text-[#FDFBF7] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="animate-spin text-[#C88A4B]" size={48} />
+        <p className="text-[#FDFBF7]/70 font-mono text-sm tracking-widest uppercase">
+          {lang === "en" ? "Loading Spaces..." : "Đang tải không gian..."}
+        </p>
+      </div>
+    );
+  }
+
+  // EMPTY STATE
+  if (dynamicPhotos.length === 0) {
+    return (
+      <div className="w-full min-h-screen text-[#FDFBF7] flex flex-col items-center justify-center space-y-4">
+        <Compass className="text-[#C88A4B]" size={48} />
+        <p className="text-[#FDFBF7]/70 font-mono text-sm tracking-widest uppercase">
+          {lang === "en" ? "Gallery is currently empty." : "Thư viện hiện đang trống."}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full text-[#FDFBF7]">
       {/* 1. HERO SHOWCASE TỰ ĐỘNG THAY ĐỔI ẢNH */}
       <section className="relative w-full h-[60vh] sm:h-[75vh] md:h-[85vh] overflow-hidden bg-[#0C0D0B] border-b border-[#222520]">
         <AnimatePresence mode="sync">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={carouselPhotos[currentSlide].src}
-              alt={carouselPhotos[currentSlide].titleVi}
-              fill
-              priority
-              className="object-cover"
-              sizes="100vw"
-            />
-            {/* Cinematic Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D0B] via-[#0C0D0B]/40 to-transparent opacity-90" />
-          </motion.div>
+          {carouselPhotos.length > 0 && (
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={carouselPhotos[currentSlide].src}
+                alt={carouselPhotos[currentSlide].titleVi}
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+              {/* Cinematic Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0D0B] via-[#0C0D0B]/40 to-transparent opacity-90" />
+            </motion.div>
+          )}
         </AnimatePresence>
 
         {/* Hero Content */}
@@ -152,31 +205,33 @@ export default function SpacePage() {
         </div>
 
         {/* Carousel Controls */}
-        <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 flex justify-center items-center gap-6 z-20">
-          <div className="flex gap-2">
-            <button 
-              onClick={() => setCurrentSlide((prev) => (prev > 0 ? prev - 1 : carouselPhotos.length - 1))}
-              className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button 
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
-            >
-              {isPlaying ? <Pause size={16} /> : <Play size={16} className="ml-1" />}
-            </button>
-            <button 
-              onClick={() => setCurrentSlide((prev) => (prev + 1) % carouselPhotos.length)}
-              className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
-            >
-              <ChevronRight size={18} />
-            </button>
+        {carouselPhotos.length > 1 && (
+          <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 flex justify-center items-center gap-6 z-20">
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setCurrentSlide((prev) => (prev > 0 ? prev - 1 : carouselPhotos.length - 1))}
+                className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
+              >
+                {isPlaying ? <Pause size={16} /> : <Play size={16} className="ml-1" />}
+              </button>
+              <button 
+                onClick={() => setCurrentSlide((prev) => (prev + 1) % carouselPhotos.length)}
+                className="w-10 h-10 rounded-full bg-[#0C0D0B]/50 hover:bg-[#C88A4B] text-[#FDFBF7] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center transition-all backdrop-blur-md"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+            <div className="text-xs font-mono font-medium tracking-widest text-[#FDFBF7]/80">
+              [ {String(currentSlide + 1).padStart(2, '0')} / {String(carouselPhotos.length).padStart(2, '0')} ]
+            </div>
           </div>
-          <div className="text-xs font-mono font-medium tracking-widest text-[#FDFBF7]/80">
-            [ {String(currentSlide + 1).padStart(2, '0')} / {String(carouselPhotos.length).padStart(2, '0')} ]
-          </div>
-        </div>
+        )}
       </section>
 
       {/* 2. FILTER TABS */}
@@ -193,6 +248,7 @@ export default function SpacePage() {
               }`}
             >
               {lang === "en" ? tab.labelEn : tab.labelVi}
+              {tab.key === "all" && ` (${dynamicPhotos.length})`}
             </button>
           ))}
         </div>
@@ -200,53 +256,66 @@ export default function SpacePage() {
 
       {/* 3. MASONRY GRID (EXPANDED) */}
       <section className="pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.05 }}
-          variants={staggerContainer}
-          className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 sm:gap-8 space-y-6 sm:space-y-8"
-        >
-          {filteredPhotos.map((photo, idx) => {
-            // Determine aspect ratio class
-            const aspectClass = 
-              photo.aspectRatio === "tall" ? "aspect-[3/4]" : 
-              photo.aspectRatio === "square" ? "aspect-square" : 
-              "aspect-[4/3]";
-              
-            return (
-              <motion.div
-                key={photo.id}
-                variants={fadeUp}
-                custom={idx}
-                onClick={() => setSelectedPhotoIndex(idx)}
-                className="break-inside-avoid group relative rounded-2xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer bg-[#0C0D0B] mb-6 sm:mb-8"
-              >
-                <div className={`relative w-full overflow-hidden ${aspectClass} bg-[#1A1D17]`}>
-                  <Image
-                    src={photo.src}
-                    alt={photo.titleVi}
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                    className="object-cover group-hover:scale-[1.02] transition-transform duration-[0.6s] ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <AnimatePresence>
+          {filteredPhotos.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-20 text-[#FDFBF7]/50 font-mono text-sm uppercase tracking-widest"
+            >
+              {lang === "en" ? "No photos found in this category." : "Không có ảnh nào trong chuyên mục này."}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.05 }}
+              variants={staggerContainer}
+              className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 sm:gap-8 space-y-6 sm:space-y-8"
+            >
+              {filteredPhotos.map((photo, idx) => {
+                // Determine aspect ratio class
+                const aspectClass = 
+                  photo.aspectRatio === "tall" ? "aspect-[3/4]" : 
+                  photo.aspectRatio === "square" ? "aspect-square" : 
+                  "aspect-[4/3]";
                   
-                  <div className="absolute bottom-0 left-0 right-0 p-5 space-y-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] drop-shadow-md">
-                      {lang === "en" ? photo.titleEn : photo.titleVi}
-                    </h3>
-                    <div className="pt-2 flex items-center gap-1.5 text-[10px] font-medium text-[#C88A4B] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                      <Eye size={12} />
-                      <span className="uppercase tracking-widest">{t("space.viewPhoto")}</span>
+                return (
+                  <motion.div
+                    key={photo.id}
+                    variants={fadeUp}
+                    custom={idx}
+                    onClick={() => setSelectedPhotoIndex(idx)}
+                    className="break-inside-avoid group relative rounded-2xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer bg-[#0C0D0B] mb-6 sm:mb-8"
+                  >
+                    <div className={`relative w-full overflow-hidden ${aspectClass} bg-[#1A1D17]`}>
+                      <Image
+                        src={photo.src}
+                        alt={photo.titleVi}
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                        className="object-cover group-hover:scale-[1.02] transition-transform duration-[0.6s] ease-out"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      
+                      <div className="absolute bottom-0 left-0 right-0 p-5 space-y-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                        <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] drop-shadow-md">
+                          {lang === "en" ? photo.titleEn : photo.titleVi}
+                        </h3>
+                        <div className="pt-2 flex items-center gap-1.5 text-[10px] font-medium text-[#C88A4B] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                          <Eye size={12} />
+                          <span className="uppercase tracking-widest">{t("space.viewPhoto")}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       {/* 4. AMENITIES */}
@@ -328,18 +397,22 @@ export default function SpacePage() {
             </div>
 
             {/* Left/Right Navigation */}
-            <button 
-              onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-              className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1A1D17]/50 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all z-20"
-            >
-              <ChevronLeft size={32} />
-            </button>
-            <button 
-              onClick={(e) => { e.stopPropagation(); handleNext(); }}
-              className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1A1D17]/50 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all z-20"
-            >
-              <ChevronRight size={32} />
-            </button>
+            {filteredPhotos.length > 1 && (
+              <>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                  className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1A1D17]/50 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all z-20"
+                >
+                  <ChevronLeft size={32} />
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                  className="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-[#1A1D17]/50 hover:bg-[#C88A4B] hover:text-[#0C0D0B] border border-white/10 flex items-center justify-center text-[#FDFBF7] transition-all z-20"
+                >
+                  <ChevronRight size={32} />
+                </button>
+              </>
+            )}
 
             {/* Main Image Container */}
             <div className="relative w-full h-full max-w-[90vw] max-h-[80vh] flex items-center justify-center">
