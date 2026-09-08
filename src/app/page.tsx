@@ -33,9 +33,9 @@ const FEATURED_IDS = [
 
 /* ── Experience keys ── */
 const EXP_KEYS = [
-  { subtitleKey: "home.exp1Subtitle", titleKey: "home.exp1Title", descKey: "home.exp1Desc", image: "/uploads/gallery/1788250253551-943009233.jpg" },
-  { subtitleKey: "home.exp2Subtitle", titleKey: "home.exp2Title", descKey: "home.exp2Desc", image: "/uploads/gallery/1788250253554-875120458.jpg" },
-  { subtitleKey: "home.exp3Subtitle", titleKey: "home.exp3Title", descKey: "home.exp3Desc", image: "/uploads/gallery/1788250253560-200373033.jpg" },
+  { subtitleKey: "home.exp1Subtitle", titleKey: "home.exp1Title", descKey: "home.exp1Desc", image: "/images/spaces/1 (1).jpg" },
+  { subtitleKey: "home.exp2Subtitle", titleKey: "home.exp2Title", descKey: "home.exp2Desc", image: "/images/spaces/1 (2).jpg" },
+  { subtitleKey: "home.exp3Subtitle", titleKey: "home.exp3Title", descKey: "home.exp3Desc", image: "/images/spaces/1 (3).jpg" },
 ];
 
 /* ── Review keys ── */
