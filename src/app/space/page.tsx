@@ -192,7 +192,7 @@ export default function SpacePage() {
       </section>
 
       {/* 2. FILTER TABS */}
-      <section className="py-8 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center relative z-10">
+      <section className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center relative z-10">
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520]">
           {FILTER_KEYS.map((tab) => (
             <button
@@ -211,13 +211,13 @@ export default function SpacePage() {
       </section>
 
       {/* 3. MASONRY GRID */}
-      <section className="pb-24 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
+      <section className="pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
-          className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+          className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 sm:gap-8 space-y-6 sm:space-y-8"
         >
           {filteredPhotos.map((photo, idx) => (
             <motion.div
@@ -225,31 +225,33 @@ export default function SpacePage() {
               variants={fadeUp}
               custom={idx}
               onClick={() => setSelectedPhoto(photo)}
-              className="break-inside-avoid group card-dark overflow-hidden cursor-pointer relative"
+              className="break-inside-avoid group relative rounded-2xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer bg-[#0C0D0B] mb-6 sm:mb-8"
             >
               <div className={`relative w-full overflow-hidden ${photo.aspect} bg-[#1A1D17]`}>
                 <Image
                   src={photo.image}
                   alt={photo.titleVi}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                   priority={idx < 2}
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-[1.02] transition-transform duration-500 ease-out"
                 />
-              </div>
-              <div className="p-5 space-y-2">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block">
-                  {lang === "en" ? photo.categoryEn : photo.categoryVi}
-                </span>
-                <h3 className="font-serif text-xl font-bold text-[#FDFBF7] group-hover:text-[#C88A4B] transition-colors">
-                  {lang === "en" ? photo.titleEn : photo.titleVi}
-                </h3>
-                <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed line-clamp-2">
-                  {lang === "en" ? photo.descEn : photo.descVi}
-                </p>
-                <div className="pt-2 flex items-center gap-1.5 text-xs font-medium text-[#C88A4B] group-hover:translate-x-1 transition-transform">
-                  <Eye size={13} />
-                  <span>{t("space.viewPhoto")}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                
+                <div className="absolute bottom-0 left-0 right-0 p-5 space-y-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#C88A4B] font-semibold block drop-shadow-md">
+                    {lang === "en" ? photo.categoryEn : photo.categoryVi}
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#FDFBF7] drop-shadow-md">
+                    {lang === "en" ? photo.titleEn : photo.titleVi}
+                  </h3>
+                  <p className="text-xs font-light text-[#FDFBF7]/80 leading-relaxed line-clamp-2 drop-shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75">
+                    {lang === "en" ? photo.descEn : photo.descVi}
+                  </p>
+                  <div className="pt-2 flex items-center gap-1.5 text-xs font-medium text-[#C88A4B] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
+                    <Eye size={13} />
+                    <span>{t("space.viewPhoto")}</span>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -258,8 +260,8 @@ export default function SpacePage() {
       </section>
 
       {/* 4. AMENITIES */}
-      <section className="py-24 px-6 sm:px-12 border-t border-[#222520] relative z-10">
-        <div className="max-w-7xl mx-auto space-y-12">
+      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#222520] relative z-10">
+        <div className="w-full space-y-12">
           <motion.div
             initial="hidden"
             whileInView="visible"

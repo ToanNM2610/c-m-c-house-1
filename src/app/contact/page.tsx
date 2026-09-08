@@ -223,13 +223,13 @@ export default function ContactPage() {
       </section>
 
       {/* 3. GOOGLE MAPS */}
-      <section className="w-full border-t border-b border-[#222520] relative z-10 bg-[#0C0D0B]/90">
+      <section className="w-full relative z-10 bg-transparent">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="max-w-7xl mx-auto px-6 sm:px-12 py-10 flex flex-col md:flex-row items-center justify-between gap-6"
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <div className="space-y-1 text-center md:text-left">
             <span className="text-xs font-mono uppercase tracking-widest text-[#C88A4B] font-semibold">
@@ -255,14 +255,16 @@ export default function ContactPage() {
           </a>
         </motion.div>
 
-        <div className="w-full h-[450px] relative bg-[#1A1D17]">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3893.045618491873!2d107.6877977!3d11.9902641!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173f55097f4f033%3A0x89e02c0b5c1c015b!2zQ-G6q20gQ8O5IEhvdXNl!5e0!3m2!1svi!2s!4v1710000000000!5m2!1svi!2s" 
-            className="w-full h-full border-0 grayscale-[30%] hover:grayscale-0 transition-all duration-500" 
-            allowFullScreen 
-            loading="lazy" 
-            referrerPolicy="strict-origin-when-cross-origin"
-          />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+          <div className="relative h-[480px] md:h-[550px] rounded-3xl overflow-hidden border border-[#C88A4B]/30 shadow-2xl bg-[#141414]">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1200.6261312794074!2d107.70356040042196!3d11.975345505572026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173c7ccbd4cd55f%3A0x932e986e061ca415!2zQ-G6qW0gQ8O5IEhvdXNl!5e1!3m2!1svi!2s!4v1788865264158!5m2!1svi!2s" 
+              className="w-full h-full border-0 grayscale-[30%] hover:grayscale-0 transition-all duration-500" 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </div>
         </div>
       </section>
 

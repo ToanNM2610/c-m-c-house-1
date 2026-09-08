@@ -81,11 +81,11 @@ function OrganicWireframe({ pathname }: { pathname: string }) {
       tZ = -0.5;
       tScale = 0.65;
     } else if (pathname === "/space") {
-      // Space: behind, left, subtle
-      tX = -1.8 + mx * 0.1;
-      tY = 0.5 + my * 0.1;
-      tZ = -1.2;
-      tScale = 0.5;
+      // Space: pushed far back, very subtle
+      tX = -3.0 + mx * 0.1;
+      tY = 1.0 + my * 0.1;
+      tZ = -5.0;
+      tScale = 0.4;
     } else if (pathname === "/menu") {
       // Menu: top-right corner, dim
       tX = 2.0 + mx * 0.08;

@@ -64,7 +64,9 @@ export default function GlobalCanvas() {
           failIfMajorPerformanceCaveat: false,
         }}
         frameloop="always"
-        className="w-full h-full pointer-events-none"
+        className={`w-full h-full pointer-events-none transition-opacity duration-1000 ease-in-out ${
+          pathname === "/space" ? "opacity-30" : "opacity-100"
+        }`}
       >
         {/* Adaptive performance: auto-adjust DPR based on FPS */}
         <PerformanceMonitor
