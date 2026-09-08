@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Star,
@@ -19,6 +19,25 @@ const fadeUp = {
     opacity: 1,
     y: 0,
     transition: { duration: 0.6, delay: i * 0.12 },
+  }),
+};
+
+const kineticReveal = {
+  hidden: { y: "120%", opacity: 0 },
+  visible: (i: number) => ({
+    y: "0%",
+    opacity: 1,
+    transition: { duration: 0.8, delay: i * 0.08 },
+  }),
+};
+
+const cardFanOut = {
+  hidden: { opacity: 0, y: 50, rotateZ: -3 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    rotateZ: 0,
+    transition: { duration: 0.7, delay: i * 0.1 },
   }),
 };
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
@@ -45,6 +64,10 @@ export default function HomePage() {
   const { t, formatPrice, tMenuItem } = useLanguage();
   const [currentReview, setCurrentReview] = useState(0);
 
+  const { scrollY } = useScroll();
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.9]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+
   const nextReview = () => setCurrentReview((p) => (p + 1) % REVIEW_KEYS.length);
   const prevReview = () => setCurrentReview((p) => (p - 1 + REVIEW_KEYS.length) % REVIEW_KEYS.length);
   const rk = REVIEW_KEYS[currentReview];
@@ -54,32 +77,37 @@ export default function HomePage() {
       {/* ── 1. HERO ── */}
       <section className="relative min-h-[90vh] sm:min-h-screen flex items-center justify-center px-6 sm:px-12 py-20 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0C0D0B]/30 via-transparent to-[#0C0D0B]/85 pointer-events-none" />
-        <motion.div initial="hidden" animate="visible" variants={stagger}
+        <motion.div initial="hidden" animate="visible" variants={stagger} style={{ scale: heroScale, opacity: heroOpacity }}
           className="relative z-10 max-w-5xl mx-auto w-full text-center space-y-8"
         >
-          <motion.div variants={fadeUp} custom={0}
+          <motion.div variants={kineticReveal} custom={0}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17]/80 border border-[#222520] text-xs font-mono font-medium text-[#C88A4B]"
           >
             <Sparkles size={14} />
             <span>{t("home.heroTag")}</span>
           </motion.div>
 
-          <motion.h1 variants={fadeUp} custom={1}
-            className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.06]"
-          >
-            {t("home.title")}
-          </motion.h1>
-
-          <motion.p variants={fadeUp} custom={2}
-            className="text-base sm:text-xl font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
-          >
-            {t("home.subtitle")}
-          </motion.p>
-
-          <motion.div variants={fadeUp} custom={3} className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <Link href="/menu"
-              className="px-8 py-3.5 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 shadow-md active:scale-[0.98]"
+          <div className="overflow-hidden pb-2">
+            <motion.h1 variants={kineticReveal} custom={1}
+              className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.06]"
             >
+              {t("home.title")}
+            </motion.h1>
+          </div>
+
+          <div className="overflow-hidden">
+            <motion.p variants={kineticReveal} custom={2}
+              className="text-base sm:text-xl font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
+            >
+              {t("home.subtitle")}
+            </motion.p>
+          </div>
+
+          <motion.div variants={kineticReveal} custom={3} className="pt-4 flex flex-wrap items-center justify-center gap-4">
+            <Link href="/menu"
+              className="relative px-8 py-3.5 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold tracking-wider uppercase transition-all duration-300 shadow-md active:scale-[0.98] group"
+            >
+              <span className="absolute inset-0 rounded-full border border-[#C88A4B] animate-ping opacity-20 pointer-events-none"></span>
               {t("home.ctaMenu")}
             </Link>
             <Link href="/space"
@@ -97,12 +125,16 @@ export default function HomePage() {
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12"
         >
           <div className="space-y-2">
-            <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
-              {t("home.experienceTag")}
-            </motion.span>
-            <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
-              {t("home.experienceTitle")}
-            </motion.h2>
+            <div className="overflow-hidden">
+              <motion.span variants={kineticReveal} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
+                {t("home.experienceTag")}
+              </motion.span>
+            </div>
+            <div className="overflow-hidden pb-1">
+              <motion.h2 variants={kineticReveal} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
+                {t("home.experienceTitle")}
+              </motion.h2>
+            </div>
           </div>
           <motion.div variants={fadeUp} custom={2}>
             <Link href="/space" className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#C88A4B] hover:underline">
@@ -116,7 +148,7 @@ export default function HomePage() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           {EXP_KEYS.map((exp, idx) => (
-            <motion.div key={idx} variants={fadeUp} custom={idx} className="card-dark overflow-hidden flex flex-col group p-2">
+            <motion.div key={idx} variants={cardFanOut} custom={idx} className="card-dark overflow-hidden flex flex-col group p-2 hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500">
               <div className="relative w-full h-52 sm:h-60 overflow-hidden rounded-2xl bg-[#1A1D17]">
                 <Image 
                   src={exp.image} 
@@ -150,15 +182,21 @@ export default function HomePage() {
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={stagger}
           className="text-center max-w-2xl mx-auto space-y-3 mb-14"
         >
-          <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
-            {t("home.signatureTag")}
-          </motion.span>
-          <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
-            {t("home.signatureTitle")}
-          </motion.h2>
-          <motion.p variants={fadeUp} custom={2} className="text-xs sm:text-sm font-light text-[#FDFBF7]/70">
-            {t("home.signatureDesc")}
-          </motion.p>
+          <div className="overflow-hidden">
+            <motion.span variants={kineticReveal} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
+              {t("home.signatureTag")}
+            </motion.span>
+          </div>
+          <div className="overflow-hidden pb-2">
+            <motion.h2 variants={kineticReveal} custom={1} className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
+              {t("home.signatureTitle")}
+            </motion.h2>
+          </div>
+          <div className="overflow-hidden">
+            <motion.p variants={kineticReveal} custom={2} className="text-xs sm:text-sm font-light text-[#FDFBF7]/70">
+              {t("home.signatureDesc")}
+            </motion.p>
+          </div>
         </motion.div>
 
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={stagger}
@@ -167,7 +205,7 @@ export default function HomePage() {
           {FEATURED_IDS.map(({ id, price, image }, idx) => {
             const item = tMenuItem(id);
             return (
-              <motion.div key={id} variants={fadeUp} custom={idx} className="card-dark p-4 flex flex-col group overflow-hidden">
+              <motion.div key={id} variants={cardFanOut} custom={idx} className="card-dark p-4 flex flex-col group overflow-hidden hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.1)] transition-all duration-500">
                 <div className="relative aspect-square w-full rounded-xl overflow-hidden mb-3 bg-[#1A1D17]">
                   <Image src={image} alt={item.name} fill sizes="25vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -197,8 +235,9 @@ export default function HomePage() {
           transition={{ duration: 0.5, delay: 0.3 }} className="mt-12 text-center"
         >
           <Link href="/menu"
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all"
+            className="relative inline-flex items-center gap-2 px-8 py-3 rounded-full border border-[#C88A4B] text-[#C88A4B] hover:bg-[#C88A4B] hover:text-[#0C0D0B] text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all group"
           >
+            <span className="absolute inset-0 rounded-full border border-[#C88A4B] animate-ping opacity-20 pointer-events-none"></span>
             <span>{t("home.viewMenuFull")}</span>
             <ArrowRight size={14} />
           </Link>

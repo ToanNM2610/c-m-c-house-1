@@ -16,6 +16,16 @@ const fadeUp = {
   }),
 };
 
+const cardFanOut = {
+  hidden: { opacity: 0, y: 50, rotateZ: -3 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    rotateZ: 0,
+    transition: { duration: 0.7, delay: i * 0.06 },
+  }),
+};
+
 const staggerContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.05 } },
@@ -125,9 +135,9 @@ export default function MenuPage() {
             return (
               <motion.div
                 key={item.id}
-                variants={fadeUp}
+                variants={cardFanOut}
                 custom={idx}
-                className="card-dark overflow-hidden flex flex-col p-4 group hover:border-[#C88A4B] transition-all duration-300"
+                className="card-dark overflow-hidden flex flex-col p-4 group hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500"
               >
                 <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-3.5 bg-[#1A1D17]">
                   <Image

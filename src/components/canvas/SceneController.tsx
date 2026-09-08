@@ -238,41 +238,103 @@ function InteractiveDotGlobe({ active }: { active: boolean }) {
 }
 
 // ==========================================
-// FLOATING PARTICLES (subtle ambient depth)
+// FLOATING PARTICLES (organic gold dust)
 // ==========================================
 function FloatingParticles() {
   const particlesRef = useRef<THREE.Points>(null);
 
-  const particlesGeo = useMemo(() => {
-    const count = 120;
+  const { particlesGeo, phases } = useMemo(() => {
+    const count = 200;
     const positions = new Float32Array(count * 3);
+    const phaseArr = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 12;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 8;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 6;
+      positions[i * 3] = (Math.random() - 0.5) * 15;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      phaseArr[i] = Math.random() * Math.PI * 2;
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    return geo;
+    return { particlesGeo: geo, phases: phaseArr };
   }, []);
 
   useFrame((state) => {
     if (!particlesRef.current) return;
-    particlesRef.current.rotation.y = state.clock.elapsedTime * 0.015;
-    particlesRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
+    const time = state.clock.elapsedTime;
+    
+    // Slow overall ambient rotation
+    particlesRef.current.rotation.y = time * 0.015;
+    particlesRef.current.rotation.x = Math.sin(time * 0.1) * 0.02;
+
+    // Organic sine wave vertical drift
+    const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+    for (let i = 0; i < 200; i++) {
+      positions[i * 3 + 1] += Math.sin(time * 0.8 + phases[i]) * 0.0015;
+    }
+    particlesRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
     <points ref={particlesRef} geometry={particlesGeo}>
       <pointsMaterial
         color="#C88A4B"
-        size={0.018}
+        size={0.03}
         transparent
-        opacity={0.35}
+        opacity={0.5}
         sizeAttenuation
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
       />
     </points>
   );
+}
+
+// ==========================================
+// CAMERA RIG (smooth dolly transitions)
+// ==========================================
+function CameraRig({ pathname }: { pathname: string }) {
+  const scrollProgress = useRef(0);
+  const targetPos = useRef(new THREE.Vector3(0, 0, 5));
+  const targetLook = useRef(new THREE.Vector3(0, 0, 0));
+
+  useEffect(() => {
+    const onScroll = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollProgress.current = Math.min(window.scrollY / maxScroll, 1);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useFrame((state, delta) => {
+    const d = Math.min(delta, 0.05);
+    const sp = scrollProgress.current;
+
+    if (pathname === "/") {
+      // Home: straight on, scroll tilts up slightly (camera moves down)
+      targetPos.current.set(0, -sp * 1.5, 5 + sp * 1.2);
+      targetLook.current.set(0, sp * 0.5, 0);
+    } else if (pathname === "/space" || pathname === "/menu") {
+      // Space/Menu: Camera dolly to the side, tilt right
+      targetPos.current.set(-1.5, 0.2, 5.5);
+      targetLook.current.set(1.0, 0, 0);
+    } else if (pathname === "/contact") {
+      targetPos.current.set(1.5, 0, 5);
+      targetLook.current.set(-1.0, 0, 0);
+    } else {
+      targetPos.current.set(0, 0, 5);
+      targetLook.current.set(0, 0, 0);
+    }
+
+    state.camera.position.lerp(targetPos.current, d * 2.0);
+    
+    // Manually interpolate lookAt target
+    const currentLookAt = new THREE.Vector3(0, 0, -1).applyQuaternion(state.camera.quaternion).add(state.camera.position);
+    currentLookAt.lerp(targetLook.current, d * 2.0);
+    state.camera.lookAt(currentLookAt);
+  });
+
+  return null;
 }
 
 // ==========================================
@@ -282,9 +344,9 @@ export default function SceneController() {
   const pathname = usePathname() || "/";
   const { camera } = useThree();
 
+  // Initial camera setup avoids jumping on first frame
   useEffect(() => {
     camera.position.set(0, 0, 5);
-    camera.lookAt(0, 0, 0);
   }, [camera]);
 
   const isContact = pathname === "/contact";
@@ -301,6 +363,9 @@ export default function SceneController() {
 
       {/* Dot globe - activates on /contact */}
       <InteractiveDotGlobe active={isContact} />
+
+      {/* Camera logic */}
+      <CameraRig pathname={pathname} />
 
       {/* Ambient floating particles */}
       <FloatingParticles />
