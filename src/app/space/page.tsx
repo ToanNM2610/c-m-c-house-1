@@ -30,6 +30,25 @@ const fadeUp = {
   }),
 };
 
+const kineticReveal = {
+  hidden: { y: "120%", opacity: 0 },
+  visible: (i: number) => ({
+    y: "0%",
+    opacity: 1,
+    transition: { duration: 0.8, delay: i * 0.08 },
+  }),
+};
+
+const cardFanOut = {
+  hidden: { opacity: 0, y: 50, rotateZ: -3 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    rotateZ: 0,
+    transition: { duration: 0.7, delay: i * 0.1 },
+  }),
+};
+
 const staggerContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08 } },
@@ -239,22 +258,26 @@ export default function SpacePage() {
             <Compass size={12} />
             <span>{t("space.heroTag")}</span>
           </motion.span>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="font-serif text-2xl md:text-3xl font-bold text-[#FDFBF7] tracking-tight drop-shadow-xl max-w-xl"
-          >
-            {t("space.heroTitle")}
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-xs sm:text-sm font-light text-[#FDFBF7]/80 max-w-md mt-3 drop-shadow-md"
-          >
-            {t("space.heroDesc")}
-          </motion.p>
+          <div className="overflow-hidden pb-1">
+            <motion.h1 
+              initial={{ y: "120%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.35 }}
+              className="font-serif text-2xl md:text-3xl font-bold text-[#FDFBF7] tracking-tight drop-shadow-xl max-w-xl"
+            >
+              {t("space.heroTitle")}
+            </motion.h1>
+          </div>
+          <div className="overflow-hidden">
+            <motion.p 
+              initial={{ y: "120%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-xs sm:text-sm font-light text-[#FDFBF7]/80 max-w-md mt-3 drop-shadow-md"
+            >
+              {t("space.heroDesc")}
+            </motion.p>
+          </div>
         </div>
 
         {/* Carousel Controls */}
@@ -402,9 +425,9 @@ export default function SpacePage() {
               return (
                 <motion.div
                   key={idx}
-                  variants={fadeUp}
+                  variants={cardFanOut}
                   custom={idx}
-                  className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] transition-colors"
+                  className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500"
                 >
                   <div className="w-14 h-14 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                     <span>{emojis[idx]}</span>

@@ -274,14 +274,32 @@ function FloatingParticles() {
     // Slow overall ambient rotation
     particlesRef.current.rotation.y = time * 0.012;
 
+    // Bounds for particle visibility (world-space half-extents)
+    const BOUND_X = 9, BOUND_Y = 7, BOUND_Z = 6;
+
     // Organic sine-wave drift from base positions (no accumulation)
     const pos = particlesRef.current.geometry.attributes.position.array as Float32Array;
     for (let i = 0; i < 180; i++) {
       const phase = phases[i];
       const speed = speeds[i];
-      pos[i * 3]     = basePositions[i * 3]     + Math.sin(time * speed * 0.4 + phase) * 0.3;
-      pos[i * 3 + 1] = basePositions[i * 3 + 1] + Math.sin(time * speed * 0.6 + phase) * 0.4;
-      pos[i * 3 + 2] = basePositions[i * 3 + 2] + Math.cos(time * speed * 0.3 + phase) * 0.2;
+      let px = basePositions[i * 3]     + Math.sin(time * speed * 0.4 + phase) * 0.3;
+      let py = basePositions[i * 3 + 1] + Math.sin(time * speed * 0.6 + phase) * 0.4;
+      let pz = basePositions[i * 3 + 2] + Math.cos(time * speed * 0.3 + phase) * 0.2;
+
+      // Clamp to bounds — if a base drifted beyond (shouldn't happen, but safety net)
+      if (Math.abs(px) > BOUND_X || Math.abs(py) > BOUND_Y || Math.abs(pz) > BOUND_Z) {
+        const nx = (Math.random() - 0.5) * BOUND_X * 2;
+        const ny = (Math.random() - 0.5) * BOUND_Y * 2;
+        const nz = (Math.random() - 0.5) * BOUND_Z * 2;
+        basePositions[i * 3] = nx;
+        basePositions[i * 3 + 1] = ny;
+        basePositions[i * 3 + 2] = nz;
+        px = nx; py = ny; pz = nz;
+      }
+
+      pos[i * 3]     = px;
+      pos[i * 3 + 1] = py;
+      pos[i * 3 + 2] = pz;
     }
     particlesRef.current.geometry.attributes.position.needsUpdate = true;
   });
