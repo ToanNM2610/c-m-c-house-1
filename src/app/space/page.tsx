@@ -53,45 +53,72 @@ export default function SpacePage() {
 
   // Map Admin Gallery Images to SpacePhoto format
   const dynamicPhotos = useMemo<SpacePhoto[]>(() => {
+    const exactMap: Record<string, { category: SpaceCategory; titleVi: string; titleEn: string }> = {
+      "1 (1)": { category: "stream", titleVi: "Bờ Suối Thung Lũng", titleEn: "Valley Stream Bank" },
+      "1 (4)": { category: "stream", titleVi: "Hàng Rào Ven Suối", titleEn: "Stream-side Wooden Fence" },
+      "1 (5)": { category: "stream", titleVi: "Góc Suối Đá Rì Rào", titleEn: "Whispering Rock Stream" },
+      "1 (15)": { category: "stream", titleVi: "Lối Xuống Suối Mát", titleEn: "Cool Stream Pathway" },
+      "1 (18)": { category: "stream", titleVi: "Bàn Đá Tự Nhiên Bên Suối", titleEn: "Natural Stone Table by Stream" },
+      "1 (19)": { category: "stream", titleVi: "Lòng Suối Đá Cuội", titleEn: "Pebble Stream Bed" },
+
+      "1 (2)": { category: "veranda", titleVi: "Hiên Gỗ Đón Nắng Sớm", titleEn: "Sunlit Wooden Veranda" },
+      "1 (9)": { category: "veranda", titleVi: "Chòi Nghỉ Lợp Mái Lá", titleEn: "Thatched Rustic Gazebo" },
+      "1 (10)": { category: "veranda", titleVi: "Băng Ghế Gỗ Dài", titleEn: "Long Wooden Bench" },
+      "1 (14)": { category: "veranda", titleVi: "Cầu Gỗ Dẫn Vào Quán", titleEn: "Wooden Entrance Bridge" },
+      "1 (16)": { category: "veranda", titleVi: "Chòi Mộc Dưới Tán Râm", titleEn: "Shaded Wooden Hut" },
+      "1 (28)": { category: "veranda", titleVi: "Góc Hiên Nhà Cổ Kính", titleEn: "Vintage Veranda Corner" },
+      "1 (29)": { category: "veranda", titleVi: "Khung Cửa Gỗ Mộc", titleEn: "Rustic Timber Frame" },
+
+      "1 (3)": { category: "flower", titleVi: "Tách Cà Phê Bên Chậu Cẩm Cù", titleEn: "Coffee by Hoya Bloom" },
+      "1 (8)": { category: "flower", titleVi: "Ban Công Hoa Ngắm Đồi", titleEn: "Hillside Flower Balcony" },
+      "1 (20)": { category: "flower", titleVi: "Giàn Hoa Đào Rực Rỡ", titleEn: "Blooming Cherry Terrace" },
+      "1 (21)": { category: "flower", titleVi: "Dải Hoa Rực Nắng", titleEn: "Sun-kissed Flower Beds" },
+      "1 (24)": { category: "flower", titleVi: "Khóm Cẩm Cù Đang Nở", titleEn: "Blooming Hoya Cluster" },
+      "1 (27)": { category: "flower", titleVi: "Góc Vườn Xanh Mướt", titleEn: "Lush Botanical Nook" },
+      "1 (30)": { category: "flower", titleVi: "Mái Nhà Hoa Rủ", titleEn: "Flowery Overhang Roof" },
+
+      "1 (6)": { category: "festive", titleVi: "Góc Nón Lá & Đèn Lồng", titleEn: "Conical Hats & Lanterns Corner" },
+      "1 (7)": { category: "festive", titleVi: "Dải Cờ Đỏ Bay Trong Gió", titleEn: "Crimson Festive Flags" },
+      "1 (11)": { category: "festive", titleVi: "Lối Đi Rực Rỡ Sắc Lễ Hội", titleEn: "Vibrant Festive Walkway" },
+      "1 (13)": { category: "festive", titleVi: "Không Gian Văn Hóa Bản Địa", titleEn: "Indigenous Cultural Display" },
+      "1 (17)": { category: "festive", titleVi: "Dãy Đèn Lồng Thổ Cẩm", titleEn: "Brocade Lantern Trail" },
+      "1 (25)": { category: "festive", titleVi: "Gian Trưng Bày Đậm Chất Tây Nguyên", titleEn: "Highland Heritage Corner" },
+
+      "1 (12)": { category: "peaceful", titleVi: "Góc Trầm Lặng Đọc Sách", titleEn: "Quiet Reading Nook" },
+      "1 (22)": { category: "peaceful", titleVi: "Bàn Gỗ Tĩnh Lặng Dưới Tán Cây", titleEn: "Peaceful Tree-shaded Table" },
+      "1 (23)": { category: "peaceful", titleVi: "Khoảng Sân Yên Bình Buổi Chiều", titleEn: "Peaceful Afternoon Courtyard" },
+      "1 (26)": { category: "peaceful", titleVi: "Góc Trú Chân Mộc Mạc", titleEn: "Rustic Hideaway" },
+      "1 (31)": { category: "peaceful", titleVi: "Không Gian Trò Chuyện Riêng Tư", titleEn: "Private Conversation Corner" }
+    };
+
     return images.map((img, index) => {
-      // Auto assign categories logically to ensure rich filter tabs
-      const cats: SpaceCategory[] = ["stream", "veranda", "flower", "festive", "peaceful"];
-      const category = cats[index % cats.length];
-      
       // Auto assign diverse aspect ratios for Masonry grid
       const aspect = index % 3 === 0 ? "tall" : index % 5 === 0 ? "square" : "wide";
       
-      // Check if caption is raw filename like "1 (3)", "t5", or "image12"
-      let titleVi = img.caption || "";
-      let titleEn = img.caption || "";
+      let mapKey = img.caption || "";
+      if (mapKey === "t8") mapKey = "1 (31)"; // Normalize fallback
       
-      const isRawFilename = !titleVi || /^(t\d+|\d+\s*\(\d+\)|image\d+|img_\d+)$/i.test(titleVi);
+      const mappedData = exactMap[mapKey];
       
-      if (isRawFilename) {
-        const aestheticNamesVi = {
-          stream: "Bờ Suối Rì Rào",
-          veranda: "Góc Hiên Đón Nắng",
-          flower: "Giàn Cẩm Cù Rực Rỡ",
-          festive: "Góc Lễ Hội Sắc Màu",
-          peaceful: "Chốn Tĩnh Lặng An Yên"
+      if (mappedData) {
+        return {
+          id: img.id,
+          src: img.url,
+          titleVi: mappedData.titleVi,
+          titleEn: mappedData.titleEn,
+          category: mappedData.category,
+          aspectRatio: aspect
         };
-        const aestheticNamesEn = {
-          stream: "Rocky Stream Bank",
-          veranda: "Sunlit Veranda",
-          flower: "Blooming Hoya",
-          festive: "Festive Colors",
-          peaceful: "Peaceful Nook"
-        };
-        const counter = Math.floor(index / cats.length) + 1;
-        titleVi = `${aestheticNamesVi[category]} ${counter}`;
-        titleEn = `${aestheticNamesEn[category]} ${counter}`;
       }
-      
+
+      // Fallback if not found in exactMap
+      const cats: SpaceCategory[] = ["stream", "veranda", "flower", "festive", "peaceful"];
+      const category = cats[index % cats.length];
       return {
         id: img.id,
         src: img.url,
-        titleVi: titleVi,
-        titleEn: titleEn,
+        titleVi: `Không gian ${index + 1}`,
+        titleEn: `Space ${index + 1}`,
         category: category,
         aspectRatio: aspect
       };
@@ -327,13 +354,19 @@ export default function SpacePage() {
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                         className="object-cover group-hover:scale-[1.02] transition-transform duration-[0.6s] ease-out"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                       
-                      <div className="absolute bottom-0 left-0 right-0 p-5 space-y-1.5 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] drop-shadow-md">
+                      <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#C88A4B]/20 border border-[#C88A4B]/30 backdrop-blur-md w-fit">
+                          <Compass size={10} className="text-[#C88A4B]" />
+                          <span className="text-[9px] font-mono font-semibold uppercase tracking-widest text-[#C88A4B]">
+                            {lang === "en" ? FILTER_KEYS.find(k => k.key === photo.category)?.labelEn : FILTER_KEYS.find(k => k.key === photo.category)?.labelVi}
+                          </span>
+                        </div>
+                        <h3 className="font-serif text-lg sm:text-xl font-bold text-[#FDFBF7] drop-shadow-md leading-tight">
                           {lang === "en" ? photo.titleEn : photo.titleVi}
                         </h3>
-                        <div className="pt-2 flex items-center gap-1.5 text-[10px] font-medium text-[#C88A4B] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                        <div className="pt-1 flex items-center gap-1.5 text-[10px] font-medium text-white/70">
                           <Eye size={12} />
                           <span className="uppercase tracking-widest">{t("space.viewPhoto")}</span>
                         </div>
