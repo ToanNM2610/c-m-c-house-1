@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useRef, useMemo, useEffect } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { Sparkles } from "@react-three/drei";
 import * as THREE from "three";
+import { useCanvas } from "@/context/CanvasContext";
 
-// GLSL 3D Simplex Noise Shader Code
+// GLSL 3D Simplex Noise Shader
 const noiseGLSL = `
-// Simplex 3D noise generator
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
 vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
 
@@ -82,25 +82,20 @@ uniform float uScrollProgress;
 
 varying vec3 vNormal;
 varying vec3 vPosition;
-varying float vNoise;
 
 void main() {
   vNormal = normalize(normalMatrix * normal);
 
-  // Hiệu ứng gợn sóng nhiễu hạt hữu cơ
-  vec3 noiseCoord = position * 1.25 + vec3(uTime * 0.18, uTime * 0.12, uTime * 0.08);
+  vec3 noiseCoord = position * 1.25 + vec3(uTime * 0.16, uTime * 0.10, uTime * 0.07);
   float noise = snoise(noiseCoord);
 
-  // Tương tác gợn sóng phản ứng theo con trỏ chuột
   float distToMouse = distance(position.xy * 0.5, uMouse);
-  float mouseRipple = sin(distToMouse * 6.0 - uTime * 2.5) * exp(-distToMouse * 1.8) * 0.18;
+  float mouseRipple = sin(distToMouse * 5.0 - uTime * 2.0) * exp(-distToMouse * 1.8) * 0.15;
 
   float displacement = (noise * uDistortion) + mouseRipple;
   vec3 newPosition = position + normal * displacement;
 
   vPosition = (modelViewMatrix * vec4(newPosition, 1.0)).xyz;
-  vNoise = noise;
-
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
 }
 `;
@@ -113,17 +108,14 @@ uniform float uOpacity;
 
 varying vec3 vNormal;
 varying vec3 vPosition;
-varying float vNoise;
 
 void main() {
   vec3 viewDir = normalize(-vPosition);
   float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 2.2);
 
-  // Ánh kim vàng Champagne #D4AF37 chuyển tiếp quang học
   vec3 color = mix(uColorCore, uColorGlow, fresnel);
-  color += uColorGlow * pow(fresnel, 3.0) * 1.6;
+  color += uColorGlow * pow(fresnel, 3.0) * 1.5;
 
-  // Độ trong suốt mờ dần khi cuộn về cuối trang
   float fade = 1.0 - smoothstep(0.65, 0.98, uScrollProgress);
   float alpha = clamp((fresnel * 0.8 + 0.2) * uOpacity * fade, 0.0, 1.0);
 
@@ -131,30 +123,32 @@ void main() {
 }
 `;
 
-import { useCanvas } from "@/context/CanvasContext";
-
 export interface CelestialCoreProps {
+  mode?: "home" | "about";
   scrollProgressRef?: React.RefObject<number>;
   isMobile?: boolean;
 }
 
-export default function CelestialCore(props: CelestialCoreProps) {
+export default function CelestialCore({
+  mode = "home",
+  scrollProgressRef: propScrollRef,
+  isMobile: propIsMobile,
+}: CelestialCoreProps) {
   const canvasCtx = useCanvas();
-  const scrollProgressRef = props.scrollProgressRef ?? canvasCtx.scrollProgressRef;
-  const isMobile = props.isMobile ?? canvasCtx.isMobile;
+  const scrollProgressRef = propScrollRef ?? canvasCtx.scrollProgressRef;
+  const isMobile = propIsMobile ?? canvasCtx.isMobile;
+
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const ring1Ref = useRef<THREE.Mesh>(null);
   const ring2Ref = useRef<THREE.Mesh>(null);
 
-  // Vector lưu vị trí chuột mượt mà
   const mouseTarget = useRef(new THREE.Vector2(0, 0));
   const mouseCurrent = useRef(new THREE.Vector2(0, 0));
   const currentScale = useRef(isMobile ? 1.0 : 1.3);
+  const currentX = useRef(0);
 
-  const { size } = useThree();
-
-  // Tạo ShaderMaterial với Uniforms
+  // Shader Material tinh giản, Additive Blending
   const shaderMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
       vertexShader: celestialVertexShader,
@@ -162,7 +156,7 @@ export default function CelestialCore(props: CelestialCoreProps) {
       uniforms: {
         uTime: { value: 0 },
         uMouse: { value: new THREE.Vector2(0, 0) },
-        uDistortion: { value: 0.28 },
+        uDistortion: { value: isMobile ? 0.18 : 0.26 },
         uScrollProgress: { value: 0 },
         uOpacity: { value: 0.95 },
         uColorCore: { value: new THREE.Color("#C5A880") },
@@ -173,7 +167,7 @@ export default function CelestialCore(props: CelestialCoreProps) {
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     return () => {
@@ -181,8 +175,9 @@ export default function CelestialCore(props: CelestialCoreProps) {
     };
   }, [shaderMaterial]);
 
-  // Lắng nghe di chuột toàn trang để parallax phản xạ
+  // Lắng nghe chuột để Parallax nhẹ (chỉ bật trên desktop)
   useEffect(() => {
+    if (isMobile) return;
     const handleMouseMove = (e: MouseEvent) => {
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -191,110 +186,130 @@ export default function CelestialCore(props: CelestialCoreProps) {
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [isMobile]);
 
   useFrame((state, delta) => {
     const time = state.clock.getElapsedTime();
-    const scroll = scrollProgressRef.current || 0;
+    const scroll = mode === "home" ? scrollProgressRef.current || 0 : 0;
 
     // Cập nhật Uniforms
     if (shaderMaterial) {
       shaderMaterial.uniforms.uTime.value = time;
       shaderMaterial.uniforms.uScrollProgress.value = scroll;
-
-      // Lerp vị trí chuột mượt mà
-      mouseCurrent.current.lerp(mouseTarget.current, 0.05);
-      shaderMaterial.uniforms.uMouse.value.copy(mouseCurrent.current);
+      if (!isMobile) {
+        mouseCurrent.current.lerp(mouseTarget.current, 0.05);
+        shaderMaterial.uniforms.uMouse.value.copy(mouseCurrent.current);
+      }
     }
 
     if (groupRef.current) {
-      // Tự xoay 3 trục cực kỳ nhẹ nhàng (breathe & float)
-      groupRef.current.rotation.y = time * 0.04 + mouseCurrent.current.x * 0.2;
-      groupRef.current.rotation.x = Math.sin(time * 0.03) * 0.1 + mouseCurrent.current.y * 0.15;
-      groupRef.current.rotation.z = Math.cos(time * 0.02) * 0.05;
+      // Xác định vị trí mục tiêu:
+      // Home: ở giữa (x = 0)
+      // About: chuyển khối 3D sang xoay nhẹ nhàng ở góc phải (x = 2.4 trên PC, 0 trên Mobile)
+      const targetX = mode === "about" ? (isMobile ? 0 : 2.4) : 0;
+      currentX.current = THREE.MathUtils.lerp(currentX.current, targetX, 0.04);
+      groupRef.current.position.x = currentX.current;
 
-      // Trôi nổi hữu cơ (Organic Floating Motion) cực chậm
-      groupRef.current.position.y = Math.sin(time * 0.3) * 0.08;
+      // Xoay 3 trục mộc mạc và mềm mại
+      groupRef.current.rotation.y = time * 0.045 + mouseCurrent.current.x * 0.15;
+      groupRef.current.rotation.x = Math.sin(time * 0.03) * 0.08 + mouseCurrent.current.y * 0.12;
+      groupRef.current.rotation.z = Math.cos(time * 0.02) * 0.04;
 
-      // Phóng to theo tiến độ cuộn trang (từ 1.2x đến 5.2x)
-      const targetScale = (isMobile ? 1.0 : 1.3) + scroll * (isMobile ? 3.2 : 4.6);
+      // Trôi nổi hữu cơ
+      groupRef.current.position.y = Math.sin(time * 0.28) * 0.08;
+
+      // Phóng to theo tiến độ cuộn trang (khi ở trang chủ)
+      const baseScale = isMobile ? 1.0 : 1.3;
+      const targetScale = mode === "home"
+        ? baseScale + scroll * (isMobile ? 3.0 : 4.2)
+        : baseScale;
       currentScale.current = THREE.MathUtils.lerp(currentScale.current, targetScale, 0.08);
       groupRef.current.scale.setScalar(currentScale.current);
 
-      // Camera dolly nhẹ theo chiều sâu Z
-      groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, scroll * 1.8, 0.06);
+      groupRef.current.position.z = THREE.MathUtils.lerp(
+        groupRef.current.position.z,
+        scroll * 1.5,
+        0.06
+      );
     }
 
-    // Xoay các vòng quỹ đạo hoàng kim
+    // Xoay các vòng quỹ đạo
     if (ring1Ref.current) {
-      ring1Ref.current.rotation.x = time * 0.25;
-      ring1Ref.current.rotation.y = time * 0.18;
+      ring1Ref.current.rotation.x = time * 0.22;
+      ring1Ref.current.rotation.y = time * 0.16;
     }
     if (ring2Ref.current) {
-      ring2Ref.current.rotation.y = -time * 0.22;
-      ring2Ref.current.rotation.z = time * 0.15;
+      ring2Ref.current.rotation.y = -time * 0.2;
+      ring2Ref.current.rotation.z = time * 0.14;
     }
   });
 
-  const sphereRadius = isMobile ? 1.4 : 1.8;
+  const sphereRadius = isMobile ? 1.3 : 1.7;
+  // Giảm 70% số đỉnh trên mobile (detail 1 thay vì 4)
+  const sphereDetail = isMobile ? 1 : 3;
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      {/* 1. Khối Lõi Tinh Thể Hữu Cơ (Organic Celestial Wireframe) */}
+      {/* 1. Khối Lõi Tinh Thể Khung Dây Hữu Cơ */}
       <mesh ref={meshRef} material={shaderMaterial}>
-        <icosahedronGeometry args={[sphereRadius, isMobile ? 3 : 4]} />
+        <icosahedronGeometry args={[sphereRadius, sphereDetail]} />
       </mesh>
 
-      {/* 2. Lớp Lõi Pha Lê Bên Trong (Inner Refractive Crystal Core) */}
-      <mesh scale={0.78}>
-        <icosahedronGeometry args={[sphereRadius, 2]} />
-        <meshPhysicalMaterial
-          color="#1A0F0A"
-          emissive="#2A1408"
-          emissiveIntensity={0.3}
-          roughness={0.15}
-          metalness={0.2}
-          transmission={0.92}
-          thickness={1.5}
-          ior={1.45}
-          transparent
-          opacity={0.4}
-          wireframe={false}
-        />
+      {/* 2. Lõi trong: Sử dụng vật liệu nhẹ không tốn render target trên mobile */}
+      <mesh scale={0.8}>
+        <icosahedronGeometry args={[sphereRadius, isMobile ? 1 : 2]} />
+        {isMobile ? (
+          <meshBasicMaterial
+            color="#1A0F0A"
+            transparent
+            opacity={0.3}
+            wireframe
+          />
+        ) : (
+          <meshStandardMaterial
+            color="#1A0F0A"
+            emissive="#2A1408"
+            emissiveIntensity={0.2}
+            roughness={0.4}
+            metalness={0.5}
+            transparent
+            opacity={0.4}
+          />
+        )}
       </mesh>
 
-      {/* 3. Vòng Quỹ Đạo Hồi Chuyển Hoàng Kim 1 */}
-      <mesh ref={ring1Ref} scale={1.25}>
-        <torusGeometry args={[sphereRadius * 1.18, 0.012, 16, 100]} />
+      {/* 3. Vòng Quỹ Đạo Hoàng Kim 1 */}
+      <mesh ref={ring1Ref} scale={1.22}>
+        <torusGeometry args={[sphereRadius * 1.15, 0.01, isMobile ? 8 : 16, isMobile ? 32 : 80]} />
         <meshBasicMaterial
           color="#D4AF37"
           wireframe
           transparent
-          opacity={0.65}
+          opacity={0.6}
           blending={THREE.AdditiveBlending}
         />
       </mesh>
 
-      {/* 4. Vòng Quỹ Đạo Hồi Chuyển Hoàng Kim 2 */}
-      <mesh ref={ring2Ref} scale={1.38} rotation={[Math.PI / 3, 0, 0]}>
-        <torusGeometry args={[sphereRadius * 1.25, 0.009, 16, 100]} />
+      {/* 4. Vòng Quỹ Đạo Hoàng Kim 2 */}
+      <mesh ref={ring2Ref} scale={1.35} rotation={[Math.PI / 3, 0, 0]}>
+        <torusGeometry args={[sphereRadius * 1.22, 0.008, isMobile ? 8 : 16, isMobile ? 32 : 80]} />
         <meshBasicMaterial
           color="#FFE1B3"
           wireframe
           transparent
-          opacity={0.5}
+          opacity={0.45}
           blending={THREE.AdditiveBlending}
         />
       </mesh>
 
-      {/* 5. Bụi Sao Vàng Lơ Lửng (Celestial Golden Stardust) */}
+      {/* 5. Bụi Sao Vàng Lơ Lửng (Giảm số lượng trên mobile) */}
       <Sparkles
-        count={isMobile ? 45 : 90}
-        scale={sphereRadius * 4.2}
-        size={isMobile ? 2.0 : 3.0}
-        speed={0.35}
+        count={isMobile ? 25 : 60}
+        scale={sphereRadius * 3.8}
+        size={isMobile ? 1.8 : 2.6}
+        speed={0.3}
         color="#FFE1B3"
-        opacity={0.75}
+        opacity={0.65}
       />
     </group>
   );

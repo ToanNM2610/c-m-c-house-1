@@ -1,19 +1,17 @@
 "use client";
 
-import React, { useRef, useMemo, useEffect, Suspense } from "react";
+import React, { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float, useTexture } from "@react-three/drei";
+import { Float } from "@react-three/drei";
 import * as THREE from "three";
 import { useCanvas } from "@/context/CanvasContext";
 
-// Tọa độ Đắk Nông (Gia Nghĩa), Việt Nam:
-// Lat: 11.98° N, Lon: 107.70° E
+// Tọa độ Gia Nghĩa, Đắk Nông chuẩn xác: 11.99° N, 107.69° E
 const DAK_NONG_COORDS = {
-  lat: 11.98,
-  lon: 107.70,
+  lat: 11.99,
+  lon: 107.69,
 };
 
-// Vị trí cố định của nguồn sáng Mặt Trời (DirectionalLight)
 const SUN_POSITION: [number, number, number] = [6, 2.5, 4.5];
 const SUN_ANGLE_XZ = Math.atan2(SUN_POSITION[2], SUN_POSITION[0]);
 
@@ -78,7 +76,7 @@ function DakNongBeacon({ radius }: { radius: number }) {
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (ringRef.current) {
-      const scale = 1 + (Math.sin(t * 3.5) + 1) * 0.55;
+      const scale = 1 + (Math.sin(t * 3.5) + 1) * 0.5;
       ringRef.current.scale.set(scale, scale, scale);
       const mat = ringRef.current.material as THREE.MeshBasicMaterial;
       if (mat) {
@@ -86,21 +84,21 @@ function DakNongBeacon({ radius }: { radius: number }) {
       }
     }
     if (lightRef.current) {
-      lightRef.current.intensity = 1.8 + Math.sin(t * 4) * 0.9;
+      lightRef.current.intensity = 1.8 + Math.sin(t * 4) * 0.8;
     }
   });
 
   return (
     <group position={pos}>
-      <pointLight ref={lightRef} color="#FFE5B4" distance={3.2} intensity={2.2} />
+      <pointLight ref={lightRef} color="#FFE5B4" distance={3.2} intensity={2.0} />
 
       <mesh>
-        <sphereGeometry args={[0.055, 12, 12]} />
+        <sphereGeometry args={[0.05, 10, 10]} />
         <meshBasicMaterial color="#FFF1D6" />
       </mesh>
 
       <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.075, 0.13, 24]} />
+        <ringGeometry args={[0.07, 0.12, 20]} />
         <meshBasicMaterial
           color="#C5A880"
           transparent
@@ -114,39 +112,45 @@ function DakNongBeacon({ radius }: { radius: number }) {
   );
 }
 
-function DotWireframeSphere({ radius = 2.4 }: { radius?: number }) {
-  const geomRef = useRef<THREE.IcosahedronGeometry>(null);
+function DotWireframeSphere({
+  radius = 2.4,
+  isMobile = false,
+}: {
+  radius?: number;
+  isMobile?: boolean;
+}) {
+  const detail = isMobile ? 2 : 3;
 
   return (
     <group>
-      {/* Khối cầu đen mờ bên trong để chắn sáng */}
+      {/* Khối cầu đen mờ bên trong */}
       <mesh>
-        <sphereGeometry args={[radius * 0.98, 32, 32]} />
+        <sphereGeometry args={[radius * 0.98, isMobile ? 16 : 28, isMobile ? 16 : 28]} />
         <meshBasicMaterial color="#0A0908" />
       </mesh>
 
       {/* Wireframe bọc ngoài */}
       <mesh>
-        <icosahedronGeometry ref={geomRef} args={[radius, 4]} />
-        <meshBasicMaterial color="#D4AF37" wireframe transparent opacity={0.15} />
+        <icosahedronGeometry args={[radius, detail]} />
+        <meshBasicMaterial color="#D4AF37" wireframe transparent opacity={0.16} />
       </mesh>
 
       {/* Dấu chấm tại các đỉnh */}
       <points>
-        <icosahedronGeometry args={[radius, 4]} />
-        <pointsMaterial color="#D4AF37" size={0.03} transparent opacity={0.4} />
+        <icosahedronGeometry args={[radius, detail]} />
+        <pointsMaterial color="#D4AF37" size={isMobile ? 0.04 : 0.03} transparent opacity={0.4} />
       </points>
     </group>
   );
 }
 
-function StarFieldParticles({ count = 80 }: { count?: number }) {
+function StarFieldParticles({ count = 60 }: { count?: number }) {
   const { geometry, material } = useMemo(() => {
     const coords = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      coords[i * 3] = (Math.random() - 0.5) * 18;
-      coords[i * 3 + 1] = (Math.random() - 0.5) * 18;
-      coords[i * 3 + 2] = (Math.random() - 0.5) * 18;
+      coords[i * 3] = (Math.random() - 0.5) * 16;
+      coords[i * 3 + 1] = (Math.random() - 0.5) * 16;
+      coords[i * 3 + 2] = (Math.random() - 0.5) * 16;
     }
     const geom = new THREE.BufferGeometry();
     geom.setAttribute("position", new THREE.BufferAttribute(coords, 3));
@@ -173,14 +177,14 @@ function StarFieldParticles({ count = 80 }: { count?: number }) {
 export default function Globe3DContent() {
   const { isAutoSpin, isMobile } = useCanvas();
   const globeGroupRef = useRef<THREE.Group>(null);
-  const radius = isMobile ? 1.8 : 2.2;
+  const radius = isMobile ? 1.7 : 2.2;
 
   const initialRotationY = useMemo(() => getRealtimeEarthRotationY(), []);
 
   useFrame((_, delta) => {
     if (globeGroupRef.current) {
       if (isAutoSpin) {
-        globeGroupRef.current.rotation.y += delta * 0.06;
+        globeGroupRef.current.rotation.y += delta * 0.05;
       } else {
         const targetRotationY = getRealtimeEarthRotationY();
         globeGroupRef.current.rotation.y = THREE.MathUtils.lerp(
@@ -192,32 +196,30 @@ export default function Globe3DContent() {
     }
   });
 
-  // Định vị quả cầu trên màn hình:
-  // Desktop: lệch phải để khớp với cột 2 trang Contact
-  // Mobile: ở giữa, hơi lệch xuống
-  const positionX = isMobile ? 0 : 2.2;
-  const positionY = isMobile ? -0.4 : 0;
+  // Căn chỉnh vị trí quả địa cầu: Desktop lệch phải nhẹ để cân bằng cột thông tin, Mobile ở giữa
+  const positionX = isMobile ? 0 : 2.0;
+  const positionY = isMobile ? -0.3 : 0;
 
   return (
     <group position={[positionX, positionY, 0]}>
       <ambientLight intensity={0.25} color="#152438" />
       <directionalLight
         position={SUN_POSITION}
-        intensity={2.6}
+        intensity={2.5}
         color="#FFFDF5"
       />
-      <pointLight position={[-8, -3, -6]} intensity={0.45} color="#2A4365" />
+      <pointLight position={[-8, -3, -6]} intensity={0.4} color="#2A4365" />
 
-      <Float speed={1.1} rotationIntensity={0.06} floatIntensity={0.15}>
+      <Float speed={1.0} rotationIntensity={0.05} floatIntensity={0.12}>
         <group rotation={[0.12, 0, 0.38]}>
           <group ref={globeGroupRef} rotation={[0, initialRotationY, 0]}>
-            <DotWireframeSphere radius={radius} />
+            <DotWireframeSphere radius={radius} isMobile={isMobile} />
             <DakNongBeacon radius={radius} />
           </group>
         </group>
       </Float>
 
-      <StarFieldParticles count={isMobile ? 35 : 75} />
+      <StarFieldParticles count={isMobile ? 25 : 55} />
     </group>
   );
 }

@@ -10,10 +10,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const lenisRef = useRef<Lenis | null>(null);
   const pathname = usePathname() || "";
   const isAdmin = pathname.startsWith("/admin") || pathname.startsWith("/wp-admin");
-  const isIgnored = isAdmin;
 
   useEffect(() => {
     // Tắt hoàn toàn Lenis trên Admin hoặc trên thiết bị cảm ứng / màn hình di động (< 768px)
+    // để tránh xung đột cuộn dọc tự nhiên trên mobile/tablet
     const isMobileOrTouch =
       typeof window !== "undefined" &&
       (window.innerWidth < 768 ||
@@ -21,7 +21,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         "ontouchstart" in window ||
         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
 
-    if (isIgnored || isMobileOrTouch) {
+    if (isAdmin || isMobileOrTouch) {
       if (lenisRef.current) {
         lenisRef.current.destroy();
         lenisRef.current = null;
@@ -32,10 +32,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Cấu hình Lenis mượt, nhẹ (duration: 1.0, smoothWheel: true, touchMultiplier: 1.5)
     const lenis = new Lenis({
-      lerp: 0.08,
-      duration: 1.2,
+      duration: 1.0,
       smoothWheel: true,
+      touchMultiplier: 1.5,
       syncTouch: false,
       autoResize: true,
       orientation: "vertical",
@@ -60,13 +61,13 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       lenisRef.current = null;
       delete (window as any).__lenis;
     };
-  }, [isIgnored]);
+  }, [isAdmin]);
 
   useEffect(() => {
-    if (!isIgnored && lenisRef.current) {
+    if (!isAdmin && lenisRef.current) {
       lenisRef.current.scrollTo(0, { immediate: true });
     }
-  }, [pathname, isIgnored]);
+  }, [pathname, isAdmin]);
 
   return <>{children}</>;
 }

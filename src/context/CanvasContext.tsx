@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { usePathname } from "next/navigation";
 
-export type CanvasSceneMode = "celestial" | "globe" | "ambient" | "none";
+export type CanvasSceneMode = "celestial" | "about" | "globe" | "ambient" | "none";
 
 interface CanvasContextValue {
   sceneMode: CanvasSceneMode;
@@ -57,6 +57,8 @@ export function CanvasProvider({ children }: { children: ReactNode }) {
       setSceneMode("none");
     } else if (pathname === "/contact") {
       setSceneMode("globe");
+    } else if (pathname === "/about") {
+      setSceneMode("about");
     } else if (pathname === "/") {
       setSceneMode("celestial");
     } else {
