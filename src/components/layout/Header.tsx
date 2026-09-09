@@ -35,11 +35,39 @@ export default function Header() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __CAMCU_INTRO_REVEALED__?: boolean }).__CAMCU_INTRO_REVEALED__
+    ) {
+      setRevealed(true);
+      return;
+    }
+
+    const handleReveal = () => setRevealed(true);
+    window.addEventListener("camcu_intro_reveal", handleReveal);
+
+    // Fallback timeout sau 3.5s phòng trường hợp trang độc lập hoặc intro kết thúc sớm
+    const fallbackTimer = setTimeout(() => {
+      setRevealed(true);
+    }, 3500);
+
+    return () => {
+      window.removeEventListener("camcu_intro_reveal", handleReveal);
+      clearTimeout(fallbackTimer);
+    };
+  }, []);
+
   if (isAdmin) return null;
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+    <motion.header
+      initial={{ opacity: 0, y: -15 }}
+      animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`sticky top-0 z-50 w-full transition-colors duration-300 ${
         scrolled
           ? "bg-[#0C0D0B]/95 border-b border-[#222520] shadow-md"
           : "bg-[#0C0D0B]/80 border-b border-[#222520]/50"
@@ -56,35 +84,69 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* MENU ĐIỀU HƯỚNG TRUNG TÂM (DESKTOP) */}
+        {/* MENU ĐIỀU HƯỚNG TRUNG TÂM (DESKTOP) - STAGGERED 60ms & ACTIVE GLOW */}
         <nav className="hidden md:flex items-center gap-8">
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEMS.map((item, index) => {
             const isActive = pathname === item.href;
             return (
-              <Link
+              <motion.div
                 key={item.href}
-                href={item.href}
-                className={`relative py-1 text-sm font-medium transition-colors duration-200 ${
-                  isActive
-                    ? "text-[#C88A4B] font-semibold"
-                    : "text-[#FDFBF7]/75 hover:text-[#FDFBF7]"
-                }`}
+                initial={{ opacity: 0, y: -8 }}
+                animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 }}
+                transition={{
+                  delay: revealed ? index * 0.06 : 0,
+                  duration: 0.35,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
-                {t(item.labelKey)}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeNavIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C88A4B] rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </Link>
+                <Link
+                  href={item.href}
+                  className={`relative py-1 text-sm font-medium transition-colors duration-200 ${
+                    isActive
+                      ? "text-[#C88A4B] font-semibold"
+                      : "text-[#FDFBF7]/75 hover:text-[#FDFBF7]"
+                  }`}
+                >
+                  <motion.span
+                    animate={
+                      isActive && revealed
+                        ? {
+                            textShadow: [
+                              "0 0 0px rgba(200,138,75,0)",
+                              "0 0 14px rgba(200,138,75,0.85)",
+                              "0 0 8px rgba(200,138,75,0.4)",
+                            ],
+                          }
+                        : {}
+                    }
+                    transition={{
+                      delay: 0.35,
+                      duration: 0.8,
+                      ease: "easeOut",
+                    }}
+                  >
+                    {t(item.labelKey)}
+                  </motion.span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#C88A4B] rounded-full shadow-[0_0_10px_rgba(200,138,75,0.85)]"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              </motion.div>
             );
           })}
         </nav>
 
         {/* CỤM BÊN PHẢI: BỘ CHỌN NGÔN NGỮ & NÚT CTA */}
-        <div className="hidden md:flex items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -6 }}
+          transition={{ delay: revealed ? 0.32 : 0, duration: 0.4 }}
+          className="hidden md:flex items-center gap-4"
+        >
           {/* Bộ chọn ngôn ngữ [VN | EN] */}
           <div className="inline-flex items-center p-1 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-medium">
             <button
@@ -116,7 +178,7 @@ export default function Header() {
           >
             <span>{t("nav.viewMenu")}</span>
           </Link>
-        </div>
+        </motion.div>
 
         {/* NÚT TOGGLE MENU MOBILE */}
         <div className="flex md:hidden items-center gap-3">
@@ -184,7 +246,7 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }
 
