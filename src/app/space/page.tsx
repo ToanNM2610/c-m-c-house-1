@@ -31,21 +31,33 @@ const fadeUp = {
 };
 
 const kineticReveal = {
-  hidden: { y: "120%", opacity: 0 },
+  hidden: { y: "100%", opacity: 0 },
   visible: (i: number) => ({
     y: "0%",
     opacity: 1,
-    transition: { duration: 0.8, delay: i * 0.08 },
+    transition: {
+      duration: 0.8,
+      delay: i * 0.08,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
   }),
 };
 
 const cardFanOut = {
-  hidden: { opacity: 0, y: 50, rotateZ: -3 },
+  hidden: (i: number) => ({
+    opacity: 0,
+    y: 36,
+    rotateZ: i === 0 ? -2 : i === 1 ? 0 : 2,
+  }),
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     rotateZ: 0,
-    transition: { duration: 0.7, delay: i * 0.1 },
+    transition: {
+      duration: 0.75,
+      delay: i * 0.12,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
   }),
 };
 

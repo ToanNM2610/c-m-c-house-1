@@ -74,12 +74,12 @@ export default function UltraIntro() {
     // Luôn khóa cuộn trang khi bắt đầu intro (mỗi lần reload F5)
     document.body.style.overflow = "hidden";
 
-    // 2.8s: Bắt đầu giai đoạn 5 - Cinematic Reveal vào Hero
+    // 2.7s: Bắt đầu giai đoạn 5 - Cinematic Reveal vào Hero (2.7s - 3.4s)
     const tReveal = setTimeout(() => {
       setIsRevealing(true);
-    }, 2800);
+    }, 2700);
 
-    // 3.4s: Giai đoạn 6 - Hero lộ diện hoàn toàn, kích hoạt Header đồng bộ
+    // 3.4s: Giai đoạn 6 - Hero lộ diện hoàn toàn, kích hoạt Header đồng bộ (3.4s - 4.0s)
     const tEnd = setTimeout(() => {
       completeIntro();
     }, 3400);

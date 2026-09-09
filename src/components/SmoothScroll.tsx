@@ -32,11 +32,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Cấu hình Lenis mượt, nhẹ (duration: 1.0, smoothWheel: true, touchMultiplier: 1.5)
+    // Cấu hình Lenis quán tính hữu cơ (duration: 1.2s, wheelMultiplier: 0.9, touchMultiplier: 1.5)
     const lenis = new Lenis({
-      duration: 1.0,
-      smoothWheel: true,
+      duration: 1.2,
+      wheelMultiplier: 0.9,
       touchMultiplier: 1.5,
+      smoothWheel: true,
       syncTouch: false,
       autoResize: true,
       orientation: "vertical",

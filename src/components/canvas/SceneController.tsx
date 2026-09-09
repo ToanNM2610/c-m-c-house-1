@@ -61,10 +61,11 @@ function OrganicWireframe({ pathname }: { pathname: string }) {
       innerRef.current.rotation.z += d * 0.12;
     }
 
-    // Route-based position/scale targets
+    // Route-based position/scale targets (đồng bộ trực tiếp với quán tính Lenis trên useFrame)
     let tX = 0, tY = 0, tZ = 0;
     let tScale = 1.0;
-    const sp = scrollProgress.current;
+    const lenis = typeof window !== "undefined" ? (window as any).__lenis : null;
+    const sp = lenis && typeof lenis.progress === "number" ? lenis.progress : scrollProgress.current;
     const mx = mouse.current.x;
     const my = mouse.current.y;
 
@@ -339,7 +340,8 @@ function CameraRig({ pathname }: { pathname: string }) {
 
   useFrame((state, delta) => {
     const d = Math.min(delta, 0.05);
-    const sp = scrollProgress.current;
+    const lenis = typeof window !== "undefined" ? (window as any).__lenis : null;
+    const sp = lenis && typeof lenis.progress === "number" ? lenis.progress : scrollProgress.current;
     const lerpFactor = d * 2.0;
 
     if (pathname === "/") {
