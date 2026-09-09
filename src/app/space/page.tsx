@@ -271,26 +271,22 @@ export default function SpacePage() {
             <Compass size={12} />
             <span>{t("space.heroTag")}</span>
           </motion.span>
-          <div className="overflow-hidden pb-1">
-            <motion.h1 
-              initial={{ y: "120%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.35 }}
-              className="font-serif text-2xl md:text-3xl font-bold text-[#FDFBF7] tracking-tight drop-shadow-xl max-w-xl"
-            >
-              {t("space.heroTitle")}
-            </motion.h1>
-          </div>
-          <div className="overflow-hidden">
-            <motion.p 
-              initial={{ y: "120%", opacity: 0 }}
-              animate={{ y: "0%", opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-xs sm:text-sm font-light text-[#FDFBF7]/80 max-w-md mt-3 drop-shadow-md"
-            >
-              {t("space.heroDesc")}
-            </motion.p>
-          </div>
+          <motion.h1 
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="font-serif text-2xl md:text-3xl font-bold text-[#FDFBF7] tracking-tight drop-shadow-xl max-w-xl"
+          >
+            {t("space.heroTitle")}
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-xs sm:text-sm font-light text-[#FDFBF7]/85 max-w-md mt-3 drop-shadow-md"
+          >
+            {t("space.heroDesc")}
+          </motion.p>
         </div>
 
         {/* Carousel Controls */}
@@ -408,17 +404,15 @@ export default function SpacePage() {
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#222520] relative z-10">
         <div className="w-full space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="overflow-hidden">
-              <motion.span
-                initial={{ y: "100%", opacity: 0 }}
-                whileInView={{ y: "0%", opacity: 1 }}
-                viewport={{ once: false, amount: 0.25 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
-              >
-                {t("space.amenitiesTag")}
-              </motion.span>
-            </div>
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1, margin: "100px 0px" }}
+              transition={{ duration: 0.5 }}
+              className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
+            >
+              {t("space.amenitiesTag")}
+            </motion.span>
             <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               {t("space.amenitiesTitle")}
             </MaskHeading>

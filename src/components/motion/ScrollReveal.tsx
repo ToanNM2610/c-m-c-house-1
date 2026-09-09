@@ -7,8 +7,8 @@ import { motion, useScroll, useTransform, Variants } from "framer-motion";
 const AWWWARDS_EASE = [0.22, 1, 0.36, 1] as const;
 
 // ╔═══════════════════════════════════════════════════════════════════════════╗
-// ║  A. MẶT NẠ CHỮ CHO TIÊU ĐỀ (HEADINGS KINETIC MASK REVEAL)                 ║
-// ║     Container overflow-hidden, translateY: 100% -> 0%, viewport 2 chiều   ║
+// ║  A. TIÊU ĐỀ LỘ DIỆN AN TOÀN (SAFE HEADINGS REVEAL — NO OVERFLOW CLIPPING)  ║
+// ║     Above-the-fold dùng animate trực tiếp; In-view dùng once: true        ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 
 interface MaskHeadingProps {
@@ -20,6 +20,7 @@ interface MaskHeadingProps {
   duration?: number;
   amount?: number;
   once?: boolean;
+  isAboveFold?: boolean;
 }
 
 export function MaskHeading({
@@ -28,18 +29,39 @@ export function MaskHeading({
   className = "",
   wrapperClassName = "",
   delay = 0,
-  duration = 0.8,
-  amount = 0.25,
-  once = false,
+  duration = 0.6,
+  amount = 0.1,
+  once = true,
+  isAboveFold,
 }: MaskHeadingProps) {
   const Tag = as;
+  const isHeadOrAboveFold = isAboveFold ?? as === "h1";
+
+  if (isHeadOrAboveFold) {
+    return (
+      <div className={`relative ${wrapperClassName}`}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration,
+            delay,
+            ease: AWWWARDS_EASE,
+          }}
+          style={{ willChange: "transform, opacity" }}
+        >
+          <Tag className={className}>{children}</Tag>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`overflow-hidden pb-1 ${wrapperClassName}`}>
+    <div className={`relative ${wrapperClassName}`}>
       <motion.div
-        initial={{ y: "100%", opacity: 0 }}
-        whileInView={{ y: "0%", opacity: 1 }}
-        viewport={{ once, amount }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once, amount, margin: "100px 0px" }}
         transition={{
           duration,
           delay,
@@ -55,14 +77,14 @@ export function MaskHeading({
 
 // ╔═══════════════════════════════════════════════════════════════════════════╗
 // ║  B. HIỆU ỨNG SO LE CHO THẺ BÀI & DANH SÁCH (STAGGERED CARDS)              ║
-// ║     staggerChildren: 0.12s, y: 35px -> 0px, scale: 0.96 -> 1, hover -6px  ║
+// ║     staggerChildren: 0.1s, y: 20px -> 0px, scale: 0.98 -> 1, hover -6px   ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 
 const staggerContainerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
+      staggerChildren: 0.1,
     },
   },
 };
@@ -70,15 +92,15 @@ const staggerContainerVariants: Variants = {
 const staggerItemVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 35,
-    scale: 0.96,
+    y: 20,
+    scale: 0.98,
   },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.65,
+      duration: 0.55,
       ease: AWWWARDS_EASE,
     },
   },
@@ -94,14 +116,14 @@ interface StaggerContainerProps {
 export function StaggerContainer({
   children,
   className = "",
-  amount = 0.15,
-  once = false,
+  amount = 0.1,
+  once = true,
 }: StaggerContainerProps) {
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once, amount }}
+      viewport={{ once, amount, margin: "100px 0px" }}
       variants={staggerContainerVariants}
       className={className}
     >
@@ -147,7 +169,7 @@ export function StaggerItem({
 interface ParallaxImageProps extends Omit<ImageProps, "className"> {
   containerClassName?: string;
   imageClassName?: string;
-  speed?: number; // 0.85x speed means slight drag
+  speed?: number;
 }
 
 export function ParallaxImage({
@@ -163,11 +185,9 @@ export function ParallaxImage({
     offset: ["start end", "end start"],
   });
 
-  // Calculate subtle parallax translateY range based on speed factor
-  // Lower speed = moves slower than scroll = drifts slightly backwards
-  const offset = (1 - speed) * 160; // ~24px range
+  const offset = (1 - speed) * 120;
   const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.08, 1.04, 1.08]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.06, 1.02, 1.06]);
 
   return (
     <div
@@ -189,7 +209,7 @@ export function ParallaxImage({
 }
 
 // ╔═══════════════════════════════════════════════════════════════════════════╗
-// ║  D. FADE-UP CHUẨN ĐIỆN ẢNH CHO KHỐI NỘI DUNG                              ║
+// ║  D. FADE-UP AN TOÀN CHO KHỐI NỘI DUNG                                      ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
 
 interface FadeUpProps {
@@ -200,6 +220,7 @@ interface FadeUpProps {
   yOffset?: number;
   amount?: number;
   once?: boolean;
+  isAboveFold?: boolean;
 }
 
 export function FadeUp({
@@ -207,15 +228,34 @@ export function FadeUp({
   className = "",
   delay = 0,
   duration = 0.6,
-  yOffset = 24,
-  amount = 0.2,
-  once = false,
+  yOffset = 20,
+  amount = 0.1,
+  once = true,
+  isAboveFold = false,
 }: FadeUpProps) {
+  if (isAboveFold) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration,
+          delay,
+          ease: AWWWARDS_EASE,
+        }}
+        className={className}
+        style={{ willChange: "transform, opacity" }}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: yOffset }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, amount }}
+      viewport={{ once, amount, margin: "100px 0px" }}
       transition={{
         duration,
         delay,

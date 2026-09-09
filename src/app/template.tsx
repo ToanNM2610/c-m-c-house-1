@@ -27,18 +27,17 @@ export default function Template({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <motion.main
-      initial={{ opacity: 0, y: 18, filter: 'blur(4px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      exit={{ opacity: 0, y: -12, filter: 'blur(2px)' }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1], // Cubic-bezier chuẩn Awwwards
+        duration: 0.3,
+        ease: [0.22, 1, 0.36, 1],
       }}
-      className="relative z-10 w-full"
-      style={{ willChange: 'opacity, transform, filter' }}
+      className="relative z-10 w-full min-h-screen"
     >
       {children}
-    </motion.main>
+    </motion.div>
   );
 }

@@ -17,15 +17,6 @@ const fadeUp = {
   }),
 };
 
-const kineticReveal = {
-  hidden: { y: "120%", opacity: 0 },
-  visible: (i: number) => ({
-    y: "0%",
-    opacity: 1,
-    transition: { duration: 0.8, delay: i * 0.08 },
-  }),
-};
-
 const cardFanOut = {
   hidden: { opacity: 0, y: 50, rotateZ: -3 },
   visible: (i: number) => ({
@@ -85,28 +76,31 @@ export default function MenuPage() {
   return (
     <div className="w-full text-[#FDFBF7]">
       {/* 1. BANNER */}
-      <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center overflow-hidden border-b border-[#222520]">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="relative z-10 max-w-3xl mx-auto space-y-4"
-        >
-          <motion.span variants={kineticReveal} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
+      <section className="relative py-28 sm:py-36 px-6 sm:px-12 flex items-center justify-center text-center border-b border-[#222520]">
+        <div className="relative z-10 max-w-3xl mx-auto space-y-4">
+          <motion.span
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]"
+          >
             <Coffee size={14} />
             <span>{t("menu.heroTag")}</span>
           </motion.span>
 
-          <MaskHeading as="h1" className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
+          <MaskHeading as="h1" isAboveFold className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
             {t("menu.heroTitle")}
           </MaskHeading>
 
-          <div className="overflow-hidden">
-            <motion.p variants={kineticReveal} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
-              {t("menu.heroDesc")}
-            </motion.p>
-          </div>
-        </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed"
+          >
+            {t("menu.heroDesc")}
+          </motion.p>
+        </div>
       </section>
 
       {/* 2. STICKY CATEGORY TABS */}

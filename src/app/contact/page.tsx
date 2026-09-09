@@ -52,26 +52,31 @@ export default function ContactPage() {
     <div className="w-full text-[#FDFBF7]">
       {/* 1. HEADER BANNER */}
       <section className="relative py-28 sm:py-36 px-6 sm:px-12 text-center border-b border-[#222520]">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="max-w-4xl mx-auto space-y-6"
-        >
-          <motion.span variants={fadeUp} custom={0} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <motion.span
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]"
+          >
             <Compass size={14} />
             <span>{t("contact.heroTag")}</span>
           </motion.span>
 
-          <MaskHeading as="h1" className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
+          <MaskHeading as="h1" isAboveFold className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
             {t("contact.heroTitle1")} <br />
             <span className="text-[#C88A4B] italic">{t("contact.heroTitle2")}</span>
           </MaskHeading>
 
-          <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed">
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
+          >
             {t("contact.heroDesc")}
           </motion.p>
-        </motion.div>
+        </div>
       </section>
 
       {/* 2. CONTACT INFO 4-COLUMN CARDS (STAGGERED WITH HOVER LIFT) */}

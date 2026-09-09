@@ -14,19 +14,6 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import { StaggerContainer, StaggerItem, MaskHeading } from "@/components/motion/ScrollReveal";
 
-const kineticReveal = {
-  hidden: { y: "100%", opacity: 0 },
-  visible: (i: number) => ({
-    y: "0%",
-    opacity: 1,
-    transition: {
-      duration: 0.8,
-      delay: i * 0.08,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-};
-
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (i: number) => ({
@@ -143,17 +130,15 @@ export default function HomePage() {
 
         {/* Nội dung tiêu chuẩn (1.0x) */}
         <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={stagger}
           style={{ scale: heroScale, opacity: heroOpacity }}
           className="relative z-10 max-w-5xl mx-auto w-full text-center space-y-8"
         >
           {/* Badge tiền cảnh nổi bật (1.25x) */}
           <motion.div style={{ y: heroFgParallax }}>
             <motion.div
-              variants={kineticReveal}
-              custom={0}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17]/80 border border-[#222520] text-xs font-mono font-medium text-[#C88A4B]"
             >
               <Sparkles size={14} />
@@ -161,32 +146,31 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* Kinetic Mask Reveal: H1 trượt từ dưới lên qua overflow-hidden */}
-          <div className="overflow-hidden pb-2">
-            <motion.h1
-              variants={kineticReveal}
-              custom={1}
-              className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.06]"
-            >
-              {t("home.title")}
-            </motion.h1>
-          </div>
+          {/* Hero Main Heading: Always visible & prominent */}
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.08] relative z-10"
+          >
+            {t("home.title")}
+          </motion.h1>
 
-          {/* Kinetic Mask Reveal: P trượt từ dưới lên qua overflow-hidden */}
-          <div className="overflow-hidden">
-            <motion.p
-              variants={kineticReveal}
-              custom={2}
-              className="text-base sm:text-xl font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
-            >
-              {t("home.subtitle")}
-            </motion.p>
-          </div>
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="text-base sm:text-xl font-light text-[#FDFBF7]/85 max-w-2xl mx-auto leading-relaxed relative z-10"
+          >
+            {t("home.subtitle")}
+          </motion.p>
 
           {/* CTA Buttons tiền cảnh (1.25x) */}
           <motion.div
-            variants={kineticReveal}
-            custom={3}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
             className="pt-4 flex flex-wrap items-center justify-center gap-4"
           >
             <Link
@@ -217,40 +201,30 @@ export default function HomePage() {
           className="absolute -top-10 left-1/4 w-[45vw] h-[45vw] rounded-full bg-[#2D4A3E]/15 blur-[120px] pointer-events-none z-0"
         />
 
-        {/* Section Header: Kinetic Mask Reveal */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.25 }}
-          variants={stagger}
-          className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14 relative z-10"
-        >
+        {/* Section Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14 relative z-10">
           <div className="space-y-2">
-            <div className="overflow-hidden">
-              <motion.span
-                variants={kineticReveal}
-                custom={0}
-                className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
-              >
-                {t("home.experienceTag")}
-              </motion.span>
-            </div>
-            <div className="overflow-hidden pb-1">
-              <motion.h2
-                variants={kineticReveal}
-                custom={1}
-                className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]"
-              >
-                {t("home.experienceTitle")}
-              </motion.h2>
-            </div>
+            <motion.span
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1, margin: "100px 0px" }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
+            >
+              {t("home.experienceTag")}
+            </motion.span>
+            <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
+              {t("home.experienceTitle")}
+            </MaskHeading>
           </div>
 
           {/* Tiền cảnh trôi nhanh hơn (1.25x) */}
           <motion.div
             style={{ y: expFgParallax }}
-            variants={fadeUp}
-            custom={2}
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1, margin: "100px 0px" }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <Link
               href="/space"
@@ -260,7 +234,7 @@ export default function HomePage() {
               <ArrowRight size={14} />
             </Link>
           </motion.div>
-        </motion.div>
+        </div>
 
         {/* 3 THẺ TRẢI NGHIỆM ĐẮK NÔNG (STAGGERED REVEAL & HOVER LIFT) */}
         <StaggerContainer
@@ -323,42 +297,30 @@ export default function HomePage() {
           className="absolute top-1/4 -right-10 w-[50vw] h-[50vw] rounded-full bg-[#C88A4B]/10 blur-[130px] pointer-events-none z-0"
         />
 
-        {/* Section Header: Kinetic Mask Reveal */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.25 }}
-          variants={stagger}
-          className="text-center max-w-2xl mx-auto space-y-3 mb-14 relative z-10"
-        >
-          <div className="overflow-hidden">
-            <motion.span
-              variants={kineticReveal}
-              custom={0}
-              className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
-            >
-              {t("home.signatureTag")}
-            </motion.span>
-          </div>
-          <div className="overflow-hidden pb-2">
-            <motion.h2
-              variants={kineticReveal}
-              custom={1}
-              className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]"
-            >
-              {t("home.signatureTitle")}
-            </motion.h2>
-          </div>
-          <div className="overflow-hidden">
-            <motion.p
-              variants={kineticReveal}
-              custom={2}
-              className="text-xs sm:text-sm font-light text-[#FDFBF7]/70"
-            >
-              {t("home.signatureDesc")}
-            </motion.p>
-          </div>
-        </motion.div>
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto space-y-3 mb-14 relative z-10">
+          <motion.span
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1, margin: "100px 0px" }}
+            transition={{ duration: 0.5 }}
+            className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
+          >
+            {t("home.signatureTag")}
+          </motion.span>
+          <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#FDFBF7]">
+            {t("home.signatureTitle")}
+          </MaskHeading>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1, margin: "100px 0px" }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="text-xs sm:text-sm font-light text-[#FDFBF7]/70"
+          >
+            {t("home.signatureDesc")}
+          </motion.p>
+        </div>
 
         {/* Thẻ món đặc trưng: StaggerContainer & StaggerItem */}
         <StaggerContainer
@@ -430,32 +392,22 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* ── 4. REVIEWS (KINETIC MASK REVEAL) ── */}
+      {/* ── 4. REVIEWS ── */}
       <section className="py-24 px-6 sm:px-12 max-w-4xl mx-auto relative z-10 border-t border-[#222520]">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }}
-          variants={stagger}
-          className="space-y-8 text-center"
-        >
-          <div className="overflow-hidden">
+        <div className="space-y-8 text-center">
+          <div className="space-y-2">
             <motion.span
-              variants={kineticReveal}
-              custom={0}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1, margin: "100px 0px" }}
+              transition={{ duration: 0.5 }}
               className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
             >
               {t("home.reviewTag")}
             </motion.span>
-          </div>
-          <div className="overflow-hidden pb-1">
-            <motion.h2
-              variants={kineticReveal}
-              custom={1}
-              className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]"
-            >
+            <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               {t("home.reviewTitle")}
-            </motion.h2>
+            </MaskHeading>
           </div>
 
           <motion.div
@@ -505,7 +457,7 @@ export default function HomePage() {
               </button>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );
