@@ -20,6 +20,7 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import { SpaceCategory, SpacePhoto } from "@/data/spaces";
 import { useGallery } from "@/hooks/useGallery";
+import { MaskHeading, StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -406,40 +407,36 @@ export default function SpacePage() {
       {/* 4. AMENITIES */}
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-[#222520] relative z-10">
         <div className="w-full space-y-12">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={staggerContainer}
-            className="text-center max-w-2xl mx-auto space-y-3"
-          >
-            <motion.span variants={fadeUp} custom={0} className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block">
-              {t("space.amenitiesTag")}
-            </motion.span>
-            <motion.h2 variants={fadeUp} custom={1} className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="overflow-hidden">
+              <motion.span
+                initial={{ y: "100%", opacity: 0 }}
+                whileInView={{ y: "0%", opacity: 1 }}
+                viewport={{ once: false, amount: 0.25 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold block"
+              >
+                {t("space.amenitiesTag")}
+              </motion.span>
+            </div>
+            <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               {t("space.amenitiesTitle")}
-            </motion.h2>
-            <motion.p variants={fadeUp} custom={2} className="text-sm font-light text-[#FDFBF7]/70">
+            </MaskHeading>
+            <p className="text-sm font-light text-[#FDFBF7]/70">
               {t("space.amenitiesDesc")}
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.15 }}
-            variants={staggerContainer}
+          <StaggerContainer
+            amount={0.15}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {[1, 2, 3, 4].map((n, idx) => {
-              const icons = [Wifi, Briefcase, Car, Trees];
               const emojis = ["📶", "🔌", "🅿️", "🌳"];
               return (
-                <motion.div
+                <StaggerItem
                   key={idx}
-                  variants={cardFanOut}
-                  custom={idx}
-                  className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500"
+                  className="card-dark p-6 rounded-3xl text-center flex flex-col items-center justify-center space-y-3 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer"
                 >
                   <div className="w-14 h-14 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                     <span>{emojis[idx]}</span>
@@ -450,10 +447,10 @@ export default function SpacePage() {
                   <p className="text-xs font-light text-[#FDFBF7]/70 leading-relaxed">
                     {t(`space.am${n}Desc`)}
                   </p>
-                </motion.div>
+                </StaggerItem>
               );
             })}
-          </motion.div>
+          </StaggerContainer>
         </div>
       </section>
 

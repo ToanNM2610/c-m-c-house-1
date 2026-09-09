@@ -8,8 +8,6 @@ import Footer from "@/components/layout/Footer";
 import SecurityShield from "@/components/ui/SecurityShield";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { Analytics } from "@vercel/analytics/next";
-import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
-
 import GlobalCanvas from "@/components/canvas/GlobalCanvas";
 import UltraIntro from "@/components/intro/UltraIntro";
 
@@ -111,9 +109,9 @@ export default function RootLayout({
           <LanguageProvider>
             <SmoothScroll>
               <Header />
-              <main className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
-                <PageTransitionProvider>{children}</PageTransitionProvider>
-              </main>
+              <div className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
+                {children}
+              </div>
               <Footer />
             </SmoothScroll>
           </LanguageProvider>

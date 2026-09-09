@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { MaskHeading, StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -62,10 +63,10 @@ export default function ContactPage() {
             <span>{t("contact.heroTag")}</span>
           </motion.span>
 
-          <motion.h1 variants={fadeUp} custom={1} className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
+          <MaskHeading as="h1" className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
             {t("contact.heroTitle1")} <br />
             <span className="text-[#C88A4B] italic">{t("contact.heroTitle2")}</span>
-          </motion.h1>
+          </MaskHeading>
 
           <motion.p variants={fadeUp} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed">
             {t("contact.heroDesc")}
@@ -73,17 +74,14 @@ export default function ContactPage() {
         </motion.div>
       </section>
 
-      {/* 2. CONTACT INFO 4-COLUMN CARDS */}
+      {/* 2. CONTACT INFO 4-COLUMN CARDS (STAGGERED WITH HOVER LIFT) */}
       <section className="py-20 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
+        <StaggerContainer
+          amount={0.15}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {/* ADDRESS */}
-          <motion.div variants={fadeUp} custom={0} className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 hover:border-[#C88A4B] transition-colors">
+          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>📍</span>
@@ -104,10 +102,10 @@ export default function ContactPage() {
               <span>{t("contact.addressLink")}</span>
               <ArrowUpRight size={14} />
             </a>
-          </motion.div>
+          </StaggerItem>
 
           {/* HOTLINE */}
-          <motion.div variants={fadeUp} custom={1} className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 hover:border-[#C88A4B] transition-colors">
+          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>📞</span>
@@ -143,10 +141,10 @@ export default function ContactPage() {
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
               {t("contact.hotlineSub")}
             </p>
-          </motion.div>
+          </StaggerItem>
 
           {/* HOURS */}
-          <motion.div variants={fadeUp} custom={2} className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 hover:border-[#C88A4B] transition-colors">
+          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>⏰</span>
@@ -168,10 +166,10 @@ export default function ContactPage() {
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
               {t("contact.hoursSub")}
             </p>
-          </motion.div>
+          </StaggerItem>
 
           {/* CHANNELS */}
-          <motion.div variants={fadeUp} custom={3} className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 hover:border-[#C88A4B] transition-colors">
+          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>💬</span>
@@ -218,8 +216,8 @@ export default function ContactPage() {
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
               {t("contact.channelSub")}
             </p>
-          </motion.div>
-        </motion.div>
+          </StaggerItem>
+        </StaggerContainer>
       </section>
 
       {/* 3. GOOGLE MAPS */}

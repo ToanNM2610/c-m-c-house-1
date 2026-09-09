@@ -12,6 +12,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { StaggerContainer, StaggerItem, MaskHeading } from "@/components/motion/ScrollReveal";
 
 const kineticReveal = {
   hidden: { y: "100%", opacity: 0 },
@@ -261,27 +262,16 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
 
-        {/* 3 THẺ TRẢI NGHIỆM ĐẮK NÔNG: XÒE THẺ 3D KHI CUỘN TỚI (FAN-OUT) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+        {/* 3 THẺ TRẢI NGHIỆM ĐẮK NÔNG (STAGGERED REVEAL & HOVER LIFT) */}
+        <StaggerContainer
+          amount={0.15}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10"
+        >
           {EXP_KEYS.map((exp, idx) => {
-            // Gán giá trị cuộn thị sai & góc xoay 3D theo đúng kịch bản:
-            // Thẻ 1 (-2deg), Thẻ 2 (0deg), Thẻ 3 (2deg) rồi duỗi phẳng cân bằng khi cuộn tiếp
-            const fanStyle =
-              idx === 0
-                ? { rotateZ: card1Rotate, x: card1X, y: card1Y }
-                : idx === 1
-                ? { rotateZ: card2Rotate, y: card2Y }
-                : { rotateZ: card3Rotate, x: card3X, y: card3Y };
-
             return (
-              <motion.div
+              <StaggerItem
                 key={idx}
-                style={fanStyle}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
-                transition={{ duration: 0.7, delay: idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="card-dark overflow-hidden flex flex-col group p-2 hover:border-[#C88A4B] hover:shadow-[0_0_25px_rgba(200,138,75,0.2)] transition-all duration-500 will-change-transform"
+                className="card-dark overflow-hidden flex flex-col group p-2 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_25px_rgba(200,138,75,0.25)] transition-all duration-500 will-change-transform cursor-pointer rounded-3xl"
               >
                 <div className="relative w-full h-52 sm:h-60 overflow-hidden rounded-2xl bg-[#1A1D17]">
                   <Image
@@ -316,10 +306,10 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </section>
 
       {/* ── 3. FEATURED SIGNATURES (MULTI-PLANE PARALLAX & KINETIC REVEAL) ── */}
@@ -370,22 +360,17 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* Thẻ món đặc trưng */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={stagger}
+        {/* Thẻ món đặc trưng: StaggerContainer & StaggerItem */}
+        <StaggerContainer
+          amount={0.1}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10"
         >
-          {FEATURED_IDS.map(({ id, price, image }, idx) => {
+          {FEATURED_IDS.map(({ id, price, image }) => {
             const item = tMenuItem(id);
             return (
-              <motion.div
+              <StaggerItem
                 key={id}
-                variants={fadeUp}
-                custom={idx}
-                className="card-dark p-4 flex flex-col group overflow-hidden hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500"
+                className="card-dark p-4 flex flex-col group overflow-hidden border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 rounded-2xl"
               >
                 <div className="relative aspect-square w-full rounded-xl overflow-hidden mb-3 bg-[#1A1D17]">
                   <Image
@@ -420,10 +405,10 @@ export default function HomePage() {
                     </Link>
                   </div>
                 </div>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </motion.div>
+        </StaggerContainer>
 
         {/* CTA Button tiền cảnh trôi nhanh (1.25x) */}
         <motion.div

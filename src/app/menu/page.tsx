@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Coffee, CheckCircle2, Leaf, HeartHandshake } from "lucide-react";
 import { REAL_MENU_DATA } from "@/data/menu";
 import { useLanguage } from "@/context/LanguageContext";
+import { MaskHeading, StaggerContainer, StaggerItem } from "@/components/motion/ScrollReveal";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -96,11 +97,9 @@ export default function MenuPage() {
             <span>{t("menu.heroTag")}</span>
           </motion.span>
 
-          <div className="overflow-hidden pb-2">
-            <motion.h1 variants={kineticReveal} custom={1} className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
-              {t("menu.heroTitle")}
-            </motion.h1>
-          </div>
+          <MaskHeading as="h1" className="font-serif text-4xl sm:text-6xl font-bold text-[#FDFBF7] tracking-tight">
+            {t("menu.heroTitle")}
+          </MaskHeading>
 
           <div className="overflow-hidden">
             <motion.p variants={kineticReveal} custom={2} className="text-base sm:text-lg font-light text-[#FDFBF7]/80 leading-relaxed">
@@ -129,28 +128,24 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* 3. MENU GRID */}
+      {/* 3. MENU GRID (STAGGERED CARDS VỚI HOVER LIFT & GLOW) */}
       <section className="pb-24 pt-8 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <div className="mb-6 text-xs text-[#FDFBF7]/60 font-mono">
           {t("menu.showing")} {filteredItems.length} {t("menu.itemsIn")}{" "}
           <strong className="text-[#C88A4B]">{t(CAT_KEYS_MAP[activeCategory])}</strong>
         </div>
 
-        <motion.div
+        <StaggerContainer
           key={activeCategory}
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
+          amount={0.08}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
-          {filteredItems.map((item, idx) => {
+          {filteredItems.map((item) => {
             const trItem = tMenuItem(item.id);
             return (
-              <motion.div
+              <StaggerItem
                 key={item.id}
-                variants={cardFanOut}
-                custom={idx}
-                className="card-dark overflow-hidden flex flex-col p-4 group hover:border-[#C88A4B] hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500"
+                className="card-dark overflow-hidden flex flex-col p-4 group border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 rounded-2xl cursor-pointer"
               >
                 <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-3.5 bg-[#1A1D17]">
                   <Image
@@ -199,10 +194,10 @@ export default function MenuPage() {
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </motion.div>
+        </StaggerContainer>
       </section>
 
       {/* 4. SPECIAL NOTES FOOTER */}
