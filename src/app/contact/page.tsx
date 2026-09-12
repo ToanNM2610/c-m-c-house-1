@@ -56,14 +56,16 @@ export default function ContactPage() {
           <motion.span
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            style={{ transform: "translate3d(0,0,0)" }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]"
           >
             <Compass size={14} />
             <span>{t("contact.heroTag")}</span>
           </motion.span>
 
-          <MaskHeading as="h1" isAboveFold className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
+          {/* Tiêu đề "TỪ GIA NGHĨA, TÔI CHỜ ĐÓN BẠN" xuất hiện trước tiên dứt khoát */}
+          <MaskHeading as="h1" isAboveFold delay={0.1} className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
             {t("contact.heroTitle1")} <br />
             <span className="text-[#C88A4B] italic">{t("contact.heroTitle2")}</span>
           </MaskHeading>
@@ -71,7 +73,8 @@ export default function ContactPage() {
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            style={{ transform: "translate3d(0,0,0)" }}
             className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
           >
             {t("contact.heroDesc")}
@@ -79,14 +82,19 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* 2. CONTACT INFO 4-COLUMN CARDS (STAGGERED WITH HOVER LIFT) */}
+      {/* 2. CONTACT INFO 4-COLUMN CARDS (STAGGERED TỪ TRÁI SANG PHẢI VỚI HOVER LIFT) */}
       <section className="py-20 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
-        <StaggerContainer
-          amount={0.15}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {/* ADDRESS */}
-          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* ADDRESS - Card 1 (Delay: 0s) */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15, margin: "0px 0px -40px 0px" }}
+            transition={{ duration: 0.6, delay: 0.05, ease: [0.25, 1, 0.5, 1] }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-colors duration-300 cursor-pointer"
+          >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>📍</span>
@@ -107,10 +115,18 @@ export default function ContactPage() {
               <span>{t("contact.addressLink")}</span>
               <ArrowUpRight size={14} />
             </a>
-          </StaggerItem>
+          </motion.div>
 
-          {/* HOTLINE */}
-          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
+          {/* HOTLINE - Card 2 (Delay: 0.12s) */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15, margin: "0px 0px -40px 0px" }}
+            transition={{ duration: 0.6, delay: 0.17, ease: [0.25, 1, 0.5, 1] }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-colors duration-300 cursor-pointer"
+          >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>📞</span>
@@ -146,10 +162,18 @@ export default function ContactPage() {
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
               {t("contact.hotlineSub")}
             </p>
-          </StaggerItem>
+          </motion.div>
 
-          {/* HOURS */}
-          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
+          {/* HOURS - Card 3 (Delay: 0.24s) */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15, margin: "0px 0px -40px 0px" }}
+            transition={{ duration: 0.6, delay: 0.29, ease: [0.25, 1, 0.5, 1] }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-colors duration-300 cursor-pointer"
+          >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>⏰</span>
@@ -171,10 +195,18 @@ export default function ContactPage() {
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
               {t("contact.hoursSub")}
             </p>
-          </StaggerItem>
+          </motion.div>
 
-          {/* CHANNELS */}
-          <StaggerItem className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 cursor-pointer">
+          {/* CHANNELS - Card 4 (Delay: 0.36s) */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15, margin: "0px 0px -40px 0px" }}
+            transition={{ duration: 0.6, delay: 0.41, ease: [0.25, 1, 0.5, 1] }}
+            whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="card-dark p-7 rounded-3xl flex flex-col justify-between space-y-4 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-colors duration-300 cursor-pointer"
+          >
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-[#1A1D17] border border-[#222520] flex items-center justify-center text-2xl">
                 <span>💬</span>
@@ -221,17 +253,18 @@ export default function ContactPage() {
             <p className="text-[11px] text-[#C88A4B] border-t border-[#222520] pt-2 font-mono">
               {t("contact.channelSub")}
             </p>
-          </StaggerItem>
-        </StaggerContainer>
+          </motion.div>
+        </div>
       </section>
 
-      {/* 3. GOOGLE MAPS */}
+      {/* 3. GOOGLE MAPS (STAGGERED TỪ TRÁI SANG PHẢI SAU CÁC THẺ) */}
       <section className="w-full relative z-10 bg-transparent">
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
+          style={{ transform: "translate3d(0,0,0)" }}
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <div className="space-y-1 text-center md:text-left">
@@ -258,7 +291,14 @@ export default function ContactPage() {
           </a>
         </motion.div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.7, delay: 0.25, ease: [0.25, 1, 0.5, 1] }}
+          style={{ transform: "translate3d(0,0,0)" }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20"
+        >
           <div className="relative h-[480px] md:h-[550px] rounded-3xl overflow-hidden border border-[#C88A4B]/30 shadow-2xl bg-[#141414]">
             <iframe 
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1200.6261312794074!2d107.70356040042196!3d11.975345505572026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3173c7ccbd4cd55f%3A0x932e986e061ca415!2zQ-G6qW0gQ8O5IEhvdXNl!5e1!3m2!1svi!2s!4v1788865264158!5m2!1svi!2s" 
@@ -268,7 +308,7 @@ export default function ContactPage() {
               referrerPolicy="strict-origin-when-cross-origin"
             />
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* 4. ENTRANCE & PARKING */}

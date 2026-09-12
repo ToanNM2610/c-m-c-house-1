@@ -146,11 +146,12 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* Hero Main Heading: Always visible & prominent */}
+          {/* Hero Main Heading: Always visible & prominent with 0.1s crisp delay */}
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
             className="font-serif text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-[#FDFBF7] leading-[1.08] relative z-10"
           >
             {t("home.title")}
@@ -160,7 +161,8 @@ export default function HomePage() {
           <motion.p
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
             className="text-base sm:text-xl font-light text-[#FDFBF7]/85 max-w-2xl mx-auto leading-relaxed relative z-10"
           >
             {t("home.subtitle")}
@@ -170,7 +172,8 @@ export default function HomePage() {
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            style={{ transform: "translate3d(0,0,0)" }}
             className="pt-4 flex flex-wrap items-center justify-center gap-4"
           >
             <Link
@@ -236,16 +239,26 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        {/* 3 THẺ TRẢI NGHIỆM ĐẮK NÔNG (STAGGERED REVEAL & HOVER LIFT) */}
-        <StaggerContainer
-          amount={0.15}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10"
-        >
+        {/* 3 THẺ TRẢI NGHIỆM ĐẮK NÔNG (STAGGERED REVEAL & HOVER LIFT & GLOW) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
           {EXP_KEYS.map((exp, idx) => {
             return (
-              <StaggerItem
+              <motion.div
                 key={idx}
-                className="card-dark overflow-hidden flex flex-col group p-2 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_25px_rgba(200,138,75,0.25)] transition-all duration-500 will-change-transform cursor-pointer rounded-3xl"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15, margin: "0px 0px -40px 0px" }}
+                transition={{
+                  duration: 0.65,
+                  delay: idx * 0.12, // Stagger 0s - 0.12s - 0.24s
+                  ease: [0.25, 1, 0.5, 1],
+                }}
+                whileHover={{
+                  y: -6,
+                  transition: { duration: 0.25, ease: "easeOut" },
+                }}
+                style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+                className="card-dark overflow-hidden flex flex-col group p-2 border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_25px_rgba(200,138,75,0.25)] transition-all duration-500 cursor-pointer rounded-3xl"
               >
                 <div className="relative w-full h-52 sm:h-60 overflow-hidden rounded-2xl bg-[#1A1D17]">
                   <Image
@@ -280,10 +293,10 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-              </StaggerItem>
+              </motion.div>
             );
           })}
-        </StaggerContainer>
+        </div>
       </section>
 
       {/* ── 3. FEATURED SIGNATURES (MULTI-PLANE PARALLAX & KINETIC REVEAL) ── */}

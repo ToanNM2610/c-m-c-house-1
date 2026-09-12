@@ -104,8 +104,14 @@ export default function MenuPage() {
       </section>
 
       {/* 2. STICKY CATEGORY TABS */}
-      <section className="py-6 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center sticky top-20 z-30 bg-[#0C0D0B]/95 border-b border-[#222520]/50">
-        <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520] max-w-full overflow-x-auto scrollbar-hide">
+      <section className="py-6 px-6 sm:px-12 max-w-7xl mx-auto flex justify-center sticky top-20 z-30 bg-[#0C0D0B]/95 border-b border-[#222520]/50 backdrop-blur-md">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          style={{ transform: "translate3d(0,0,0)" }}
+          className="flex flex-wrap items-center justify-center gap-2 p-1.5 rounded-full bg-[#1A1D17] border border-[#222520] max-w-full overflow-x-auto scrollbar-hide"
+        >
           {CATEGORY_TABS.map((tab) => (
             <button
               key={tab}
@@ -119,33 +125,46 @@ export default function MenuPage() {
               {t(CAT_KEYS_MAP[tab])}
             </button>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* 3. MENU GRID (STAGGERED CARDS VỚI HOVER LIFT & GLOW) */}
+      {/* 3. MENU GRID (STAGGERED 4-COLUMN CARDS VỚI HOVER LIFT -4PX & GLOW) */}
       <section className="pb-24 pt-8 px-6 sm:px-12 max-w-7xl mx-auto relative z-10">
         <div className="mb-6 text-xs text-[#FDFBF7]/60 font-mono">
           {t("menu.showing")} {filteredItems.length} {t("menu.itemsIn")}{" "}
           <strong className="text-[#C88A4B]">{t(CAT_KEYS_MAP[activeCategory])}</strong>
         </div>
 
-        <StaggerContainer
+        <div
           key={activeCategory}
-          amount={0.08}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
-          {filteredItems.map((item) => {
+          {filteredItems.map((item, idx) => {
             const trItem = tMenuItem(item.id);
             return (
-              <StaggerItem
+              <motion.div
                 key={item.id}
-                className="card-dark overflow-hidden flex flex-col p-4 group border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-all duration-500 rounded-2xl cursor-pointer"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1, margin: "0px 0px -40px 0px" }}
+                transition={{
+                  duration: 0.55,
+                  delay: (idx % 4) * 0.08, // Nhịp nhàng theo từng hàng 4 cột
+                  ease: [0.25, 1, 0.5, 1],
+                }}
+                whileHover={{
+                  y: -4, // Nhấc thẻ -4px siêu êm
+                  transition: { duration: 0.25, ease: "easeOut" },
+                }}
+                style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+                className="card-dark overflow-hidden flex flex-col p-4 group border border-white/5 hover:border-[#C88A4B]/40 hover:shadow-[0_0_20px_rgba(200,138,75,0.15)] transition-colors duration-300 rounded-2xl cursor-pointer"
               >
                 <div className="relative aspect-square w-full rounded-2xl overflow-hidden mb-3.5 bg-[#1A1D17]">
                   <Image
                     src={item.image}
                     alt={trItem.name}
                     fill
+                    loading="lazy"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                   />
@@ -188,10 +207,10 @@ export default function MenuPage() {
                     </span>
                   </div>
                 </div>
-              </StaggerItem>
+              </motion.div>
             );
           })}
-        </StaggerContainer>
+        </div>
       </section>
 
       {/* 4. SPECIAL NOTES FOOTER */}

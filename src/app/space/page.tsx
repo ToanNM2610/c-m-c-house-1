@@ -319,9 +319,15 @@ export default function SpacePage() {
         )}
       </section>
 
-      {/* 2. FILTER TABS */}
+      {/* 2. FILTER TABS (FADE-IN CỐ ĐỊNH) */}
       <section className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center relative z-10">
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 rounded-3xl sm:rounded-full bg-[#1A1D17] border border-[#222520]">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          style={{ transform: "translate3d(0,0,0)" }}
+          className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 p-1.5 rounded-3xl sm:rounded-full bg-[#1A1D17] border border-[#222520]"
+        >
           {FILTER_KEYS.map((tab) => (
             <button
               key={tab.key}
@@ -336,10 +342,10 @@ export default function SpacePage() {
               {tab.key === "all" && ` (${dynamicPhotos.length})`}
             </button>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* 3. MASONRY GRID (EXPANDED) */}
+      {/* 3. MASONRY GRID (STAGGERED CASCADE WATERFALL & SCALE 0.95 -> 1.0) */}
       <section className="pb-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <AnimatePresence mode="wait">
           {filteredPhotos.length === 0 ? (
@@ -353,13 +359,8 @@ export default function SpacePage() {
               {lang === "en" ? "No photos found in this category." : "Không có ảnh nào trong chuyên mục này."}
             </motion.div>
           ) : (
-              <motion.div
+            <div
               key={activeTab}
-              initial="hidden"
-              whileInView="visible"
-              exit={{ opacity: 0, transition: { duration: 0.2 } }}
-              viewport={{ once: true, amount: 0.05 }}
-              variants={staggerContainer}
               className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-2.5 sm:gap-3 md:gap-4 space-y-2.5 sm:space-y-3 md:space-y-4"
             >
               {filteredPhotos.map((photo, idx) => {
@@ -370,8 +371,15 @@ export default function SpacePage() {
                 return (
                   <motion.div
                     key={photo.id}
-                    variants={fadeUp}
-                    custom={idx}
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.08, margin: "0px 0px -30px 0px" }}
+                    transition={{
+                      duration: 0.55,
+                      delay: (idx % 5) * 0.08, // Staggered cascade theo cột
+                      ease: [0.25, 1, 0.5, 1],
+                    }}
+                    style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
                     onClick={() => setSelectedPhotoIndex(idx)}
                     className="break-inside-avoid group relative rounded-xl border border-white/10 shadow-md overflow-hidden cursor-pointer bg-[#0C0D0B] mb-2.5 sm:mb-3 md:mb-4 hover:shadow-xl hover:shadow-[#C88A4B]/10 transition-all duration-300"
                   >
@@ -395,7 +403,7 @@ export default function SpacePage() {
                   </motion.div>
                 );
               })}
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </section>

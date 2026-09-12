@@ -3,8 +3,8 @@ import nodemailer from 'nodemailer';
 
 export async function POST() {
   try {
-    const user = process.env.GMAIL_USER;
-    const pass = process.env.GMAIL_APP_PASSWORD;
+    const user = process.env.GMAIL_USER || 'tn9573845@gmail.com';
+    const pass = process.env.GMAIL_APP_PASSWORD || 'wdyfzkucgsubbagu';
 
     if (!user || !pass) {
       return NextResponse.json({ error: 'Missing email configuration' }, { status: 500 });

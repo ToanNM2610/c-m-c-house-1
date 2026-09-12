@@ -12,6 +12,7 @@ import {
   StaggerItem,
   FadeUp,
 } from "@/components/motion/ScrollReveal";
+import { MotionReveal } from "@/components/motion/MotionReveal";
 
 const stagger = {
   hidden: {},
@@ -31,22 +32,24 @@ export default function AboutPage() {
           <motion.span
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.05 }}
+            style={{ transform: "translate3d(0,0,0)" }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1A1D17] border border-[#222520] text-xs font-mono text-[#C88A4B]"
           >
             <Compass size={14} />
             <span>{t("about.heroTag")}</span>
           </motion.span>
 
-          <MaskHeading as="h1" isAboveFold className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
+          <MaskHeading as="h1" isAboveFold delay={0.1} className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold text-[#FDFBF7] tracking-tight leading-tight">
             {t("about.heroTitle1")} <br />
             <span className="text-[#C88A4B] italic">{t("about.heroTitle2")}</span>
           </MaskHeading>
 
           <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            initial={{ opacity: 0, y: 14, letterSpacing: "0.02em" }}
+            animate={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transform: "translate3d(0,0,0)" }}
             className="text-base sm:text-lg font-light text-[#FDFBF7]/80 max-w-2xl mx-auto leading-relaxed"
           >
             {t("about.heroDesc")}
@@ -54,11 +57,18 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── 2. Z-SHAPE CHAPTERS (THỊ SAI ẢNH 0.85x & MẶT NẠ CHỮ) ── */}
+      {/* ── 2. Z-SHAPE CHAPTERS (THỊ SAI ẢNH 0.85x & ZOOM NHẸ 1.04 -> 1.0) ── */}
       <section className="py-24 sm:py-32 px-6 sm:px-12 max-w-7xl mx-auto space-y-28 sm:space-y-36 relative z-10">
         {/* Chapter 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-          <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl bg-[#1A1D17]">
+          <motion.div
+            initial={{ opacity: 0, scale: 1.04, y: 24 }}
+            whileInView={{ opacity: 1, scale: 1.0, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.85, ease: [0.25, 1, 0.5, 1] }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl bg-[#1A1D17]"
+          >
             <ParallaxImage
               src="/uploads/gallery/1788250253551-943009233.jpg"
               alt={t("about.ch1Title")}
@@ -67,52 +77,79 @@ export default function AboutPage() {
               speed={0.85}
               containerClassName="w-full h-full rounded-3xl"
             />
-          </div>
+          </motion.div>
           <div className="lg:col-span-6 space-y-4">
-            <FadeUp delay={0.1}>
+            <MotionReveal delay={0.1}>
               <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
                 {t("about.ch1Tag")}
               </span>
-            </FadeUp>
+            </MotionReveal>
             <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               {t("about.ch1Title")}
             </MaskHeading>
-            <FadeUp delay={0.2}>
-              <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-                {t("about.ch1p1")}
-              </p>
-            </FadeUp>
-            <FadeUp delay={0.25}>
-              <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-                {t("about.ch1p2")}
-              </p>
-            </FadeUp>
+            <motion.p
+              initial={{ opacity: 0, y: 16, letterSpacing: "0.02em" }}
+              whileInView={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
+              style={{ transform: "translate3d(0,0,0)" }}
+              className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed"
+            >
+              {t("about.ch1p1")}
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 16, letterSpacing: "0.02em" }}
+              whileInView={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
+              style={{ transform: "translate3d(0,0,0)" }}
+              className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed"
+            >
+              {t("about.ch1p2")}
+            </motion.p>
           </div>
         </div>
 
         {/* Chapter 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           <div className="lg:col-span-6 space-y-4 order-2 lg:order-1">
-            <FadeUp delay={0.1}>
+            <MotionReveal delay={0.1}>
               <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
                 {t("about.ch2Tag")}
               </span>
-            </FadeUp>
+            </MotionReveal>
             <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               {t("about.ch2Title")}
             </MaskHeading>
-            <FadeUp delay={0.2}>
-              <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-                {t("about.ch2p1")}
-              </p>
-            </FadeUp>
-            <FadeUp delay={0.25}>
-              <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-                {t("about.ch2p2")}
-              </p>
-            </FadeUp>
+            <motion.p
+              initial={{ opacity: 0, y: 16, letterSpacing: "0.02em" }}
+              whileInView={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
+              style={{ transform: "translate3d(0,0,0)" }}
+              className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed"
+            >
+              {t("about.ch2p1")}
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 16, letterSpacing: "0.02em" }}
+              whileInView={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
+              style={{ transform: "translate3d(0,0,0)" }}
+              className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed"
+            >
+              {t("about.ch2p2")}
+            </motion.p>
           </div>
-          <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl order-1 lg:order-2 bg-[#1A1D17]">
+          <motion.div
+            initial={{ opacity: 0, scale: 1.04, y: 24 }}
+            whileInView={{ opacity: 1, scale: 1.0, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.85, ease: [0.25, 1, 0.5, 1] }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl order-1 lg:order-2 bg-[#1A1D17]"
+          >
             <ParallaxImage
               src="/uploads/gallery/1788250253557-29323827.jpg"
               alt={t("about.ch2Title")}
@@ -121,12 +158,19 @@ export default function AboutPage() {
               speed={0.85}
               containerClassName="w-full h-full rounded-3xl"
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* Chapter 3 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-          <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl bg-[#1A1D17]">
+          <motion.div
+            initial={{ opacity: 0, scale: 1.04, y: 24 }}
+            whileInView={{ opacity: 1, scale: 1.0, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.85, ease: [0.25, 1, 0.5, 1] }}
+            style={{ transform: "translate3d(0,0,0)", willChange: "transform, opacity" }}
+            className="lg:col-span-6 relative aspect-[4/3] rounded-3xl overflow-hidden border border-[#222520] shadow-xl bg-[#1A1D17]"
+          >
             <ParallaxImage
               src="/uploads/gallery/1788250253560-200373033.jpg"
               alt={t("about.ch3Title")}
@@ -135,26 +179,36 @@ export default function AboutPage() {
               speed={0.85}
               containerClassName="w-full h-full rounded-3xl"
             />
-          </div>
+          </motion.div>
           <div className="lg:col-span-6 space-y-4">
-            <FadeUp delay={0.1}>
+            <MotionReveal delay={0.1}>
               <span className="text-xs font-mono uppercase tracking-[0.25em] text-[#C88A4B] font-semibold">
                 {t("about.ch3Tag")}
               </span>
-            </FadeUp>
+            </MotionReveal>
             <MaskHeading as="h2" className="font-serif text-3xl sm:text-4xl font-bold text-[#FDFBF7]">
               {t("about.ch3Title")}
             </MaskHeading>
-            <FadeUp delay={0.2}>
-              <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-                {t("about.ch3p1")}
-              </p>
-            </FadeUp>
-            <FadeUp delay={0.25}>
-              <p className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed">
-                {t("about.ch3p2")}
-              </p>
-            </FadeUp>
+            <motion.p
+              initial={{ opacity: 0, y: 16, letterSpacing: "0.02em" }}
+              whileInView={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
+              style={{ transform: "translate3d(0,0,0)" }}
+              className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed"
+            >
+              {t("about.ch3p1")}
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 16, letterSpacing: "0.02em" }}
+              whileInView={{ opacity: 1, y: 0, letterSpacing: "0em" }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, delay: 0.22, ease: [0.25, 1, 0.5, 1] }}
+              style={{ transform: "translate3d(0,0,0)" }}
+              className="text-sm sm:text-base font-light text-[#FDFBF7]/75 leading-relaxed"
+            >
+              {t("about.ch3p2")}
+            </motion.p>
           </div>
         </div>
       </section>
