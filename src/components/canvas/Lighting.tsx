@@ -19,15 +19,15 @@ export default function Lighting() {
   const targetIntensities = useMemo(() => {
     switch(introState) {
       case "darkness":
-        return { ambient: 0.01, dir: 0, point: 0, fill: 0 };
+        return { ambient: 0.1, dir: 0, point: 0, fill: 0 };
       case "light":
-        return { ambient: 0.05, dir: 0, point: 0.8, fill: 0 };
+        return { ambient: 0.2, dir: 0, point: 1.0, fill: 0 };
       case "reveal":
-        return { ambient: 0.2, dir: 0.5, point: 0.6, fill: 0.1 };
+        return { ambient: 0.5, dir: 0.8, point: 1.2, fill: 0.4 };
       case "enter":
       case "done":
       default:
-        return { ambient: 0.4, dir: 1.2, point: 0.5, fill: 0.3 };
+        return { ambient: 1.2, dir: 1.8, point: 1.5, fill: 0.8 };
     }
   }, [introState]);
 
@@ -51,14 +51,14 @@ export default function Lighting() {
 
   return (
     <>
-      <ambientLight ref={ambientRef} intensity={0.01} color="#ffd8b5" />
+      <ambientLight ref={ambientRef} intensity={0.1} color="#ffe8d6" />
       
       <directionalLight
         ref={dirLightRef}
         castShadow
-        position={[5, 6, 4]}
+        position={[5, 8, 4]}
         intensity={0}
-        color="#ffead1"
+        color="#fff1e0"
         shadow-mapSize={[1024, 1024]}
         shadow-camera-near={0.5}
         shadow-camera-far={25}
@@ -71,12 +71,12 @@ export default function Lighting() {
       
       <directionalLight
         ref={fillLightRef}
-        position={[-5, 3, -4]}
+        position={[-5, 4, -4]}
         intensity={0}
-        color="#a9c2e3"
+        color="#d1e0eb"
       />
       
-      <pointLight ref={pointLightRef} position={[0, 1.5, 0]} intensity={0} color="#ffb870" distance={8} decay={2} />
+      <pointLight ref={pointLightRef} position={[0, 2, 0]} intensity={0} color="#ffb870" distance={10} decay={2} />
     </>
   );
 }

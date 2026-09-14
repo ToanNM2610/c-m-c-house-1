@@ -44,7 +44,7 @@ export default function GlobalCanvas() {
   return (
     <div
       id="global-canvas-container"
-      className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none"
+      className="fixed inset-0 -z-10 pointer-events-none overflow-hidden select-none"
       aria-hidden="true"
       style={{
         width: "100vw",

@@ -13,7 +13,7 @@ export default function MenuPage() {
   const getItems = (cat: string) => REAL_MENU_DATA.filter(i => i.category === cat);
 
   const leftCategories = ["Cà Phê", "Trà", "Sinh Tố", "Nước Ép"];
-  const rightCategories = ["Soda & Sữa Chua", "Khác", "Món Ăn"];
+  const rightCategories = ["Soda / Sữa Chua", "Other", "Food"];
 
   const renderCategory = (cat: string, alignRight: boolean = false) => {
     const items = getItems(cat);
@@ -39,15 +39,10 @@ export default function MenuPage() {
                 <h3 className="font-medium text-lg tracking-wide uppercase transition-colors group-hover:text-[#C88A4B]">
                   {item.name}
                 </h3>
-                <span className="font-mono text-sm opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span className="font-mono text-sm opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap ml-4">
                   {item.priceFormatted}
                 </span>
               </div>
-              {item.desc && (
-                <p className={`text-xs font-light text-[#FDFBF7]/50 leading-relaxed max-w-[90%] ${alignRight ? "lg:text-right" : ""}`}>
-                  {item.desc}
-                </p>
-              )}
             </motion.div>
           ))}
         </div>
@@ -56,34 +51,26 @@ export default function MenuPage() {
   };
 
   return (
-    <div className="w-full min-h-screen text-[#FDFBF7] relative z-10 pointer-events-none">
+    <div className="w-full min-h-screen text-[#FDFBF7] relative z-20">
       
       {/* Editorial Header */}
-      <section className="pt-40 pb-20 px-6 sm:px-12 text-center">
+      <section className="pt-40 pb-20 px-6 sm:px-12 text-center pointer-events-auto relative z-20">
         <MaskHeading as="h1" duration={1} className="font-serif text-5xl sm:text-7xl lg:text-8xl tracking-widest uppercase text-shadow-md">
-          {t("menu.heroTitle") || "Thực Đơn"}
+          Thực Đơn
         </MaskHeading>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...cinematicTransition, delay: 0.2 }}
-          className="mt-6 text-[#C88A4B] text-xs sm:text-sm tracking-[0.3em] uppercase font-mono"
-        >
-          Nguyên bản & Tươi mới ({REAL_MENU_DATA.length} món)
-        </motion.p>
       </section>
 
       {/* Split Menu Layout over 3D Scene */}
-      <section className="px-6 sm:px-12 lg:px-24 pb-40 max-w-[1400px] mx-auto pointer-events-auto">
+      <section className="px-6 sm:px-12 lg:px-24 pb-40 max-w-[1400px] mx-auto pointer-events-auto relative z-20">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 relative z-20 bg-[#0C0D0B]/40 lg:bg-transparent rounded-3xl p-6 lg:p-0 backdrop-blur-sm lg:backdrop-blur-none">
           
           {/* Left Column */}
           <div className="lg:col-span-4 flex flex-col pt-8">
             {leftCategories.map(cat => renderCategory(cat, false))}
           </div>
 
-          {/* Center Column: Empty for 3D Coffee Showcase */}
+          {/* Center Column: Reserved for 3D Coffee Showcase */}
           <div className="hidden lg:block lg:col-span-4 pointer-events-none">
             {/* The 3D coffee cup from CoffeeScene will appear here in the background */}
           </div>

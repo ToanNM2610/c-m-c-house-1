@@ -321,7 +321,7 @@ export default function AdminMenuPage() {
 
                   {/* Quy đổi USD */}
                   <td className="px-3 py-3 align-middle text-[#2271b1] font-mono text-xs">
-                    {getUsdEstimate(editingId === item.id ? editPrice : item.price)}
+                    {getUsdEstimate(editingId === item.id ? editPrice : (item.price || 0))}
                   </td>
 
                   {/* Tình trạng Bật/Tắt hết hàng */}
