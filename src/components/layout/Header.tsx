@@ -67,10 +67,10 @@ export default function Header() {
       initial={{ opacity: 0, y: -15 }}
       animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -15 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      className={`sticky top-0 z-50 w-full transition-colors duration-300 ${
+      className={`fixed top-0 z-50 w-full transition-all duration-500 ${
         scrolled
-          ? "bg-[#0C0D0B]/95 border-b border-[#222520] shadow-md"
-          : "bg-[#0C0D0B]/80 border-b border-[#222520]/50"
+          ? "bg-[#0C0D0B]/60 backdrop-blur-md border-b border-[#FDFBF7]/10 shadow-lg"
+          : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">

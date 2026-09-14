@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { usePathname } from "next/navigation";
-import SceneController from "./SceneController";
+import CoffeeScene from "./CoffeeScene";
 
 export default function GlobalCanvas() {
   const [mounted, setMounted] = useState(false);
@@ -75,7 +75,7 @@ export default function GlobalCanvas() {
           flipflops={3}
           bounds={(refreshrate) => [refreshrate * 0.5, refreshrate * 0.9]}
         />
-        <SceneController />
+        <CoffeeScene />
       </Canvas>
     </div>
   );

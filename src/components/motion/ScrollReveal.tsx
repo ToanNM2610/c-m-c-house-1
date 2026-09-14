@@ -4,8 +4,9 @@ import React, { useRef } from "react";
 import Image, { ImageProps } from "next/image";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
 
-const AWWWARDS_EASE = [0.22, 1, 0.36, 1] as const;
+import { cinematicTransition } from "./config";
 
+const AWWWARDS_EASE = cinematicTransition.ease;
 // ╔═══════════════════════════════════════════════════════════════════════════╗
 // ║  A. TIÊU ĐỀ LỘ DIỆN AN TOÀN (SAFE HEADINGS REVEAL — NO OVERFLOW CLIPPING)  ║
 // ║     Above-the-fold dùng animate trực tiếp; In-view dùng once: true        ║
