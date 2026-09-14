@@ -30,15 +30,15 @@ const beVietnamPro = Be_Vietnam_Pro({
 export const metadata: Metadata = {
   metadataBase: new URL("https://camcuhouse.vercel.app"),
   title: {
-    default: "Cẩm Cù House | Cà Phê Ven Suối & Trải Nghiệm Đắk Nông",
+    default: "Cẩm Cù House coffee & Food",
     template: "%s | Cẩm Cù House",
   },
   description:
-    "Cẩm Cù House - Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa, Đắk Nông. Thưởng thức hương vị cà phê rang củi mộc nguyên bản và nông sản Tây Nguyên tươi lành.",
+    "Không gian cà phê và food bên bờ suối, không gian sinh thái và trong lành, hòa mình với thiên nhiên tại Gia Nghĩa, Đắk Nông.",
   openGraph: {
-    title: "Cẩm Cù House | Cà Phê Ven Suối & Trải Nghiệm Đắk Nông",
+    title: "Cẩm Cù House coffee & Food",
     description:
-      "Cẩm Cù House - Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa, Đắk Nông. Thưởng thức hương vị cà phê rang củi mộc nguyên bản và nông sản Tây Nguyên tươi lành.",
+      "Không gian cà phê và food bên bờ suối, không gian sinh thái và trong lành, hòa mình với thiên nhiên tại Gia Nghĩa, Đắk Nông.",
     url: "https://camcuhouse.vercel.app",
     siteName: "Cẩm Cù House",
     locale: "vi_VN",
@@ -46,8 +46,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cẩm Cù House | Cà Phê Ven Suối & Trải Nghiệm Đắk Nông",
-    description: "Cẩm Cù House - Hòa mình vào thiên nhiên bên bờ suối đá Gia Nghĩa, Đắk Nông.",
+    title: "Cẩm Cù House coffee & Food",
+    description: "Không gian cà phê và food bên bờ suối, không gian sinh thái và trong lành, hòa mình với thiên nhiên tại Gia Nghĩa, Đắk Nông.",
   },
 };
 
