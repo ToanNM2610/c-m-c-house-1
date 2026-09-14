@@ -57,6 +57,7 @@ export default function SpacePage() {
           {displayPhotos.map((photo, i) => (
             <motion.div
               key={photo.id}
+              data-cursor="view"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}

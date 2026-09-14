@@ -10,6 +10,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { Analytics } from "@vercel/analytics/next";
 import GlobalCanvas from "@/components/canvas/GlobalCanvas";
 import UltraIntro from "@/components/intro/UltraIntro";
+import { SceneProvider } from "@/context/SceneContext";
+import CustomCursor from "@/components/ui/CustomCursor";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -102,20 +104,23 @@ export default function RootLayout({
       >
         <UltraIntro />
         
-        {/* Global Canvas Singleton - Vĩnh cửu, không re-mount khi chuyển trang */}
-        <GlobalCanvas />
+        <SceneProvider>
+          {/* Global Canvas Singleton - Vĩnh cửu, không re-mount khi chuyển trang */}
+          <GlobalCanvas />
+          <CustomCursor />
 
-        <SecurityShield>
-          <LanguageProvider>
-            <SmoothScroll>
-              <Header />
-              <div className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
-                {children}
-              </div>
-              <Footer />
-            </SmoothScroll>
-          </LanguageProvider>
-        </SecurityShield>
+          <SecurityShield>
+            <LanguageProvider>
+              <SmoothScroll>
+                <Header />
+                <div className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
+                  {children}
+                </div>
+                <Footer />
+              </SmoothScroll>
+            </LanguageProvider>
+          </SecurityShield>
+        </SceneProvider>
         <Analytics />
         <GoogleAnalytics gaId="G-F1E55KL26P" />
       </body>

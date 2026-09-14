@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePathname } from "next/navigation";
+import { useScene } from "@/context/SceneContext";
 
 export default function CameraRig() {
   const { camera } = useThree();
   const pathname = usePathname() || "";
+  const { introState, scrollProgress } = useScene();
   
   const mouse = useRef({ x: 0, y: 0 });
-  const scrollProgress = useRef(0);
+  const localScroll = useRef(0);
   
   // Track target position and rotation to lerp towards
   const targetPosition = useRef(new THREE.Vector3(0, 1.5, 8));
@@ -23,47 +25,47 @@ export default function CameraRig() {
       mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
 
-    const onScroll = () => {
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      scrollProgress.current = Math.min(window.scrollY / maxScroll, 1);
-    };
-
     window.addEventListener("mousemove", onMouseMove, { passive: true });
-    window.addEventListener("scroll", onScroll, { passive: true });
-    
-    // Trigger initial calculation
-    onScroll();
-    
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("mousemove", onMouseMove);
   }, []);
 
   useFrame((_, delta) => {
-    // Clamp delta to avoid huge jumps if tab was inactive
     const d = Math.min(delta, 0.05);
     
+    // We use context scrollProgress, but allow fallback
     const lenis = typeof window !== "undefined" ? (window as any).__lenis : null;
-    const sp = lenis && typeof lenis.progress === "number" ? lenis.progress : scrollProgress.current;
+    const sp = lenis && typeof lenis.progress === "number" ? lenis.progress : scrollProgress;
     
+    // Only smooth out scroll slightly if needed, but Context is already updating it.
+    localScroll.current = THREE.MathUtils.lerp(localScroll.current, sp, d * 5.0);
+    const scroll = localScroll.current;
+
     const mx = mouse.current.x;
     const my = mouse.current.y;
 
-    // Cinematic base targets based on route
+    // --- Cinematic Camera Choreography ---
+    
     if (pathname === "/") {
-      // Home page: camera starts far, moves closer based on scroll
-      // Hero phase 1-5 will be handled by scroll progress
-      // Phase 1: sp=0 -> far away, maybe looking slightly down
-      // Phase 2: sp>0.1 -> closer to the shop environment
-      
-      const zPos = 8 - sp * 4; // Move from 8 to 4
-      const yPos = 1.5 + sp * 0.5; // Slightly rise
-      const xPos = Math.sin(sp * Math.PI) * 1.5; // Gentle sway
-      
-      targetPosition.current.set(xPos, yPos, zPos);
-      targetLookAt.current.set(0, 0, 0);
-      
+      if (introState === "darkness") {
+        targetPosition.current.set(0, 1.5, 12);
+        targetLookAt.current.set(0, 1.5, 0);
+      } else if (introState === "light") {
+        targetPosition.current.set(0, 1.5, 10);
+        targetLookAt.current.set(0, 0.5, 0);
+      } else if (introState === "reveal") {
+        targetPosition.current.set(0, 1.5, 8);
+        targetLookAt.current.set(0, 0.5, 0);
+      } else {
+        // "enter" or "done" => Scroll driven
+        // Phase 1: sp=0 -> far away, maybe looking slightly down
+        // Phase 2: sp>0.1 -> closer to the shop environment
+        const zPos = 8 - scroll * 6; // Move from 8 to 2
+        const yPos = 1.5 + scroll * 0.5; 
+        const xPos = Math.sin(scroll * Math.PI) * 1.5; 
+        
+        targetPosition.current.set(xPos, yPos, zPos);
+        targetLookAt.current.set(0, 0.5 - scroll * 0.5, 0);
+      }
     } else if (pathname === "/about") {
       targetPosition.current.set(2, 1.2, 5);
       targetLookAt.current.set(-1, 0, 0);
@@ -71,25 +73,27 @@ export default function CameraRig() {
       targetPosition.current.set(0, 1.5, 6);
       targetLookAt.current.set(0, 0.5, -2);
     } else if (pathname === "/menu") {
-      // Focus on the coffee cup placeholder
       targetPosition.current.set(0, 1.2, 3);
       targetLookAt.current.set(0, 0.4, 0);
-    } else if (pathname === "/contact") {
+    } else {
       targetPosition.current.set(-2, 1, 4);
       targetLookAt.current.set(1, 0, 0);
     }
 
     // Apply Mouse Parallax (subtle sway)
-    // Only apply if not on mobile (can check via window innerWidth, but keeping it subtle is fine for all)
-    const parallaxX = mx * 0.3;
-    const parallaxY = my * 0.3;
-    
-    targetPosition.current.x += parallaxX;
-    targetPosition.current.y += parallaxY;
+    if (introState === "done" || introState === "enter") {
+      const parallaxX = mx * 0.3;
+      const parallaxY = my * 0.3;
+      targetPosition.current.x += parallaxX;
+      targetPosition.current.y += parallaxY;
+    }
 
     // Smooth Lerp
-    camera.position.lerp(targetPosition.current, d * 2.5);
-    currentLookAt.current.lerp(targetLookAt.current, d * 3.0);
+    // Use slower lerp for intro transitions
+    const lerpSpeed = (introState === "done" || introState === "enter") ? 2.5 : 1.0;
+    
+    camera.position.lerp(targetPosition.current, d * lerpSpeed);
+    currentLookAt.current.lerp(targetLookAt.current, d * lerpSpeed * 1.2);
     camera.lookAt(currentLookAt.current);
   });
 
