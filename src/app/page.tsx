@@ -2,18 +2,13 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import { cinematicTransition, slowCinematicTransition } from "@/components/motion/config";
 import { useScene } from "@/context/SceneContext";
-import Image from "next/image";
 
-const FEATURED_MENU = [
-  { name: "Cà phê sài gòn", price: "25.000 VNĐ" },
-  { name: "Cà phê muối", price: "28.000 VNĐ" },
-  { name: "Trà đào cam sả", price: "30.000 VNĐ" },
-  { name: "Sữa chua hạt đác", price: "30.000 VNĐ" },
-];
+const SUBHEADING_STYLE = "font-sans text-xs tracking-[0.25em] uppercase text-[#C88A4B] font-medium block";
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -49,6 +44,7 @@ export default function HomePage() {
   const heroY = useTransform(scrollY, [0, 400], [0, -50]);
   
   const isLocked = introState !== "enter" && introState !== "done";
+  const isReady = introState === "enter" || introState === "done";
 
   return (
     <div className={`w-full text-[#FDFBF7] relative z-10 ${isLocked ? 'h-screen overflow-hidden' : ''}`}>
@@ -60,7 +56,7 @@ export default function HomePage() {
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 2, ease: "easeInOut" }}
-            className="fixed inset-0 bg-[#0a0908] z-50 pointer-events-none flex items-center justify-center"
+            className="fixed inset-0 bg-[#0a0705] z-50 pointer-events-none flex items-center justify-center"
           >
             {introState === "light" && (
               <motion.div
@@ -75,143 +71,206 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
-      {/* ── HERO ── */}
+      {/* =========================================
+          SECTION 1: HERO SECTION
+      ========================================= */}
       <section className="relative w-full h-screen flex flex-col items-center justify-center px-6 pointer-events-none">
+        {/* Background gradient hint */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#c88a4b]/5 via-[#0a0705]/80 to-[#0a0705] z-0"></div>
+
         <motion.div 
           style={{ opacity: heroOpacity, y: heroY }}
-          className="flex flex-col items-center text-center pointer-events-auto"
+          className="flex flex-col items-center text-center pointer-events-auto relative z-10"
         >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: (introState === "enter" || introState === "done") ? 1 : 0, y: (introState === "enter" || introState === "done") ? 0 : 30 }}
+            animate={{ opacity: isReady ? 1 : 0, y: isReady ? 0 : 30 }}
             transition={slowCinematicTransition}
             className="flex flex-col items-center"
           >
-            <h1 className="font-serif text-5xl sm:text-7xl lg:text-9xl font-medium tracking-widest uppercase mb-4 text-shadow-md">
-              CẨM CÙ
+            <span className={SUBHEADING_STYLE + " mb-8"}>
+              TỌA ĐỘ 11.99° N, 107.69° E • GIA NGHĨA, ĐẮK NÔNG
+            </span>
+            <h1 className="font-serif text-5xl sm:text-7xl lg:text-9xl font-semibold tracking-wide uppercase mb-6 text-[#F5EFEB] drop-shadow-lg">
+              CẨM CÙ HOUSE
             </h1>
-            <div className="h-[1px] w-12 bg-[#C88A4B] mb-8 opacity-60"></div>
-            <p className="text-sm sm:text-base font-light tracking-[0.4em] text-[#FDFBF7]/80 uppercase font-mono">
-              Coffee • Nature • Slow Living
+            <p className="font-sans text-lg sm:text-xl font-light text-[#FDFBF7]/80 leading-relaxed max-w-lg">
+              Chốn dừng chân mộc mạc bên bờ suối đá.
             </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: (introState === "enter" || introState === "done") ? 1 : 0 }}
+            animate={{ opacity: isReady ? 1 : 0 }}
             transition={{ ...cinematicTransition, delay: 0.5 }}
-            className="mt-20 flex flex-col sm:flex-row gap-6"
+            className="mt-16 flex flex-col sm:flex-row gap-6"
           >
             <Link
               href="/space"
               data-cursor="explore"
-              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-transparent text-[#FDFBF7] text-xs uppercase tracking-[0.2em] border border-[#FDFBF7]/20 hover:border-[#C88A4B] transition-colors duration-500 overflow-hidden"
+              className="inline-flex items-center justify-center px-10 py-4 bg-[#C88A4B] text-[#0a0705] font-sans font-medium rounded-full shadow-lg hover:shadow-[#C88A4B]/20 hover:-translate-y-1 transition-all duration-300"
             >
-              <span className="relative z-10">Khám Phá Không Gian</span>
-              <motion.div 
-                className="absolute inset-0 bg-[#C88A4B]/10 -z-0"
-                initial={{ scaleX: 0, originX: 0 }}
-                whileHover={{ scaleX: 1 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              />
+              Khám Phá Không Gian
             </Link>
             <Link
               href="/menu"
               data-cursor="explore"
-              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-[#FDFBF7] text-[#0C0D0B] text-xs uppercase tracking-[0.2em] border border-[#FDFBF7] hover:bg-[#C88A4B] hover:border-[#C88A4B] hover:text-[#0C0D0B] transition-colors duration-500"
+              className="inline-flex items-center justify-center px-10 py-4 bg-transparent border border-[#F5EFEB]/30 text-[#F5EFEB] font-sans font-medium rounded-full hover:bg-[#FDFBF7]/10 hover:border-[#FDFBF7]/50 backdrop-blur-sm transition-all duration-300"
             >
-              <span className="relative z-10">Xem Thực Đơn</span>
+              Xem Thực Đơn
             </Link>
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ── INTRO SECTION ── */}
-      <section className="relative min-h-[120vh] flex flex-col items-center justify-center px-6 text-center pointer-events-none">
-        <div className="pointer-events-auto max-w-4xl mx-auto">
-          <motion.p
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={slowCinematicTransition}
-            className="font-serif text-3xl sm:text-5xl lg:text-7xl leading-tight mb-8"
-          >
-            MỘT NƠI ĐỂ<br />
-            <span className="text-[#C88A4B] italic">CHẬM LẠI.</span>
-          </motion.p>
-        </div>
-      </section>
-
-      {/* ── 3 NATURE VALUES ── */}
-      <section className="relative py-32 px-6 lg:px-24 bg-[#0C0D0B]/80 pointer-events-auto">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
+      {/* =========================================
+          SECTION 2: CHUYỆN BÊN BỜ SUỐI (VIBE & NATURE)
+      ========================================= */}
+      <section className="relative py-32 px-6 sm:px-12 lg:px-24 bg-[#0a0705] pointer-events-auto">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ ...cinematicTransition, delay: 0.1 }}
-            className="flex flex-col text-center items-center"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={cinematicTransition}
+            className="md:col-span-5 relative w-full aspect-[4/5] rounded-2xl overflow-hidden border border-[#C88A4B]/15"
           >
-            <span className="font-mono text-xs tracking-widest text-[#C88A4B] uppercase mb-6 block">01</span>
-            <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-[#FDFBF7]">Suối Nguồn Tự Nhiên</h2>
-            <p className="font-light text-sm text-[#FDFBF7]/60 leading-relaxed">
-              Tiếng nước chảy róc rách, sỏi đá rêu phong. Không khí dịu mát quanh năm, mang lại cảm giác bình yên và tĩnh tại.
-            </p>
+            <Image
+              src="/uploads/gallery/1788250253551-943009233.jpg"
+              alt="Bờ suối đá"
+              fill
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover hover:scale-105 transition-transform duration-1000"
+            />
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ ...cinematicTransition, delay: 0.2 }}
-            className="flex flex-col text-center items-center"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={cinematicTransition}
+            className="md:col-span-7 flex flex-col justify-center"
           >
-            <span className="font-mono text-xs tracking-widest text-[#C88A4B] uppercase mb-6 block">02</span>
-            <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-[#FDFBF7]">Hiên Gỗ Rợp Cây Xanh</h2>
-            <p className="font-light text-sm text-[#FDFBF7]/60 leading-relaxed">
-              Bóng mát đại ngàn với những tán cây rộng lớn. Góc ngồi thư thái, mộc mạc và gần gũi với thiên nhiên nguyên sơ.
+            <span className={SUBHEADING_STYLE + " mb-4"}>Vibe & Nature</span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-medium text-[#F5EFEB] mb-8 leading-tight">
+              LẮNG NGHE TIẾNG SUỐI NGUỒN
+            </h2>
+            <p className="font-sans font-light text-[#FDFBF7]/70 text-lg leading-relaxed mb-6">
+              Không gian đón gió mát lành, hoa lá đại ngàn che bóng mát, nơi bạn tạm gác lại những xô bồ thường nhật để tìm về sự tĩnh lặng.
             </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ ...cinematicTransition, delay: 0.3 }}
-            className="flex flex-col text-center items-center"
-          >
-            <span className="font-mono text-xs tracking-widest text-[#C88A4B] uppercase mb-6 block">03</span>
-            <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-[#FDFBF7]">Cà Phê & Đồ Uống Mộc</h2>
-            <p className="font-light text-sm text-[#FDFBF7]/60 leading-relaxed">
-              Hương vị rang xay mộc mạc, đậm chất Tây Nguyên. Thưởng thức trọn vẹn sự tinh túy của từng hạt cà phê địa phương.
+            <p className="font-sans font-light text-[#FDFBF7]/70 text-lg leading-relaxed">
+              Hãy để tiếng nước chảy róc rách và hương cà phê nguyên bản dẫn lối tâm hồn.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── FEATURED MENU ── */}
-      <section className="relative py-40 px-6 lg:px-24 bg-gradient-to-t from-[#0C0D0B] to-transparent pointer-events-auto">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
+      {/* =========================================
+          SECTION 3: 3 TRẢI NGHIỆM ĐẶC TRƯNG
+      ========================================= */}
+      <section className="relative py-32 px-6 sm:px-12 lg:px-24 bg-[#0a0705]/95 pointer-events-auto border-t border-[#FDFBF7]/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={cinematicTransition}
+              className={SUBHEADING_STYLE + " mb-4"}
+            >
+              TRẢI NGHIỆM ĐẮK NÔNG
+            </motion.span>
+            <motion.h2 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ ...cinematicTransition, delay: 0.1 }}
+              className="font-serif text-3xl sm:text-5xl font-medium text-[#F5EFEB]"
+            >
+              GÓC NHỎ AN YÊN
+            </motion.h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { title: "Bờ Suối Đá Tự Nhiên", desc: "Bàn gỗ ven suối, làn nước trong mát vỗ về", img: "/uploads/gallery/1788250253551-943009233.jpg" },
+              { title: "Hiên Gỗ Mộc Rợp Hoa", desc: "Không gian mở ngập tràn sắc hoa và ánh nắng", img: "/uploads/gallery/1788250253554-875120458.jpg" },
+              { title: "Cà Phê Mộc Nguyên Bản", desc: "Hương vị rang xay mộc ấm nồng đặc trưng", img: "/uploads/gallery/1788250253557-29323827.jpg" },
+            ].map((exp, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ ...cinematicTransition, delay: idx * 0.15 }}
+                className="group flex flex-col gap-6"
+              >
+                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-[#FDFBF7]/10">
+                  <Image
+                    src={exp.img}
+                    alt={exp.title}
+                    fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-serif text-2xl text-[#C88A4B] mb-2">{exp.title}</h3>
+                  <p className="font-sans font-light text-[#FDFBF7]/70 leading-relaxed">
+                    {exp.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          SECTION 4: THỨC UỐNG NỔI BẬT (SIGNATURE SIPS)
+      ========================================= */}
+      <section className="relative py-32 px-6 sm:px-12 lg:px-24 bg-[#0a0705] pointer-events-auto border-t border-[#FDFBF7]/5">
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.span 
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={cinematicTransition}
-            className="font-serif text-4xl sm:text-5xl tracking-widest text-[#C88A4B] uppercase mb-16"
+            className={SUBHEADING_STYLE + " mb-4"}
           >
-            Thực Đơn Nổi Bật
+            SIGNATURE SIPS
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ ...cinematicTransition, delay: 0.1 }}
+            className="font-serif text-3xl sm:text-5xl font-medium text-[#F5EFEB] mb-16"
+          >
+            HƯƠNG VỊ MỘC MẠC ĐẶC TRƯNG
           </motion.h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-left max-w-2xl mx-auto">
-            {FEATURED_MENU.map((item, idx) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-left mb-16">
+            {[
+              { name: "Cà phê Sài Gòn", price: "25.000 VNĐ", desc: "Đậm vị, nguyên bản" },
+              { name: "Cà phê Muối", price: "28.000 VNĐ", desc: "Mặn mà, béo ngậy" },
+              { name: "Trà Đào Cam Sả", price: "30.000 VNĐ", desc: "Thanh mát, sảng khoái" },
+              { name: "Sữa Chua Hạt Đác", price: "30.000 VNĐ", desc: "Dẻo bùi, chua ngọt thanh" },
+            ].map((item, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
                 transition={{ ...cinematicTransition, delay: idx * 0.1 }}
-                className="flex justify-between items-baseline border-b border-[#FDFBF7]/10 pb-4"
+                className="bg-[#1A1D17]/50 border border-[#FDFBF7]/10 rounded-2xl p-6 hover:-translate-y-1.5 transition-transform duration-300"
               >
-                <h3 className="font-medium text-lg tracking-wide uppercase text-[#FDFBF7]">{item.name}</h3>
-                <span className="font-mono text-sm opacity-80 text-[#FDFBF7]/80">{item.price}</span>
+                <h3 className="font-serif text-xl font-medium text-[#F5EFEB] mb-1">{item.name}</h3>
+                <p className="font-sans text-sm font-light text-[#FDFBF7]/60 mb-4">{item.desc}</p>
+                <div className="font-sans font-medium text-[#C88A4B] tracking-wide">
+                  {item.price}
+                </div>
               </motion.div>
             ))}
           </div>
@@ -220,21 +279,73 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ ...cinematicTransition, delay: 0.5 }}
-            className="mt-16"
+            transition={{ ...cinematicTransition, delay: 0.4 }}
           >
             <Link
               href="/menu"
-              className="inline-block px-10 py-4 bg-transparent text-[#FDFBF7] text-xs uppercase tracking-[0.2em] border border-[#FDFBF7]/30 hover:border-[#C88A4B] hover:text-[#C88A4B] transition-colors duration-300"
+              className="inline-flex items-center justify-center px-8 py-3 bg-transparent border border-[#FDFBF7]/20 text-[#FDFBF7]/80 font-sans text-sm font-medium rounded-full hover:bg-[#FDFBF7]/10 hover:border-[#FDFBF7]/40 hover:text-[#F5EFEB] transition-all duration-300"
             >
-              Xem Toàn Bộ Thực Đơn
+              Xem Toàn Bộ Thực Đơn (40+ Món) →
             </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* ── LOCATION / CTA ── */}
-      <section className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-6 pointer-events-auto bg-[#0C0D0B]">
+      {/* =========================================
+          SECTION 5: TIỆN ÍCH CHU ĐÁO (AMENITIES)
+      ========================================= */}
+      <section className="relative py-24 px-6 sm:px-12 bg-[#0a0705]/95 pointer-events-auto border-t border-[#FDFBF7]/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 divide-x divide-[#FDFBF7]/10">
+            {[
+              "Bãi Đậu Xe Ô Tô & Xe Máy An Toàn",
+              "Wifi Tốc Độ Cao",
+              "Ổ Điện Từng Bàn Tiện Lợi",
+              "Không Gian Mở Đón Gió Tự Nhiên",
+            ].map((amenity, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ ...cinematicTransition, delay: idx * 0.1 }}
+                className="px-4 text-center flex items-center justify-center"
+              >
+                <p className="font-sans font-medium text-[#FDFBF7]/70 text-sm sm:text-base leading-relaxed">
+                  {amenity}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================
+          SECTION 6: CẢM NHẬN KHÁCH HÀNG (GUEST WORDS)
+      ========================================= */}
+      <section className="relative py-32 px-6 sm:px-12 bg-[#1A1D17]/40 pointer-events-auto">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={slowCinematicTransition}
+          >
+            <span className={SUBHEADING_STYLE + " mb-8"}>Khách Hàng Nói Gì</span>
+            <blockquote className="font-serif text-2xl sm:text-4xl italic font-light leading-relaxed text-[#F5EFEB] mb-8">
+              "Thật tuyệt khi tìm được một chốn bình yên, thư thái bên tiếng suối chảy róc rách. Cà phê thơm mộc, mọi thứ đều trọn vẹn để thả lỏng."
+            </blockquote>
+            <p className="font-sans font-medium tracking-widest text-xs uppercase text-[#C88A4B]">
+              — Trải nghiệm một ngày thảnh thơi
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* =========================================
+          SECTION 7: TỪ GIA NGHĨA, CHÚNG TÔI CHỜ BẠN (LOCATION & HOURS)
+      ========================================= */}
+      <section className="relative py-32 px-6 sm:px-12 text-center pointer-events-auto bg-[#0a0705]">
         <div className="max-w-4xl mx-auto space-y-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -242,18 +353,37 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={cinematicTransition}
           >
-            <p className="font-mono text-sm tracking-[0.3em] uppercase text-[#FDFBF7]/60 mb-6">
-              Từ Gia Nghĩa,
-            </p>
-            <h2 className="font-serif text-4xl sm:text-6xl text-[#FDFBF7] mb-12">
-              Chúng tôi chờ đón bạn.
+            <span className={SUBHEADING_STYLE + " mb-4"}>VISIT US</span>
+            <h2 className="font-serif text-4xl sm:text-6xl text-[#F5EFEB] font-medium mb-12 leading-tight">
+              TỪ GIA NGHĨA,<br />
+              CHÚNG TÔI CHỜ BẠN.
             </h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-left max-w-2xl mx-auto mb-16 border-t border-[#FDFBF7]/10 pt-12">
+              <div>
+                <h3 className="font-sans text-xs tracking-[0.2em] uppercase text-[#C88A4B] mb-3">Địa Chỉ</h3>
+                <p className="font-sans font-light text-[#FDFBF7]/80 leading-relaxed">
+                  Hẻm 437 Hùng Vương<br />
+                  Phường Nghĩa Trung<br />
+                  TP. Gia Nghĩa, Tỉnh Đắk Nông
+                </p>
+              </div>
+              <div>
+                <h3 className="font-sans text-xs tracking-[0.2em] uppercase text-[#C88A4B] mb-3">Giờ Mở Cửa & Hotline</h3>
+                <p className="font-sans font-light text-[#FDFBF7]/80 leading-relaxed mb-2">
+                  T2 – T5: 07:00 – 22:00<br />
+                  T6 – CN: 07:00 – 23:00
+                </p>
+                <a href="tel:0382851688" className="font-sans font-medium text-[#FDFBF7]/90 hover:text-[#C88A4B] transition-colors block">038 285 1688</a>
+                <a href="tel:0774659000" className="font-sans font-medium text-[#FDFBF7]/90 hover:text-[#C88A4B] transition-colors block">077 465 9000</a>
+              </div>
+            </div>
+
             <Link
               href="/contact"
-              data-cursor="explore"
-              className="inline-block px-12 py-4 bg-[#FDFBF7] text-[#0C0D0B] font-mono text-xs uppercase tracking-widest font-semibold hover:bg-[#C88A4B] hover:text-[#FDFBF7] transition-colors duration-500"
+              className="inline-flex items-center justify-center px-10 py-4 bg-[#F5EFEB] text-[#0a0705] font-sans font-medium rounded-full hover:bg-[#C88A4B] transition-colors duration-300 shadow-md"
             >
-              Xem Bản Đồ & Chỉ Đường
+              Xem Google Maps Chỉ Đường
             </Link>
           </motion.div>
         </div>
