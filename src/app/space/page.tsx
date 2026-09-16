@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useGallery } from "@/hooks/useGallery";
 import { MaskHeading } from "@/components/motion/ScrollReveal";
@@ -66,10 +67,13 @@ export default function SpacePage() {
               onClick={() => setSelectedPhotoIndex(i)}
             >
               <div className="w-full relative bg-[#1A1D17]">
-                <img
+                <Image
                   src={photo.src}
                   alt={photo.titleVi}
                   loading="lazy"
+                  width={800}
+                  height={600}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
@@ -96,10 +100,11 @@ export default function SpacePage() {
               <X size={32} strokeWidth={1} />
             </button>
             <div className="relative w-full max-w-6xl h-full max-h-[80vh] flex flex-col items-center justify-center">
-              <img
+              <Image
                 src={displayPhotos[selectedPhotoIndex].src}
                 alt="Enlarged space"
-                className="w-full h-full object-contain max-h-[80vh]"
+                fill
+                className="object-contain"
               />
               <p className="mt-4 font-mono text-xs uppercase tracking-widest text-[#FDFBF7]/50">
                 {displayPhotos[selectedPhotoIndex].titleVi}
