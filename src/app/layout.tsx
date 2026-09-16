@@ -101,6 +101,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${playfair.variable} ${beVietnamPro.variable} antialiased font-sans bg-[#0C0D0B] text-[#FDFBF7] selection:bg-[#C88A4B] selection:text-[#0C0D0B] max-w-[100vw] w-full overflow-x-hidden`}
+        style={{ WebkitFontSmoothing: "antialiased", WebkitBackfaceVisibility: "hidden", backfaceVisibility: "hidden" }}
       >
         <UltraIntro />
         

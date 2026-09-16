@@ -12,8 +12,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const isAdmin = pathname.startsWith("/portal-camcu-2610") || pathname.startsWith("/wp-admin");
 
   useEffect(() => {
-    // Tắt hoàn toàn Lenis trên Admin hoặc trên thiết bị cảm ứng / màn hình di động (< 768px)
-    // để tránh xung đột cuộn dọc tự nhiên trên mobile/tablet
     const isMobileOrTouch =
       typeof window !== "undefined" &&
       (window.innerWidth < 768 ||
@@ -21,7 +19,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         "ontouchstart" in window ||
         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
 
-    if (isAdmin || isMobileOrTouch) {
+    if (isAdmin) {
       if (lenisRef.current) {
         lenisRef.current.destroy();
         lenisRef.current = null;
@@ -32,13 +30,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Cấu hình Lenis quán tính hữu cơ (duration: 1.2s, wheelMultiplier: 0.9, touchMultiplier: 1.5)
     const lenis = new Lenis({
-      duration: 1.2,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.5,
+      duration: 1.0,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.0, // Retain native touch feel
       smoothWheel: true,
-      syncTouch: false,
+      syncTouch: false, // Prevents conflicts with native scrolling on iOS Safari
       autoResize: true,
       orientation: "vertical",
     });
@@ -46,7 +43,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     lenisRef.current = lenis;
     (window as any).__lenis = lenis;
 
-    // Đồng bộ hoàn hảo giữa Lenis và GSAP ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
     const tickerCb = (time: number) => {

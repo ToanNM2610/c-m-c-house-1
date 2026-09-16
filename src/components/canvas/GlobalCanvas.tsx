@@ -9,6 +9,7 @@ import CoffeeScene from "./CoffeeScene";
 export default function GlobalCanvas() {
   const [mounted, setMounted] = useState(false);
   const [dpr, setDpr] = useState(1);
+  const [isVisible, setIsVisible] = useState(true);
   const pathname = usePathname() || "";
 
   useEffect(() => {
@@ -20,7 +21,19 @@ export default function GlobalCanvas() {
         window.matchMedia("(pointer: coarse)").matches ||
         "ontouchstart" in window ||
         (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
-    setDpr(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
+    
+    // Reduce DPR on mobile to heavily save GPU
+    setDpr(isMobile ? Math.min(window.devicePixelRatio, 1) : Math.min(window.devicePixelRatio, 1.5));
+
+    // Pause WebGL rendering entirely when tab is hidden
+    const handleVisibilityChange = () => {
+      setIsVisible(document.visibilityState === "visible");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   // PerformanceMonitor callbacks for adaptive quality
@@ -56,14 +69,14 @@ export default function GlobalCanvas() {
         camera={{ position: [0, 0, 5], fov: 45 }}
         dpr={dpr}
         gl={{
-          powerPreference: "high-performance",
+          powerPreference: "low-power",
           antialias: false,
           alpha: true,
-          depth: true,
+          depth: false,
           stencil: false,
-          failIfMajorPerformanceCaveat: false,
+          failIfMajorPerformanceCaveat: true,
         }}
-        frameloop="always"
+        frameloop={isVisible ? "always" : "demand"}
         className={`w-full h-full pointer-events-none transition-opacity duration-1000 ease-in-out ${
           (pathname === "/space" || pathname === "/menu") ? "opacity-15" : "opacity-100"
         }`}
@@ -75,7 +88,7 @@ export default function GlobalCanvas() {
           flipflops={3}
           bounds={(refreshrate) => [refreshrate * 0.5, refreshrate * 0.9]}
         />
-        <CoffeeScene />
+        {isVisible && <CoffeeScene />}
       </Canvas>
     </div>
   );

@@ -119,9 +119,10 @@ export default function SpacePage() {
                     src={photo.src}
                     alt={photo.titleVi}
                     loading="lazy"
+                    decoding="async"
                     width={800}
                     height={600}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
