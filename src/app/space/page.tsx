@@ -10,35 +10,44 @@ import { MaskHeading } from "@/components/motion/ScrollReveal";
 import { cinematicTransition, slowCinematicTransition } from "@/components/motion/config";
 import { SpacePhoto, SpaceCategory } from "@/data/spaces";
 
+const CATEGORIES = ["Tất cả", "Bờ Suối Đá", "Hiên Gỗ & Chòi", "Vườn Hoa Cẩm Cù", "Góc Tĩnh Lặng"];
+
 export default function SpacePage() {
   const { t } = useLanguage();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState("Tất cả");
   const { images, isLoading } = useGallery();
 
-  // Basic map for loaded images
   const dynamicPhotos = useMemo<SpacePhoto[]>(() => {
-    return images.map((img, i) => ({
-      id: `img-${i}`,
-      category: "all" as SpaceCategory,
-      titleVi: img.caption || "Không gian Cẩm Cù",
-      titleEn: "Space",
-      src: img.url,
-      aspectRatio: "wide" as const,
-    })) as unknown as SpacePhoto[];
+    return images.map((img, i) => {
+      // Dummy mapping for demo since real tags are not in images array
+      const cat = CATEGORIES[1 + (i % 4)]; 
+      return {
+        id: `img-${i}`,
+        category: cat,
+        titleVi: img.caption || cat,
+        titleEn: "Space",
+        src: img.url,
+        aspectRatio: "wide" as const,
+      };
+    }) as unknown as SpacePhoto[];
   }, [images]);
 
-  const displayPhotos = dynamicPhotos.length > 0 ? dynamicPhotos : [
-    { id: '1', category: 'all' as SpaceCategory, titleVi: 'Bờ Suối', titleEn: 'Stream', src: '/uploads/gallery/1788250253551-943009233.jpg', aspectRatio: "wide" as const },
-    { id: '2', category: 'all' as SpaceCategory, titleVi: 'Hiên Gỗ', titleEn: 'Wooden Veranda', src: '/uploads/gallery/1788250253554-875120458.jpg', aspectRatio: "wide" as const },
-    { id: '3', category: 'all' as SpaceCategory, titleVi: 'Góc Tĩnh Lặng', titleEn: 'Peaceful Nook', src: '/uploads/gallery/1788250253557-29323827.jpg', aspectRatio: "wide" as const },
-    { id: '4', category: 'all' as SpaceCategory, titleVi: 'Lối Nhỏ', titleEn: 'Small Path', src: '/uploads/gallery/1788250253560-200373033.jpg', aspectRatio: "wide" as const },
-    { id: '5', category: 'all' as SpaceCategory, titleVi: 'Sương Mai', titleEn: 'Morning Dew', src: '/uploads/gallery/1788250253562-580915883.jpg', aspectRatio: "wide" as const },
+  const fallbackPhotos = [
+    { id: '1', category: 'Bờ Suối Đá', titleVi: 'Bờ Suối', titleEn: 'Stream', src: '/uploads/gallery/1788250253551-943009233.jpg', aspectRatio: "wide" as const },
+    { id: '2', category: 'Hiên Gỗ & Chòi', titleVi: 'Hiên Gỗ', titleEn: 'Wooden Veranda', src: '/uploads/gallery/1788250253554-875120458.jpg', aspectRatio: "wide" as const },
+    { id: '3', category: 'Góc Tĩnh Lặng', titleVi: 'Góc Tĩnh Lặng', titleEn: 'Peaceful Nook', src: '/uploads/gallery/1788250253557-29323827.jpg', aspectRatio: "wide" as const },
+    { id: '4', category: 'Vườn Hoa Cẩm Cù', titleVi: 'Lối Nhỏ', titleEn: 'Small Path', src: '/uploads/gallery/1788250253560-200373033.jpg', aspectRatio: "wide" as const },
+    { id: '5', category: 'Bờ Suối Đá', titleVi: 'Sương Mai', titleEn: 'Morning Dew', src: '/uploads/gallery/1788250253562-580915883.jpg', aspectRatio: "wide" as const },
   ];
+
+  const allPhotos = dynamicPhotos.length > 0 ? dynamicPhotos : fallbackPhotos;
+  const displayPhotos = activeCategory === "Tất cả" ? allPhotos : allPhotos.filter(p => p.category === activeCategory);
 
   return (
     <div className="w-full min-h-screen text-[#FDFBF7] relative z-10 pointer-events-none">
       
-      <section className="pt-40 pb-20 px-6 text-center">
+      <section className="pt-40 pb-12 px-6 text-center">
         <MaskHeading as="h1" duration={1} className="font-serif text-5xl sm:text-7xl lg:text-8xl tracking-widest uppercase text-shadow-md">
           KHÔNG GIAN
         </MaskHeading>
@@ -52,35 +61,72 @@ export default function SpacePage() {
         </motion.p>
       </section>
 
-      {/* Masonry Asymmetric Layout */}
-      <section className="px-6 sm:px-12 pb-40 max-w-[1600px] mx-auto pointer-events-auto">
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-          {displayPhotos.map((photo, i) => (
-            <motion.div
-              key={photo.id}
-              data-cursor="view"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ ...cinematicTransition, delay: (i % 3) * 0.1 }}
-              className="relative overflow-hidden break-inside-avoid group cursor-pointer"
-              onClick={() => setSelectedPhotoIndex(i)}
+      {/* Utilities Section */}
+      <section className="px-6 pb-12 text-center pointer-events-auto">
+        <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-[#FDFBF7]/70 font-mono text-xs uppercase tracking-widest">
+          <span>Wi-Fi Tốc Độ Cao</span>
+          <span className="hidden sm:inline">•</span>
+          <span>Ổ Cắm Từng Bàn</span>
+          <span className="hidden sm:inline">•</span>
+          <span>Bãi Đỗ Xe Ô Tô / Xe Máy</span>
+        </div>
+      </section>
+
+      {/* Filter Categories */}
+      <section className="px-6 pb-12 pointer-events-auto text-center">
+        <div className="flex flex-wrap justify-center gap-4">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-4 py-2 font-mono text-xs uppercase tracking-widest border transition-colors ${
+                activeCategory === cat ? "border-[#C88A4B] text-[#C88A4B]" : "border-[#FDFBF7]/20 text-[#FDFBF7]/60 hover:border-[#FDFBF7]/60 hover:text-[#FDFBF7]"
+              }`}
             >
-              <div className="w-full relative bg-[#1A1D17]">
-                <Image
-                  src={photo.src}
-                  alt={photo.titleVi}
-                  loading="lazy"
-                  width={800}
-                  height={600}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
-                />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
-              </div>
-            </motion.div>
+              {cat}
+            </button>
           ))}
         </div>
+      </section>
+
+      {/* Masonry Asymmetric Layout */}
+      <section className="px-6 sm:px-12 pb-40 max-w-[1600px] mx-auto pointer-events-auto">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={activeCategory}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
+          >
+            {displayPhotos.map((photo, i) => (
+              <motion.div
+                key={photo.id}
+                data-cursor="view"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ ...cinematicTransition, delay: (i % 3) * 0.1 }}
+                className="relative overflow-hidden break-inside-avoid group cursor-pointer"
+                onClick={() => setSelectedPhotoIndex(i)}
+              >
+                <div className="w-full relative bg-[#1A1D17]">
+                  <Image
+                    src={photo.src}
+                    alt={photo.titleVi}
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </section>
 
       {/* Fullscreen Image Viewer Overlay */}

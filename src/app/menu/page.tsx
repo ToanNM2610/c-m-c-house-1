@@ -13,7 +13,7 @@ export default function MenuPage() {
   const getItems = (cat: string) => REAL_MENU_DATA.filter(i => i.category === cat);
 
   const leftCategories = ["Cà Phê", "Trà", "Sinh Tố", "Nước Ép"];
-  const rightCategories = ["Soda / Sữa Chua", "Other", "Food"];
+  const rightCategories = ["Soda / Sữa Chua", "Món Khác", "Món Ăn (Food)"];
 
   const renderCategory = (cat: string, alignRight: boolean = false) => {
     const items = getItems(cat);
@@ -80,6 +80,13 @@ export default function MenuPage() {
             {rightCategories.map(cat => renderCategory(cat, true))}
           </div>
 
+        </div>
+        
+        {/* Footer Note */}
+        <div className="mt-20 text-center relative z-20">
+          <p className="font-mono text-sm tracking-widest text-[#FDFBF7]/60 uppercase">
+            Thực đơn phục vụ trực tiếp tại quán. Mời bạn ghé Cẩm Cù House thưởng thức.
+          </p>
         </div>
       </section>
 
