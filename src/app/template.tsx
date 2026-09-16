@@ -24,28 +24,5 @@ export default function Template({ children }: { children: React.ReactNode }) {
     }
   }, [pathname]);
 
-  const isAdmin = pathname.startsWith('/portal-camcu-2610') || pathname.startsWith('/wp-admin');
-  if (isAdmin) {
-    return <>{children}</>;
-  }
-
-  return (
-    <motion.div
-      key={pathname}
-      initial={{ opacity: 0, y: 16, scale: 0.99 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -12, scale: 0.99 }}
-      transition={{
-        duration: 0.55,
-        ease: [0.22, 1, 0.36, 1], // Cubic-bezier Awwwards sang trọng
-      }}
-      style={{
-        transform: 'translate3d(0,0,0)',
-        willChange: 'opacity, transform',
-      }}
-      className="relative z-10 w-full min-h-screen"
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className="relative z-10 w-full min-h-screen">{children}</div>;
 }
