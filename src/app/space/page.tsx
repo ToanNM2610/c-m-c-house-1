@@ -1,27 +1,31 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import { useGallery } from "@/hooks/useGallery";
 import { MaskHeading } from "@/components/motion/ScrollReveal";
-import { cinematicTransition, slowCinematicTransition } from "@/components/motion/config";
+import { CinematicReveal } from "@/components/motion/CinematicReveal";
 import { SpacePhoto, SpaceCategory } from "@/data/spaces";
 
 const CATEGORIES = ["Tất cả", "Bờ Suối Đá", "Hiên Gỗ & Chòi", "Vườn Hoa Cẩm Cù", "Góc Tĩnh Lặng"];
+
+const snappyTransition = {
+  duration: 0.4,
+  ease: [0.22, 1, 0.36, 1] as const,
+};
 
 export default function SpacePage() {
   const { t } = useLanguage();
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [activeCategory, setActiveCategory] = useState("Tất cả");
-  const { images, isLoading } = useGallery();
+  const { images } = useGallery();
 
   const dynamicPhotos = useMemo<SpacePhoto[]>(() => {
     return images.map((img, i) => {
-      // Dummy mapping for demo since real tags are not in images array
-      const cat = CATEGORIES[1 + (i % 4)]; 
+      const cat = CATEGORIES[1 + (i % 4)];
       return {
         id: `img-${i}`,
         category: cat,
@@ -46,23 +50,20 @@ export default function SpacePage() {
 
   return (
     <div className="w-full min-h-screen text-[#FDFBF7] relative z-10 pointer-events-none">
-      
+
       <section className="pt-40 pb-12 px-6 text-center">
         <MaskHeading as="h1" duration={1} className="font-serif text-5xl sm:text-7xl lg:text-8xl tracking-widest uppercase text-shadow-md">
           KHÔNG GIAN
         </MaskHeading>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ ...cinematicTransition, delay: 0.2 }}
-          className="mt-6 text-[#FDFBF7]/60 text-sm tracking-widest uppercase font-mono max-w-lg mx-auto"
-        >
-          Sự tĩnh lặng giữa đại ngàn
-        </motion.p>
+        <CinematicReveal delay={0.2} className="mt-6">
+          <p className="text-[#FDFBF7]/60 text-sm tracking-widest uppercase font-mono max-w-lg mx-auto">
+            Sự tĩnh lặng giữa đại ngàn
+          </p>
+        </CinematicReveal>
       </section>
 
-      {/* Utilities Section */}
-      <section className="px-6 pb-12 text-center pointer-events-auto">
+      {/* Utilities */}
+      <CinematicReveal className="px-6 pb-8 text-center pointer-events-auto" delay={0.1}>
         <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-[#FDFBF7]/70 font-mono text-xs uppercase tracking-widest">
           <span>Wi-Fi Tốc Độ Cao</span>
           <span className="hidden sm:inline">•</span>
@@ -70,44 +71,46 @@ export default function SpacePage() {
           <span className="hidden sm:inline">•</span>
           <span>Bãi Đỗ Xe Ô Tô / Xe Máy</span>
         </div>
-      </section>
+      </CinematicReveal>
 
       {/* Filter Categories */}
-      <section className="px-6 pb-12 pointer-events-auto text-center">
+      <CinematicReveal className="px-6 pb-12 pointer-events-auto text-center" delay={0.2}>
         <div className="flex flex-wrap justify-center gap-4">
           {CATEGORIES.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 font-mono text-xs uppercase tracking-widest border transition-colors ${
-                activeCategory === cat ? "border-[#C88A4B] text-[#C88A4B]" : "border-[#FDFBF7]/20 text-[#FDFBF7]/60 hover:border-[#FDFBF7]/60 hover:text-[#FDFBF7]"
+                activeCategory === cat
+                  ? "border-[#C88A4B] text-[#C88A4B]"
+                  : "border-[#FDFBF7]/20 text-[#FDFBF7]/60 hover:border-[#FDFBF7]/60 hover:text-[#FDFBF7]"
               }`}
             >
               {cat}
             </button>
           ))}
         </div>
-      </section>
+      </CinematicReveal>
 
-      {/* Masonry Asymmetric Layout */}
+      {/* Masonry Grid */}
       <section className="px-6 sm:px-12 pb-40 max-w-[1600px] mx-auto pointer-events-auto">
         <AnimatePresence mode="wait">
-          <motion.div 
+          <motion.div
             key={activeCategory}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
           >
             {displayPhotos.map((photo, i) => (
               <motion.div
                 key={photo.id}
-                data-cursor="view"
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ ...cinematicTransition, delay: (i % 3) * 0.1 }}
+                transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: (i % 3) * 0.08 }}
+                style={{ willChange: 'opacity, transform' }}
                 className="relative overflow-hidden break-inside-avoid group cursor-pointer"
                 onClick={() => setSelectedPhotoIndex(i)}
               >
@@ -129,7 +132,7 @@ export default function SpacePage() {
         </AnimatePresence>
       </section>
 
-      {/* Fullscreen Image Viewer Overlay */}
+      {/* Fullscreen Viewer */}
       <AnimatePresence>
         {selectedPhotoIndex !== null && (
           <motion.div
@@ -163,8 +166,3 @@ export default function SpacePage() {
     </div>
   );
 }
-
-const snappyTransition = {
-  duration: 0.4,
-  ease: [0.22, 1, 0.36, 1] as const,
-};
