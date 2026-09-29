@@ -8,7 +8,7 @@ import { useScene } from "@/context/SceneContext";
 import { MathUtils } from "three";
 
 export default function Atmosphere() {
-  const { introState } = useScene();
+  const { introState, isTransitioning } = useScene();
   const fogRef = useRef<THREE.Fog>(null);
   
   // Responsive particle count
@@ -47,14 +47,14 @@ export default function Atmosphere() {
       {/* @ts-ignore - fiber types for fog can be finicky with ref */}
       <fog ref={fogRef} attach="fog" args={["#0a0908", 0, 2]} />
       
-      {/* Floating Dust Particles to create atmospheric depth */}
+      {/* Floating Dust Particles to create atmospheric depth - surges subtly during 4D transition */}
       {introState !== "darkness" && (
         <Sparkles 
           count={particleCount}
           scale={12} 
-          size={introState === "light" ? 3 : 1.5} 
-          speed={0.2} 
-          opacity={0.15} 
+          size={isTransitioning ? 2.5 : (introState === "light" ? 3 : 1.5)} 
+          speed={isTransitioning ? 1.0 : 0.2} 
+          opacity={isTransitioning ? 0.35 : 0.15} 
           color="#ffe2c4"
           noise={1.5}
         />

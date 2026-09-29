@@ -4,12 +4,17 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export type IntroState = "darkness" | "light" | "reveal" | "enter" | "done";
+export type TransitionPhase = "idle" | "exiting" | "entering";
 
 interface SceneContextType {
   introState: IntroState;
   setIntroState: (state: IntroState) => void;
   scrollProgress: number;
   setScrollProgress: (progress: number) => void;
+  isTransitioning: boolean;
+  setIsTransitioning: (val: boolean) => void;
+  transitionPhase: TransitionPhase;
+  setTransitionPhase: (phase: TransitionPhase) => void;
 }
 
 const SceneContext = createContext<SceneContextType | undefined>(undefined);
@@ -17,6 +22,8 @@ const SceneContext = createContext<SceneContextType | undefined>(undefined);
 export function SceneProvider({ children }: { children: React.ReactNode }) {
   const [introState, setIntroState] = useState<IntroState>("darkness");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionPhase, setTransitionPhase] = useState<TransitionPhase>("idle");
   const pathname = usePathname();
 
   useEffect(() => {
@@ -37,7 +44,18 @@ export function SceneProvider({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   return (
-    <SceneContext.Provider value={{ introState, setIntroState, scrollProgress, setScrollProgress }}>
+    <SceneContext.Provider
+      value={{
+        introState,
+        setIntroState,
+        scrollProgress,
+        setScrollProgress,
+        isTransitioning,
+        setIsTransitioning,
+        transitionPhase,
+        setTransitionPhase,
+      }}
+    >
       {children}
     </SceneContext.Provider>
   );

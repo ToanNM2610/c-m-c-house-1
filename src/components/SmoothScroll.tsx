@@ -60,11 +60,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     };
   }, [isAdmin]);
 
-  useEffect(() => {
-    if (!isAdmin && lenisRef.current) {
-      lenisRef.current.scrollTo(0, { immediate: true });
-    }
-  }, [pathname, isAdmin]);
 
   return <>{children}</>;
 }

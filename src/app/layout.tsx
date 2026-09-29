@@ -12,6 +12,7 @@ import GlobalCanvas from "@/components/canvas/GlobalCanvas";
 import UltraIntro from "@/components/intro/UltraIntro";
 import { SceneProvider } from "@/context/SceneContext";
 import CustomCursor from "@/components/ui/CustomCursor";
+import PageTransitionLayout from "@/components/motion/PageTransitionLayout";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -114,9 +115,9 @@ export default function RootLayout({
             <LanguageProvider>
               <SmoothScroll>
                 <Header />
-                <div className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
+                <PageTransitionLayout className="w-full max-w-[100vw] overflow-x-hidden min-h-screen relative z-10">
                   {children}
-                </div>
+                </PageTransitionLayout>
                 <Footer />
               </SmoothScroll>
             </LanguageProvider>

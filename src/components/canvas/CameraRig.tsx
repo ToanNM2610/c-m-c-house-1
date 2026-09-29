@@ -9,7 +9,7 @@ import { useScene } from "@/context/SceneContext";
 export default function CameraRig() {
   const { camera } = useThree();
   const pathname = usePathname() || "";
-  const { introState, scrollProgress } = useScene();
+  const { introState, scrollProgress, isTransitioning } = useScene();
   
   const mouse = useRef({ x: 0, y: 0 });
   const localScroll = useRef(0);
@@ -89,8 +89,10 @@ export default function CameraRig() {
     }
 
     // Smooth Lerp
-    // Use slower lerp for intro transitions
-    const lerpSpeed = (introState === "done" || introState === "enter") ? 2.5 : 1.0;
+    // Boost lerp during 4D page transition for synchronized scene movement
+    const lerpSpeed = isTransitioning 
+      ? 3.8 
+      : (introState === "done" || introState === "enter") ? 2.5 : 1.0;
     
     camera.position.lerp(targetPosition.current, d * lerpSpeed);
     currentLookAt.current.lerp(targetLookAt.current, d * lerpSpeed * 1.2);
