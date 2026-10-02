@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,21 +14,50 @@ import {
   PhoneCall,
   Navigation,
   CheckCircle2,
-  Plus
+  Plus,
+  Search,
+  AlertCircle
 } from "lucide-react";
 
 export default function MenuPage() {
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(MENU_ITEMS);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  const filteredItems = MENU_ITEMS.filter((item) => {
-    if (activeCategory === "all") return true;
-    return item.category === activeCategory;
+  useEffect(() => {
+    async function loadMenu() {
+      setIsSyncing(true);
+      try {
+        const res = await fetch("/api/admin/menu");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.items && Array.isArray(data.items)) {
+            setMenuItems(data.items);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi đồng bộ thực đơn từ máy chủ:", err);
+      } finally {
+        setIsSyncing(false);
+      }
+    }
+    loadMenu();
+  }, []);
+
+  const filteredItems = menuItems.filter((item) => {
+    const matchesCategory = activeCategory === "all" || item.category === activeCategory;
+    const matchesSearch = !searchQuery.trim() || item.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
+    return matchesCategory && matchesSearch;
   });
 
   const getCategoryCount = (catId: string) => {
-    if (catId === "all") return MENU_ITEMS.length;
-    return MENU_ITEMS.filter((i) => i.category === catId).length;
+    if (catId === "all") return menuItems.length;
+    return menuItems.filter((i) => i.category === catId).length;
   };
+
+  const signatureItem = menuItems.find((i) => i.id === "c5");
+  const isSignatureOutOfStock = signatureItem?.inStock === false;
 
   return (
     <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D]">
@@ -71,25 +100,39 @@ export default function MenuPage() {
 
         {/* Sticky Dynamic Filter Navigation */}
         <div className="sticky top-20 z-40 w-full bg-[#F9F8F3]/95 backdrop-blur-md py-3 px-4 sm:px-6 lg:px-8 border-y border-stone-200/80 shadow-[0_4px_16px_rgba(37,51,38,0.03)]">
-          <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
-            {MENU_CATEGORIES.map((cat) => {
-              const isActive = activeCategory === cat.id;
-              const count = getCategoryCount(cat.id);
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  type="button"
-                  className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
-                    isActive
-                      ? "bg-[#3E5C46] text-white shadow-sm"
-                      : "bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200/60"
-                  }`}
-                >
-                  {cat.name} ({count})
-                </button>
-              );
-            })}
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
+              {MENU_CATEGORIES.map((cat) => {
+                const isActive = activeCategory === cat.id;
+                const count = getCategoryCount(cat.id);
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    type="button"
+                    className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
+                      isActive
+                        ? "bg-[#3E5C46] text-white shadow-sm"
+                        : "bg-stone-100 text-stone-600 hover:bg-stone-200 hover:text-stone-900 border border-stone-200/60"
+                    }`}
+                  >
+                    {cat.name} ({count})
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick Search */}
+            <div className="relative shrink-0 sm:w-56">
+              <input
+                type="text"
+                placeholder="Tìm món nhanh..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 bg-white rounded-full text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-inner"
+              />
+              <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            </div>
           </div>
         </div>
 
@@ -101,18 +144,32 @@ export default function MenuPage() {
               <img
                 src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
                 alt="Cà phê muối Đắk Nông"
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover transition-transform duration-500 hover:scale-105 ${
+                  isSignatureOutOfStock ? "grayscale-[40%] opacity-80" : ""
+                }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex items-end p-4">
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex items-end p-4 justify-between">
                 <span className="text-white font-serif text-lg font-bold">
                   Signature: Cà Phê Muối Đắk Nông
                 </span>
+                {isSignatureOutOfStock && (
+                  <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-xs font-bold shadow-md">
+                    Tạm Hết
+                  </span>
+                )}
               </div>
             </div>
             <div className="lg:col-span-7 flex flex-col gap-3">
-              <span className="text-xs uppercase tracking-widest text-[#614633] font-bold">
-                Món Được Yêu Thích Nhất
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs uppercase tracking-widest text-[#614633] font-bold">
+                  Món Được Yêu Thích Nhất
+                </span>
+                {isSignatureOutOfStock && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-xs font-bold">
+                    Tạm Hết Hôm Nay
+                  </span>
+                )}
+              </div>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#3E5C46]">
                 Cà Phê Muối Gia Nghĩa &amp; Trà Hoa Đu Đủ Rừng
               </h2>
@@ -143,42 +200,72 @@ export default function MenuPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-start justify-between py-2.5 border-b border-dotted border-stone-200 group hover:bg-stone-50 px-2 rounded-xl transition-colors"
-                >
-                  <div className="flex flex-col min-w-0 pr-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-[#1B281D] group-hover:text-[#3E5C46] transition-colors">
-                        {item.name}
-                      </span>
-                      {item.tag && (
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[#3E5C46] text-[10px] font-bold">
-                          {item.tag}
+              {filteredItems.map((item) => {
+                const isOutOfStock = item.inStock === false;
+                return (
+                  <div
+                    key={item.id}
+                    className={`flex items-start justify-between py-2.5 border-b border-dotted border-stone-200 group px-2 rounded-xl transition-all ${
+                      isOutOfStock
+                        ? "opacity-60 bg-stone-100/60 grayscale-[30%]"
+                        : "hover:bg-stone-50"
+                    }`}
+                  >
+                    <div className="flex flex-col min-w-0 pr-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className={`text-sm font-bold transition-colors ${
+                            isOutOfStock
+                              ? "text-stone-500 line-through"
+                              : "text-[#1B281D] group-hover:text-[#3E5C46]"
+                          }`}
+                        >
+                          {item.name}
+                        </span>
+                        {isOutOfStock ? (
+                          <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200 text-[10px] font-bold">
+                            Tạm Hết
+                          </span>
+                        ) : (
+                          item.tag && (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[#3E5C46] text-[10px] font-bold">
+                              {item.tag}
+                            </span>
+                          )
+                        )}
+                      </div>
+                      {item.description && (
+                        <span className="text-xs text-stone-600 line-clamp-1 mt-0.5">
+                          {item.description}
                         </span>
                       )}
                     </div>
-                    {item.description && (
-                      <span className="text-xs text-stone-600 line-clamp-1 mt-0.5">
-                        {item.description}
+                    <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                      <span className="font-serif text-sm font-bold text-[#614633]">
+                        {item.price.toLocaleString("vi-VN")}đ
                       </span>
-                    )}
+                      {isOutOfStock ? (
+                        <button
+                          type="button"
+                          disabled
+                          title="Món đang tạm hết"
+                          className="w-7 h-7 rounded-full bg-stone-200 text-stone-400 flex items-center justify-center cursor-not-allowed"
+                        >
+                          <span className="text-xs font-bold">✕</span>
+                        </button>
+                      ) : (
+                        <a
+                          href="tel:0382851688"
+                          title="Gọi đặt món"
+                          className="w-7 h-7 rounded-full bg-stone-100 text-[#3E5C46] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                    <span className="font-serif text-sm font-bold text-[#614633]">
-                      {item.price.toLocaleString("vi-VN")}đ
-                    </span>
-                    <a
-                      href="tel:0382851688"
-                      title="Gọi đặt món"
-                      className="w-7 h-7 rounded-full bg-stone-100 text-[#3E5C46] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white transition-colors"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

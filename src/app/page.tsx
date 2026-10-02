@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,17 +22,100 @@ import {
   CheckCircle2,
   Flower2,
   Waves,
-  Sparkles
+  Sparkles,
+  Clock,
+  Bell
 } from "lucide-react";
 
 export default function HomePage() {
+  const [settings, setSettings] = useState({
+    isOpen: true,
+    statusText: "Quán đang mở cửa đón khách",
+    hoursWeekday: "07:00 - 18:00",
+    hoursWeekend: "07:00 - 22:00",
+    hotline1: "038 285 1688",
+    topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
+  });
+  const [latestAnnouncement, setLatestAnnouncement] = useState<{
+    id: string;
+    title: string;
+    content: string;
+    type?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [settingsRes, annRes] = await Promise.all([
+          fetch("/api/admin/settings").catch(() => null),
+          fetch("/api/admin/announcements").catch(() => null),
+        ]);
+
+        if (settingsRes && settingsRes.ok) {
+          const sData = await settingsRes.json();
+          if (sData.settings) {
+            setSettings((prev) => ({ ...prev, ...sData.settings }));
+          }
+        }
+
+        if (annRes && annRes.ok) {
+          const aData = await annRes.json();
+          if (aData.announcements && aData.announcements.length > 0) {
+            setLatestAnnouncement(aData.announcements[0]);
+          }
+        }
+      } catch (e) {
+        // Fallback gracefully
+      }
+    }
+    loadData();
+  }, []);
+
   return (
     <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D] font-sans selection:bg-[#3E5C46] selection:text-white">
       <Navbar />
 
-      <main className="pt-20">
+      <main className="pt-24 sm:pt-28">
+        {/* Dynamic Announcement Banner from Admin Store */}
+        {latestAnnouncement && (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+            <div className="bg-[#2D4233] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#3E5C46]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-white/10 text-amber-300 flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5 animate-pulse" />
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-800 text-emerald-200 text-[10px] font-bold uppercase tracking-wider">
+                      {latestAnnouncement.type === "event"
+                        ? "Sự Kiện"
+                        : latestAnnouncement.type === "special"
+                        ? "Món Đặc Sản"
+                        : "Bảng Tin Quán"}
+                    </span>
+                    <span className="text-sm sm:text-base font-bold text-white">
+                      {latestAnnouncement.title}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-stone-200 mt-1 line-clamp-2 sm:line-clamp-1">
+                    {latestAnnouncement.content}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                <Link
+                  href="/menu"
+                  className="px-4 py-2 rounded-full bg-[#F9F8F3] text-[#2D4233] text-xs font-bold hover:bg-white transition-all shadow-sm"
+                >
+                  Xem Thực Đơn
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* RESTRUCTURED HERO SECTION - WARM CREAM BEIGE WITH NATURE ACCENTS */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-16 text-center">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-16 text-center">
           {/* Eyebrow Coordinate Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-200/80 text-xs font-semibold uppercase tracking-widest text-[#3E5C46] mb-6 shadow-sm border border-stone-300/60">
             <Compass className="w-3.5 h-3.5 text-[#396663]" />
@@ -101,16 +185,31 @@ export default function HomePage() {
             </a>
           </div>
 
-          {/* Real-time Atmospheric Meter Badge */}
+          {/* Real-time Atmospheric Meter Badge & Store Status */}
           <div className="inline-flex flex-wrap items-center justify-center gap-3 px-5 py-2.5 rounded-full bg-white/90 backdrop-blur-sm border border-stone-200/80 shadow-sm text-stone-600 text-xs mb-10">
             <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              <span className="relative flex h-2.5 w-2.5">
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
+                    settings.isOpen ? "bg-emerald-400" : "bg-rose-400"
+                  } opacity-75`}
+                />
+                <span
+                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                    settings.isOpen ? "bg-emerald-500" : "bg-rose-500"
+                  }`}
+                />
               </span>
-              <span className="font-semibold text-stone-800">Hiện tại bên suối:</span>
+              <span className="font-semibold text-stone-800">
+                Hệ thống Hoạt Động: Cửa hàng {settings.isOpen ? "Đang mở" : "Tạm nghỉ"}
+              </span>
             </div>
+            <span>•</span>
             <div className="flex items-center gap-3 font-semibold text-[#2D4233]">
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-[#3E5C46]" /> T2-T5: {settings.hoursWeekday} | T6-CN: {settings.hoursWeekend}
+              </span>
+              <span>•</span>
               <span className="flex items-center gap-1">
                 <Thermometer className="w-3.5 h-3.5 text-[#3E5C46]" /> 23°C
               </span>
