@@ -89,10 +89,12 @@ export function setSharedData<T>(key: string, value: T): void {
     const domainPart = isProd ? "; domain=.camcuhouse.online" : "";
     const maxAge = 31536000; // 1 year
 
-    // Save to Shared Cookie
-    document.cookie = `${key}=${encodeURIComponent(
-      serialized
-    )}; path=/; max-age=${maxAge}${domainPart}; SameSite=Lax`;
+    // Save to Shared Cookie (if within safe RFC limit of 3800 bytes)
+    if (serialized.length < 3800) {
+      document.cookie = `${key}=${encodeURIComponent(
+        serialized
+      )}; path=/; max-age=${maxAge}${domainPart}; SameSite=Lax`;
+    }
 
     // Notify listeners in same window
     window.dispatchEvent(

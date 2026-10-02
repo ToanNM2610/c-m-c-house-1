@@ -1,10 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
+import {
+  getSharedData,
+  KEYS,
+  SharedGalleryItem,
+} from "@/lib/syncStore";
 import {
   Droplets,
   Trees,
@@ -21,10 +26,112 @@ import {
 export default function SpacePage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [galleryPhotos, setGalleryPhotos] = useState<SharedGalleryItem[]>([]);
 
-  const filteredItems = SPACE_ITEMS.filter((item) => {
+  useEffect(() => {
+    // 1. Hydrate shared gallery from storage & cookie
+    const stored = getSharedData<SharedGalleryItem[]>(KEYS.GALLERY, []);
+    setGalleryPhotos(stored);
+
+    // 2. Real-time synchronization listener across tabs & windows
+    const handleSync = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (custom.detail?.key === KEYS.GALLERY) {
+        setGalleryPhotos(custom.detail.value || []);
+      }
+    };
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === KEYS.GALLERY) {
+        const next = getSharedData<SharedGalleryItem[]>(KEYS.GALLERY, []);
+        setGalleryPhotos(next);
+      }
+    };
+
+    window.addEventListener("camcu_sync_update", handleSync);
+    window.addEventListener("storage", handleStorage);
+
+    // 3. Background server fetch
+    fetch("/api/admin/gallery")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data.photos) && data.photos.length > 0) {
+          const current = getSharedData<SharedGalleryItem[] | null>(KEYS.GALLERY, null);
+          if (current === null || current.length === 0) {
+            setGalleryPhotos(data.photos);
+          }
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener("camcu_sync_update", handleSync);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, []);
+
+  // Map admin category to space category list
+  const mapAdminCategoryToSpace = (cat: string): string[] => {
+    switch (cat) {
+      case "stream":
+      case "suoi":
+      case "bo-suoi":
+        return ["stream", "bo-suoi"];
+      case "wooden-terrace":
+      case "hien-go":
+        return ["wooden-terrace", "hien-go"];
+      case "checkin":
+      case "check-in":
+        return ["checkin", "check-in"];
+      case "workspace":
+      case "chill-work":
+        return ["workspace", "chill-work"];
+      case "hero":
+      case "khong-gian":
+        return ["stream", "checkin", "wooden-terrace"];
+      default:
+        return [cat];
+    }
+  };
+
+  const dynamicItems: SpaceItem[] = galleryPhotos
+    .filter((g) => {
+      return [
+        "stream",
+        "suoi",
+        "bo-suoi",
+        "wooden-terrace",
+        "hien-go",
+        "checkin",
+        "check-in",
+        "workspace",
+        "chill-work",
+        "khong-gian",
+        "hero",
+      ].includes(g.category);
+    })
+    .map((g, idx) => ({
+      id: g.id || `dyn_${idx}`,
+      title: g.title || "Góc Không Gian Cẩm Cù House",
+      subtitle: "Ảnh Mới Từ Quán",
+      description: "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông được cập nhật mới nhất từ ban quản lý.",
+      image: g.url,
+      category: mapAdminCategoryToSpace(g.category),
+      tag: "Ảnh Mới Cập Nhật",
+      colSpan: idx % 3 === 0 ? "lg:col-span-6" : "lg:col-span-3",
+      aspect: idx % 3 === 0 ? "aspect-[4/3] md:aspect-[16/10]" : "aspect-[3/4]",
+    }));
+
+  const allItems = [...dynamicItems, ...SPACE_ITEMS];
+
+  const filteredItems = allItems.filter((item) => {
     if (activeFilter === "all") return true;
-    return item.category.includes(activeFilter as any);
+    return (
+      item.category.includes(activeFilter) ||
+      (activeFilter === "stream" && item.category.includes("bo-suoi")) ||
+      (activeFilter === "wooden-terrace" && item.category.includes("hien-go")) ||
+      (activeFilter === "checkin" && item.category.includes("check-in")) ||
+      (activeFilter === "workspace" && item.category.includes("chill-work"))
+    );
   });
 
   return (
@@ -84,7 +191,7 @@ export default function SpacePage() {
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-200/60"
                   }`}
                 >
-                  {cat.name}
+                  {cat.id === "all" ? `Tất Cả (${allItems.length})` : cat.name}
                 </button>
               ))}
             </div>

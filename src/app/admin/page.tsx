@@ -125,17 +125,24 @@ export default function AdminPage() {
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
   const [editingPriceValue, setEditingPriceValue] = useState<string>("");
 
-  // Gallery tab state (Direct File Upload & URL)
+  // Gallery tab state (Direct Batch File Upload & URL)
+  interface PendingPhoto {
+    id: string;
+    name: string;
+    dataUrl: string;
+    sizeKb: number;
+    title: string;
+  }
+
   const [galleryUploadMode, setGalleryUploadMode] = useState<"file" | "url">("file");
   const [newPhoto, setNewPhoto] = useState({
     title: "",
     url: "",
-    category: "suoi" as "suoi" | "nuoc" | "mon-an" | "khong-gian",
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFileName, setImageFileName] = useState<string | null>(null);
-  const [imageFileSize, setImageFileSize] = useState<string | null>(null);
-  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
+  const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
+  const [batchCategory, setBatchCategory] = useState<string>("stream");
+  const [isProcessingBatch, setIsProcessingBatch] = useState<boolean>(false);
+  const [batchProgress, setBatchProgress] = useState<string>("");
   const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -441,37 +448,69 @@ export default function AdminPage() {
     }
   };
 
-  // File upload & drag-drop handler
-  const handleFileSelect = async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      alert("Vui lòng chọn file hình ảnh (.jpg, .jpeg, .png, .webp)");
+  // Batch file upload & drag-drop handler with Canvas compression
+  const handleFilesSelect = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files).filter((f) => f.type.startsWith("image/"));
+    if (fileArray.length === 0) {
+      alert("Vui lòng chọn các file hình ảnh hợp lệ (.jpg, .jpeg, .png, .webp)");
       return;
     }
 
-    setIsProcessingImage(true);
-    try {
-      const originalSizeKb = Math.round(file.size / 1024);
-      setImageFileName(file.name);
+    setIsProcessingBatch(true);
+    setBatchProgress(`Đang tối ưu & nén 0/${fileArray.length} ảnh...`);
 
-      // Auto-fill title if empty
-      if (!newPhoto.title) {
-        const titleWithoutExt = file.name.replace(/\.[^/.]+$/, "");
-        setNewPhoto((prev) => ({ ...prev, title: titleWithoutExt }));
+    const newPendingList: PendingPhoto[] = [];
+    let count = 0;
+
+    for (const file of fileArray) {
+      try {
+        count++;
+        setBatchProgress(`Đang nén & tối ưu ${count}/${fileArray.length}: ${file.name}...`);
+
+        // Compress using Canvas (max 1280px, quality 0.78)
+        const compressedDataUrl = await compressImageFile(file, 1280, 1280, 0.78);
+        const compressedSizeKb = Math.round((compressedDataUrl.length * 0.75) / 1024);
+
+        const titleWithoutExt = file.name
+          .replace(/\.[^/.]+$/, "")
+          .replace(/[-_]/g, " ")
+          .trim();
+
+        newPendingList.push({
+          id: `pending_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          name: file.name,
+          dataUrl: compressedDataUrl,
+          sizeKb: compressedSizeKb,
+          title: titleWithoutExt,
+        });
+      } catch (err) {
+        console.error("Lỗi nén ảnh:", file.name, err);
       }
-
-      // Compress and convert to Base64 Data URL
-      const compressedDataUrl = await compressImageFile(file, 1200, 1200, 0.82);
-      setImagePreview(compressedDataUrl);
-      setNewPhoto((prev) => ({ ...prev, url: compressedDataUrl }));
-
-      const compressedSizeKb = Math.round((compressedDataUrl.length * 0.75) / 1024);
-      setImageFileSize(`${compressedSizeKb} KB (Gốc: ${originalSizeKb} KB)`);
-    } catch (err) {
-      console.error("Lỗi xử lý ảnh:", err);
-      alert("Không thể đọc file ảnh này. Vui lòng thử lại.");
-    } finally {
-      setIsProcessingImage(false);
     }
+
+    setPendingPhotos((prev) => [...prev, ...newPendingList]);
+    setIsProcessingBatch(false);
+    setBatchProgress("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    showToast(`Đã nạp ${newPendingList.length} ảnh xem trước thành công!`);
+  };
+
+  const handleRemovePendingPhoto = (id: string) => {
+    setPendingPhotos((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleUpdatePendingTitle = (id: string, newTitle: string) => {
+    setPendingPhotos((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, title: newTitle } : p))
+    );
+  };
+
+  const handleClearAllPending = () => {
+    setPendingPhotos([]);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -488,54 +527,77 @@ export default function AdminPage() {
     e.preventDefault();
     setIsDraggingFile(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileSelect(e.dataTransfer.files[0]);
+      handleFilesSelect(e.dataTransfer.files);
     }
   };
 
-  // Add Photo
-  const handleAddPhoto = async (e: React.FormEvent) => {
+  // Add Photos (Batch or Single URL)
+  const handleSaveGalleryPhotos = async (e: React.FormEvent) => {
     e.preventDefault();
-    const photoUrl = galleryUploadMode === "file" ? (imagePreview || newPhoto.url) : newPhoto.url;
-    if (!newPhoto.title || !photoUrl) {
-      alert("Vui lòng nhập tiêu đề và chọn ảnh hoặc dán link");
+
+    if (galleryUploadMode === "url") {
+      if (!newPhoto.title.trim() || !newPhoto.url.trim()) {
+        alert("Vui lòng nhập tiêu đề và liên kết hình ảnh");
+        return;
+      }
+      const newPhotoItem: GalleryItem = {
+        id: `photo_${Date.now()}`,
+        title: newPhoto.title.trim(),
+        url: newPhoto.url.trim(),
+        category: batchCategory as any,
+      };
+
+      const updatedGallery = [newPhotoItem, ...gallery];
+      setGallery(updatedGallery);
+      setSharedData(KEYS.GALLERY, updatedGallery);
+      setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+      setNewPhoto({ title: "", url: "" });
+      showToast("Đã lưu ảnh mới vào thư viện!");
+
+      try {
+        fetch("/api/admin/gallery", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newPhotoItem),
+        }).catch(() => {});
+      } catch {}
       return;
     }
 
-    const newPhotoItem: GalleryItem = {
-      id: `photo_${Date.now()}`,
-      title: newPhoto.title,
-      url: photoUrl,
-      category: newPhoto.category,
-    };
+    // Batch File Upload Mode
+    if (pendingPhotos.length === 0) {
+      alert("Vui lòng chọn ít nhất 1 ảnh để lưu vào thư viện");
+      return;
+    }
 
-    const updatedGallery = [newPhotoItem, ...gallery];
+    const newGalleryItems: GalleryItem[] = pendingPhotos.map((p, idx) => ({
+      id: `photo_${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 6)}`,
+      title: p.title.trim() || `Ảnh không gian ${idx + 1}`,
+      url: p.dataUrl,
+      category: batchCategory as any,
+    }));
+
+    const updatedGallery = [...newGalleryItems, ...gallery];
     setGallery(updatedGallery);
     setSharedData(KEYS.GALLERY, updatedGallery);
     setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
 
-    // Reset form
-    setNewPhoto({ title: "", url: "", category: "suoi" });
-    setImagePreview(null);
-    setImageFileName(null);
-    setImageFileSize(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    showToast("Đã lưu ảnh mới vào thư viện!");
+    const savedCount = newGalleryItems.length;
+    setPendingPhotos([]);
+    showToast(`Đã lưu thành công ${savedCount} ảnh vào thư viện quán!`);
 
-    // Also sync to server in background
-    try {
-      await fetch("/api/admin/gallery", {
+    // Background sync to server API
+    for (const item of newGalleryItems) {
+      fetch("/api/admin/gallery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPhotoItem),
-      });
-    } catch (err) {
-      console.warn("Background API sync for gallery photo:", err);
+        body: JSON.stringify(item),
+      }).catch(() => {});
     }
   };
 
   // Delete Photo
   const handleDeletePhoto = async (id: string) => {
-    if (!confirm("Bạn có muốn xóa ảnh này khỏi thư viện?")) return;
     const updatedGallery = gallery.filter((g) => g.id !== id);
     setGallery(updatedGallery);
     setSharedData(KEYS.GALLERY, updatedGallery);
@@ -543,9 +605,37 @@ export default function AdminPage() {
     showToast("Đã xóa ảnh khỏi thư viện");
 
     try {
-      await fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" });
-    } catch (err) {
-      console.warn("Background API delete for gallery photo:", err);
+      fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" }).catch(() => {});
+    } catch {}
+  };
+
+  // Category Label Mapper
+  const getCategoryLabel = (cat: string) => {
+    switch (cat) {
+      case "stream":
+      case "suoi":
+      case "bo-suoi":
+        return "Bờ Suối Tự Nhiên";
+      case "wooden-terrace":
+      case "hien-go":
+        return "Hiên Gỗ & Chòi Mộc";
+      case "checkin":
+      case "check-in":
+        return "Góc Check-in & Cảnh Quan";
+      case "workspace":
+      case "chill-work":
+        return "Bàn Ghế Làm Việc / Đọc Sách";
+      case "coffee":
+      case "nuoc":
+        return "Cà Phê & Đồ Uống";
+      case "food":
+      case "mon-an":
+        return "Món Ăn Vặt & Đặc Sản";
+      case "hero":
+      case "khong-gian":
+        return "Banner Nổi Bật Trang Chủ";
+      default:
+        return cat;
     }
   };
 
@@ -1317,9 +1407,9 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Form Add Photo */}
+              {/* Form Add Photos (Multi / Batch Upload) */}
               <form
-                onSubmit={handleAddPhoto}
+                onSubmit={handleSaveGalleryPhotos}
                 className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col gap-5"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 gap-3">
@@ -1327,9 +1417,14 @@ export default function AdminPage() {
                     <span className="p-1.5 rounded-lg bg-[#3E5C46]/10 text-[#3E5C46]">
                       <Camera className="w-4 h-4" />
                     </span>
-                    <h3 className="font-serif text-base font-bold text-[#3E5C46]">
-                      + Thêm Ảnh Mới Vào Thư Viện
-                    </h3>
+                    <div>
+                      <h3 className="font-serif text-base font-bold text-[#3E5C46]">
+                        + Tải Lên &amp; Đăng Ảnh Thư Viện
+                      </h3>
+                      <p className="text-[11px] text-stone-500">
+                        Hỗ trợ nạp hàng loạt nhiều ảnh cùng lúc, tự động tối ưu hóa hiển thị.
+                      </p>
+                    </div>
                   </div>
 
                   {/* Mode switcher tabs */}
@@ -1344,7 +1439,7 @@ export default function AdminPage() {
                       }`}
                     >
                       <UploadCloud className="w-3.5 h-3.5" />
-                      <span>Tải ảnh từ máy / điện thoại</span>
+                      <span>Tải nhiều ảnh từ máy (Batch)</span>
                     </button>
                     <button
                       type="button"
@@ -1356,109 +1451,140 @@ export default function AdminPage() {
                       }`}
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
-                      <span>Dán liên kết URL</span>
+                      <span>Dán link trực tuyến</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Direct File Upload Mode */}
+                {/* Direct Batch File Upload Mode */}
                 {galleryUploadMode === "file" && (
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-4">
                     <input
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
+                      multiple
                       className="hidden"
                       onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          handleFileSelect(e.target.files[0]);
+                        if (e.target.files && e.target.files.length > 0) {
+                          handleFilesSelect(e.target.files);
                         }
                       }}
                     />
 
-                    {!imagePreview ? (
+                    {/* Batch Processing Loading State */}
+                    {isProcessingBatch && (
+                      <div className="rounded-2xl border-2 border-dashed border-[#3E5C46]/50 bg-[#3E5C46]/5 p-8 flex flex-col items-center justify-center text-center gap-3">
+                        <RefreshCw className="w-8 h-8 text-[#3E5C46] animate-spin" />
+                        <span className="text-sm font-bold text-stone-800">
+                          {batchProgress || "Đang nén và tối ưu hóa hình ảnh..."}
+                        </span>
+                        <span className="text-xs text-stone-500">
+                          Tự động giảm kích thước canvas tối đa 1280px để lưu trữ nhẹ nhàng.
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Drag & Drop Area when no images selected yet */}
+                    {!isProcessingBatch && pendingPhotos.length === 0 && (
                       <div
                         onDragOver={handleDragOver}
                         onDragLeave={handleDragLeave}
                         onDrop={handleDrop}
                         onClick={() => fileInputRef.current?.click()}
-                        className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition-all flex flex-col items-center justify-center gap-3 ${
+                        className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 sm:p-10 text-center transition-all flex flex-col items-center justify-center gap-3 ${
                           isDraggingFile
-                            ? "border-[#3E5C46] bg-[#3E5C46]/5 scale-[0.99]"
+                            ? "border-[#3E5C46] bg-[#3E5C46]/10 scale-[0.99]"
                             : "border-stone-300 bg-stone-50/60 hover:bg-stone-100/80 hover:border-[#3E5C46]"
                         }`}
                       >
                         <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-stone-200 flex items-center justify-center text-[#3E5C46]">
-                          {isProcessingImage ? (
-                            <RefreshCw className="w-6 h-6 animate-spin text-[#3E5C46]" />
-                          ) : (
-                            <UploadCloud className="w-7 h-7" />
-                          )}
+                          <UploadCloud className="w-7 h-7" />
                         </div>
                         <div>
                           <p className="text-sm font-bold text-stone-800">
-                            {isProcessingImage
-                              ? "Đang tối ưu & nén hình ảnh..."
-                              : "Kéo thả ảnh vào đây hoặc bấm để chọn từ máy / điện thoại"}
+                            Kéo thả nhiều ảnh vào đây hoặc bấm để chọn từ máy / điện thoại
                           </p>
                           <p className="text-xs text-stone-500 mt-1">
-                            Hỗ trợ JPG, PNG, WEBP. Ảnh tự động tối ưu hóa hiển thị nhanh sắc nét.
+                            Hỗ trợ chọn cùng lúc 5, 10, 20 ảnh (.jpg, .jpeg, .png, .webp).
                           </p>
                         </div>
                         <button
                           type="button"
-                          disabled={isProcessingImage}
-                          className="px-4 py-2 rounded-full bg-white text-[#3E5C46] text-xs font-bold border border-stone-300 shadow-sm hover:bg-stone-50"
+                          className="px-5 py-2.5 rounded-full bg-white text-[#3E5C46] text-xs font-bold border border-stone-300 shadow-sm hover:bg-stone-50 transition-all"
                         >
-                          Chọn ảnh từ thiết bị
+                          Chọn nhiều ảnh từ thiết bị
                         </button>
                       </div>
-                    ) : (
-                      /* Live Image Preview Card */
-                      <div className="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-2xl bg-stone-50 border border-stone-200">
-                        <div className="relative w-40 h-28 rounded-xl overflow-hidden shadow-sm border border-stone-200 shrink-0 bg-stone-100">
-                          <img
-                            src={imagePreview}
-                            alt="Xem trước ảnh"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                    )}
+
+                    {/* Preview Grid when photos are selected */}
+                    {!isProcessingBatch && pendingPhotos.length > 0 && (
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-200">
                           <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[#3E5C46] text-[10px] font-bold">
-                              ✓ Đã nạp ảnh thành công
+                            <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold shadow-sm">
+                              ✓ Đã chọn {pendingPhotos.length} ảnh
                             </span>
-                            {imageFileSize && (
-                              <span className="text-[10px] text-stone-500 font-mono">
-                                Dung lượng: {imageFileSize}
-                              </span>
-                            )}
+                            <span className="text-xs text-emerald-900 font-medium">
+                              Tổng dung lượng nén:{" "}
+                              {pendingPhotos.reduce((acc, p) => acc + p.sizeKb, 0).toLocaleString("vi-VN")}{" "}
+                              KB
+                            </span>
                           </div>
-                          <p className="text-xs font-bold text-stone-800 truncate">
-                            {imageFileName || "Ảnh từ thiết bị"}
-                          </p>
-                          <div className="flex items-center gap-2 pt-1">
+
+                          <div className="flex items-center gap-2">
                             <button
                               type="button"
                               onClick={() => fileInputRef.current?.click()}
-                              className="px-3 py-1 rounded-full bg-white text-[#3E5C46] border border-stone-300 text-xs font-semibold hover:bg-stone-100"
+                              className="px-3 py-1 rounded-lg bg-white text-[#3E5C46] border border-stone-300 text-xs font-semibold hover:bg-stone-50 shadow-sm"
                             >
-                              Đổi ảnh khác
+                              + Chọn thêm ảnh
                             </button>
                             <button
                               type="button"
-                              onClick={() => {
-                                setImagePreview(null);
-                                setImageFileName(null);
-                                setImageFileSize(null);
-                                setNewPhoto((prev) => ({ ...prev, url: "" }));
-                                if (fileInputRef.current) fileInputRef.current.value = "";
-                              }}
-                              className="px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-semibold hover:bg-red-100"
+                              onClick={handleClearAllPending}
+                              className="px-3 py-1 rounded-lg bg-red-50 text-red-600 border border-red-200 text-xs font-semibold hover:bg-red-100"
                             >
-                              Hủy bỏ
+                              Xóa danh sách
                             </button>
                           </div>
+                        </div>
+
+                        {/* Thumbnails Grid with Individual X button & Title Editor */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 max-h-[420px] overflow-y-auto p-1">
+                          {pendingPhotos.map((photo) => (
+                            <div
+                              key={photo.id}
+                              className="group relative bg-white rounded-xl border border-stone-200 p-2 shadow-sm flex flex-col gap-1.5 hover:shadow-md transition-shadow"
+                            >
+                              <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-stone-100">
+                                <img
+                                  src={photo.dataUrl}
+                                  alt={photo.title}
+                                  className="w-full h-full object-cover"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemovePendingPhoto(photo.id)}
+                                  className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 hover:bg-red-600 text-white flex items-center justify-center transition-colors shadow"
+                                  title="Gỡ ảnh này"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                                <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[9px] text-white font-mono">
+                                  {photo.sizeKb} KB
+                                </span>
+                              </div>
+                              <input
+                                type="text"
+                                value={photo.title}
+                                onChange={(e) => handleUpdatePendingTitle(photo.id, e.target.value)}
+                                placeholder="Tên ảnh..."
+                                className="w-full px-2 py-1 bg-stone-50 rounded text-[11px] font-medium border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
+                              />
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -1467,109 +1593,141 @@ export default function AdminPage() {
 
                 {/* Online URL Mode */}
                 {galleryUploadMode === "url" && (
-                  <div>
-                    <label className="text-xs font-semibold text-stone-600 block mb-1">
-                      URL Hình ảnh (Unsplash / Link trực tuyến)
-                    </label>
-                    <input
-                      type="url"
-                      placeholder="https://images.unsplash.com/photo-..."
-                      value={newPhoto.url}
-                      onChange={(e) => setNewPhoto({ ...newPhoto, url: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
-                      required={galleryUploadMode === "url"}
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold text-stone-700 block mb-1">
+                        URL Hình ảnh (Unsplash / Link trực tuyến)
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://images.unsplash.com/photo-..."
+                        value={newPhoto.url}
+                        onChange={(e) => setNewPhoto({ ...newPhoto, url: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                        required={galleryUploadMode === "url"}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-stone-700 block mb-1">
+                        Tiêu đề hình ảnh
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="VD: Cảnh suối ban mai trong veo..."
+                        value={newPhoto.title}
+                        onChange={(e) => setNewPhoto({ ...newPhoto, title: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                        required={galleryUploadMode === "url"}
+                      />
+                    </div>
                   </div>
                 )}
 
-                {/* Metadata Fields: Title & Category */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                  <div>
-                    <label className="text-xs font-semibold text-stone-600 block mb-1">
-                      Tiêu đề ảnh
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="VD: Góc suối ban mai trong veo..."
-                      value={newPhoto.title}
-                      onChange={(e) => setNewPhoto({ ...newPhoto, title: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-stone-600 block mb-1">
-                      Chuyên mục
+                {/* Category Selection Dropdown (Standardized for /space, /menu, /) */}
+                <div className="pt-2 border-t border-stone-200">
+                  <div className="max-w-md">
+                    <label className="text-xs font-bold text-stone-800 block mb-1.5 flex items-center gap-1.5">
+                      <span>Chuyên mục phân loại ảnh</span>
+                      <span className="text-[10px] text-stone-400 font-normal">
+                        (Hiển thị đúng vào bộ lọc của trang tương ứng)
+                      </span>
                     </label>
                     <select
-                      value={newPhoto.category}
-                      onChange={(e) => setNewPhoto({ ...newPhoto, category: e.target.value as any })}
-                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      value={batchCategory}
+                      onChange={(e) => setBatchCategory(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs font-semibold text-stone-800 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     >
-                      <option value="suoi">Bờ Suối Đá</option>
-                      <option value="khong-gian">Không Gian Quán</option>
-                      <option value="nuoc">Đồ Uống Cà Phê</option>
-                      <option value="mon-an">Món Ăn</option>
+                      <optgroup label="🌿 Nhóm Không Gian Suối (Trang /space)">
+                        <option value="stream">Bờ Suối Tự Nhiên (stream)</option>
+                        <option value="wooden-terrace">Hiên Gỗ &amp; Chòi Mộc (wooden-terrace)</option>
+                        <option value="checkin">Góc Check-in &amp; Cảnh Quan (checkin)</option>
+                        <option value="workspace">Bàn Ghế Làm Việc / Đọc Sách (workspace)</option>
+                      </optgroup>
+                      <optgroup label="☕ Nhóm Thực Đơn (Trang /menu)">
+                        <option value="coffee">Cà Phê &amp; Đồ Uống (coffee)</option>
+                        <option value="food">Món Ăn Vặt &amp; Đặc Sản (food)</option>
+                      </optgroup>
+                      <optgroup label="🏡 Nhóm Trang Chủ">
+                        <option value="hero">Banner Nổi Bật Trang Chủ (hero)</option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2">
+                {/* Action Footer */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-3 border-t border-stone-200 gap-3">
                   <span className="text-xs text-stone-500">
-                    {galleryUploadMode === "file" && imagePreview
-                      ? "✓ Sẵn sàng lưu vào thư viện và bộ nhớ máy"
-                      : "Điền tiêu đề và chọn ảnh để lưu"}
+                    {galleryUploadMode === "file"
+                      ? pendingPhotos.length > 0
+                        ? `✓ Đã sẵn sàng lưu ${pendingPhotos.length} ảnh vào thư viện.`
+                        : "Chọn hoặc kéo thả ảnh để nạp vào danh sách xem trước."
+                      : "Dán link và điền tiêu đề để lưu ảnh trực tuyến."}
                   </span>
                   <button
                     type="submit"
-                    disabled={isProcessingImage}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-bold hover:bg-[#2D4233] transition-all shadow-md disabled:opacity-50"
+                    disabled={isProcessingBatch || (galleryUploadMode === "file" && pendingPhotos.length === 0)}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-bold hover:bg-[#2D4233] transition-all shadow-md disabled:opacity-50"
                   >
                     <Save className="w-4 h-4" />
-                    <span>Lưu Ảnh Vào Thư Viện</span>
+                    <span>
+                      {galleryUploadMode === "file" && pendingPhotos.length > 0
+                        ? `Lưu Tất Cả (${pendingPhotos.length}) Ảnh Vào Thư Viện`
+                        : "Lưu Ảnh Vào Thư Viện"}
+                    </span>
                   </button>
                 </div>
               </form>
 
-              {/* Gallery Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {gallery.map((photo) => (
-                  <div
-                    key={photo.id}
-                    className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col hover:shadow-md transition-shadow"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
-                      <img
-                        src={photo.url}
-                        alt={photo.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleDeletePhoto(photo.id)}
-                        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm"
-                        title="Xóa ảnh này khỏi thư viện"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <span className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold">
-                        {photo.category === "suoi"
-                          ? "Bờ Suối"
-                          : photo.category === "khong-gian"
-                          ? "Không Gian"
-                          : photo.category === "nuoc"
-                          ? "Đồ Uống"
-                          : "Món Ăn"}
-                      </span>
-                    </div>
-                    <div className="p-4 flex flex-col gap-1">
-                      <span className="text-xs font-bold text-[#1B281D] truncate">{photo.title}</span>
-                      <span className="text-[10px] text-stone-400 truncate">
-                        {photo.url.startsWith("data:") ? "Ảnh tải từ thiết bị (Base64)" : photo.url}
-                      </span>
-                    </div>
+              {/* Gallery Grid with Category Badges */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-serif text-lg font-bold text-[#3E5C46]">
+                    Tất Cả Ảnh Đang Có Trong Thư Viện ({gallery.length})
+                  </h3>
+                  <span className="text-xs text-stone-500">
+                    Bấm icon thùng rác trên từng ảnh để xóa khỏi hệ thống
+                  </span>
+                </div>
+
+                {gallery.length === 0 ? (
+                  <div className="p-12 text-center bg-white rounded-2xl border border-stone-200 text-stone-400 text-xs">
+                    Chưa có hình ảnh nào trong thư viện.
                   </div>
-                ))}
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {gallery.map((photo) => (
+                      <div
+                        key={photo.id}
+                        className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col hover:shadow-md transition-shadow"
+                      >
+                        <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
+                          <img
+                            src={photo.url}
+                            alt={photo.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleDeletePhoto(photo.id)}
+                            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm"
+                            title="Xóa ảnh này khỏi thư viện"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <span className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold">
+                            {getCategoryLabel(photo.category)}
+                          </span>
+                        </div>
+                        <div className="p-4 flex flex-col gap-1">
+                          <span className="text-xs font-bold text-[#1B281D] truncate">{photo.title}</span>
+                          <span className="text-[10px] text-stone-400 truncate">
+                            {photo.url.startsWith("data:") ? "Ảnh tải từ thiết bị (Base64)" : photo.url}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
