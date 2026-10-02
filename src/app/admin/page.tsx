@@ -62,6 +62,14 @@ import {
 } from "@/utils/storage";
 
 import defaultGalleryData from "@/data/gallery.json";
+import ThemeToggle from "@/components/ThemeToggle";
+import LightboxModal, { LightboxPhoto } from "@/components/LightboxModal";
+import {
+  useStoreStatus,
+  getStoreOverride,
+  setStoreOverride,
+  StoreOverrideMode,
+} from "@/lib/openingHours";
 
 type AnnouncementItem = SharedAnnouncement;
 
@@ -93,6 +101,12 @@ export default function AdminPage() {
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<"overview" | "menu" | "gallery" | "settings">("overview");
+
+  // Store opening hours & override state
+  const storeStatus = useStoreStatus();
+  const [storeOverride, setStoreOverrideState] = useState<StoreOverrideMode>("auto");
+  const [adminLightboxOpen, setAdminLightboxOpen] = useState<boolean>(false);
+  const [adminLightboxIndex, setAdminLightboxIndex] = useState<number>(0);
 
   // Store data state
   const [menuOverrides, setMenuOverrides] = useState<Record<string, { inStock: boolean; price?: number }>>({});
@@ -667,6 +681,25 @@ export default function AdminPage() {
     } catch {}
   };
 
+  // Store Override Change Handler
+  const handleStoreOverrideChange = (mode: StoreOverrideMode) => {
+    setStoreOverrideState(mode);
+    setStoreOverride(mode);
+    showToast(
+      mode === "auto"
+        ? "Đã chuyển sang: Tự động theo lịch (GMT+7)"
+        : mode === "force_open"
+        ? "Đã ghi đè: Bắt buộc mở cửa đón khách"
+        : "Đã ghi đè: Tạm đóng cửa / Nghỉ lễ"
+    );
+  };
+
+  // Lightbox Modal Handler
+  const handleOpenAdminLightbox = (index: number) => {
+    setAdminLightboxIndex(index);
+    setAdminLightboxOpen(true);
+  };
+
   // Reset to default 31 standard photos
   const handleResetToDefaultPhotos = () => {
     if (window.confirm("Bạn có chắc chắn muốn đồng bộ và khôi phục 31 ảnh quán về danh mục và tên chuẩn không?")) {
@@ -983,29 +1016,45 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content Body */}
-      <div className="pl-64 w-full min-h-screen flex flex-col">
+      <div className="pl-64 w-full min-h-screen flex flex-col bg-[#F9F8F3] dark:bg-[#121A15] text-[#1B281D] dark:text-[#F5F4EE] transition-colors duration-300">
         {/* Top Header */}
-        <header className="h-16 bg-[#F9F8F3]/90 backdrop-blur-xl border-b border-stone-200 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8">
+        <header className="h-16 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8">
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/70 border border-emerald-200 text-[#3E5C46] text-xs font-semibold">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  settings.isOpen ? "bg-[#396663] animate-pulse" : "bg-red-500"
-                }`}
-              />
-              <span>
-                Hệ thống Hoạt Động (Cửa hàng: {settings.isOpen ? "Đang mở cửa" : "Tạm nghỉ"})
+            {/* Store Status Override Control */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-stone-700 dark:text-stone-300 hidden md:inline">
+                Hệ thống Hoạt Động:
               </span>
-            </span>
+              <div className="relative inline-flex items-center">
+                <select
+                  value={storeOverride}
+                  onChange={(e) => handleStoreOverrideChange(e.target.value as StoreOverrideMode)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                    storeStatus.badgeType === "open"
+                      ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border-emerald-300 dark:border-emerald-800"
+                      : storeStatus.badgeType === "closing_soon"
+                      ? "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-800"
+                      : "bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 border-rose-300 dark:border-rose-800"
+                  }`}
+                >
+                  <option value="auto">⏱ Tự động theo lịch ({storeStatus.shortBadge})</option>
+                  <option value="force_open">🟢 Bắt buộc mở (Force Open)</option>
+                  <option value="force_closed">🔴 Tạm đóng cửa / Nghỉ lễ (Force Closed)</option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-stone-600">
-              <Clock className="w-3.5 h-3.5 text-[#396663]" />
-              <span>Đắk Nông (GMT+7) • T2-T5: {settings.hoursWeekday} | T6-CN: {settings.hoursWeekend}</span>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="hidden lg:flex items-center gap-1.5 text-xs text-stone-600 dark:text-stone-400">
+              <Clock className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
+              <span>Đắk Nông (GMT+7: {storeStatus.currentTimeVN}) • {storeStatus.scheduleText}</span>
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Theme Toggle Button */}
+              <ThemeToggle />
+
               {/* Nút Xem Website mở trong tab mới */}
               <a
                 href="https://camcuhouse.online"
@@ -1774,13 +1823,16 @@ export default function AdminPage() {
                     Chưa có hình ảnh nào trong thư viện.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {gallery.map((photo) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {gallery.map((photo, idx) => (
                       <div
                         key={photo.id}
-                        className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col hover:shadow-md transition-shadow"
+                        className="group bg-white dark:bg-[#1E2B22] rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col hover:shadow-md transition-all"
                       >
-                        <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
+                        <div
+                          onClick={() => handleOpenAdminLightbox(idx)}
+                          className="relative aspect-[16/10] overflow-hidden bg-stone-100 dark:bg-stone-800 cursor-pointer"
+                        >
                           <img
                             src={photo.url}
                             alt={photo.title}
@@ -1788,7 +1840,10 @@ export default function AdminPage() {
                           />
                           <button
                             type="button"
-                            onClick={() => handleDeletePhoto(photo.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeletePhoto(photo.id);
+                            }}
                             className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm z-10"
                             title="Xóa ảnh này khỏi thư viện"
                           >
@@ -1799,28 +1854,28 @@ export default function AdminPage() {
                           </span>
                         </div>
 
-                        <div className="p-4 flex flex-col gap-3 bg-white">
+                        <div className="p-4 flex flex-col gap-3 bg-white dark:bg-[#1E2B22]">
                           <div>
-                            <label className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block mb-1">
+                            <label className="text-[10px] font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider block mb-1">
                               Tiêu đề ảnh
                             </label>
                             <input
                               type="text"
                               value={photo.title}
                               onChange={(e) => handleUpdatePhoto(photo.id, { title: e.target.value })}
-                              className="w-full px-3 py-1.5 bg-stone-50 rounded-lg text-xs font-semibold text-[#1B281D] border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
+                              className="w-full px-3 py-1.5 bg-stone-50 dark:bg-[#16231A] text-[#1B281D] dark:text-[#F5F4EE] rounded-lg text-xs font-semibold border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
                               placeholder="Tiêu đề ảnh..."
                             />
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block mb-1">
+                            <label className="text-[10px] font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider block mb-1">
                               Chuyên mục phân loại
                             </label>
                             <select
                               value={photo.category}
                               onChange={(e) => handleUpdatePhoto(photo.id, { category: e.target.value })}
-                              className="w-full px-3 py-1.5 bg-stone-50 rounded-lg text-xs font-medium text-stone-800 border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
+                              className="w-full px-3 py-1.5 bg-stone-50 dark:bg-[#16231A] text-stone-800 dark:text-stone-200 rounded-lg text-xs font-medium border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
                             >
                               <optgroup label="🌿 Nhóm Không Gian Suối (Trang /space)">
                                 <option value="stream">Bờ Suối Tự Nhiên (stream)</option>
@@ -1839,23 +1894,23 @@ export default function AdminPage() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block mb-1">
+                            <label className="text-[10px] font-bold text-stone-600 dark:text-stone-400 uppercase tracking-wider block mb-1">
                               Lời tựa / Chú thích (Caption)
                             </label>
                             <textarea
                               rows={2}
                               value={photo.caption || ""}
                               onChange={(e) => handleUpdatePhoto(photo.id, { caption: e.target.value })}
-                              className="w-full px-3 py-1.5 bg-stone-50 rounded-lg text-[11px] text-stone-600 border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46] resize-none"
+                              className="w-full px-3 py-1.5 bg-stone-50 dark:bg-[#16231A] text-stone-700 dark:text-stone-300 rounded-lg text-[11px] border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-1 focus:ring-[#3E5C46] resize-none"
                               placeholder="Lời tựa nên thơ cho ảnh..."
                             />
                           </div>
 
-                          <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-400">
-                            <span className="truncate max-w-[200px]" title={photo.url}>
-                              {photo.url.startsWith("data:") ? "Ảnh tải từ thiết bị (Base64)" : photo.url}
+                          <div className="pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-[10px] text-stone-400">
+                            <span className="truncate max-w-[180px]" title={photo.url}>
+                              {photo.url.startsWith("data:") ? "Ảnh nén Base64" : photo.url}
                             </span>
-                            <span className="text-emerald-700 font-medium">✓ Đã lưu</span>
+                            <span className="text-emerald-700 dark:text-emerald-400 font-medium">✓ Đã lưu</span>
                           </div>
                         </div>
                       </div>
@@ -2180,6 +2235,19 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+
+      {/* Lightbox Modal for Admin Gallery Preview */}
+      <LightboxModal
+        isOpen={adminLightboxOpen}
+        photos={gallery.map((p) => ({
+          url: p.url,
+          title: p.title,
+          caption: p.caption,
+          subtitle: getCategoryLabel(p.category),
+        }))}
+        initialIndex={adminLightboxIndex}
+        onClose={() => setAdminLightboxOpen(false)}
+      />
     </div>
   );
 }

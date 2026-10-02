@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -41,11 +42,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={`${playfair.variable} ${jakarta.variable}`}>
-      <body className="bg-[#F9F8F3] text-[#1B281D] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white">
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${jakarta.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var cookieMatch = document.cookie.match(/(?:^|;\\s*)camcu_theme=([^;]*)/);
+                  var storedTheme = localStorage.getItem('camcu_theme');
+                  var theme = (cookieMatch ? cookieMatch[1] : null) || storedTheme;
+                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body suppressHydrationWarning className="bg-[#F9F8F3] dark:bg-[#121A15] text-[#1B281D] dark:text-[#F5F4EE] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white transition-colors duration-300">
+        <ThemeProvider>
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
