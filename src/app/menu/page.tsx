@@ -20,6 +20,10 @@ import {
 } from "lucide-react";
 
 import {
+  getSharedData,
+  KEYS,
+} from "@/lib/syncStore";
+import {
   CAMCU_MENU_OVERRIDES_KEY,
   getStoredData,
 } from "@/utils/storage";
@@ -36,18 +40,33 @@ export default function MenuPage() {
       CAMCU_MENU_OVERRIDES_KEY,
       {}
     );
-    if (Object.keys(storedOverrides).length > 0) {
-      setMenuItems((prev) =>
-        prev.map((item) => {
-          const ov = storedOverrides[item.id];
-          return {
+    const disabledIds = getSharedData<string[]>(KEYS.DISABLED_MENU_IDS, []);
+
+    setMenuItems((prev) =>
+      prev.map((item) => {
+        const ov = storedOverrides[item.id];
+        const isExplicitlyDisabled = disabledIds.includes(item.id);
+        return {
+          ...item,
+          inStock: isExplicitlyDisabled ? false : ov ? ov.inStock : item.inStock ?? true,
+          price: ov && typeof ov.price === "number" ? ov.price : item.price,
+        };
+      })
+    );
+
+    const handleSync = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (custom.detail?.key === KEYS.DISABLED_MENU_IDS) {
+        const currentDisabled: string[] = custom.detail.value || [];
+        setMenuItems((prev) =>
+          prev.map((item) => ({
             ...item,
-            inStock: ov ? ov.inStock : item.inStock ?? true,
-            price: ov && typeof ov.price === "number" ? ov.price : item.price,
-          };
-        })
-      );
-    }
+            inStock: !currentDisabled.includes(item.id),
+          }))
+        );
+      }
+    };
+    window.addEventListener("camcu_sync_update", handleSync);
 
     // 2. Fetch server updates
     async function loadMenu() {

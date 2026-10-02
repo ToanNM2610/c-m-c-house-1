@@ -24,8 +24,12 @@ const NAV_LINKS = [
 ];
 
 import {
+  getSharedData,
+  KEYS,
+  SharedAnnouncement,
+} from "@/lib/syncStore";
+import {
   CAMCU_SETTINGS_KEY,
-  CAMCU_ANNOUNCEMENTS_KEY,
   getStoredData,
 } from "@/utils/storage";
 
@@ -42,24 +46,36 @@ export default function Navbar() {
     hotline1: "038 285 1688",
     topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
   });
-  const [latestAnnouncement, setLatestAnnouncement] = useState<{ title: string; content: string } | null>(null);
+  const [announcements, setAnnouncements] = useState<SharedAnnouncement[]>([]);
 
   useEffect(() => {
-    // 1. Immediately hydrate from LocalStorage & Shared Cookie to survive F5
+    // 1. Immediately hydrate from Shared Storage & Cookie (survives F5)
     const storedSettings = getStoredData<typeof settings | null>(CAMCU_SETTINGS_KEY, null);
     if (storedSettings) {
       setSettings((prev) => ({ ...prev, ...storedSettings }));
     }
 
-    const storedAnnouncements = getStoredData<Array<{ title: string; content: string }>>(
-      CAMCU_ANNOUNCEMENTS_KEY,
-      []
-    );
-    if (storedAnnouncements.length > 0) {
-      setLatestAnnouncement(storedAnnouncements[0]);
-    }
+    const storedAnnouncements = getSharedData<SharedAnnouncement[]>(KEYS.ANNOUNCEMENTS, []);
+    setAnnouncements(storedAnnouncements);
 
-    // 2. Fetch server updates
+    // Real-time synchronization listener across tabs & windows
+    const handleSync = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (custom.detail?.key === KEYS.ANNOUNCEMENTS) {
+        setAnnouncements(custom.detail.value || []);
+      }
+    };
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === KEYS.ANNOUNCEMENTS) {
+        const next = getSharedData<SharedAnnouncement[]>(KEYS.ANNOUNCEMENTS, []);
+        setAnnouncements(next);
+      }
+    };
+
+    window.addEventListener("camcu_sync_update", handleSync);
+    window.addEventListener("storage", handleStorage);
+
+    // 2. Fetch server updates (fallback if no client cookie is present)
     async function loadData() {
       try {
         const [settingsRes, annRes] = await Promise.all([
@@ -76,8 +92,11 @@ export default function Navbar() {
 
         if (annRes && annRes.ok) {
           const aData = await annRes.json();
-          if (aData.announcements && aData.announcements.length > 0) {
-            setLatestAnnouncement(aData.announcements[0]);
+          if (aData.announcements && Array.isArray(aData.announcements)) {
+            const clientCookie = getSharedData<SharedAnnouncement[] | null>(KEYS.ANNOUNCEMENTS, null);
+            if (clientCookie === null) {
+              setAnnouncements(aData.announcements);
+            }
           }
         }
       } catch (e) {
@@ -85,7 +104,15 @@ export default function Navbar() {
       }
     }
     loadData();
+
+    return () => {
+      window.removeEventListener("camcu_sync_update", handleSync);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
+
+  const pinnedNews =
+    announcements.find((a) => a.isPinned || a.isHighlighted) || announcements[0] || null;
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#F9F8F3]/95 backdrop-blur-md border-b border-stone-200/80 shadow-[0_2px_12px_rgba(37,51,38,0.04)] transition-all">
@@ -94,12 +121,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-hidden truncate">
             <span className="bg-[#3E5C46] px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
-              Bảng Tin Quán
+              {pinnedNews ? "Bảng Tin Quán" : "Giờ Mở Cửa"}
             </span>
             <span className="truncate font-medium">
-              {latestAnnouncement
-                ? `${latestAnnouncement.title}: ${latestAnnouncement.content}`
-                : settings.topBanner}
+              {pinnedNews
+                ? `${pinnedNews.title}: ${pinnedNews.content}`
+                : `🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (${settings.hoursWeekday}) | T6 - CN (${settings.hoursWeekend})`}
             </span>
           </div>
 

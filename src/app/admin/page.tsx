@@ -41,6 +41,13 @@ import {
 } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
 import {
+  getSharedData,
+  setSharedData,
+  KEYS,
+  SharedAnnouncement,
+  SharedGalleryItem,
+} from "@/lib/syncStore";
+import {
   CAMCU_AUTH_KEY,
   CAMCU_MENU_OVERRIDES_KEY,
   CAMCU_ANNOUNCEMENTS_KEY,
@@ -54,14 +61,7 @@ import {
   compressImageFile,
 } from "@/utils/storage";
 
-interface AnnouncementItem {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-  type: "event" | "notice" | "special";
-  isHighlighted?: boolean;
-}
+type AnnouncementItem = SharedAnnouncement;
 
 interface GalleryItem {
   id: string;
@@ -93,8 +93,12 @@ export default function AdminPage() {
 
   // Store data state
   const [menuOverrides, setMenuOverrides] = useState<Record<string, { inStock: boolean; price?: number }>>({});
-  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
-  const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>(() => {
+    return getSharedData<AnnouncementItem[]>(KEYS.ANNOUNCEMENTS, []);
+  });
+  const [gallery, setGallery] = useState<GalleryItem[]>(() => {
+    return getSharedData<GalleryItem[]>(KEYS.GALLERY, []);
+  });
   const [settings, setSettings] = useState<StoreSettingsData>({
     isOpen: true,
     statusText: "Quán đang mở cửa đón khách",
@@ -157,7 +161,7 @@ export default function AdminPage() {
       setIsAuthenticated(true);
     }
 
-    // 2. Hydrate from Storage first (immediate, no flicker, survives F5)
+    // 2. Hydrate from Shared Storage first (survives F5 and syncs across subdomains)
     const storedOverrides = getStoredData<Record<string, { inStock: boolean; price?: number }>>(
       CAMCU_MENU_OVERRIDES_KEY,
       {}
@@ -166,14 +170,12 @@ export default function AdminPage() {
       setMenuOverrides(storedOverrides);
     }
 
-    const storedAnnouncements = getStoredData<AnnouncementItem[]>(CAMCU_ANNOUNCEMENTS_KEY, []);
-    if (storedAnnouncements.length > 0) {
-      setAnnouncements(storedAnnouncements);
-    }
+    const sharedAnnouncements = getSharedData<AnnouncementItem[]>(KEYS.ANNOUNCEMENTS, []);
+    setAnnouncements(sharedAnnouncements);
 
-    const storedGallery = getStoredData<GalleryItem[]>(CAMCU_GALLERY_KEY, []);
-    if (storedGallery.length > 0) {
-      setGallery(storedGallery);
+    const sharedGallery = getSharedData<GalleryItem[]>(KEYS.GALLERY, []);
+    if (sharedGallery.length > 0) {
+      setGallery(sharedGallery);
     }
 
     const storedSettings = getStoredData<StoreSettingsData | null>(CAMCU_SETTINGS_KEY, null);
@@ -181,7 +183,7 @@ export default function AdminPage() {
       setSettings((prev) => ({ ...prev, ...storedSettings }));
     }
 
-    // 3. Sync from API in background (and merge if server has updates)
+    // 3. Sync from API in background
     fetch("/api/admin/menu")
       .then((res) => res.json())
       .then((data) => {
@@ -195,21 +197,6 @@ export default function AdminPage() {
       })
       .catch((err) => console.warn(err));
 
-    fetch("/api/admin/announcements")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.announcements && data.announcements.length > 0) {
-          setAnnouncements((prev) => {
-            if (prev.length === 0) {
-              setStoredData(CAMCU_ANNOUNCEMENTS_KEY, data.announcements, true);
-              return data.announcements;
-            }
-            return prev;
-          });
-        }
-      })
-      .catch((err) => console.warn(err));
-
     fetch("/api/admin/gallery")
       .then((res) => res.json())
       .then((data) => {
@@ -217,6 +204,7 @@ export default function AdminPage() {
           setGallery((prev) => {
             if (prev.length === 0) {
               setStoredData(CAMCU_GALLERY_KEY, data.photos, false);
+              setSharedData(KEYS.GALLERY, data.photos);
               return data.photos;
             }
             return prev;
@@ -335,6 +323,17 @@ export default function AdminPage() {
     };
     setMenuOverrides(updated);
     setStoredData(CAMCU_MENU_OVERRIDES_KEY, updated, true);
+
+    // Sync camcu_disabled_menu_ids (array of out-of-stock item IDs)
+    const currentDisabled = getSharedData<string[]>(KEYS.DISABLED_MENU_IDS, []);
+    let updatedDisabled: string[];
+    if (!newStatus) {
+      updatedDisabled = Array.from(new Set([...currentDisabled, id]));
+    } else {
+      updatedDisabled = currentDisabled.filter((itemId) => itemId !== id);
+    }
+    setSharedData(KEYS.DISABLED_MENU_IDS, updatedDisabled);
+
     showToast(`Đã ${newStatus ? "bật còn hàng" : "tắt (báo hết hàng)"} món`);
 
     try {
@@ -381,50 +380,62 @@ export default function AdminPage() {
   };
 
   // Create Announcement
-  const handleCreateNotice = async (e: React.FormEvent) => {
+  const handleCreateAnnouncement = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newNotice.title || !newNotice.content) {
+    if (!newNotice.title.trim() || !newNotice.content.trim()) {
       alert("Vui lòng nhập đầy đủ tiêu đề và nội dung");
       return;
     }
 
+    const uniqueId = Date.now().toString();
     const newNoticeItem: AnnouncementItem = {
-      id: `notice_${Date.now()}`,
-      title: newNotice.title,
-      content: newNotice.content,
-      date: "Hôm nay",
+      id: uniqueId,
+      title: newNotice.title.trim(),
+      content: newNotice.content.trim(),
+      category: newNotice.type,
       type: newNotice.type,
+      isPinned: newNotice.isHighlighted,
       isHighlighted: newNotice.isHighlighted,
+      createdAt: new Date().toLocaleDateString("vi-VN"),
+      date: "Hôm nay",
     };
 
-    const updated = [newNoticeItem, ...announcements];
-    setAnnouncements(updated);
-    setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+    setAnnouncements((prev) => {
+      const updated = [newNoticeItem, ...prev];
+      setSharedData(KEYS.ANNOUNCEMENTS, updated);
+      setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+      return updated;
+    });
+
     setNoticeModalOpen(false);
     setNewNotice({ title: "", content: "", type: "event", isHighlighted: false });
-    showToast("Đã tạo bảng tin mới thành công");
+    showToast("Đã đăng bản tin mới thành công");
 
     try {
-      await fetch("/api/admin/announcements", {
+      fetch("/api/admin/announcements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newNotice),
-      });
+        body: JSON.stringify(newNoticeItem),
+      }).catch((err) => console.warn(err));
     } catch (err) {
       console.error(err);
     }
   };
 
-  // Delete Announcement
-  const handleDeleteNotice = async (id: string) => {
-    if (!confirm("Bạn có chắc chắn muốn xóa bản tin này?")) return;
-    const updated = announcements.filter((a) => a.id !== id);
-    setAnnouncements(updated);
-    setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
-    showToast("Đã xóa bản tin");
+  // Delete Announcement - Immediate removal & Cookie sync
+  const handleDeleteAnnouncement = (id: string) => {
+    setAnnouncements((prev) => {
+      const updated = prev.filter((a) => a.id !== id);
+      setSharedData(KEYS.ANNOUNCEMENTS, updated);
+      setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+      return updated;
+    });
+    showToast("Đã xóa bản tin thành công");
 
     try {
-      await fetch(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
+      fetch(`/api/admin/announcements?id=${id}`, { method: "DELETE" }).catch((err) =>
+        console.warn(err)
+      );
     } catch (err) {
       console.error(err);
     }
@@ -499,6 +510,7 @@ export default function AdminPage() {
 
     const updatedGallery = [newPhotoItem, ...gallery];
     setGallery(updatedGallery);
+    setSharedData(KEYS.GALLERY, updatedGallery);
     setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
 
     // Reset form
@@ -526,6 +538,7 @@ export default function AdminPage() {
     if (!confirm("Bạn có muốn xóa ảnh này khỏi thư viện?")) return;
     const updatedGallery = gallery.filter((g) => g.id !== id);
     setGallery(updatedGallery);
+    setSharedData(KEYS.GALLERY, updatedGallery);
     setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
     showToast("Đã xóa ảnh khỏi thư viện");
 
@@ -1012,41 +1025,59 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex flex-col divide-y divide-stone-100">
-                      {announcements.map((a) => (
-                        <div key={a.id} className="py-4 flex items-start justify-between gap-4 group">
-                          <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                  a.type === "event"
-                                    ? "bg-purple-100 text-purple-700"
-                                    : a.type === "special"
-                                    ? "bg-amber-100 text-amber-800"
-                                    : "bg-emerald-100 text-[#3E5C46]"
-                                }`}
-                              >
-                                {a.type === "event" ? "Sự kiện" : a.type === "special" ? "Đặc sản" : "Thông báo"}
-                              </span>
-                              <span className="text-xs text-stone-400">{a.date}</span>
-                              {a.isHighlighted && (
-                                <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded">
-                                  Ghim
-                                </span>
-                              )}
-                            </div>
-                            <h3 className="font-serif text-base font-bold text-[#1B281D]">{a.title}</h3>
-                            <p className="text-xs text-stone-600 leading-relaxed">{a.content}</p>
-                          </div>
+                      {announcements.length === 0 ? (
+                        <div className="py-8 text-center text-stone-400 text-xs flex flex-col items-center justify-center gap-2">
+                          <Radio className="w-8 h-8 text-stone-300" />
+                          <p>Chưa có bảng tin hoặc thông báo nào.</p>
                           <button
                             type="button"
-                            onClick={() => handleDeleteNotice(a.id)}
-                            title="Xóa tin này"
-                            className="p-2 text-stone-300 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                            onClick={() => setNoticeModalOpen(true)}
+                            className="text-[#3E5C46] font-semibold underline hover:text-[#2D4233]"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            Bấm vào đây để tạo tin mới
                           </button>
                         </div>
-                      ))}
+                      ) : (
+                        announcements.map((a) => (
+                          <div key={a.id} className="py-4 flex items-start justify-between gap-4 group">
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                    a.type === "event" || a.category === "event"
+                                      ? "bg-purple-100 text-purple-700"
+                                      : a.type === "special" || a.category === "special"
+                                      ? "bg-amber-100 text-amber-800"
+                                      : "bg-emerald-100 text-[#3E5C46]"
+                                  }`}
+                                >
+                                  {a.type === "event" || a.category === "event"
+                                    ? "Sự kiện"
+                                    : a.type === "special" || a.category === "special"
+                                    ? "Đặc sản"
+                                    : "Thông báo"}
+                                </span>
+                                <span className="text-xs text-stone-400">{a.date || a.createdAt}</span>
+                                {(a.isHighlighted || a.isPinned) && (
+                                  <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded">
+                                    Ghim
+                                  </span>
+                                )}
+                              </div>
+                              <h3 className="font-serif text-base font-bold text-[#1B281D]">{a.title}</h3>
+                              <p className="text-xs text-stone-600 leading-relaxed">{a.content}</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAnnouncement(a.id)}
+                              title="Xóa tin này"
+                              className="p-2 text-stone-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1779,7 +1810,7 @@ export default function AdminPage() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateNotice} className="flex flex-col gap-4">
+            <form onSubmit={handleCreateAnnouncement} className="flex flex-col gap-4">
               <div>
                 <label className="text-xs font-semibold text-stone-700 block mb-1">
                   Tiêu đề bản tin

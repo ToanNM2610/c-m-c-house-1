@@ -56,32 +56,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
   adminPin: "2610",
 };
 
-const DEFAULT_ANNOUNCEMENTS: AnnouncementItem[] = [
-  {
-    id: "a1",
-    title: "Đêm Nhạc Acoustic Bên Bờ Suối Thứ 7",
-    content: "Đêm nhạc acoustic mộc mạc bên ánh lửa bập bùng và tiếng suối reo từ 19:30 - 21:30 mỗi tối thứ 7 cuối tuần.",
-    date: "Hôm nay",
-    type: "event",
-    isHighlighted: true,
-  },
-  {
-    id: "a2",
-    title: "Mùa Trái Cây Đắk Nông: Bơ Sáp 034 Chín Mọng",
-    content: "Vừa về chuyến bơ sáp 034 Đắk Nông dẻo quánh, mời quý khách thưởng thức sinh tố bơ sầu riêng tươi ngon trong ngày.",
-    date: "Hôm qua",
-    type: "special",
-    isHighlighted: false,
-  },
-  {
-    id: "a3",
-    title: "Lối Vào Xe Ô Tô Đã Tráng Nhựa & Bê Tông Bằng Phẳng",
-    content: "Tuyến đường từ mặt tiền Hùng Vương vào quán rộng rãi, xe 4-16 chỗ di chuyển dễ dàng và có bãi đỗ trong sân.",
-    date: "3 ngày trước",
-    type: "notice",
-    isHighlighted: false,
-  },
-];
+const DEFAULT_ANNOUNCEMENTS: AnnouncementItem[] = [];
 
 const DEFAULT_GALLERY: GalleryPhoto[] = [
   {

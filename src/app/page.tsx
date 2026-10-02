@@ -28,8 +28,12 @@ import {
 } from "lucide-react";
 
 import {
+  getSharedData,
+  KEYS,
+  SharedAnnouncement,
+} from "@/lib/syncStore";
+import {
   CAMCU_SETTINGS_KEY,
-  CAMCU_ANNOUNCEMENTS_KEY,
   getStoredData,
 } from "@/utils/storage";
 
@@ -42,29 +46,36 @@ export default function HomePage() {
     hotline1: "038 285 1688",
     topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
   });
-  const [latestAnnouncement, setLatestAnnouncement] = useState<{
-    id: string;
-    title: string;
-    content: string;
-    type?: string;
-  } | null>(null);
+  const [announcements, setAnnouncements] = useState<SharedAnnouncement[]>([]);
 
   useEffect(() => {
-    // 1. Immediately hydrate from LocalStorage & Shared Cookie to survive F5
+    // 1. Immediately hydrate from Shared Storage & Cookie (survives F5)
     const storedSettings = getStoredData<typeof settings | null>(CAMCU_SETTINGS_KEY, null);
     if (storedSettings) {
       setSettings((prev) => ({ ...prev, ...storedSettings }));
     }
 
-    const storedAnnouncements = getStoredData<Array<{ id: string; title: string; content: string; type?: string }>>(
-      CAMCU_ANNOUNCEMENTS_KEY,
-      []
-    );
-    if (storedAnnouncements.length > 0) {
-      setLatestAnnouncement(storedAnnouncements[0]);
-    }
+    const storedAnnouncements = getSharedData<SharedAnnouncement[]>(KEYS.ANNOUNCEMENTS, []);
+    setAnnouncements(storedAnnouncements);
 
-    // 2. Fetch server updates
+    // Real-time synchronization listener across tabs & windows
+    const handleSync = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (custom.detail?.key === KEYS.ANNOUNCEMENTS) {
+        setAnnouncements(custom.detail.value || []);
+      }
+    };
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === KEYS.ANNOUNCEMENTS) {
+        const next = getSharedData<SharedAnnouncement[]>(KEYS.ANNOUNCEMENTS, []);
+        setAnnouncements(next);
+      }
+    };
+
+    window.addEventListener("camcu_sync_update", handleSync);
+    window.addEventListener("storage", handleStorage);
+
+    // 2. Fetch server updates (fallback if no local cookie is present)
     async function loadData() {
       try {
         const [settingsRes, annRes] = await Promise.all([
@@ -81,8 +92,12 @@ export default function HomePage() {
 
         if (annRes && annRes.ok) {
           const aData = await annRes.json();
-          if (aData.announcements && aData.announcements.length > 0) {
-            setLatestAnnouncement(aData.announcements[0]);
+          if (aData.announcements && Array.isArray(aData.announcements)) {
+            // Only update if client has no shared cookie record
+            const clientCookie = getSharedData<SharedAnnouncement[] | null>(KEYS.ANNOUNCEMENTS, null);
+            if (clientCookie === null) {
+              setAnnouncements(aData.announcements);
+            }
           }
         }
       } catch (e) {
@@ -90,15 +105,23 @@ export default function HomePage() {
       }
     }
     loadData();
+
+    return () => {
+      window.removeEventListener("camcu_sync_update", handleSync);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
+
+  const pinnedNews =
+    announcements.find((a) => a.isPinned || a.isHighlighted) || announcements[0] || null;
 
   return (
     <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D] font-sans selection:bg-[#3E5C46] selection:text-white">
       <Navbar />
 
       <main className="pt-24 sm:pt-28">
-        {/* Dynamic Announcement Banner from Admin Store */}
-        {latestAnnouncement && (
+        {/* Dynamic Announcement Banner from Shared Cookie Store: Render only if pinnedNews exists */}
+        {pinnedNews && (
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
             <div className="bg-[#2D4233] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#3E5C46]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-start sm:items-center gap-3.5">
@@ -108,18 +131,18 @@ export default function HomePage() {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-800 text-emerald-200 text-[10px] font-bold uppercase tracking-wider">
-                      {latestAnnouncement.type === "event"
+                      {pinnedNews.category === "event" || pinnedNews.type === "event"
                         ? "Sự Kiện"
-                        : latestAnnouncement.type === "special"
+                        : pinnedNews.category === "special" || pinnedNews.type === "special"
                         ? "Món Đặc Sản"
                         : "Bảng Tin Quán"}
                     </span>
                     <span className="text-sm sm:text-base font-bold text-white">
-                      {latestAnnouncement.title}
+                      {pinnedNews.title}
                     </span>
                   </div>
                   <p className="text-xs sm:text-sm text-stone-200 mt-1 line-clamp-2 sm:line-clamp-1">
-                    {latestAnnouncement.content}
+                    {pinnedNews.content}
                   </p>
                 </div>
               </div>
