@@ -23,6 +23,12 @@ const NAV_LINKS = [
   { href: "/contact", label: "Chỉ Đường & Liên Hệ" },
 ];
 
+import {
+  CAMCU_SETTINGS_KEY,
+  CAMCU_ANNOUNCEMENTS_KEY,
+  getStoredData,
+} from "@/utils/storage";
+
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -39,6 +45,21 @@ export default function Navbar() {
   const [latestAnnouncement, setLatestAnnouncement] = useState<{ title: string; content: string } | null>(null);
 
   useEffect(() => {
+    // 1. Immediately hydrate from LocalStorage & Shared Cookie to survive F5
+    const storedSettings = getStoredData<typeof settings | null>(CAMCU_SETTINGS_KEY, null);
+    if (storedSettings) {
+      setSettings((prev) => ({ ...prev, ...storedSettings }));
+    }
+
+    const storedAnnouncements = getStoredData<Array<{ title: string; content: string }>>(
+      CAMCU_ANNOUNCEMENTS_KEY,
+      []
+    );
+    if (storedAnnouncements.length > 0) {
+      setLatestAnnouncement(storedAnnouncements[0]);
+    }
+
+    // 2. Fetch server updates
     async function loadData() {
       try {
         const [settingsRes, annRes] = await Promise.all([

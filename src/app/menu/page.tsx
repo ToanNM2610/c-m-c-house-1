@@ -19,6 +19,11 @@ import {
   AlertCircle
 } from "lucide-react";
 
+import {
+  CAMCU_MENU_OVERRIDES_KEY,
+  getStoredData,
+} from "@/utils/storage";
+
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(MENU_ITEMS);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -26,6 +31,25 @@ export default function MenuPage() {
   const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
+    // 1. Hydrate immediately from LocalStorage & Shared Cookie to survive F5
+    const storedOverrides = getStoredData<Record<string, { inStock: boolean; price?: number }>>(
+      CAMCU_MENU_OVERRIDES_KEY,
+      {}
+    );
+    if (Object.keys(storedOverrides).length > 0) {
+      setMenuItems((prev) =>
+        prev.map((item) => {
+          const ov = storedOverrides[item.id];
+          return {
+            ...item,
+            inStock: ov ? ov.inStock : item.inStock ?? true,
+            price: ov && typeof ov.price === "number" ? ov.price : item.price,
+          };
+        })
+      );
+    }
+
+    // 2. Fetch server updates
     async function loadMenu() {
       setIsSyncing(true);
       try {
@@ -33,7 +57,19 @@ export default function MenuPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.items && Array.isArray(data.items)) {
-            setMenuItems(data.items);
+            const currentStored = getStoredData<Record<string, { inStock: boolean; price?: number }>>(
+              CAMCU_MENU_OVERRIDES_KEY,
+              {}
+            );
+            const merged = data.items.map((item: MenuItem) => {
+              const ov = currentStored[item.id] || (data.overrides ? data.overrides[item.id] : null);
+              return {
+                ...item,
+                inStock: ov ? ov.inStock : item.inStock ?? true,
+                price: ov && typeof ov.price === "number" ? ov.price : item.price,
+              };
+            });
+            setMenuItems(merged);
           }
         }
       } catch (err) {

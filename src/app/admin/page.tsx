@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Sparkles,
@@ -33,9 +33,26 @@ import {
   Save,
   AlertCircle,
   RefreshCw,
-  X
+  X,
+  UploadCloud,
+  Camera,
+  FileImage,
+  Upload
 } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
+import {
+  CAMCU_AUTH_KEY,
+  CAMCU_MENU_OVERRIDES_KEY,
+  CAMCU_ANNOUNCEMENTS_KEY,
+  CAMCU_SETTINGS_KEY,
+  CAMCU_GALLERY_KEY,
+  getStoredData,
+  setStoredData,
+  setSharedCookie,
+  getSharedCookie,
+  removeSharedCookie,
+  compressImageFile,
+} from "@/utils/storage";
 
 interface AnnouncementItem {
   id: string;
@@ -104,12 +121,19 @@ export default function AdminPage() {
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
   const [editingPriceValue, setEditingPriceValue] = useState<string>("");
 
-  // Gallery tab state
+  // Gallery tab state (Direct File Upload & URL)
+  const [galleryUploadMode, setGalleryUploadMode] = useState<"file" | "url">("file");
   const [newPhoto, setNewPhoto] = useState({
     title: "",
     url: "",
     category: "suoi" as "suoi" | "nuoc" | "mon-an" | "khong-gian",
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageFileName, setImageFileName] = useState<string | null>(null);
+  const [imageFileSize, setImageFileSize] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState<boolean>(false);
+  const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Settings PIN change state
   const [oldPin, setOldPin] = useState("");
@@ -125,50 +149,95 @@ export default function AdminPage() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // Check login on mount
+  // Check login & Hydrate state on mount from LocalStorage & Cookies
   useEffect(() => {
-    const savedAuth = localStorage.getItem("camcu_admin_auth");
-    if (savedAuth === "authenticated_session_2610") {
+    // 1. Auth check
+    const authVal = getStoredData<string>(CAMCU_AUTH_KEY, "") || getSharedCookie(CAMCU_AUTH_KEY);
+    if (authVal === "authenticated_session_2610") {
       setIsAuthenticated(true);
     }
-  }, []);
 
-  // Fetch initial data when authenticated
-  useEffect(() => {
-    if (!isAuthenticated) return;
+    // 2. Hydrate from Storage first (immediate, no flicker, survives F5)
+    const storedOverrides = getStoredData<Record<string, { inStock: boolean; price?: number }>>(
+      CAMCU_MENU_OVERRIDES_KEY,
+      {}
+    );
+    if (Object.keys(storedOverrides).length > 0) {
+      setMenuOverrides(storedOverrides);
+    }
 
-    // 1. Fetch menu overrides
+    const storedAnnouncements = getStoredData<AnnouncementItem[]>(CAMCU_ANNOUNCEMENTS_KEY, []);
+    if (storedAnnouncements.length > 0) {
+      setAnnouncements(storedAnnouncements);
+    }
+
+    const storedGallery = getStoredData<GalleryItem[]>(CAMCU_GALLERY_KEY, []);
+    if (storedGallery.length > 0) {
+      setGallery(storedGallery);
+    }
+
+    const storedSettings = getStoredData<StoreSettingsData | null>(CAMCU_SETTINGS_KEY, null);
+    if (storedSettings) {
+      setSettings((prev) => ({ ...prev, ...storedSettings }));
+    }
+
+    // 3. Sync from API in background (and merge if server has updates)
     fetch("/api/admin/menu")
       .then((res) => res.json())
       .then((data) => {
-        if (data.overrides) setMenuOverrides(data.overrides);
+        if (data.overrides) {
+          setMenuOverrides((prev) => {
+            const merged = { ...data.overrides, ...prev };
+            setStoredData(CAMCU_MENU_OVERRIDES_KEY, merged, true);
+            return merged;
+          });
+        }
       })
-      .catch((err) => console.error("Error fetching menu overrides:", err));
+      .catch((err) => console.warn(err));
 
-    // 2. Fetch announcements
     fetch("/api/admin/announcements")
       .then((res) => res.json())
       .then((data) => {
-        if (data.announcements) setAnnouncements(data.announcements);
+        if (data.announcements && data.announcements.length > 0) {
+          setAnnouncements((prev) => {
+            if (prev.length === 0) {
+              setStoredData(CAMCU_ANNOUNCEMENTS_KEY, data.announcements, true);
+              return data.announcements;
+            }
+            return prev;
+          });
+        }
       })
-      .catch((err) => console.error("Error fetching announcements:", err));
+      .catch((err) => console.warn(err));
 
-    // 3. Fetch gallery
     fetch("/api/admin/gallery")
       .then((res) => res.json())
       .then((data) => {
-        if (data.photos) setGallery(data.photos);
+        if (data.photos && data.photos.length > 0) {
+          setGallery((prev) => {
+            if (prev.length === 0) {
+              setStoredData(CAMCU_GALLERY_KEY, data.photos, false);
+              return data.photos;
+            }
+            return prev;
+          });
+        }
       })
-      .catch((err) => console.error("Error fetching gallery:", err));
+      .catch((err) => console.warn(err));
 
-    // 4. Fetch settings
     fetch("/api/admin/settings")
       .then((res) => res.json())
       .then((data) => {
-        if (data.settings) setSettings(data.settings);
+        if (data.settings) {
+          setSettings((prev) => {
+            const merged = { ...data.settings, ...prev };
+            setStoredData(CAMCU_SETTINGS_KEY, merged, true);
+            return merged;
+          });
+        }
       })
-      .catch((err) => console.error("Error fetching settings:", err));
-  }, [isAuthenticated]);
+      .catch((err) => console.warn(err));
+  }, []);
 
   // Handle PIN input
   const handlePinDigit = (digit: string) => {
@@ -202,7 +271,7 @@ export default function AdminPage() {
       });
       const data = await res.json();
       if (data.success || pinToTest === "2610") {
-        localStorage.setItem("camcu_admin_auth", "authenticated_session_2610");
+        setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
         setIsAuthenticated(true);
         setPinInput("");
       } else {
@@ -212,7 +281,7 @@ export default function AdminPage() {
     } catch {
       // Fallback offline validation
       if (pinToTest === "2610") {
-        localStorage.setItem("camcu_admin_auth", "authenticated_session_2610");
+        setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
         setIsAuthenticated(true);
         setPinInput("");
       } else {
@@ -231,7 +300,8 @@ export default function AdminPage() {
     } catch (e) {
       console.error(e);
     }
-    localStorage.removeItem("camcu_admin_auth");
+    localStorage.removeItem(CAMCU_AUTH_KEY);
+    removeSharedCookie(CAMCU_AUTH_KEY);
     setIsAuthenticated(false);
     setPinInput("");
     showToast("Đã đăng xuất phiên làm việc an toàn");
@@ -256,25 +326,23 @@ export default function AdminPage() {
   // Toggle item in stock
   const handleToggleStock = async (id: string, currentStatus: boolean) => {
     const newStatus = !currentStatus;
-    // Optimistic update
-    setMenuOverrides((prev) => ({
-      ...prev,
+    const updated = {
+      ...menuOverrides,
       [id]: {
-        ...prev[id],
+        ...menuOverrides[id],
         inStock: newStatus,
       },
-    }));
+    };
+    setMenuOverrides(updated);
+    setStoredData(CAMCU_MENU_OVERRIDES_KEY, updated, true);
+    showToast(`Đã ${newStatus ? "bật còn hàng" : "tắt (báo hết hàng)"} món`);
 
     try {
-      const res = await fetch("/api/admin/menu", {
+      await fetch("/api/admin/menu", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, inStock: newStatus }),
       });
-      const data = await res.json();
-      if (data.success) {
-        showToast(`Đã ${newStatus ? "bật còn hàng" : "tắt (báo hết hàng)"} món`);
-      }
     } catch (err) {
       console.error("Lỗi cập nhật trạng thái món:", err);
     }
@@ -288,16 +356,18 @@ export default function AdminPage() {
       return;
     }
 
-    setMenuOverrides((prev) => ({
-      ...prev,
+    const updated = {
+      ...menuOverrides,
       [id]: {
-        ...prev[id],
-        inStock: prev[id]?.inStock ?? true,
+        ...menuOverrides[id],
+        inStock: menuOverrides[id]?.inStock ?? true,
         price: numPrice,
       },
-    }));
-
+    };
+    setMenuOverrides(updated);
+    setStoredData(CAMCU_MENU_OVERRIDES_KEY, updated, true);
     setEditingPriceId(null);
+    showToast(`Đã cập nhật giá mới: ${numPrice.toLocaleString("vi-VN")}đ`);
 
     try {
       await fetch("/api/admin/menu", {
@@ -305,7 +375,6 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, price: numPrice }),
       });
-      showToast(`Đã cập nhật giá mới: ${numPrice.toLocaleString("vi-VN")}đ`);
     } catch (err) {
       console.error(err);
     }
@@ -319,19 +388,28 @@ export default function AdminPage() {
       return;
     }
 
+    const newNoticeItem: AnnouncementItem = {
+      id: `notice_${Date.now()}`,
+      title: newNotice.title,
+      content: newNotice.content,
+      date: "Hôm nay",
+      type: newNotice.type,
+      isHighlighted: newNotice.isHighlighted,
+    };
+
+    const updated = [newNoticeItem, ...announcements];
+    setAnnouncements(updated);
+    setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+    setNoticeModalOpen(false);
+    setNewNotice({ title: "", content: "", type: "event", isHighlighted: false });
+    showToast("Đã tạo bảng tin mới thành công");
+
     try {
-      const res = await fetch("/api/admin/announcements", {
+      await fetch("/api/admin/announcements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newNotice),
       });
-      const data = await res.json();
-      if (data.success && data.announcement) {
-        setAnnouncements((prev) => [data.announcement, ...prev]);
-        setNoticeModalOpen(false);
-        setNewNotice({ title: "", content: "", type: "event", isHighlighted: false });
-        showToast("Đã tạo bảng tin mới thành công");
-      }
     } catch (err) {
       console.error(err);
     }
@@ -340,55 +418,130 @@ export default function AdminPage() {
   // Delete Announcement
   const handleDeleteNotice = async (id: string) => {
     if (!confirm("Bạn có chắc chắn muốn xóa bản tin này?")) return;
+    const updated = announcements.filter((a) => a.id !== id);
+    setAnnouncements(updated);
+    setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+    showToast("Đã xóa bản tin");
+
     try {
       await fetch(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
-      setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-      showToast("Đã xóa bản tin");
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // File upload & drag-drop handler
+  const handleFileSelect = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Vui lòng chọn file hình ảnh (.jpg, .jpeg, .png, .webp)");
+      return;
+    }
+
+    setIsProcessingImage(true);
+    try {
+      const originalSizeKb = Math.round(file.size / 1024);
+      setImageFileName(file.name);
+
+      // Auto-fill title if empty
+      if (!newPhoto.title) {
+        const titleWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+        setNewPhoto((prev) => ({ ...prev, title: titleWithoutExt }));
+      }
+
+      // Compress and convert to Base64 Data URL
+      const compressedDataUrl = await compressImageFile(file, 1200, 1200, 0.82);
+      setImagePreview(compressedDataUrl);
+      setNewPhoto((prev) => ({ ...prev, url: compressedDataUrl }));
+
+      const compressedSizeKb = Math.round((compressedDataUrl.length * 0.75) / 1024);
+      setImageFileSize(`${compressedSizeKb} KB (Gốc: ${originalSizeKb} KB)`);
+    } catch (err) {
+      console.error("Lỗi xử lý ảnh:", err);
+      alert("Không thể đọc file ảnh này. Vui lòng thử lại.");
+    } finally {
+      setIsProcessingImage(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingFile(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingFile(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingFile(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFileSelect(e.dataTransfer.files[0]);
     }
   };
 
   // Add Photo
   const handleAddPhoto = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPhoto.title || !newPhoto.url) {
-      alert("Vui lòng nhập tiêu đề và link ảnh");
+    const photoUrl = galleryUploadMode === "file" ? (imagePreview || newPhoto.url) : newPhoto.url;
+    if (!newPhoto.title || !photoUrl) {
+      alert("Vui lòng nhập tiêu đề và chọn ảnh hoặc dán link");
       return;
     }
 
+    const newPhotoItem: GalleryItem = {
+      id: `photo_${Date.now()}`,
+      title: newPhoto.title,
+      url: photoUrl,
+      category: newPhoto.category,
+    };
+
+    const updatedGallery = [newPhotoItem, ...gallery];
+    setGallery(updatedGallery);
+    setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+
+    // Reset form
+    setNewPhoto({ title: "", url: "", category: "suoi" });
+    setImagePreview(null);
+    setImageFileName(null);
+    setImageFileSize(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    showToast("Đã lưu ảnh mới vào thư viện!");
+
+    // Also sync to server in background
     try {
-      const res = await fetch("/api/admin/gallery", {
+      await fetch("/api/admin/gallery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPhoto),
+        body: JSON.stringify(newPhotoItem),
       });
-      const data = await res.json();
-      if (data.success && data.photo) {
-        setGallery((prev) => [data.photo, ...prev]);
-        setNewPhoto({ title: "", url: "", category: "suoi" });
-        showToast("Đã thêm ảnh vào thư viện");
-      }
     } catch (err) {
-      console.error(err);
+      console.warn("Background API sync for gallery photo:", err);
     }
   };
 
   // Delete Photo
   const handleDeletePhoto = async (id: string) => {
     if (!confirm("Bạn có muốn xóa ảnh này khỏi thư viện?")) return;
+    const updatedGallery = gallery.filter((g) => g.id !== id);
+    setGallery(updatedGallery);
+    setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+    showToast("Đã xóa ảnh khỏi thư viện");
+
     try {
       await fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" });
-      setGallery((prev) => prev.filter((g) => g.id !== id));
-      showToast("Đã xóa ảnh");
     } catch (err) {
-      console.error(err);
+      console.warn("Background API delete for gallery photo:", err);
     }
   };
 
   // Save Settings
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
+    setStoredData(CAMCU_SETTINGS_KEY, settings, true);
+    showToast("Cập nhật thông tin cửa hàng thành công");
+
     try {
       const res = await fetch("/api/admin/settings", {
         method: "POST",
@@ -1136,35 +1289,180 @@ export default function AdminPage() {
               {/* Form Add Photo */}
               <form
                 onSubmit={handleAddPhoto}
-                className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col gap-4"
+                className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col gap-5"
               >
-                <h3 className="font-serif text-base font-bold text-[#3E5C46]">
-                  + Thêm Ảnh Mới Vào Thư Viện
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-xs font-semibold text-stone-600 block mb-1">
-                      Tiêu đề ảnh
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="VD: Góc suối ban mai..."
-                      value={newPhoto.title}
-                      onChange={(e) => setNewPhoto({ ...newPhoto, title: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
-                      required
-                    />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-[#3E5C46]/10 text-[#3E5C46]">
+                      <Camera className="w-4 h-4" />
+                    </span>
+                    <h3 className="font-serif text-base font-bold text-[#3E5C46]">
+                      + Thêm Ảnh Mới Vào Thư Viện
+                    </h3>
                   </div>
+
+                  {/* Mode switcher tabs */}
+                  <div className="inline-flex items-center bg-stone-100 p-1 rounded-xl text-xs font-semibold text-stone-600 border border-stone-200">
+                    <button
+                      type="button"
+                      onClick={() => setGalleryUploadMode("file")}
+                      className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                        galleryUploadMode === "file"
+                          ? "bg-white text-[#3E5C46] shadow-sm font-bold"
+                          : "hover:text-stone-900"
+                      }`}
+                    >
+                      <UploadCloud className="w-3.5 h-3.5" />
+                      <span>Tải ảnh từ máy / điện thoại</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGalleryUploadMode("url")}
+                      className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
+                        galleryUploadMode === "url"
+                          ? "bg-white text-[#3E5C46] shadow-sm font-bold"
+                          : "hover:text-stone-900"
+                      }`}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Dán liên kết URL</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Direct File Upload Mode */}
+                {galleryUploadMode === "file" && (
+                  <div className="flex flex-col gap-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleFileSelect(e.target.files[0]);
+                        }
+                      }}
+                    />
+
+                    {!imagePreview ? (
+                      <div
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition-all flex flex-col items-center justify-center gap-3 ${
+                          isDraggingFile
+                            ? "border-[#3E5C46] bg-[#3E5C46]/5 scale-[0.99]"
+                            : "border-stone-300 bg-stone-50/60 hover:bg-stone-100/80 hover:border-[#3E5C46]"
+                        }`}
+                      >
+                        <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-stone-200 flex items-center justify-center text-[#3E5C46]">
+                          {isProcessingImage ? (
+                            <RefreshCw className="w-6 h-6 animate-spin text-[#3E5C46]" />
+                          ) : (
+                            <UploadCloud className="w-7 h-7" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-stone-800">
+                            {isProcessingImage
+                              ? "Đang tối ưu & nén hình ảnh..."
+                              : "Kéo thả ảnh vào đây hoặc bấm để chọn từ máy / điện thoại"}
+                          </p>
+                          <p className="text-xs text-stone-500 mt-1">
+                            Hỗ trợ JPG, PNG, WEBP. Ảnh tự động tối ưu hóa hiển thị nhanh sắc nét.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          disabled={isProcessingImage}
+                          className="px-4 py-2 rounded-full bg-white text-[#3E5C46] text-xs font-bold border border-stone-300 shadow-sm hover:bg-stone-50"
+                        >
+                          Chọn ảnh từ thiết bị
+                        </button>
+                      </div>
+                    ) : (
+                      /* Live Image Preview Card */
+                      <div className="flex flex-col sm:flex-row items-center gap-5 p-4 rounded-2xl bg-stone-50 border border-stone-200">
+                        <div className="relative w-40 h-28 rounded-xl overflow-hidden shadow-sm border border-stone-200 shrink-0 bg-stone-100">
+                          <img
+                            src={imagePreview}
+                            alt="Xem trước ảnh"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[#3E5C46] text-[10px] font-bold">
+                              ✓ Đã nạp ảnh thành công
+                            </span>
+                            {imageFileSize && (
+                              <span className="text-[10px] text-stone-500 font-mono">
+                                Dung lượng: {imageFileSize}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs font-bold text-stone-800 truncate">
+                            {imageFileName || "Ảnh từ thiết bị"}
+                          </p>
+                          <div className="flex items-center gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="px-3 py-1 rounded-full bg-white text-[#3E5C46] border border-stone-300 text-xs font-semibold hover:bg-stone-100"
+                            >
+                              Đổi ảnh khác
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setImagePreview(null);
+                                setImageFileName(null);
+                                setImageFileSize(null);
+                                setNewPhoto((prev) => ({ ...prev, url: "" }));
+                                if (fileInputRef.current) fileInputRef.current.value = "";
+                              }}
+                              className="px-3 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-semibold hover:bg-red-100"
+                            >
+                              Hủy bỏ
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Online URL Mode */}
+                {galleryUploadMode === "url" && (
                   <div>
                     <label className="text-xs font-semibold text-stone-600 block mb-1">
-                      URL Hình ảnh (Unsplash / Trực tuyến)
+                      URL Hình ảnh (Unsplash / Link trực tuyến)
                     </label>
                     <input
                       type="url"
                       placeholder="https://images.unsplash.com/photo-..."
                       value={newPhoto.url}
                       onChange={(e) => setNewPhoto({ ...newPhoto, url: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      required={galleryUploadMode === "url"}
+                    />
+                  </div>
+                )}
+
+                {/* Metadata Fields: Title & Category */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  <div>
+                    <label className="text-xs font-semibold text-stone-600 block mb-1">
+                      Tiêu đề ảnh
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="VD: Góc suối ban mai trong veo..."
+                      value={newPhoto.title}
+                      onChange={(e) => setNewPhoto({ ...newPhoto, title: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
                   </div>
@@ -1175,7 +1473,7 @@ export default function AdminPage() {
                     <select
                       value={newPhoto.category}
                       onChange={(e) => setNewPhoto({ ...newPhoto, category: e.target.value as any })}
-                      className="w-full px-3 py-2 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     >
                       <option value="suoi">Bờ Suối Đá</option>
                       <option value="khong-gian">Không Gian Quán</option>
@@ -1184,12 +1482,22 @@ export default function AdminPage() {
                     </select>
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  className="self-end px-6 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-semibold hover:bg-[#2D4233] transition-all shadow-sm"
-                >
-                  Lưu Ảnh Vào Thư Viện
-                </button>
+
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-xs text-stone-500">
+                    {galleryUploadMode === "file" && imagePreview
+                      ? "✓ Sẵn sàng lưu vào thư viện và bộ nhớ máy"
+                      : "Điền tiêu đề và chọn ảnh để lưu"}
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={isProcessingImage}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-bold hover:bg-[#2D4233] transition-all shadow-md disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Lưu Ảnh Vào Thư Viện</span>
+                  </button>
+                </div>
               </form>
 
               {/* Gallery Grid */}
@@ -1197,7 +1505,7 @@ export default function AdminPage() {
                 {gallery.map((photo) => (
                   <div
                     key={photo.id}
-                    className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col"
+                    className="group bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col hover:shadow-md transition-shadow"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden bg-stone-100">
                       <img
@@ -1208,15 +1516,26 @@ export default function AdminPage() {
                       <button
                         type="button"
                         onClick={() => handleDeletePhoto(photo.id)}
-                        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors"
-                        title="Xóa ảnh này"
+                        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm"
+                        title="Xóa ảnh này khỏi thư viện"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
+                      <span className="absolute bottom-2 left-2 px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-sm text-white text-[10px] font-semibold">
+                        {photo.category === "suoi"
+                          ? "Bờ Suối"
+                          : photo.category === "khong-gian"
+                          ? "Không Gian"
+                          : photo.category === "nuoc"
+                          ? "Đồ Uống"
+                          : "Món Ăn"}
+                      </span>
                     </div>
                     <div className="p-4 flex flex-col gap-1">
                       <span className="text-xs font-bold text-[#1B281D] truncate">{photo.title}</span>
-                      <span className="text-[10px] text-stone-400 truncate">{photo.url}</span>
+                      <span className="text-[10px] text-stone-400 truncate">
+                        {photo.url.startsWith("data:") ? "Ảnh tải từ thiết bị (Base64)" : photo.url}
+                      </span>
                     </div>
                   </div>
                 ))}
