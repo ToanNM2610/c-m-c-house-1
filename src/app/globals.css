@@ -1,98 +1,25 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg-dark: #0C0D0B;
-  --color-brand-primary: #2D4A3E;
-  --color-brand-accent: #C88A4B;
-  --color-text-main: #FDFBF7;
-  --color-border-dark: #222520;
-  --color-background: #0C0D0B;
-  --color-foreground: #FDFBF7;
-  --color-primary: #2D4A3E;
-  --color-accent: #C88A4B;
-  --font-serif: var(--font-heading), "Playfair Display", Georgia, serif;
-  --font-sans: var(--font-body), "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
 :root {
-  --background: #0C0D0B;
-  --foreground: #FDFBF7;
-  --primary: #2D4A3E;
-  --accent: #C88A4B;
-  --border: #222520;
+  --background: #F9F8F3;
+  --foreground: #1B281D;
 }
 
-html {
-  background-color: #0C0D0B;
-  color: #FDFBF7;
-  scroll-behavior: smooth;
-}
-
+html,
 body {
-  background-color: #0C0D0B;
-  color: #FDFBF7;
-  font-family: var(--font-body), "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow-x: hidden;
+  background-color: #F9F8F3;
+  color: #1B281D;
   margin: 0;
   padding: 0;
+  scroll-behavior: smooth;
+  font-family: var(--font-jakarta), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6, .font-serif {
-  font-family: var(--font-heading), "Playfair Display", Georgia, serif;
+/* Hide scrollbar for clean luxury feel */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
-
-/* Custom Scrollbar for Awwwards Aesthetic */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0C0D0B;
-}
-::-webkit-scrollbar-thumb {
-  background: #2D4A3E;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #C88A4B;
-}
-
-/* Awwwards Dark Card & Button Utilities */
-.card-dark {
-  background-color: rgba(12, 13, 11, 0.85);
-  border: 1px solid #222520;
-  border-radius: 1rem;
-  transition: all 0.3s ease;
-}
-.card-dark:hover {
-  border-color: #C88A4B;
-  transform: translateY(-2px);
-}
-
-.btn-gold-outline {
-  border: 1px solid #C88A4B;
-  color: #C88A4B;
-  background-color: transparent;
-  transition: all 0.25s ease-in-out;
-}
-.btn-gold-outline:hover {
-  background-color: #C88A4B;
-  color: #0C0D0B;
-}
-
-.btn-forest-outline {
-  border: 1px solid #2D4A3E;
-  color: #FDFBF7;
-  background-color: transparent;
-  transition: all 0.25s ease-in-out;
-}
-.btn-forest-outline:hover {
-  background-color: #2D4A3E;
-  color: #FDFBF7;
-}
-
-/* GPU Accelerated utility without CSS blur */
-.gpu-accelerate {
-  will-change: transform, opacity;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

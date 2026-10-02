@@ -1,169 +1,300 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
-import Image from "next/image";
-import { useLanguage } from "@/context/LanguageContext";
-import { useGallery } from "@/hooks/useGallery";
-import { MaskHeading } from "@/components/motion/ScrollReveal";
-import { CinematicReveal } from "@/components/motion/CinematicReveal";
-import { SpacePhoto, SpaceCategory } from "@/data/spaces";
-
-const CATEGORIES = ["Tất cả", "Bờ Suối Đá", "Hiên Gỗ & Chòi", "Vườn Hoa Cẩm Cù", "Góc Tĩnh Lặng"];
-
-const snappyTransition = {
-  duration: 0.4,
-  ease: [0.22, 1, 0.36, 1] as const,
-};
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
+import {
+  Droplets,
+  Trees,
+  Volume2,
+  VolumeX,
+  Play,
+  Pause,
+  PhoneCall,
+  Navigation,
+  CheckCircle2,
+  Sparkles
+} from "lucide-react";
 
 export default function SpacePage() {
-  const { t } = useLanguage();
-  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
-  const [activeCategory, setActiveCategory] = useState("Tất cả");
-  const { images } = useGallery();
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
-  const dynamicPhotos = useMemo<SpacePhoto[]>(() => {
-    return images.map((img, i) => {
-      const cat = CATEGORIES[1 + (i % 4)];
-      return {
-        id: `img-${i}`,
-        category: cat,
-        titleVi: img.caption || cat,
-        titleEn: "Space",
-        src: img.url,
-        aspectRatio: "wide" as const,
-      };
-    }) as unknown as SpacePhoto[];
-  }, [images]);
-
-  const fallbackPhotos = [
-    { id: '1', category: 'Bờ Suối Đá', titleVi: 'Bờ Suối', titleEn: 'Stream', src: '/uploads/gallery/1788250253551-943009233.jpg', aspectRatio: "wide" as const },
-    { id: '2', category: 'Hiên Gỗ & Chòi', titleVi: 'Hiên Gỗ', titleEn: 'Wooden Veranda', src: '/uploads/gallery/1788250253554-875120458.jpg', aspectRatio: "wide" as const },
-    { id: '3', category: 'Góc Tĩnh Lặng', titleVi: 'Góc Tĩnh Lặng', titleEn: 'Peaceful Nook', src: '/uploads/gallery/1788250253557-29323827.jpg', aspectRatio: "wide" as const },
-    { id: '4', category: 'Vườn Hoa Cẩm Cù', titleVi: 'Lối Nhỏ', titleEn: 'Small Path', src: '/uploads/gallery/1788250253560-200373033.jpg', aspectRatio: "wide" as const },
-    { id: '5', category: 'Bờ Suối Đá', titleVi: 'Sương Mai', titleEn: 'Morning Dew', src: '/uploads/gallery/1788250253562-580915883.jpg', aspectRatio: "wide" as const },
-  ];
-
-  const allPhotos = dynamicPhotos.length > 0 ? dynamicPhotos : fallbackPhotos;
-  const displayPhotos = activeCategory === "Tất cả" ? allPhotos : allPhotos.filter(p => p.category === activeCategory);
+  const filteredItems = SPACE_ITEMS.filter((item) => {
+    if (activeFilter === "all") return true;
+    return item.category.includes(activeFilter as any);
+  });
 
   return (
-    <div className="w-full min-h-screen text-[#FDFBF7] relative z-10 pointer-events-none">
+    <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D]">
+      <Navbar />
 
-      <section className="pt-40 pb-12 px-6 text-center">
-        <MaskHeading as="h1" duration={1} className="font-serif text-5xl sm:text-7xl lg:text-8xl tracking-widest uppercase text-shadow-md">
-          KHÔNG GIAN
-        </MaskHeading>
-        <CinematicReveal delay={0.2} className="mt-6">
-          <p className="text-[#FDFBF7]/60 text-sm tracking-widest uppercase font-mono max-w-lg mx-auto">
-            Sự tĩnh lặng giữa đại ngàn
-          </p>
-        </CinematicReveal>
-      </section>
-
-      {/* Utilities */}
-      <CinematicReveal className="px-6 pb-8 text-center pointer-events-auto" delay={0.1}>
-        <div className="flex flex-wrap justify-center gap-6 md:gap-12 text-[#FDFBF7]/70 font-mono text-xs uppercase tracking-widest">
-          <span>Wi-Fi Tốc Độ Cao</span>
-          <span className="hidden sm:inline">•</span>
-          <span>Ổ Cắm Từng Bàn</span>
-          <span className="hidden sm:inline">•</span>
-          <span>Bãi Đỗ Xe Ô Tô / Xe Máy</span>
-        </div>
-      </CinematicReveal>
-
-      {/* Filter Categories */}
-      <CinematicReveal className="px-6 pb-12 pointer-events-auto text-center" delay={0.2}>
-        <div className="flex flex-wrap justify-center gap-4">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 font-mono text-xs uppercase tracking-widest border transition-colors ${
-                activeCategory === cat
-                  ? "border-[#C88A4B] text-[#C88A4B]"
-                  : "border-[#FDFBF7]/20 text-[#FDFBF7]/60 hover:border-[#FDFBF7]/60 hover:text-[#FDFBF7]"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </CinematicReveal>
-
-      {/* Masonry Grid */}
-      <section className="px-6 sm:px-12 pb-40 max-w-[1600px] mx-auto pointer-events-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
-          >
-            {displayPhotos.map((photo, i) => (
-              <motion.div
-                key={photo.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, ease: [0.25, 1, 0.5, 1], delay: (i % 3) * 0.08 }}
-                style={{ willChange: 'opacity, transform' }}
-                className="relative overflow-hidden break-inside-avoid group cursor-pointer"
-                onClick={() => setSelectedPhotoIndex(i)}
-              >
-                <div className="w-full relative bg-[#1A1D17]">
-                  <Image
-                    src={photo.src}
-                    alt={photo.titleVi}
-                    loading="lazy"
-                    decoding="async"
-                    width={800}
-                    height={600}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="w-full h-auto object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </section>
-
-      {/* Fullscreen Viewer */}
-      <AnimatePresence>
-        {selectedPhotoIndex !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={snappyTransition}
-            className="fixed inset-0 z-50 bg-[#0C0D0B]/95 flex items-center justify-center p-4 sm:p-12 pointer-events-auto"
-          >
-            <button
-              onClick={() => setSelectedPhotoIndex(null)}
-              className="absolute top-8 right-8 z-50 p-2 text-[#FDFBF7]/50 hover:text-[#FDFBF7] transition-colors"
-            >
-              <X size={32} strokeWidth={1} />
-            </button>
-            <div className="relative w-full max-w-6xl h-full max-h-[80vh] flex flex-col items-center justify-center">
-              <Image
-                src={displayPhotos[selectedPhotoIndex].src}
-                alt="Enlarged space"
-                fill
-                className="object-contain"
-              />
-              <p className="mt-4 font-mono text-xs uppercase tracking-widest text-[#FDFBF7]/50">
-                {displayPhotos[selectedPhotoIndex].titleVi}
+      <main className="pt-20">
+        {/* Top Narrative Intro */}
+        <section className="relative w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-8 sm:pt-14 pb-8">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 text-[#3E5C46] text-xs tracking-wider uppercase mb-3 shadow-sm border border-stone-200/70">
+                <Droplets className="w-3.5 h-3.5 text-[#396663]" />
+                <span>Space &amp; Stream Sanctuary • Gia Nghĩa</span>
+              </div>
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] font-bold tracking-tight leading-tight">
+                Không Gian Sinh Thái <span className="text-[#614633] italic font-normal">•</span> Sự Tĩnh Lặng Bên Bờ Suối Đá
+              </h1>
+              <p className="mt-3 text-base sm:text-lg text-stone-700 max-w-2xl leading-relaxed">
+                Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông.
               </p>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
+            {/* Quick Atmosphere Metrics */}
+            <div className="flex items-center gap-4 bg-white/90 backdrop-blur-sm border border-stone-200/70 px-5 py-3 rounded-2xl shadow-sm self-start lg:self-end">
+              <div className="flex flex-col">
+                <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
+                  Nhiệt Độ Thung Lũng
+                </span>
+                <span className="font-serif text-xl font-bold text-[#3E5C46]">
+                  22°C - 26°C
+                </span>
+              </div>
+              <div className="w-px h-8 bg-stone-200" />
+              <div className="flex flex-col">
+                <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
+                  Độ Che Phủ Tự Nhiên
+                </span>
+                <span className="font-serif text-xl font-bold text-[#396663]">
+                  85% Tán Cây
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="w-full flex items-center justify-between gap-4 flex-wrap pb-4 border-b border-stone-200/70">
+            <div className="inline-flex flex-wrap items-center gap-2 p-1 bg-stone-100 rounded-full border border-stone-200/70">
+              {SPACE_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveFilter(cat.id)}
+                  type="button"
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all duration-300 ${
+                    activeFilter === cat.id
+                      ? "bg-[#3E5C46] text-white shadow-sm"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-200/60"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+
+            <div className="hidden md:flex items-center gap-2 text-xs text-stone-500 font-medium">
+              <span className="w-2 h-2 rounded-full bg-[#396663] animate-pulse" />
+              <span>Chạm vào ảnh để khám phá chi tiết góc ngồi</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Editorial Masonry Gallery Grid */}
+        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20">
+          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
+            <AnimatePresence>
+              {filteredItems.map((item) => (
+                <motion.article
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                  key={item.id}
+                  className={`gallery-item ${item.colSpan || "lg:col-span-4"} flex flex-col group relative bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-stone-200/60 transition-all duration-500`}
+                >
+                  <div className={`relative w-full ${item.aspect || "aspect-[3/4]"} overflow-hidden`}>
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent" />
+
+                    {/* Tag badge */}
+                    <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#3E5C46] text-xs font-bold shadow-sm border border-white/60">
+                      <Sparkles className="w-3.5 h-3.5 text-[#614633]" />
+                      <span>{item.tag}</span>
+                    </div>
+
+                    {/* Content overlay */}
+                    <div className="absolute bottom-5 left-5 right-5 text-white">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-200 mb-1 block">
+                        {item.subtitle}
+                      </span>
+                      <h3 className="font-serif text-lg sm:text-xl font-bold leading-snug">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-white/80 mt-1 line-clamp-2">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </section>
+
+        {/* Sensory Audio Guide */}
+        <section className="w-full bg-stone-100/70 border-y border-stone-200 py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10">
+            <div className="max-w-xl">
+              <span className="text-xs uppercase tracking-widest text-[#396663] font-bold">
+                Cảm Nhận Giác Quan
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] font-bold mt-1">
+                Dành Cho Tâm Hồn Cần Chốn Chữa Lành
+              </h2>
+              <p className="text-base text-stone-700 mt-3 leading-relaxed">
+                Không ồn ào còi xe, không ánh đèn nhân tạo chói lóa. Ở Cẩm Cù House, thanh âm chủ đạo là tiếng suối reo trên đá bazan, tiếng chim hót trên ngọn sầu riêng cổ và tiếng xào xạc của gió luồn qua rặng tre ngà.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 flex items-start gap-3">
+                  <Droplets className="w-6 h-6 text-[#396663] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#1B281D]">Tiếng Nước Tự Nhiên</h4>
+                    <p className="text-xs text-stone-600 mt-1">Âm thanh trắng làm dịu sóng não căng thẳng.</p>
+                  </div>
+                </div>
+                <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 flex items-start gap-3">
+                  <Trees className="w-6 h-6 text-[#614633] shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#1B281D]">Hương Rừng &amp; Hoa Cù</h4>
+                    <p className="text-xs text-stone-600 mt-1">Mùi thơm thảo mộc tự nhiên ngát lành trong gió.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Audio Stream Player Simulator Card */}
+            <div className="w-full lg:w-96 bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl p-6 border border-stone-200/60 flex flex-col items-center text-center relative">
+              <div className="w-20 h-20 rounded-full bg-[#396663]/15 text-[#396663] flex items-center justify-center mb-4 shadow-sm relative">
+                {isPlayingAudio ? (
+                  <Volume2 className="w-9 h-9 text-[#396663] animate-pulse" />
+                ) : (
+                  <VolumeX className="w-9 h-9 text-[#396663]" />
+                )}
+                {isPlayingAudio && (
+                  <span className="absolute inset-0 rounded-full border-2 border-[#396663] animate-ping opacity-30" />
+                )}
+              </div>
+              <span className="text-xs text-stone-500 uppercase tracking-wider font-semibold">
+                Thanh Âm Thực Địa
+              </span>
+              <h3 className="font-serif text-xl font-bold text-[#3E5C46] mt-1">
+                Tiếng Suối Đá Gia Nghĩa
+              </h3>
+              <p className="text-xs text-stone-600 mt-2 mb-6">
+                {isPlayingAudio
+                  ? "Đang phát mô phỏng: Tiếng suối róc rách qua ghềnh đá bazan tự nhiên..."
+                  : "Bấm để nghe đoạn âm thanh thực tế bên bờ suối Cẩm Cù House lúc ban mai."}
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                className={`w-full py-3.5 px-6 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
+                  isPlayingAudio
+                    ? "bg-[#396663] text-white"
+                    : "bg-[#3E5C46] text-white hover:bg-[#2D4233]"
+                }`}
+              >
+                {isPlayingAudio ? (
+                  <>
+                    <Pause className="w-4 h-4" />
+                    <span>Tạm Dừng Thanh Âm Suối</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>Nghe Tiếng Suối Chảy</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Eco Charter Section */}
+        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-16">
+          <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl p-6 sm:p-10 border border-stone-200/60 relative overflow-hidden">
+            <div className="relative z-10 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3E5C46]/10 text-[#3E5C46] text-xs font-bold mb-3">
+                <Trees className="w-4 h-4 text-[#3E5C46]" />
+                <span>Lời Hứa Xanh Từ Cẩm Cù House</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] font-bold tracking-tight">
+                Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên &amp; Giảm Thiểu Nhựa
+              </h2>
+              <p className="mt-3 text-base text-stone-700 leading-relaxed">
+                Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 p-4 rounded-2xl bg-stone-50 border border-stone-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#396663]/15 flex items-center justify-center text-[#396663] shrink-0">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#1B281D]">Không Nhựa 1 Lần</p>
+                    <p className="text-[11px] text-stone-600">100% vật liệu tự nhiên</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#3E5C46]/15 flex items-center justify-center text-[#3E5C46] shrink-0">
+                    <Droplets className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#1B281D]">Bảo Vệ Nguồn Nước</p>
+                    <p className="text-[11px] text-stone-600">Lọc thải khép kín an toàn</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-amber-600/15 flex items-center justify-center text-amber-800 shrink-0">
+                    <Trees className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#1B281D]">Hệ Sinh Thái Rừng</p>
+                    <p className="text-[11px] text-stone-600">Gìn giữ thảm thực vật bản địa</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Callouts */}
+              <div className="mt-8 flex flex-wrap items-center gap-3.5">
+                <a
+                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
+                >
+                  <span>Chỉ Đường Tới Quán</span>
+                  <Navigation className="w-4 h-4" />
+                </a>
+                <a
+                  href="tel:0382851688"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-stone-100 text-[#3E5C46] hover:bg-stone-200 transition-colors text-xs sm:text-sm font-semibold border border-stone-200"
+                >
+                  <PhoneCall className="w-4 h-4 text-[#3E5C46]" />
+                  <span>Gọi Hotline: 038 285 1688</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
     </div>
   );
 }
