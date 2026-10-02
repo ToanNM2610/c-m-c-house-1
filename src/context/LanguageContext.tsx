@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 export type Language = "vi" | "en" | "VN" | "EN" | string;
 
@@ -21,7 +27,27 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>("vi");
+  const [language, setLanguageState] = useState<Language>("vi");
+  const [mounted, setMounted] = useState(false);
+
+  // Restore saved language from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("camcu_lang");
+      if (saved === "en" || saved === "vi") {
+        setLanguageState(saved);
+      }
+    } catch (_) {}
+    setMounted(true);
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    const normalized = lang.toLowerCase() as Language;
+    setLanguageState(normalized);
+    try {
+      localStorage.setItem("camcu_lang", normalized as string);
+    } catch (_) {}
+  };
 
   const t = (vnText: string, enText?: string) => {
     if (language.toLowerCase() === "en" && enText) return enText;
@@ -38,7 +64,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   return (
     <LanguageContext.Provider value={value}>
-      {children}
+      {mounted ? children : children}
     </LanguageContext.Provider>
   );
 }

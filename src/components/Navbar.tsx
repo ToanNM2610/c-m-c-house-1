@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useStoreStatus } from "@/lib/openingHours";
+import { useLanguage } from "@/context/LanguageContext";
 
 const NAV_LINKS = [
   { href: "/", label: "Trang Chủ" },
@@ -37,7 +38,9 @@ import {
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [lang, setLang] = useState<"VN" | "EN">("VN");
+  const { language, setLanguage } = useLanguage();
+  const lang = language.toLowerCase() === "en" ? "EN" : "VN";
+  const setLang = (l: "VN" | "EN") => setLanguage(l.toLowerCase());
   const storeStatus = useStoreStatus();
 
   const [settings, setSettings] = useState({

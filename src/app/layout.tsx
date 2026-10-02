@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Playfair_Display, Be_Vietnam_Pro } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 
@@ -11,10 +11,10 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
-const jakarta = Plus_Jakarta_Sans({
+const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-jakarta",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-be-vietnam",
   display: "swap",
 });
 
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Cẩm Cù House coffee & Food • Gia Nghĩa Đắk Nông",
-    description: "Chốn dừng chân mộc mạc bên bờ suối đá thiên nhiên.",
+    description: "Chốn dừng chân mộc mạc bên bờ suối đất thiên nhiên.",
     type: "website",
     locale: "vi_VN",
   },
@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${jakarta.variable}`}>
+    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${beVietnam.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -63,7 +63,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className="bg-[#F9F8F3] dark:bg-[#121A15] text-[#1B281D] dark:text-[#F5F4EE] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white transition-colors duration-300">
+      <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <LanguageProvider>
             {children}

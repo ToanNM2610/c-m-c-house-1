@@ -808,14 +808,14 @@ export default function AdminPage() {
   // ==========================================
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#F9F8F3] flex flex-col items-center justify-center p-4 selection:bg-[#3E5C46] selection:text-white">
-        <div className="w-full max-w-sm bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-stone-200/80 text-center flex flex-col items-center">
+      <div className="min-h-screen bg-[#F9F8F3] dark:bg-[#121A15] flex flex-col items-center justify-center p-4 selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
+        <div className="w-full max-w-sm bg-white/95 dark:bg-[#1E2B22]/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-stone-200/80 dark:border-stone-700/60 text-center flex flex-col items-center transition-colors duration-200">
           {/* Logo / Brand */}
           <div className="w-14 h-14 rounded-2xl bg-[#3E5C46] text-white flex items-center justify-center mb-4 shadow-lg">
             <Lock className="w-7 h-7" />
           </div>
 
-          <h1 className="font-serif text-2xl font-bold text-[#2D4233] tracking-tight">
+          <h1 className="font-serif text-2xl font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight">
             CẨM CÙ ADMIN
           </h1>
           <p className="text-xs text-stone-500 mt-1 uppercase tracking-widest font-semibold">
@@ -908,7 +908,7 @@ export default function AdminPage() {
   // RENDER 2: FULL ADMIN DASHBOARD WITH ACTIVATED SIDEBAR
   // ==========================================
   return (
-    <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D] flex font-sans selection:bg-[#3E5C46] selection:text-white">
+    <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] flex font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
       {/* Toast Alert Notification */}
       {toastMessage && (
         <div className="fixed top-5 right-5 z-[999] bg-[#2D4233] text-white px-5 py-3 rounded-2xl shadow-2xl border border-emerald-500/30 flex items-center gap-3 text-sm font-semibold animate-fade-in">
@@ -918,7 +918,7 @@ export default function AdminPage() {
       )}
 
       {/* Sidebar - FIXED & FULLY INTERACTIVE */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-stone-100 z-50 flex flex-col justify-between py-6 px-4 border-r border-stone-200 shadow-sm">
+      <aside className="fixed left-0 top-0 h-full w-64 bg-stone-100 dark:bg-[#16231A] z-50 flex flex-col justify-between py-6 px-4 border-r border-stone-200 dark:border-stone-800 shadow-sm transition-colors duration-200">
         <div className="flex flex-col gap-6">
           {/* Brand */}
           <div className="flex items-center gap-3 px-2">
@@ -945,7 +945,7 @@ export default function AdminPage() {
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === "overview"
                   ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 hover:bg-stone-200/80 hover:text-stone-900"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
               }`}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -958,7 +958,7 @@ export default function AdminPage() {
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === "menu"
                   ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 hover:bg-stone-200/80 hover:text-stone-900"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
               }`}
             >
               <UtensilsCrossed className="w-4 h-4" />
@@ -971,7 +971,7 @@ export default function AdminPage() {
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === "gallery"
                   ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 hover:bg-stone-200/80 hover:text-stone-900"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
               }`}
             >
               <ImageIcon className="w-4 h-4" />
@@ -984,7 +984,7 @@ export default function AdminPage() {
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === "settings"
                   ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 hover:bg-stone-200/80 hover:text-stone-900"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
               }`}
             >
               <Settings className="w-4 h-4" />
@@ -994,13 +994,13 @@ export default function AdminPage() {
         </div>
 
         {/* User Card with Logout Action */}
-        <div className="p-3 bg-white rounded-2xl border border-stone-200/80 shadow-sm flex items-center justify-between">
+        <div className="p-3 bg-white dark:bg-[#1E2B22] rounded-2xl border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-[#3E5C46] text-white flex items-center justify-center font-bold text-xs shrink-0">
               CC
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-stone-800">Quản lý viên</span>
+              <span className="text-xs font-bold text-stone-800 dark:text-stone-100">Quản lý viên</span>
               <span className="text-[10px] text-stone-400">Gia Nghĩa Hub</span>
             </div>
           </div>
@@ -1077,13 +1077,13 @@ export default function AdminPage() {
           {activeTab === "overview" && (
             <>
               {/* Welcome Banner */}
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 sm:p-8 bg-white/90 backdrop-blur-sm border border-stone-200/60 rounded-2xl shadow-sm">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 rounded-2xl shadow-sm">
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center gap-2 text-xs font-bold text-[#396663] uppercase tracking-wider">
                     <Sparkles className="w-4 h-4" />
                     <span>Bảng Điều Khiển Vận Hành</span>
                   </div>
-                  <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#3E5C46]">
+                  <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
                     Xin chào Quản lý Cẩm Cù House
                   </h1>
                   <p className="text-xs sm:text-sm text-stone-600 flex items-center gap-2 flex-wrap">
@@ -1118,7 +1118,7 @@ export default function AdminPage() {
 
               {/* 4 KPI Metrics Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                <div className="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-stone-200/60 shadow-sm flex flex-col justify-between">
+                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
@@ -1141,7 +1141,7 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-stone-200/60 shadow-sm flex flex-col justify-between">
+                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
@@ -1167,7 +1167,7 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-stone-200/60 shadow-sm flex flex-col justify-between">
+                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
@@ -1189,7 +1189,7 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-white/90 backdrop-blur-sm border border-stone-200/60 shadow-sm flex flex-col justify-between">
+                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
@@ -1215,7 +1215,7 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left 7 Cols: Bảng tin mới nhất */}
                 <div className="lg:col-span-7 flex flex-col gap-6">
-                  <div className="bg-white/90 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 shadow-sm flex flex-col gap-4">
+                  <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4">
                     <div className="flex items-center justify-between pb-3 border-b border-stone-200">
                       <div className="flex items-center gap-2">
                         <Radio className="w-5 h-5 text-[#396663]" />
@@ -1292,7 +1292,7 @@ export default function AdminPage() {
 
                 {/* Right 5 Cols: Trạng Thái Món Nhanh (Top 5 Quick Toggles) */}
                 <div className="lg:col-span-5 flex flex-col gap-6">
-                  <div className="bg-white/90 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 shadow-sm flex flex-col gap-4">
+                  <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4">
                     <div className="flex items-center justify-between pb-3 border-b border-stone-200">
                       <div className="flex items-center gap-2">
                         <UtensilsCrossed className="w-5 h-5 text-[#3E5C46]" />
@@ -1353,7 +1353,7 @@ export default function AdminPage() {
           {activeTab === "menu" && (
             <div className="flex flex-col gap-6">
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm">
                 <div>
                   <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
                     Quản Lý Thực Đơn Cẩm Cù House
@@ -1386,7 +1386,7 @@ export default function AdminPage() {
                     className={`px-4 py-2 rounded-full text-xs font-semibold shrink-0 transition-all ${
                       selectedCategory === cat.id
                         ? "bg-[#3E5C46] text-white shadow-sm"
-                        : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-100"
+                        : "bg-white dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 hover:bg-stone-100 dark:hover:bg-white/10"
                     }`}
                   >
                     {cat.name}
@@ -1395,10 +1395,10 @@ export default function AdminPage() {
               </div>
 
               {/* Menu Items Table */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 overflow-hidden shadow-sm">
+              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs text-stone-700">
-                    <thead className="bg-stone-50 border-b border-stone-200 uppercase tracking-wider text-[11px] text-stone-500 font-bold">
+                    <thead className="bg-stone-50 dark:bg-[#16231A] border-b border-stone-200 dark:border-stone-700/60 uppercase tracking-wider text-[11px] text-stone-500 dark:text-stone-400 font-bold">
                       <tr>
                         <th className="py-3.5 px-6">Tên Món</th>
                         <th className="py-3.5 px-4">Nhóm Món</th>
@@ -1514,7 +1514,7 @@ export default function AdminPage() {
           {/* ========================================================= */}
           {activeTab === "gallery" && (
             <div className="flex flex-col gap-6">
-              <div className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
                     Thư Viện Ảnh Cẩm Cù House
@@ -1528,7 +1528,7 @@ export default function AdminPage() {
               {/* Form Add Photos (Multi / Batch Upload) */}
               <form
                 onSubmit={handleSaveGalleryPhotos}
-                className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col gap-5"
+                className="p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-5"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-200 gap-3">
                   <div className="flex items-center gap-2">
@@ -1552,7 +1552,7 @@ export default function AdminPage() {
                       onClick={() => setGalleryUploadMode("file")}
                       className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
                         galleryUploadMode === "file"
-                          ? "bg-white text-[#3E5C46] shadow-sm font-bold"
+                          ? "bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] shadow-sm font-bold"
                           : "hover:text-stone-900"
                       }`}
                     >
@@ -1564,7 +1564,7 @@ export default function AdminPage() {
                       onClick={() => setGalleryUploadMode("url")}
                       className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
                         galleryUploadMode === "url"
-                          ? "bg-white text-[#3E5C46] shadow-sm font-bold"
+                          ? "bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] shadow-sm font-bold"
                           : "hover:text-stone-900"
                       }`}
                     >
@@ -1616,7 +1616,7 @@ export default function AdminPage() {
                             : "border-stone-300 bg-stone-50/60 hover:bg-stone-100/80 hover:border-[#3E5C46]"
                         }`}
                       >
-                        <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-stone-200 flex items-center justify-center text-[#3E5C46]">
+                        <div className="w-14 h-14 rounded-2xl bg-white dark:bg-[#1E2B22] shadow-sm border border-stone-200 dark:border-stone-700/60 flex items-center justify-center text-[#3E5C46] dark:text-[#88B795]">
                           <UploadCloud className="w-7 h-7" />
                         </div>
                         <div>
@@ -1629,7 +1629,7 @@ export default function AdminPage() {
                         </div>
                         <button
                           type="button"
-                          className="px-5 py-2.5 rounded-full bg-white text-[#3E5C46] text-xs font-bold border border-stone-300 shadow-sm hover:bg-stone-50 transition-all"
+                          className="px-5 py-2.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs font-bold border border-stone-300 dark:border-stone-700/60 shadow-sm hover:bg-stone-50 dark:hover:bg-white/10 transition-all"
                         >
                           Chọn nhiều ảnh từ thiết bị
                         </button>
@@ -1655,7 +1655,7 @@ export default function AdminPage() {
                             <button
                               type="button"
                               onClick={() => fileInputRef.current?.click()}
-                              className="px-3 py-1 rounded-lg bg-white text-[#3E5C46] border border-stone-300 text-xs font-semibold hover:bg-stone-50 shadow-sm"
+                              className="px-3 py-1 rounded-lg bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] border border-stone-300 dark:border-stone-700/60 text-xs font-semibold hover:bg-stone-50 dark:hover:bg-white/10 shadow-sm"
                             >
                               + Chọn thêm ảnh
                             </button>
@@ -1674,7 +1674,7 @@ export default function AdminPage() {
                           {pendingPhotos.map((photo) => (
                             <div
                               key={photo.id}
-                              className="group relative bg-white rounded-xl border border-stone-200 p-2 shadow-sm flex flex-col gap-1.5 hover:shadow-md transition-shadow"
+                              className="group relative bg-white dark:bg-[#1E2B22] rounded-xl border border-stone-200 dark:border-stone-700/60 p-2 shadow-sm flex flex-col gap-1.5 hover:shadow-md transition-shadow"
                             >
                               <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-stone-100">
                                 <img
@@ -1721,7 +1721,7 @@ export default function AdminPage() {
                         placeholder="https://images.unsplash.com/photo-..."
                         value={newPhoto.url}
                         onChange={(e) => setNewPhoto({ ...newPhoto, url: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                        className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                         required={galleryUploadMode === "url"}
                       />
                     </div>
@@ -1734,7 +1734,7 @@ export default function AdminPage() {
                         placeholder="VD: Cảnh suối ban mai trong veo..."
                         value={newPhoto.title}
                         onChange={(e) => setNewPhoto({ ...newPhoto, title: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                        className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                         required={galleryUploadMode === "url"}
                       />
                     </div>
@@ -1819,7 +1819,7 @@ export default function AdminPage() {
                 </div>
 
                 {gallery.length === 0 ? (
-                  <div className="p-12 text-center bg-white rounded-2xl border border-stone-200 text-stone-400 text-xs">
+                  <div className="p-12 text-center bg-white dark:bg-[#1E2B22] rounded-2xl border border-stone-200 dark:border-stone-700/60 text-stone-400 text-xs">
                     Chưa có hình ảnh nào trong thư viện.
                   </div>
                 ) : (
@@ -1929,7 +1929,7 @@ export default function AdminPage() {
               {/* Store Operational Info Form */}
               <form
                 onSubmit={handleSaveSettings}
-                className="p-6 sm:p-8 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col gap-6"
+                className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6"
               >
                 <div className="pb-3 border-b border-stone-200 flex items-center justify-between">
                   <div>
@@ -1982,7 +1982,7 @@ export default function AdminPage() {
                       type="text"
                       value={settings.topBanner}
                       onChange={(e) => setSettings({ ...settings, topBanner: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
 
@@ -1995,7 +1995,7 @@ export default function AdminPage() {
                       type="text"
                       value={settings.hoursWeekday}
                       onChange={(e) => setSettings({ ...settings, hoursWeekday: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
 
@@ -2008,7 +2008,7 @@ export default function AdminPage() {
                       type="text"
                       value={settings.hoursWeekend}
                       onChange={(e) => setSettings({ ...settings, hoursWeekend: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
 
@@ -2021,7 +2021,7 @@ export default function AdminPage() {
                       type="text"
                       value={settings.hotline1}
                       onChange={(e) => setSettings({ ...settings, hotline1: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
 
@@ -2034,7 +2034,7 @@ export default function AdminPage() {
                       type="text"
                       value={settings.hotline2}
                       onChange={(e) => setSettings({ ...settings, hotline2: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
 
@@ -2047,7 +2047,7 @@ export default function AdminPage() {
                       type="text"
                       value={settings.address}
                       onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
                 </div>
@@ -2056,7 +2056,7 @@ export default function AdminPage() {
               {/* PIN Code Change Form */}
               <form
                 onSubmit={handleChangePin}
-                className="p-6 sm:p-8 bg-white/90 backdrop-blur-sm rounded-2xl border border-stone-200 shadow-sm flex flex-col gap-6"
+                className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6"
               >
                 <div className="pb-3 border-b border-stone-200">
                   <h2 className="font-serif text-xl font-bold text-[#3E5C46]">
@@ -2090,7 +2090,7 @@ export default function AdminPage() {
                       value={oldPin}
                       onChange={(e) => setOldPin(e.target.value)}
                       placeholder="Mặc định: 2610"
-                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
                   </div>
@@ -2105,7 +2105,7 @@ export default function AdminPage() {
                       value={newPin}
                       onChange={(e) => setNewPin(e.target.value)}
                       placeholder="Nhập mã PIN mới"
-                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
                   </div>
@@ -2120,7 +2120,7 @@ export default function AdminPage() {
                       value={confirmPin}
                       onChange={(e) => setConfirmPin(e.target.value)}
                       placeholder="Nhập lại mã PIN mới"
-                      className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
                   </div>
@@ -2143,7 +2143,7 @@ export default function AdminPage() {
       {/* ========================================================= */}
       {noticeModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-stone-200 flex flex-col gap-4 animate-scale-up">
+          <div className="bg-white dark:bg-[#1E2B22] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-4 animate-scale-up text-[#1B281D] dark:text-[#F5F4EE]">
             <div className="flex items-center justify-between pb-3 border-b border-stone-200">
               <h3 className="font-serif text-xl font-bold text-[#3E5C46]">
                 + Tạo Bản Tin Quán Mới
@@ -2167,7 +2167,7 @@ export default function AdminPage() {
                   placeholder="VD: Đêm nhạc Acoustic bên suối..."
                   value={newNotice.title}
                   onChange={(e) => setNewNotice({ ...newNotice, title: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                  className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                   required
                 />
               </div>
@@ -2181,7 +2181,7 @@ export default function AdminPage() {
                   placeholder="Nội dung thông báo tới khách hàng..."
                   value={newNotice.content}
                   onChange={(e) => setNewNotice({ ...newNotice, content: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-stone-100 rounded-xl text-xs border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                  className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                   required
                 />
               </div>
@@ -2194,7 +2194,7 @@ export default function AdminPage() {
                   <select
                     value={newNotice.type}
                     onChange={(e) => setNewNotice({ ...newNotice, type: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-stone-100 rounded-xl text-xs border border-stone-200"
+                    className="w-full px-3 py-2 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60"
                   >
                     <option value="event">Sự kiện đêm suối</option>
                     <option value="special">Món ngon đặc sản</option>

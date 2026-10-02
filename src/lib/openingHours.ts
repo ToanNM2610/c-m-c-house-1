@@ -147,11 +147,10 @@ export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatu
   }
 
   // Outside opening hours
-  const nextOpenDay = totalMinutes < openMinutes ? "hôm nay" : "sáng mai";
   return {
     status: "closed",
     badgeType: "closed",
-    badgeText: `🔴 Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ${nextOpenDay}`,
+    badgeText: "🔴 Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ngày mai",
     shortBadge: "Đã đóng cửa",
     closingTime,
     scheduleText,
