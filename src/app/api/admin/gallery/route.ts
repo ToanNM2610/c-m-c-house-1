@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getGalleryPhotos, addGalleryPhoto, deleteGalleryPhoto } from "@/data/store";
+import { getGalleryPhotos, addGalleryPhoto, updateGalleryPhoto, deleteGalleryPhoto } from "@/data/store";
 
 export async function GET() {
   try {
@@ -39,6 +39,39 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: "Lỗi thêm ảnh vào thư viện" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, title, category, caption, url } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Thiếu ID ảnh cần cập nhật" },
+        { status: 400 }
+      );
+    }
+
+    const updated = updateGalleryPhoto(id, {
+      ...(title !== undefined ? { title } : {}),
+      ...(category !== undefined ? { category } : {}),
+      ...(caption !== undefined ? { caption } : {}),
+      ...(url !== undefined ? { url } : {}),
+    });
+
+    return NextResponse.json({
+      success: !!updated,
+      message: updated ? "Cập nhật ảnh thành công" : "Không tìm thấy ảnh",
+      photo: updated,
+      photos: getGalleryPhotos(),
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: "Lỗi cập nhật ảnh" },
       { status: 500 }
     );
   }

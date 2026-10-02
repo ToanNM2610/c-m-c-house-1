@@ -61,13 +61,16 @@ import {
   compressImageFile,
 } from "@/utils/storage";
 
+import defaultGalleryData from "@/data/gallery.json";
+
 type AnnouncementItem = SharedAnnouncement;
 
 interface GalleryItem {
   id: string;
   title: string;
   url: string;
-  category: "suoi" | "nuoc" | "mon-an" | "khong-gian";
+  category: string;
+  caption?: string;
 }
 
 interface StoreSettingsData {
@@ -97,7 +100,11 @@ export default function AdminPage() {
     return getSharedData<AnnouncementItem[]>(KEYS.ANNOUNCEMENTS, []);
   });
   const [gallery, setGallery] = useState<GalleryItem[]>(() => {
-    return getSharedData<GalleryItem[]>(KEYS.GALLERY, []);
+    const shared = getSharedData<GalleryItem[]>(KEYS.GALLERY, []);
+    if (shared && shared.length > 0) {
+      return shared;
+    }
+    return defaultGalleryData as GalleryItem[];
   });
   const [settings, setSettings] = useState<StoreSettingsData>({
     isOpen: true,
@@ -181,8 +188,41 @@ export default function AdminPage() {
     setAnnouncements(sharedAnnouncements);
 
     const sharedGallery = getSharedData<GalleryItem[]>(KEYS.GALLERY, []);
-    if (sharedGallery.length > 0) {
-      setGallery(sharedGallery);
+    const standardList = defaultGalleryData as GalleryItem[];
+    if (!sharedGallery || sharedGallery.length === 0) {
+      setGallery(standardList);
+      setSharedData(KEYS.GALLERY, standardList);
+      setStoredData(CAMCU_GALLERY_KEY, standardList, false);
+    } else {
+      let isChanged = false;
+      const reconciled = sharedGallery.map((item) => {
+        const match = standardList.find(
+          (std) => std.id === item.id || std.url === item.url || (item.title && item.title.startsWith("1 ("))
+        );
+        if (match && (item.title.startsWith("1 (") || !item.caption || (item.category === "stream" && match.category !== "stream"))) {
+          isChanged = true;
+          return {
+            ...item,
+            title: match.title,
+            caption: match.caption,
+            category: match.category,
+          };
+        }
+        return item;
+      });
+
+      standardList.forEach((std) => {
+        if (!reconciled.some((r) => r.url === std.url || r.id === std.id)) {
+          reconciled.push(std);
+          isChanged = true;
+        }
+      });
+
+      setGallery(reconciled);
+      if (isChanged) {
+        setSharedData(KEYS.GALLERY, reconciled);
+        setStoredData(CAMCU_GALLERY_KEY, reconciled, false);
+      }
     }
 
     const storedSettings = getStoredData<StoreSettingsData | null>(CAMCU_SETTINGS_KEY, null);
@@ -607,6 +647,35 @@ export default function AdminPage() {
     try {
       fetch(`/api/admin/gallery?id=${id}`, { method: "DELETE" }).catch(() => {});
     } catch {}
+  };
+
+  // Update Photo Title, Category, Caption
+  const handleUpdatePhoto = async (id: string, updates: Partial<GalleryItem>) => {
+    const updatedGallery = gallery.map((item) =>
+      item.id === id ? { ...item, ...updates } : item
+    );
+    setGallery(updatedGallery);
+    setSharedData(KEYS.GALLERY, updatedGallery);
+    setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+
+    try {
+      fetch("/api/admin/gallery", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, ...updates }),
+      }).catch(() => {});
+    } catch {}
+  };
+
+  // Reset to default 31 standard photos
+  const handleResetToDefaultPhotos = () => {
+    if (window.confirm("Bạn có chắc chắn muốn đồng bộ và khôi phục 31 ảnh quán về danh mục và tên chuẩn không?")) {
+      const resetList = defaultGalleryData as GalleryItem[];
+      setGallery(resetList);
+      setSharedData(KEYS.GALLERY, resetList);
+      setStoredData(CAMCU_GALLERY_KEY, resetList, false);
+      showToast("Đã đồng bộ 31 ảnh về taxonomy và tên gọi chuẩn thành công!");
+    }
   };
 
   // Category Label Mapper
@@ -1647,7 +1716,7 @@ export default function AdminPage() {
                         <option value="coffee">Cà Phê &amp; Đồ Uống (coffee)</option>
                         <option value="food">Món Ăn Vặt &amp; Đặc Sản (food)</option>
                       </optgroup>
-                      <optgroup label="🏡 Nhóm Trang Chủ">
+                      <optgroup label="🏕️ Nhóm Trang Chủ">
                         <option value="hero">Banner Nổi Bật Trang Chủ (hero)</option>
                       </optgroup>
                     </select>
@@ -1678,15 +1747,26 @@ export default function AdminPage() {
                 </div>
               </form>
 
-              {/* Gallery Grid with Category Badges */}
+              {/* Gallery Grid with Category Badges & In-Card Editor */}
               <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-serif text-lg font-bold text-[#3E5C46]">
-                    Tất Cả Ảnh Đang Có Trong Thư Viện ({gallery.length})
-                  </h3>
-                  <span className="text-xs text-stone-500">
-                    Bấm icon thùng rác trên từng ảnh để xóa khỏi hệ thống
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-[#3E5C46]">
+                      Tất Cả Ảnh Đang Có Trong Thư Viện ({gallery.length})
+                    </h3>
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Chỉnh sửa trực tiếp tên, chuyên mục và lời tựa cho từng bức ảnh. Thay đổi lưu tức thì.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleResetToDefaultPhotos}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold border border-stone-300 transition-colors shadow-sm self-start sm:self-auto"
+                    title="Khôi phục lại 31 ảnh quán với tên và chuyên mục chuẩn"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Đồng bộ 31 ảnh chuẩn</span>
+                  </button>
                 </div>
 
                 {gallery.length === 0 ? (
@@ -1709,7 +1789,7 @@ export default function AdminPage() {
                           <button
                             type="button"
                             onClick={() => handleDeletePhoto(photo.id)}
-                            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm"
+                            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm z-10"
                             title="Xóa ảnh này khỏi thư viện"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1718,11 +1798,65 @@ export default function AdminPage() {
                             {getCategoryLabel(photo.category)}
                           </span>
                         </div>
-                        <div className="p-4 flex flex-col gap-1">
-                          <span className="text-xs font-bold text-[#1B281D] truncate">{photo.title}</span>
-                          <span className="text-[10px] text-stone-400 truncate">
-                            {photo.url.startsWith("data:") ? "Ảnh tải từ thiết bị (Base64)" : photo.url}
-                          </span>
+
+                        <div className="p-4 flex flex-col gap-3 bg-white">
+                          <div>
+                            <label className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block mb-1">
+                              Tiêu đề ảnh
+                            </label>
+                            <input
+                              type="text"
+                              value={photo.title}
+                              onChange={(e) => handleUpdatePhoto(photo.id, { title: e.target.value })}
+                              className="w-full px-3 py-1.5 bg-stone-50 rounded-lg text-xs font-semibold text-[#1B281D] border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
+                              placeholder="Tiêu đề ảnh..."
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block mb-1">
+                              Chuyên mục phân loại
+                            </label>
+                            <select
+                              value={photo.category}
+                              onChange={(e) => handleUpdatePhoto(photo.id, { category: e.target.value })}
+                              className="w-full px-3 py-1.5 bg-stone-50 rounded-lg text-xs font-medium text-stone-800 border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46]"
+                            >
+                              <optgroup label="🌿 Nhóm Không Gian Suối (Trang /space)">
+                                <option value="stream">Bờ Suối Tự Nhiên (stream)</option>
+                                <option value="wooden-terrace">Hiên Gỗ &amp; Chòi Mộc (wooden-terrace)</option>
+                                <option value="checkin">Góc Check-in &amp; Cảnh Quan (checkin)</option>
+                                <option value="workspace">Bàn Ghế Làm Việc / Đọc Sách (workspace)</option>
+                              </optgroup>
+                              <optgroup label="☕ Nhóm Thực Đơn (Trang /menu)">
+                                <option value="coffee">Cà Phê &amp; Đồ Uống (coffee)</option>
+                                <option value="food">Món Ăn Vặt &amp; Đặc Sản (food)</option>
+                              </optgroup>
+                              <optgroup label="🏕️ Nhóm Trang Chủ">
+                                <option value="hero">Banner Nổi Bật Trang Chủ (hero)</option>
+                              </optgroup>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-bold text-stone-600 uppercase tracking-wider block mb-1">
+                              Lời tựa / Chú thích (Caption)
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={photo.caption || ""}
+                              onChange={(e) => handleUpdatePhoto(photo.id, { caption: e.target.value })}
+                              className="w-full px-3 py-1.5 bg-stone-50 rounded-lg text-[11px] text-stone-600 border border-stone-200 focus:outline-none focus:ring-1 focus:ring-[#3E5C46] resize-none"
+                              placeholder="Lời tựa nên thơ cho ảnh..."
+                            />
+                          </div>
+
+                          <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] text-stone-400">
+                            <span className="truncate max-w-[200px]" title={photo.url}>
+                              {photo.url.startsWith("data:") ? "Ảnh tải từ thiết bị (Base64)" : photo.url}
+                            </span>
+                            <span className="text-emerald-700 font-medium">✓ Đã lưu</span>
+                          </div>
                         </div>
                       </div>
                     ))}

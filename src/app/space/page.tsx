@@ -93,6 +93,26 @@ export default function SpacePage() {
     }
   };
 
+  const getCategorySubtitle = (cat: string): string => {
+    switch (cat) {
+      case "stream":
+      case "suoi":
+      case "bo-suoi":
+        return "Bờ Suối Tự Nhiên";
+      case "wooden-terrace":
+      case "hien-go":
+        return "Hiên Gỗ & Chòi Mộc";
+      case "checkin":
+      case "check-in":
+        return "Góc Check-in & Cảnh Quan";
+      case "workspace":
+      case "chill-work":
+        return "Bàn Ghế Làm Việc / Đọc Sách";
+      default:
+        return "Không Gian Quán";
+    }
+  };
+
   const dynamicItems: SpaceItem[] = galleryPhotos
     .filter((g) => {
       return [
@@ -112,16 +132,38 @@ export default function SpacePage() {
     .map((g, idx) => ({
       id: g.id || `dyn_${idx}`,
       title: g.title || "Góc Không Gian Cẩm Cù House",
-      subtitle: "Ảnh Mới Từ Quán",
-      description: "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông được cập nhật mới nhất từ ban quản lý.",
+      subtitle: getCategorySubtitle(g.category),
+      description:
+        (g as { caption?: string }).caption ||
+        "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông được cập nhật mới nhất từ ban quản lý.",
       image: g.url,
       category: mapAdminCategoryToSpace(g.category),
-      tag: "Ảnh Mới Cập Nhật",
+      tag: getCategorySubtitle(g.category),
       colSpan: idx % 3 === 0 ? "lg:col-span-6" : "lg:col-span-3",
       aspect: idx % 3 === 0 ? "aspect-[4/3] md:aspect-[16/10]" : "aspect-[3/4]",
     }));
 
-  const allItems = [...dynamicItems, ...SPACE_ITEMS];
+  // Combine dynamic items with default space items, deduplicating by URL
+  const allItems: SpaceItem[] = (() => {
+    const seen = new Set<string>();
+    const list: SpaceItem[] = [];
+
+    dynamicItems.forEach((item) => {
+      if (!seen.has(item.image)) {
+        seen.add(item.image);
+        list.push(item);
+      }
+    });
+
+    SPACE_ITEMS.forEach((item) => {
+      if (!seen.has(item.image)) {
+        seen.add(item.image);
+        list.push(item);
+      }
+    });
+
+    return list;
+  })();
 
   const filteredItems = allItems.filter((item) => {
     if (activeFilter === "all") return true;
@@ -191,7 +233,7 @@ export default function SpacePage() {
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-200/60"
                   }`}
                 >
-                  {cat.id === "all" ? `Tất Cả (${allItems.length})` : cat.name}
+                  {cat.id === "all" ? `Tất Cả Không Gian (${allItems.length})` : cat.name}
                 </button>
               ))}
             </div>

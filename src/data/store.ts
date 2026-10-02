@@ -29,11 +29,14 @@ export interface StoreSettings {
   adminPin: string;
 }
 
+import defaultGalleryData from "./gallery.json";
+
 export interface GalleryPhoto {
   id: string;
   title: string;
   url: string;
-  category: "suoi" | "nuoc" | "mon-an" | "khong-gian";
+  category: string;
+  caption?: string;
 }
 
 // Global Singleton Store for Node.js / Next.js Serverless runtime
@@ -58,44 +61,7 @@ const DEFAULT_SETTINGS: StoreSettings = {
 
 const DEFAULT_ANNOUNCEMENTS: AnnouncementItem[] = [];
 
-const DEFAULT_GALLERY: GalleryPhoto[] = [
-  {
-    id: "g1",
-    title: "Dòng suối đá bazan rêu phong",
-    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-    category: "suoi",
-  },
-  {
-    id: "g2",
-    title: "Hiên gỗ ngắm thung lũng xanh",
-    url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
-    category: "khong-gian",
-  },
-  {
-    id: "g3",
-    title: "Cà phê muối Đắk Nông nguyên bản",
-    url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
-    category: "nuoc",
-  },
-  {
-    id: "g4",
-    title: "Trà hoa đu đủ mật ong rừng",
-    url: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80",
-    category: "nuoc",
-  },
-  {
-    id: "g5",
-    title: "Bàn gỗ mộc dưới tán cây rừng",
-    url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80",
-    category: "khong-gian",
-  },
-  {
-    id: "g6",
-    title: "Lối rợp bóng cây vào quán",
-    url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
-    category: "suoi",
-  },
-];
+const DEFAULT_GALLERY: GalleryPhoto[] = defaultGalleryData as GalleryPhoto[];
 
 declare global {
   // eslint-disable-next-line no-var
@@ -206,6 +172,14 @@ export function addGalleryPhoto(photo: Omit<GalleryPhoto, "id">): GalleryPhoto {
   };
   store.gallery = [newPhoto, ...store.gallery];
   return newPhoto;
+}
+
+export function updateGalleryPhoto(id: string, updates: Partial<GalleryPhoto>): GalleryPhoto | null {
+  const store = getGlobalStore();
+  const idx = store.gallery.findIndex((g) => g.id === id);
+  if (idx === -1) return null;
+  store.gallery[idx] = { ...store.gallery[idx], ...updates };
+  return store.gallery[idx];
 }
 
 export function deleteGalleryPhoto(id: string): boolean {
