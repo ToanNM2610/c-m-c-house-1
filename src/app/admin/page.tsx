@@ -42,7 +42,7 @@ const INITIAL_DISHES: DishStatus[] = [
     name: "Cà phê muối Đắk Nông",
     price: "28.000đ",
     tag: "Bán chạy",
-    image: "/images/coffee-drink.png",
+    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -50,7 +50,7 @@ const INITIAL_DISHES: DishStatus[] = [
     name: "Trà hoa đu đủ mật ong",
     price: "28.000đ",
     tag: "Thảo mộc",
-    image: "/images/fruit-tea.png",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -58,7 +58,7 @@ const INITIAL_DISHES: DishStatus[] = [
     name: "Sinh tố bơ sầu riêng",
     price: "33.000đ",
     tag: "Đặc sản bơ 034",
-    image: "/space/space-8.jpg",
+    image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -66,7 +66,7 @@ const INITIAL_DISHES: DishStatus[] = [
     name: "Bò kho + bánh mì",
     price: "45.000đ",
     tag: "Món chính",
-    image: "/space/space-1.jpg",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -74,7 +74,7 @@ const INITIAL_DISHES: DishStatus[] = [
     name: "Bánh tráng phơi sương sa tế",
     price: "12.000đ",
     tag: "Ăn vặt",
-    image: "/space/space-6.jpg",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80",
     inStock: false,
   },
 ];
@@ -282,8 +282,8 @@ export default function AdminPage() {
                     Khách ghé hôm nay
                   </span>
                   <div className="flex items-baseline gap-2 mt-1">
-                    <span className="font-serif text-3xl font-bold text-[#3E5C46]">~85</span>
-                    <span className="text-xs text-stone-400">lượt khách</span>
+                    <span className="font-serif text-3xl font-bold text-[#3E5C46]">128+</span>
+                    <span className="text-xs text-stone-500 font-medium">khách ghé</span>
                   </div>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-[#3E5C46]">

@@ -99,7 +99,7 @@ export default function MenuPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 shadow-sm">
             <div className="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] relative">
               <img
-                src="/images/coffee-drink.png"
+                src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
                 alt="Cà phê muối Đắk Nông"
                 className="w-full h-full object-cover"
               />

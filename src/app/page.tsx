@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
@@ -15,122 +14,132 @@ import {
   Thermometer,
   Wind,
   Droplets,
-  Trees,
   Car,
-  Wifi,
-  Zap,
   Coffee,
   PhoneCall,
   MapPin,
-  Quote,
   CheckCircle2,
   Flower2,
-  Waves
+  Waves,
+  Sparkles
 } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D]">
+    <div className="bg-[#F9F8F3] min-h-screen text-[#1B281D] font-sans selection:bg-[#3E5C46] selection:text-white">
       <Navbar />
 
       <main className="pt-20">
-        {/* HERO SECTION WITH TRANQUIL STREAM PHOTO & SOFT OVERLAY */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-          <div className="relative rounded-3xl overflow-hidden min-h-[580px] sm:min-h-[640px] flex items-center shadow-xl border border-stone-200/60">
-            {/* Background Stream Image */}
+        {/* RESTRUCTURED HERO SECTION - WARM CREAM BEIGE WITH NATURE ACCENTS */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-16 text-center">
+          {/* Eyebrow Coordinate Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-200/80 text-xs font-semibold uppercase tracking-widest text-[#3E5C46] mb-6 shadow-sm border border-stone-300/60">
+            <Compass className="w-3.5 h-3.5 text-[#396663]" />
+            <span>Tọa độ 11.99° N, 107.69° E • Gia Nghĩa, Đắk Nông</span>
+          </div>
+
+          {/* Hero Headlines */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] tracking-tight leading-tight max-w-4xl mx-auto mb-4">
+            CẨM CÙ HOUSE <br />
+            <span className="italic font-normal text-[#7D5E4A] text-2xl sm:text-4xl lg:text-5xl block mt-2">
+              Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
+            </span>
+          </h1>
+
+          {/* Subtitle Description */}
+          <p className="text-stone-600 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+            Thưởng thức tách cà phê Robusta rang củi nguyên bản, lắng nghe dòng suối róc rách giữa thung lũng xanh thanh bình miền cao nguyên Đắk Nông.
+          </p>
+
+          {/* Trust Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-medium text-stone-700 mb-8">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white shadow-sm border border-stone-200/80">
+              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              100% Đề Xuất Hài Lòng
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white shadow-sm border border-stone-200/80">
+              <DollarSign className="w-4 h-4 text-[#3E5C46]" />
+              Mức Giá Bình Dân (20k - 45k)
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white shadow-sm border border-stone-200/80">
+              <Leaf className="w-4 h-4 text-[#396663]" />
+              Nguyên Liệu Xanh Sạch
+            </span>
+          </div>
+
+          {/* Balanced CTA Buttons (No Booking/Reservation) */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
+            <Link
+              href="/space"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#3E5C46] text-white text-sm font-semibold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] hover:-translate-y-0.5"
+            >
+              <span>Khám Phá Góc Suối</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/menu"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-white text-[#2D4233] text-sm font-semibold hover:bg-stone-50 border border-stone-300/80 transition-all shadow-sm hover:-translate-y-0.5"
+            >
+              <UtensilsCrossed className="w-4 h-4 text-[#3E5C46]" />
+              <span>Xem Thực Đơn 50+ Món</span>
+            </Link>
+            <a
+              href="tel:0382851688"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#F4EFEA] hover:bg-[#EAE2D9] text-[#2D4233] text-sm font-semibold transition-all shadow-sm border border-stone-300/60 hover:-translate-y-0.5"
+            >
+              <PhoneCall className="w-4 h-4 text-[#3E5C46]" />
+              <span>Hotline: 038 285 1688</span>
+            </a>
+            <a
+              href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-sm font-semibold transition-all border border-stone-300/60"
+            >
+              <MapPin className="w-4 h-4 text-[#7D5E4A]" />
+              <span>Chỉ Đường Tới Quán</span>
+            </a>
+          </div>
+
+          {/* Real-time Atmospheric Meter Badge */}
+          <div className="inline-flex flex-wrap items-center justify-center gap-3 px-5 py-2.5 rounded-full bg-white/90 backdrop-blur-sm border border-stone-200/80 shadow-sm text-stone-600 text-xs mb-10">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="font-semibold text-stone-800">Hiện tại bên suối:</span>
+            </div>
+            <div className="flex items-center gap-3 font-semibold text-[#2D4233]">
+              <span className="flex items-center gap-1">
+                <Thermometer className="w-3.5 h-3.5 text-[#3E5C46]" /> 23°C
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Wind className="w-3.5 h-3.5 text-[#3E5C46]" /> Gió mát nhẹ
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Droplets className="w-3.5 h-3.5 text-[#396663]" /> Nước trong veo
+              </span>
+            </div>
+          </div>
+
+          {/* Hero Stream Photo Frame (Khung ảnh bờ suối lớn bo góc rounded-3xl) */}
+          <div className="relative max-w-5xl mx-auto h-72 sm:h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/90">
             <img
-              src="/images/deck-landscape.png"
-              alt="Cảnh sắc suối mộc Cẩm Cù House Gia Nghĩa"
-              className="absolute inset-0 w-full h-full object-cover object-center"
+              src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
+              alt="Cảnh sắc suối mộc Cẩm Cù House Gia Nghĩa Đắk Nông"
+              className="w-full h-full object-cover"
             />
-            {/* Soft Dark & Nature Gradient Overlay for High Contrast Text */}
-            <div className="absolute inset-0 bg-gradient-to-r from-stone-950/85 via-stone-950/65 to-stone-900/40 backdrop-blur-[1px]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent" />
-
-            {/* Foreground Content */}
-            <div className="relative z-10 p-6 sm:p-12 lg:p-16 max-w-3xl flex flex-col gap-6">
-              {/* Coordinate Eyebrow Badge */}
-              <div className="inline-flex items-center gap-2 self-start px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-emerald-200 text-xs font-semibold shadow-sm border border-white/20">
-                <Compass className="w-4 h-4 text-emerald-300" />
-                <span>TỌA ĐỘ 11.99° N, 107.69° E • GIA NGHĨA, ĐẮK NÔNG</span>
-              </div>
-
-              {/* Main Headline */}
-              <div>
-                <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight leading-tight">
-                  CẨM CÙ HOUSE
-                </h1>
-                <p className="font-serif text-xl sm:text-2xl lg:text-3xl text-emerald-100/90 italic font-normal mt-2">
-                  Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent flex items-end p-6 sm:p-10">
+              <div className="text-left text-white">
+                <span className="text-xs uppercase font-semibold tracking-wider text-emerald-200">
+                  Không Gian Sinh Thái Suối Reo
+                </span>
+                <p className="text-lg sm:text-2xl font-serif font-bold mt-1">
+                  Thung lũng suối xanh mát &amp; hiên gỗ lợp lá mộc yên bình
                 </p>
-              </div>
-
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg text-stone-200 leading-relaxed max-w-2xl">
-                Thưởng thức tách cà phê Robusta rang củi nguyên bản, lắng nghe dòng suối róc rách giữa thung lũng xanh thanh bình miền cao nguyên Đắk Nông.
-              </p>
-
-              {/* Trust Badges Strip */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-medium border border-white/20">
-                  <Star className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
-                  100% Đề Xuất Hài Lòng
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-medium border border-white/20">
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-300" />
-                  Mức giá bình dân ($)
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-white text-xs font-medium border border-white/20">
-                  <Leaf className="w-3.5 h-3.5 text-emerald-300" />
-                  Nguyên liệu xanh sạch
-                </span>
-              </div>
-
-              {/* Balanced CTA Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <Link
-                  href="/space"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#3E5C46] text-white text-sm font-semibold hover:bg-[#2D4233] transition-all duration-300 shadow-[0_8px_20px_rgba(62,92,70,0.3)] hover:-translate-y-0.5"
-                >
-                  <span>Khám Phá Không Gian</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/menu"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-white/95 backdrop-blur-sm text-stone-900 text-sm font-semibold hover:bg-white transition-all duration-300 shadow-md hover:-translate-y-0.5 border border-white/80"
-                >
-                  <UtensilsCrossed className="w-4 h-4 text-[#3E5C46]" />
-                  <span>Xem Menu 50+ Món</span>
-                </Link>
-                <a
-                  href="tel:0382851688"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-stone-800/80 backdrop-blur-sm text-white text-sm font-semibold hover:bg-stone-800 border border-white/20 shadow-md transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  <PhoneCall className="w-4 h-4 text-emerald-300" />
-                  <span>038 285 1688</span>
-                </a>
-              </div>
-
-              {/* Real-time Atmospheric Meter Badge */}
-              <div className="mt-2 inline-flex flex-wrap items-center gap-3 px-4 py-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 max-w-fit shadow-sm text-stone-200 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                  </span>
-                  <span className="text-stone-300 font-medium">Hiện tại bên suối:</span>
-                </div>
-                <div className="flex items-center gap-3 font-semibold text-white">
-                  <span className="flex items-center gap-1">
-                    <Thermometer className="w-3.5 h-3.5 text-emerald-300" /> 23°C
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Wind className="w-3.5 h-3.5 text-emerald-300" /> Gió mát nhẹ
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Droplets className="w-3.5 h-3.5 text-emerald-300" /> Nước trong veo
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -238,7 +247,7 @@ export default function HomePage() {
             <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 hover:shadow-md transition-all flex flex-col justify-between group">
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-stone-100">
                 <img
-                  src="/images/coffee-drink.png"
+                  src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80"
                   alt="Cà phê muối Đắk Nông"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -267,7 +276,7 @@ export default function HomePage() {
             <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 hover:shadow-md transition-all flex flex-col justify-between group">
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-stone-100">
                 <img
-                  src="/images/fruit-tea.png"
+                  src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=800&q=80"
                   alt="Trà hoa đu đủ mật ong rừng"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -296,50 +305,50 @@ export default function HomePage() {
             <div className="bg-white/90 backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 hover:shadow-md transition-all flex flex-col justify-between group">
               <div className="relative rounded-xl overflow-hidden aspect-[4/3] mb-4 bg-stone-100">
                 <img
-                  src="/space/space-8.jpg"
+                  src="https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80"
                   alt="Sinh tố bơ sầu riêng 034"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-amber-700 text-white text-xs font-bold shadow-sm">
-                  Đặc Sản Mùa
+                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-[#7D5E4A] text-white text-xs font-bold shadow-sm">
+                  Đặc Sản VIP
                 </span>
               </div>
               <div>
                 <div className="flex items-baseline justify-between mb-2">
                   <h3 className="font-serif text-lg font-bold text-[#1B281D]">
-                    Sinh tố bơ sầu riêng
+                    Sinh tố bơ sầu riêng 034
                   </h3>
                   <span className="text-base font-bold text-[#614633]">33.000đ</span>
                 </div>
                 <p className="text-xs sm:text-sm text-stone-700 leading-relaxed mb-4">
-                  Bơ sáp 034 dẻo quánh kết hợp cơm sầu riêng chín cây thơm nức mũi từ nương rẫy suối.
+                  Bơ sáp dẻo quánh đặc sản Đắk Nông xay cùng sầu riêng Ri6 thơm béo ngậy.
                 </p>
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-stone-100 text-xs text-stone-500">
-                <span>Trái cây tươi rói</span>
+                <span>Dẻo mịn ngọt thơm</span>
                 <span className="text-[#3E5C46] font-medium">Có sẵn hôm nay</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 3: CURATED SPACE GALLERY PREVIEW */}
+        {/* SECTION 3: SPACE PREVIEW */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 text-[#3E5C46] text-xs font-semibold mb-3">
-                <Trees className="w-3.5 h-3.5" />
-                <span>Không Gian Sinh Thái</span>
+                <Waves className="w-3.5 h-3.5" />
+                <span>Không Gian Mở Bên Bờ Suối</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] font-bold tracking-tight">
-                Góc Bình Yên Bên Suối Reo
+                Góc Check-in &amp; Thư Thái Tự Nhiên
               </h2>
             </div>
             <Link
               href="/space"
               className="inline-flex items-center gap-2 text-sm font-semibold text-[#3E5C46] hover:text-[#2D4233] transition-colors"
             >
-              <span>Xem 30+ góc ảnh không gian</span>
+              <span>Xem 15+ góc ảnh không gian</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -347,7 +356,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group shadow-sm">
               <img
-                src="/space/space-3.jpg"
+                src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
                 alt="Hiên gỗ ngắm dòng suối tại Cẩm Cù House"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -358,7 +367,7 @@ export default function HomePage() {
 
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group shadow-sm">
               <img
-                src="/space/space-4.jpg"
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80"
                 alt="Bàn ghế mộc dưới tán cây"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -369,7 +378,7 @@ export default function HomePage() {
 
             <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group shadow-sm">
               <img
-                src="/space/space-6.jpg"
+                src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80"
                 alt="Lối đi hoa cẩm cù rực rỡ"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
@@ -492,13 +501,15 @@ export default function HomePage() {
                 <PhoneCall className="w-5 h-5 text-[#3E5C46]" />
                 <span>Gọi Hotline: 038 285 1688</span>
               </a>
-              <Link
-                href="/contact"
+              <a
+                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5"
               >
                 <MapPin className="w-5 h-5 text-emerald-300" />
                 <span>Xem Bản Đồ Chỉ Đường</span>
-              </Link>
+              </a>
             </div>
           </div>
         </section>

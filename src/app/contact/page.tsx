@@ -322,7 +322,7 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative rounded-2xl overflow-hidden aspect-[16/10] group border border-stone-200">
                 <img
-                  src="/space/space-11.jpg"
+                  src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80"
                   alt="Lối rợp bóng mát vào Cẩm Cù House"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -338,7 +338,7 @@ export default function ContactPage() {
 
               <div className="relative rounded-2xl overflow-hidden aspect-[16/10] group border border-stone-200">
                 <img
-                  src="/space/space-12.jpg"
+                  src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=80"
                   alt="Bàn gỗ bên bờ suối đá mát lành"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
