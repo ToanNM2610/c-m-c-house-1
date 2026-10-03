@@ -12,6 +12,8 @@ import {
   X, 
   MapPin, 
   Sparkles,
+  Compass,
+  Navigation,
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useStoreStatus } from "@/lib/openingHours";
@@ -52,6 +54,11 @@ export default function Navbar() {
     topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
   });
   const [announcements, setAnnouncements] = useState<SharedAnnouncement[]>([]);
+
+  // Close mobile drawer upon route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     // 1. Immediately hydrate from Shared Storage & Cookie (survives F5)
@@ -135,9 +142,23 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80 shadow-[0_2px_12px_rgba(37,51,38,0.04)] transition-colors duration-300">
       {/* Top Announcement Bar */}
-      <div className="w-full bg-[#2D4233] dark:bg-[#16231A] text-stone-200 text-[11px] sm:text-xs py-1.5 px-4 border-b border-stone-800/20 dark:border-stone-800/60 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 overflow-hidden truncate">
+      <div className="w-full bg-[#2D4233] dark:bg-[#16231A] text-stone-200 text-[11px] sm:text-xs py-1 px-3 sm:px-4 border-b border-stone-800/20 dark:border-stone-800/60 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
+          {/* Mobile Display: Clean left-right balance without horizontal overflow */}
+          <div className="flex md:hidden items-center justify-between w-full text-[11px]">
+            <span className="flex items-center gap-1.5 font-semibold text-white truncate">
+              <span className={`w-2 h-2 rounded-full shrink-0 ${getDotClass()}`} />
+              <span className="truncate">{i18nStatus.shortBadge}</span>
+            </span>
+            <span className="text-stone-300 text-[10px] sm:text-[11px] font-medium shrink-0 ml-2">
+              {storeStatus.isOpen
+                ? (locale === "en" ? `Closes at ${storeStatus.closingTime}` : `Đóng lúc ${storeStatus.closingTime}`)
+                : (locale === "en" ? "Opens at 07:00" : "Mở lúc 07:00")}
+            </span>
+          </div>
+
+          {/* Desktop Display: Pinned Announcement / Detailed Schedule */}
+          <div className="hidden md:flex items-center gap-2 overflow-hidden truncate">
             <span className="bg-[#3E5C46] px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
               {pinnedNews ? dict.common.noticeBoard : dict.common.openingHoursGMT}
             </span>
@@ -163,23 +184,23 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main Header Container */}
-      <div className="h-16 sm:h-20 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center justify-between gap-4">
+      {/* Main Header Container - Fixed Height & No Horizontal Overflow */}
+      <div className="h-14 sm:h-20 w-full px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
         {/* Brand / Logo */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group btn-press-sm">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 flex items-center justify-center text-[#3E5C46] dark:text-[#88B795] group-hover:bg-[#3E5C46] group-hover:text-white dark:group-hover:bg-[#88B795] dark:group-hover:text-[#121A15] transition-all duration-300 shadow-sm">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0 group btn-press-sm">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 flex items-center justify-center text-[#3E5C46] dark:text-[#88B795] group-hover:bg-[#3E5C46] group-hover:text-white dark:group-hover:bg-[#88B795] dark:group-hover:text-[#121A15] transition-all duration-300 shadow-sm shrink-0">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-current animate-pulse" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-lg sm:text-2xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] tracking-tight group-hover:text-[#2D4233] dark:group-hover:text-[#88B795] transition-colors">
+          <div className="flex flex-col min-w-0">
+            <span className="font-serif text-base sm:text-2xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] tracking-tight group-hover:text-[#2D4233] dark:group-hover:text-[#88B795] transition-colors truncate">
               Cẩm Cù House
             </span>
-            <span className="text-[10px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium tracking-wide">
+            <span className="text-[9px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium tracking-wide truncate hidden xs:block">
               {locale === "en" ? "coffee & Food • Gia Nghia" : "coffee & Food • Gia Nghĩa"}
             </span>
           </div>
           
-          {/* Quick Realtime Hours Pill */}
+          {/* Quick Realtime Hours Pill (Desktop only) */}
           <div className="hidden xl:flex items-center gap-1.5 ml-2 px-3 py-1 bg-stone-100 dark:bg-[#1E2B22] rounded-full text-stone-700 dark:text-stone-300 text-xs border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors">
             <Clock className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
             <span className="flex items-center gap-1.5">
@@ -210,17 +231,17 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Actions Deck */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Theme Toggle Button (Light / Dark) */}
+        {/* Actions Deck: Exactly 3 neat controls on mobile (Theme, VN/EN, Hamburger) */}
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          {/* 1. Theme Toggle Button (Light / Dark) */}
           <ThemeToggle />
 
-          {/* Bilingual Language Switcher (VN | EN) with Smooth Animated Slider */}
-          <div className="inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-1 text-xs font-bold text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700/60 shadow-inner relative">
+          {/* 2. Bilingual Language Switcher (VN | EN) with Smooth Animated Slider */}
+          <div className="inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-0.5 sm:p-1 text-xs font-bold text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700/60 shadow-inner relative shrink-0">
             <button
               type="button"
               onClick={() => setLocale("vi")}
-              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm ${
+              className={`relative px-2 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
                 locale === "vi"
                   ? "text-white"
                   : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
@@ -239,7 +260,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setLocale("en")}
-              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm ${
+              className={`relative px-2 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
                 locale === "en"
                   ? "text-white"
                   : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
@@ -257,156 +278,124 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Hotline CTA */}
+          {/* Hotline CTA (Desktop & Tablet only to prevent mobile overflow) */}
           <a
             href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-            className="btn-press inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-[0_4px_14px_rgba(62,92,70,0.25)] hover:-translate-y-0.5 shrink-0"
+            className="btn-press hidden xl:inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-[0_4px_14px_rgba(62,92,70,0.25)] hover:-translate-y-0.5 shrink-0"
           >
             <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
-            <span className="hidden sm:inline">
-              {locale === "en" ? "Hotline:" : "Gọi Hotline:"}
-            </span>
             <span>{settings.hotline1}</span>
           </a>
 
-          {/* Admin link */}
+          {/* Admin link (Desktop only) */}
           <a
             href="https://admin.camcuhouse.online"
             title={dict.common.admin}
-            className="btn-press w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white flex items-center justify-center shrink-0 shadow-sm"
+            className="btn-press hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white items-center justify-center shrink-0 shadow-sm"
           >
             <User className="w-4 h-4" />
           </a>
 
-          {/* Mobile Menu Button (Min 44px) */}
+          {/* 3. Mobile Hamburger Menu Button (Min 40-44px touch target) */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="btn-press lg:hidden w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-[#2A3B30] transition-colors border border-stone-200 dark:border-stone-700/60"
-            aria-label="Toggle Navigation"
+            className="btn-press lg:hidden w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-[#2A3B30] transition-colors border border-stone-200 dark:border-stone-700/60 shrink-0"
+            aria-label="Mở menu điều hướng"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 text-rose-500" /> : <MenuIcon className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu with Backdrop */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-[#F9F8F3] dark:bg-[#121A15] border-b border-stone-200 dark:border-stone-800 px-6 py-5 flex flex-col gap-3.5 shadow-xl overflow-hidden"
-          >
-            {/* Realtime Status Bar in Mobile Drawer */}
-            <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800 text-xs text-stone-600 dark:text-stone-300">
-              <span className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full ${getPillDotClass()}`} />
-                <span className="font-bold text-stone-900 dark:text-white">
-                  {i18nStatus.badgeText}
-                </span>
-              </span>
-              <span className="hidden sm:flex items-center gap-1 font-semibold text-[#3E5C46] dark:text-[#88B795]">
-                <MapPin className="w-3.5 h-3.5" />
-                Gia Nghĩa
-              </span>
-            </div>
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm top-14 sm:top-20"
+            />
 
-            {/* Mobile Nav Links */}
-            <div className="flex flex-col gap-1 pt-1">
-              {NAV_ITEMS.map((item) => {
-                const isActive = pathname === item.href;
-                const label = locale === "en" ? item.labelEn : item.labelVi;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`px-4 py-3 min-h-[44px] flex items-center rounded-xl text-sm font-semibold transition-all ${
-                      isActive
-                        ? "bg-[#3E5C46] text-white"
-                        : "text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800/60"
-                    }`}
-                  >
-                    {label}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* Theme Toggle & Language in Mobile */}
-            <div className="pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
-                  {dict.common.themeLabel}
+            {/* Slide Down Drawer Menu */}
+            <motion.div
+              initial={{ opacity: 0, y: -8, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -8, height: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:hidden fixed top-14 sm:top-20 left-0 w-full z-50 bg-[#F9F8F3] dark:bg-[#121A15] border-b border-stone-200 dark:border-stone-800 px-5 py-5 flex flex-col gap-4 shadow-2xl max-h-[calc(100vh-60px)] overflow-y-auto"
+            >
+              {/* Realtime Status Bar with Coordinates in Drawer */}
+              <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800 text-xs text-stone-600 dark:text-stone-300">
+                <span className="flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${getPillDotClass()}`} />
+                  <span className="font-bold text-stone-900 dark:text-white truncate">
+                    {i18nStatus.badgeText}
+                  </span>
                 </span>
-                <ThemeToggle showLabel />
+                <span className="flex items-center gap-1 font-semibold text-[#3E5C46] dark:text-[#88B795] shrink-0">
+                  <MapPin className="w-3.5 h-3.5" />
+                  Gia Nghĩa
+                </span>
               </div>
 
-              {/* Mobile Language Switcher */}
-              <div className="relative inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-1 text-xs font-bold text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 shadow-inner">
-                <button
-                  type="button"
-                  onClick={() => setLocale("vi")}
-                  className={`relative px-3 py-1.5 rounded-full transition-colors duration-200 z-10 ${
-                    locale === "vi"
-                      ? "text-white"
-                      : "text-stone-500 dark:text-stone-400"
-                  }`}
-                >
-                  {locale === "vi" && (
-                    <motion.span
-                      layoutId="activeLangPillMobile"
-                      className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
-                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
-                    />
-                  )}
-                  VN
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLocale("en")}
-                  className={`relative px-3 py-1.5 rounded-full transition-colors duration-200 z-10 ${
-                    locale === "en"
-                      ? "text-white"
-                      : "text-stone-500 dark:text-stone-400"
-                  }`}
-                >
-                  {locale === "en" && (
-                    <motion.span
-                      layoutId="activeLangPillMobile"
-                      className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
-                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
-                    />
-                  )}
-                  EN
-                </button>
-              </div>
-            </div>
+              {/* Navigation Links with Active Indicator */}
+              <nav className="flex flex-col gap-1.5">
+                {NAV_ITEMS.map((item) => {
+                  const isActive = pathname === item.href;
+                  const label = locale === "en" ? item.labelEn : item.labelVi;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`btn-press px-4 py-3 min-h-[46px] flex items-center justify-between rounded-xl text-sm font-semibold transition-all ${
+                        isActive
+                          ? "bg-[#3E5C46] text-white shadow-sm font-bold"
+                          : "text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800/60"
+                      }`}
+                    >
+                      <span>{label}</span>
+                      {isActive && <span className="w-2 h-2 rounded-full bg-emerald-300 shrink-0" />}
+                    </Link>
+                  );
+                })}
+              </nav>
 
-            {/* Action buttons */}
-            <div className="pt-2 flex flex-col sm:flex-row gap-2">
-              <a
-                href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="btn-press w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold shadow-md"
-              >
-                <PhoneCall className="w-4 h-4" />
-                <span>
-                  {locale === "en" ? "Call Hotline:" : "Gọi Hotline:"} {settings.hotline1}
-                </span>
-              </a>
-              <a
-                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-press w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-sm font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
-              >
-                <MapPin className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
-                <span>{dict.common.openGoogleMaps}</span>
-              </a>
-            </div>
-          </motion.div>
+              {/* Coordinates Pill */}
+              <div className="p-3 rounded-xl bg-stone-100 dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 flex items-center gap-2.5 text-xs text-stone-600 dark:text-stone-300">
+                <Compass className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795] shrink-0" />
+                <span className="font-medium truncate">{dict.common.coordinates} • Đắk Nông</span>
+              </div>
+
+              {/* Action Buttons: Hotline & Directions */}
+              <div className="pt-1 flex flex-col gap-2.5">
+                <a
+                  href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
+                  className="btn-press w-full min-h-[48px] flex items-center justify-center gap-2 py-3.5 rounded-full bg-[#3E5C46] text-white text-sm font-bold shadow-md active:scale-95 transition-transform"
+                >
+                  <PhoneCall className="w-4 h-4 animate-bounce" />
+                  <span>
+                    {locale === "en" ? "Call Hotline:" : "Gọi Hotline Trực Tiếp:"} {settings.hotline1}
+                  </span>
+                </a>
+                <a
+                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-press w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-sm font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
+                >
+                  <Navigation className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
+                  <span>{dict.common.openGoogleMaps}</span>
+                </a>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
