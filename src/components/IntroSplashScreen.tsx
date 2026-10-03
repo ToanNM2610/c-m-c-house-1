@@ -6,38 +6,62 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function IntroSplashScreen() {
   const { locale, dict } = useLanguage();
-  const [showIntro, setShowIntro] = useState(true);
+  const [show, setShow] = useState(false);
   const [stage, setStage] = useState<0 | 1 | 2>(0); // 0: icon appears, 1: brand & slogan reveal, 2: exiting
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    // Every time this component mounts (page reload / F5), intro runs
-    document.body.style.overflow = "hidden";
+    // 1. Differentiate F5 / Hard Reload or First Visit from Client-side Navigation
+    let isReload = false;
+    if (typeof window !== "undefined" && typeof performance !== "undefined") {
+      const navEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+      if (navEntries && navEntries.length > 0) {
+        isReload = navEntries[0].type === "reload";
+      } else if ((performance as unknown as { navigation?: { type: number } }).navigation) {
+        isReload = (performance as unknown as { navigation: { type: number } }).navigation.type === 1;
+      }
+    }
 
-    // Timeline:
-    // 0.0s - 0.5s: Stage 0 (icon ripples in)
-    // 0.5s - 1.5s: Stage 1 (Brand title glows, expanding line, slogan reveals)
-    const t1 = setTimeout(() => {
-      setStage(1);
-    }, 500);
+    let isFirstVisit = false;
+    try {
+      isFirstVisit = !sessionStorage.getItem("camcu_visited");
+    } catch {
+      isFirstVisit = true;
+    }
 
-    // 1.5s - 2.2s: Stage 2 (Curtain fades and slides upward)
-    const t2 = setTimeout(() => {
-      setStage(2);
-    }, 1500);
+    // Only activate Intro if Hard Reload (F5) or direct First Visit to Home Page
+    if (isReload || isFirstVisit) {
+      setShow(true);
+      try {
+        sessionStorage.setItem("camcu_visited", "true");
+      } catch {}
+      document.body.style.overflow = "hidden";
 
-    // 2.25s: Complete intro, unlock scroll, unmount
-    const t3 = setTimeout(() => {
-      document.body.style.overflow = "unset";
-      setShowIntro(false);
-    }, 2250);
+      // Timeline:
+      // 0.0s - 0.5s: Stage 0 (icon ripples in)
+      // 0.5s - 1.5s: Stage 1 (Brand title glows, expanding line, slogan reveals)
+      const t1 = setTimeout(() => {
+        setStage(1);
+      }, 500);
 
-    timeoutsRef.current = [t1, t2, t3];
+      // 1.5s - 2.2s: Stage 2 (Curtain fades and slides upward)
+      const t2 = setTimeout(() => {
+        setStage(2);
+      }, 1500);
 
-    return () => {
-      timeoutsRef.current.forEach(clearTimeout);
-      document.body.style.overflow = "unset";
-    };
+      // 2.25s: Complete intro, unlock scroll, unmount
+      const t3 = setTimeout(() => {
+        document.body.style.overflow = "unset";
+        setShow(false);
+      }, 2250);
+
+      timeoutsRef.current = [t1, t2, t3];
+
+      return () => {
+        timeoutsRef.current.forEach(clearTimeout);
+        document.body.style.overflow = "unset";
+      };
+    }
   }, []);
 
   const handleSkip = () => {
@@ -45,11 +69,11 @@ export default function IntroSplashScreen() {
     setStage(2);
     document.body.style.overflow = "unset";
     setTimeout(() => {
-      setShowIntro(false);
-    }, 300);
+      setShow(false);
+    }, 250);
   };
 
-  if (!showIntro) return null;
+  if (!show) return null;
 
   return (
     <div
