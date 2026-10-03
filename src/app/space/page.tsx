@@ -202,7 +202,7 @@ export default function SpacePage() {
       <main className="pt-24 sm:pt-28">
         {/* Top Narrative Intro */}
         <section className="relative w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 sm:pt-10 pb-8">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
+          <div className="animate-fade-up-1 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs tracking-wider uppercase mb-3 shadow-sm border border-stone-200/70 dark:border-stone-700/60">
                 <Droplets className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
@@ -248,8 +248,8 @@ export default function SpacePage() {
             </div>
           </div>
 
-          {/* Filter Tabs - Responsive with Horizontal Scrollbar Hidden on Mobile/Tablet */}
-          <div className="w-full flex items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
+          {/* Filter Tabs - Responsive (Stagger 2: 120ms) */}
+          <div className="animate-fade-up-2 w-full flex items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
             <div className="flex items-center gap-2 p-1.5 bg-stone-100 dark:bg-[#1E2B22] rounded-2xl sm:rounded-full border border-stone-200/70 dark:border-stone-700/60 overflow-x-auto no-scrollbar w-full sm:w-auto">
               {SPACE_CATEGORIES.map((cat) => {
                 const label = dict.space.categories[cat.id] || cat.name;
@@ -278,8 +278,8 @@ export default function SpacePage() {
           </div>
         </section>
 
-        {/* Gallery Grid Section */}
-        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
+        {/* Gallery Grid Section (Stagger 3: 200ms) */}
+        <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredItems.map((item, idx) => (
               <div

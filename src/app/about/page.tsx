@@ -29,28 +29,30 @@ export default function AboutPage() {
         {/* Top Narrative Intro */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-12 w-full text-center">
           <div className="max-w-4xl mx-auto flex flex-col items-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-200/80 dark:bg-[#1E2B22] border border-stone-300/60 dark:border-stone-700/60 shadow-sm mb-6">
-              <span className="w-2 h-2 rounded-full bg-[#3E5C46] dark:bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-[#3E5C46] dark:text-[#88B795] uppercase tracking-widest font-bold">
-                {dict.about.badge}
-              </span>
-              <span className="text-stone-400 dark:text-stone-600">•</span>
-              <span className="text-xs text-stone-600 dark:text-stone-300 font-semibold">Gia Nghĩa • Đắk Nông</span>
+            <div className="animate-fade-up-1 flex flex-col items-center">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-200/80 dark:bg-[#1E2B22] border border-stone-300/60 dark:border-stone-700/60 shadow-sm mb-6">
+                <span className="w-2 h-2 rounded-full bg-[#3E5C46] dark:bg-emerald-400 animate-pulse" />
+                <span className="text-xs text-[#3E5C46] dark:text-[#88B795] uppercase tracking-widest font-bold">
+                  {dict.about.badge}
+                </span>
+                <span className="text-stone-400 dark:text-stone-600">•</span>
+                <span className="text-xs text-stone-600 dark:text-stone-300 font-semibold">Gia Nghĩa • Đắk Nông</span>
+              </div>
+
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight max-w-3xl mb-4 leading-tight">
+                {dict.about.title} <br className="hidden sm:inline" />
+                <span className="italic font-normal text-[#7D5E4A] dark:text-[#D1A684] text-2xl sm:text-4xl lg:text-5xl block mt-2">
+                  {dict.about.subtitle}
+                </span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed mt-2">
+                {dict.about.description}
+              </p>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight max-w-3xl mb-4 leading-tight">
-              {dict.about.title} <br className="hidden sm:inline" />
-              <span className="italic font-normal text-[#7D5E4A] dark:text-[#D1A684] text-2xl sm:text-4xl lg:text-5xl block mt-2">
-                {dict.about.subtitle}
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed mt-2">
-              {dict.about.description}
-            </p>
-
             {/* Coordinates & Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-8 text-xs font-semibold text-[#7D5E4A] dark:text-stone-200">
+            <div className="animate-fade-up-2 flex flex-wrap items-center justify-center gap-3 mt-8 text-xs font-semibold text-[#7D5E4A] dark:text-stone-200">
               <span className="flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-full shadow-sm">
                 <Flower2 className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
                 {dict.about.hoyaFlower}
@@ -70,8 +72,8 @@ export default function AboutPage() {
         {/* SECTION 1: Hành Trình Khởi Sinh */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Text Column */}
-            <div className="lg:col-span-7 flex flex-col gap-5">
+            {/* Text Column (Stagger 2: 120ms) */}
+            <div className="lg:col-span-7 flex flex-col gap-5 animate-fade-up-2">
               <div className="flex items-center gap-3">
                 <span className="text-xs font-bold text-[#3E5C46] dark:text-[#88B795] uppercase tracking-wider">
                   {isEn ? "Origins" : "Khối 01"}
@@ -144,8 +146,8 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Visual Column */}
-            <div className="lg:col-span-5 relative">
+            {/* Visual Column (Stagger 3: 200ms) */}
+            <div className="lg:col-span-5 relative animate-fade-up-3">
               <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-stone-700/60 aspect-[4/5] relative">
                 <img
                   src="/uploads/gallery/1788250253557-29323827.jpg"

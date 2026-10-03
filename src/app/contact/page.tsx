@@ -26,7 +26,7 @@ export default function ContactPage() {
 
       <main className="pt-20">
         {/* Top Ambient Banner */}
-        <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-8">
+        <section className="animate-fade-up-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-3xl flex flex-col gap-2">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-stone-100 dark:bg-[#1E2B22] w-fit text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold border border-stone-200 dark:border-stone-700/60">
@@ -61,8 +61,8 @@ export default function ContactPage() {
         {/* 2-Column Balanced Core Section */}
         <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Detailed Information */}
-            <div className="lg:col-span-6 flex flex-col gap-6">
+            {/* Left Column: Detailed Information (Stagger 2: 120ms) */}
+            <div className="animate-fade-up-2 lg:col-span-6 flex flex-col gap-6">
               {/* Address Card */}
               <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200">
                 <div className="flex items-start gap-4">
@@ -183,8 +183,8 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Right Column: Direction CTA & Social Channels */}
-            <div className="lg:col-span-6 flex flex-col gap-6">
+            {/* Right Column: Direction CTA & Social Channels (Stagger 3: 200ms) */}
+            <div className="animate-fade-up-3 lg:col-span-6 flex flex-col gap-6">
               {/* Google Maps Primary CTA Card */}
               <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border-2 border-[#3E5C46]/30 dark:border-[#88B795]/30 shadow-sm flex flex-col gap-4 transition-colors duration-200">
                 <div className="flex items-center gap-3">

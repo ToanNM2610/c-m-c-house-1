@@ -125,7 +125,7 @@ export default function MenuPage() {
       <main className="pt-20">
         {/* Top Atmospheric Intro Header */}
         <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 pt-8 pb-12 bg-gradient-to-b from-stone-100/50 to-[#F9F8F3] dark:from-[#16231A] dark:to-[#121A15] transition-colors duration-200">
-          <div className="max-w-5xl mx-auto relative z-10 flex flex-col items-center text-center">
+          <div className="animate-fade-up-1 max-w-5xl mx-auto relative z-10 flex flex-col items-center text-center">
             {/* Botanical badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold shadow-sm mb-5 border border-stone-200 dark:border-stone-700/60">
               <Sprout className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
@@ -157,8 +157,8 @@ export default function MenuPage() {
           </div>
         </section>
 
-        {/* Sticky Dynamic Filter Navigation */}
-        <div className="sticky top-20 z-40 w-full bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md py-3 px-4 sm:px-6 lg:px-8 border-y border-stone-200/80 dark:border-stone-800/80 shadow-[0_4px_16px_rgba(37,51,38,0.03)] transition-colors duration-200">
+        {/* Sticky Dynamic Filter Navigation (Stagger 2: 120ms) */}
+        <div className="animate-fade-up-2 sticky top-20 z-40 w-full bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md py-3 px-4 sm:px-6 lg:px-8 border-y border-stone-200/80 dark:border-stone-800/80 shadow-[0_4px_16px_rgba(37,51,38,0.03)] transition-colors duration-200">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
               {MENU_CATEGORIES.map((cat) => {
@@ -196,8 +196,8 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* Main Menu Grid Layout */}
-        <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 flex flex-col gap-10">
+        {/* Main Menu Grid Layout (Stagger 3: 200ms) */}
+        <div className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 flex flex-col gap-10">
           {/* Spotlight Story Card */}
           <div className="group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm hover:shadow-lg hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300">
             <div className="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] relative">

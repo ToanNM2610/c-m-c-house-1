@@ -226,140 +226,147 @@ export default function HomePage() {
 
         {/* HERO SECTION - WARM CREAM BEIGE / DARK FOREST NATURE */}
         <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-8 pb-12 sm:pb-16 text-center w-full">
-          {/* Eyebrow Coordinate Badge - Compact */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-200/80 dark:bg-[#1E2B22] text-[10px] tracking-wider uppercase font-semibold text-[#3E5C46] dark:text-[#88B795] mb-2 sm:mb-4 shadow-sm border border-stone-300/60 dark:border-stone-700/60">
-            <Compass className="w-3 h-3 text-[#396663] dark:text-[#88B795]" />
-            <span>{dict.common.coordinates}</span>
-          </div>
-
-          {/* Hero Headlines */}
-          <h1 className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-snug sm:leading-tight max-w-4xl mx-auto mb-1.5 sm:mb-3">
-            {dict.home.heroTitleLine1} <br className="hidden sm:inline" />
-            <span className="italic font-normal text-[#7D5E4A] dark:text-[#E8A87C] text-xl sm:text-4xl lg:text-5xl block sm:inline sm:ml-2">
-              {dict.home.heroTitleLine2}
-            </span>
-          </h1>
-
-          {/* Subtitle Description */}
-          <p className="text-stone-600 dark:text-stone-300 text-xs sm:text-base max-w-2xl mx-auto mb-3 sm:mb-6 leading-relaxed line-clamp-3 sm:line-clamp-none px-2">
-            {dict.home.heroDescription}
-          </p>
-
-          {/* 3 Trust Badges: Exactly single horizontal row */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 my-2 sm:my-4">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              {dict.home.badgeRecommended}
-            </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
-              <DollarSign className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#88B795]" />
-              {dict.home.badgePrice}
-            </span>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
-              <Leaf className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
-              {dict.home.badgeOrganic}
-            </span>
-          </div>
-
-          {/* CTA Buttons: Clear Hierarchy (No 4-row vertical stacking) */}
-          <div className="w-full max-w-md mx-auto sm:max-w-none flex flex-col gap-2 sm:gap-3.5 mb-6 sm:mb-8">
-            {/* Row 1: Primary Actions (2-column parallel grid on mobile, inline-flex on desktop) */}
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3.5 w-full">
-              <Link
-                href="/space"
-                className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[42px] sm:min-h-[44px] px-3 sm:px-7 py-2.5 rounded-full bg-[#2D4233] dark:bg-[#25362B] text-white text-xs sm:text-sm font-bold hover:bg-[#1E2B22] transition-all shadow-[0_4px_16px_rgba(45,66,51,0.25)]"
-              >
-                <ArrowUpRight className="w-4 h-4 text-emerald-300" />
-                <span className="truncate">{dict.common.exploreStream}</span>
-              </Link>
-              <Link
-                href="/menu"
-                className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[42px] sm:min-h-[44px] px-3 sm:px-7 py-2.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#F5F4EE] text-xs sm:text-sm font-bold hover:bg-stone-50 dark:hover:bg-[#28392E] border border-stone-300/80 dark:border-stone-700/60 transition-all shadow-sm"
-              >
-                <UtensilsCrossed className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-                <span className="truncate">{dict.common.viewMenu}</span>
-              </Link>
+          {/* Eyebrow Coordinate Badge & Headlines (Stagger 1: 50ms) */}
+          <div className="animate-fade-up-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-200/80 dark:bg-[#1E2B22] text-[10px] tracking-wider uppercase font-semibold text-[#3E5C46] dark:text-[#88B795] mb-2 sm:mb-4 shadow-sm border border-stone-300/60 dark:border-stone-700/60">
+              <Compass className="w-3 h-3 text-[#396663] dark:text-[#88B795]" />
+              <span>{dict.common.coordinates}</span>
             </div>
 
-            {/* Row 2: Secondary Utilities (Hotline & Directions in clean 2-column grid) */}
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3 w-full">
-              <a
-                href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-[#F4EFEA] dark:bg-[#1A261E] hover:bg-[#EAE2D9] text-[#2D4233] dark:text-[#88B795] text-xs sm:text-sm font-semibold transition-all shadow-xs border border-stone-300/60 dark:border-stone-700/60 truncate"
-              >
-                <PhoneCall className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#88B795] shrink-0" />
-                <span className="truncate">Hotline: {settings.hotline1}</span>
-              </a>
-              <a
-                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-stone-100 dark:bg-[#1A261E] hover:bg-stone-200 dark:hover:bg-[#28392E] text-stone-700 dark:text-stone-300 text-xs sm:text-sm font-semibold transition-all border border-stone-300/60 dark:border-stone-700/60 truncate"
-              >
-                <MapPin className="w-3.5 h-3.5 text-[#7D5E4A] dark:text-[#E8A87C] shrink-0" />
-                <span className="truncate">{dict.common.getDirections}</span>
-              </a>
+            {/* Hero Headlines */}
+            <h1 className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-snug sm:leading-tight max-w-4xl mx-auto mb-1.5 sm:mb-3">
+              {dict.home.heroTitleLine1} <br className="hidden sm:inline" />
+              <span className="italic font-normal text-[#7D5E4A] dark:text-[#E8A87C] text-xl sm:text-4xl lg:text-5xl block sm:inline sm:ml-2">
+                {dict.home.heroTitleLine2}
+              </span>
+            </h1>
+
+            {/* Subtitle Description */}
+            <p className="text-stone-600 dark:text-stone-300 text-xs sm:text-base max-w-2xl mx-auto mb-3 sm:mb-6 leading-relaxed line-clamp-3 sm:line-clamp-none px-2">
+              {dict.home.heroDescription}
+            </p>
+          </div>
+
+          {/* 3 Trust Badges & CTA Buttons (Stagger 2: 120ms) */}
+          <div className="animate-fade-up-2">
+            {/* 3 Trust Badges: Exactly single horizontal row */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 my-2 sm:my-4">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                {dict.home.badgeRecommended}
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
+                <DollarSign className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#88B795]" />
+                {dict.home.badgePrice}
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
+                <Leaf className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
+                {dict.home.badgeOrganic}
+              </span>
+            </div>
+
+            {/* CTA Buttons: Clear Hierarchy */}
+            <div className="w-full max-w-md mx-auto sm:max-w-none flex flex-col gap-2 sm:gap-3.5 mb-6 sm:mb-8">
+              {/* Row 1: Primary Actions */}
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3.5 w-full">
+                <Link
+                  href="/space"
+                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[42px] sm:min-h-[44px] px-3 sm:px-7 py-2.5 rounded-full bg-[#2D4233] dark:bg-[#25362B] text-white text-xs sm:text-sm font-bold hover:bg-[#1E2B22] transition-all shadow-[0_4px_16px_rgba(45,66,51,0.25)]"
+                >
+                  <ArrowUpRight className="w-4 h-4 text-emerald-300" />
+                  <span className="truncate">{dict.common.exploreStream}</span>
+                </Link>
+                <Link
+                  href="/menu"
+                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[42px] sm:min-h-[44px] px-3 sm:px-7 py-2.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#F5F4EE] text-xs sm:text-sm font-bold hover:bg-stone-50 dark:hover:bg-[#28392E] border border-stone-300/80 dark:border-stone-700/60 transition-all shadow-sm"
+                >
+                  <UtensilsCrossed className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
+                  <span className="truncate">{dict.common.viewMenu}</span>
+                </Link>
+              </div>
+
+              {/* Row 2: Secondary Utilities */}
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3 w-full">
+                <a
+                  href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
+                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-[#F4EFEA] dark:bg-[#1A261E] hover:bg-[#EAE2D9] text-[#2D4233] dark:text-[#88B795] text-xs sm:text-sm font-semibold transition-all shadow-xs border border-stone-300/60 dark:border-stone-700/60 truncate"
+                >
+                  <PhoneCall className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#88B795] shrink-0" />
+                  <span className="truncate">Hotline: {settings.hotline1}</span>
+                </a>
+                <a
+                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-stone-100 dark:bg-[#1A261E] hover:bg-stone-200 dark:hover:bg-[#28392E] text-stone-700 dark:text-stone-300 text-xs sm:text-sm font-semibold transition-all border border-stone-300/60 dark:border-stone-700/60 truncate"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-[#7D5E4A] dark:text-[#E8A87C] shrink-0" />
+                  <span className="truncate">{dict.common.getDirections}</span>
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Visual Hero Card - High-impact real nature stream photo immediately visible on mobile */}
-          <div
-            onClick={() => handleOpenLightbox(0)}
-            style={{ transform: `translateY(${heroParallaxOffset}px)` }}
-            className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white dark:border-stone-700/60 transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
-          >
-            <img
-              src="/uploads/gallery/1788250253551-943009233.jpg"
-              alt={dict.home.heroCardTitle}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out transform-gpu"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex items-end justify-between p-4 sm:p-8">
-              <div className="text-left text-white max-w-xl">
-                <span className="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-emerald-300">
-                  {dict.home.streamEcoSpace}
+          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) */}
+          <div className="animate-fade-up-3">
+            <div
+              onClick={() => handleOpenLightbox(0)}
+              style={{ transform: `translateY(${heroParallaxOffset}px)` }}
+              className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white dark:border-stone-700/60 transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
+            >
+              <img
+                src="/uploads/gallery/1788250253551-943009233.jpg"
+                alt={dict.home.heroCardTitle}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out transform-gpu"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex items-end justify-between p-4 sm:p-8">
+                <div className="text-left text-white max-w-xl">
+                  <span className="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-emerald-300">
+                    {dict.home.streamEcoSpace}
+                  </span>
+                  <p className="text-base sm:text-2xl font-serif font-bold mt-0.5 sm:mt-1 drop-shadow-sm">
+                    {dict.home.heroCardTitle}
+                  </p>
+                  <p className="text-[11px] sm:text-sm text-stone-200 mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2">
+                    {dict.home.heroCardDesc}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold group-hover:bg-[#3E5C46] transition-colors shrink-0">
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span className="hidden xs:inline">{dict.common.viewLarger}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Real-time Atmospheric Meter Badge & Store Status */}
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/80 dark:border-stone-700/60 shadow-xs text-stone-600 dark:text-stone-300 text-[11px] sm:text-xs transition-colors">
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2 items-center justify-center">
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      storeStatus.badgeType === "open"
+                        ? "bg-emerald-500 animate-pulse-ring-emerald"
+                        : storeStatus.badgeType === "closing_soon"
+                        ? "bg-amber-500 animate-pulse-ring-amber"
+                        : "bg-rose-500 animate-pulse-ring-rose"
+                    }`}
+                  />
                 </span>
-                <p className="text-base sm:text-2xl font-serif font-bold mt-0.5 sm:mt-1 drop-shadow-sm">
-                  {dict.home.heroCardTitle}
-                </p>
-                <p className="text-[11px] sm:text-sm text-stone-200 mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2">
-                  {dict.home.heroCardDesc}
-                </p>
+                <span className="font-semibold text-stone-800 dark:text-stone-100">
+                  {i18nStatus.shortBadge}
+                </span>
               </div>
-
-              <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold group-hover:bg-[#3E5C46] transition-colors shrink-0">
-                <Maximize2 className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">{dict.common.viewLarger}</span>
+              <span>•</span>
+              <div className="flex items-center gap-2 font-semibold text-[#2D4233] dark:text-[#88B795]">
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> {i18nStatus.scheduleText}
+                </span>
+                <span className="hidden sm:inline">•</span>
+                <span className="hidden sm:flex items-center gap-1">
+                  <Thermometer className="w-3.5 h-3.5" /> {dict.home.tempText}
+                </span>
               </div>
-            </div>
-          </div>
-
-          {/* Real-time Atmospheric Meter Badge & Store Status (Compact on mobile) */}
-          <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/80 dark:border-stone-700/60 shadow-xs text-stone-600 dark:text-stone-300 text-[11px] sm:text-xs transition-colors">
-            <div className="flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2 items-center justify-center">
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    storeStatus.badgeType === "open"
-                      ? "bg-emerald-500 animate-pulse-ring-emerald"
-                      : storeStatus.badgeType === "closing_soon"
-                      ? "bg-amber-500 animate-pulse-ring-amber"
-                      : "bg-rose-500 animate-pulse-ring-rose"
-                  }`}
-                />
-              </span>
-              <span className="font-semibold text-stone-800 dark:text-stone-100">
-                {i18nStatus.shortBadge}
-              </span>
-            </div>
-            <span>•</span>
-            <div className="flex items-center gap-2 font-semibold text-[#2D4233] dark:text-[#88B795]">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" /> {i18nStatus.scheduleText}
-              </span>
-              <span className="hidden sm:inline">•</span>
-              <span className="hidden sm:flex items-center gap-1">
-                <Thermometer className="w-3.5 h-3.5" /> {dict.home.tempText}
-              </span>
             </div>
           </div>
         </section>
