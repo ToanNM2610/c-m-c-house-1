@@ -210,8 +210,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation - Centered */}
-        <nav className="hidden lg:flex items-center gap-1 p-1 bg-stone-100/90 dark:bg-[#1E2B22]/90 rounded-full border border-stone-200/70 dark:border-stone-700/60 shadow-inner">
+        {/* Desktop Navigation - Centered Pill */}
+        <nav className="hidden lg:inline-flex flex-row items-center gap-1 sm:gap-1.5 md:gap-2 p-1.5 rounded-full bg-stone-900/60 dark:bg-stone-900/80 border border-stone-800/60 backdrop-blur-md max-w-max mx-auto shrink-0">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             const label = locale === "en" ? item.labelEn : item.labelVi;
@@ -219,13 +219,13 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 btn-press-sm ${
+                className={`inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
                   isActive
-                    ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
-                    : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
+                    ? "bg-[#2D4233] text-white rounded-full shadow-sm font-bold"
+                    : "text-stone-300 hover:text-white hover:bg-stone-800/40 rounded-full"
                 }`}
               >
-                {label}
+                <span className="whitespace-nowrap">{label}</span>
               </Link>
             );
           })}
@@ -354,13 +354,13 @@ export default function Navbar() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`btn-press px-4 py-3 min-h-[46px] flex items-center justify-between rounded-xl text-sm font-semibold transition-all ${
+                      className={`btn-press px-4 py-3 min-h-[46px] flex items-center justify-between rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                         isActive
                           ? "bg-[#3E5C46] text-white shadow-sm font-bold"
                           : "text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800/60"
                       }`}
                     >
-                      <span>{label}</span>
+                      <span className="whitespace-nowrap">{label}</span>
                       {isActive && <span className="w-2 h-2 rounded-full bg-emerald-300 shrink-0" />}
                     </Link>
                   );
