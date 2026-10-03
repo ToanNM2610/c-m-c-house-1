@@ -4,6 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { Sparkles, Waves } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
+declare global {
+  interface Window {
+    __camcu_intro_played?: boolean;
+  }
+}
+
 export default function IntroSplashScreen() {
   const { locale, dict } = useLanguage();
   const [show, setShow] = useState(false);
@@ -11,30 +17,10 @@ export default function IntroSplashScreen() {
   const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
-    // 1. Differentiate F5 / Hard Reload or First Visit from Client-side Navigation
-    let isReload = false;
-    if (typeof window !== "undefined" && typeof performance !== "undefined") {
-      const navEntries = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
-      if (navEntries && navEntries.length > 0) {
-        isReload = navEntries[0].type === "reload";
-      } else if ((performance as unknown as { navigation?: { type: number } }).navigation) {
-        isReload = (performance as unknown as { navigation: { type: number } }).navigation.type === 1;
-      }
-    }
-
-    let isFirstVisit = false;
-    try {
-      isFirstVisit = !sessionStorage.getItem("camcu_visited");
-    } catch {
-      isFirstVisit = true;
-    }
-
-    // Only activate Intro if Hard Reload (F5) or direct First Visit to Home Page
-    if (isReload || isFirstVisit) {
+    // Only play if in this page runtime context the intro has NOT yet played on window
+    if (typeof window !== "undefined" && !window.__camcu_intro_played) {
+      window.__camcu_intro_played = true; // Mark as played immediately in memory
       setShow(true);
-      try {
-        sessionStorage.setItem("camcu_visited", "true");
-      } catch {}
       document.body.style.overflow = "hidden";
 
       // Timeline:
@@ -51,7 +37,7 @@ export default function IntroSplashScreen() {
 
       // 2.25s: Complete intro, unlock scroll, unmount
       const t3 = setTimeout(() => {
-        document.body.style.overflow = "unset";
+        document.body.style.overflow = "";
         setShow(false);
       }, 2250);
 
@@ -59,7 +45,7 @@ export default function IntroSplashScreen() {
 
       return () => {
         timeoutsRef.current.forEach(clearTimeout);
-        document.body.style.overflow = "unset";
+        document.body.style.overflow = "";
       };
     }
   }, []);
@@ -67,7 +53,7 @@ export default function IntroSplashScreen() {
   const handleSkip = () => {
     timeoutsRef.current.forEach(clearTimeout);
     setStage(2);
-    document.body.style.overflow = "unset";
+    document.body.style.overflow = "";
     setTimeout(() => {
       setShow(false);
     }, 250);
@@ -79,7 +65,7 @@ export default function IntroSplashScreen() {
     <div
       role="dialog"
       aria-label="Cẩm Cù House Welcome Intro"
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#121A15] text-[#F5F4EE] px-4 select-none transform-gpu transition-all duration-700 ease-in-out ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#121A15] text-[#F5F4EE] px-4 select-none transform-gpu transition-all duration-700 ease-in-out ${
         stage === 2 ? "opacity-0 -translate-y-4 pointer-events-none" : "opacity-100 translate-y-0"
       }`}
     >
