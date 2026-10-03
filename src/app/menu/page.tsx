@@ -1,22 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
+import { useLanguage } from "@/context/LanguageContext";
 import {
-  Coffee,
   Sparkles,
   Droplets,
   Sprout,
-  UtensilsCrossed,
   PhoneCall,
   Navigation,
   CheckCircle2,
   Plus,
   Search,
-  AlertCircle
 } from "lucide-react";
 
 import {
@@ -29,10 +26,13 @@ import {
 } from "@/utils/storage";
 
 export default function MenuPage() {
+  const { locale, dict } = useLanguage();
+  const isEn = locale === "en";
+
   const [menuItems, setMenuItems] = useState<MenuItem[]>(MENU_ITEMS);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [, setIsSyncing] = useState(false);
 
   useEffect(() => {
     // 1. Hydrate immediately from LocalStorage & Shared Cookie to survive F5
@@ -129,29 +129,29 @@ export default function MenuPage() {
             {/* Botanical badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold shadow-sm mb-5 border border-stone-200 dark:border-stone-700/60">
               <Sprout className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-              <span>Ẩm Thực Tự Nhiên &amp; Nông Sản Bản Địa Gia Nghĩa</span>
+              <span>{dict.menu.badge}</span>
             </div>
 
             <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold max-w-3xl mb-3 tracking-tight">
-              Thực Đơn Mộc Mạc • Thức Uống Xanh &amp; Món Ăn Lành
+              {dict.menu.title}
             </h1>
             <p className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed mb-6">
-              Mỗi món nước hay món ăn đều trọn vẹn hương vị mộc mạc, chế biến từ nông sản Đắk Nông tươi rói, kết hợp cùng không gian tiếng suối róc rách trong trẻo.
+              {dict.menu.subtitle}
             </p>
 
             {/* Quick Trust Indicators Bento Snippet */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-2xl">
               <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/70 dark:border-stone-700/60 shadow-sm text-xs font-bold text-[#3E5C46] dark:text-[#88B795]">
                 <Droplets className="w-4 h-4 text-[#396663] dark:text-teal-400" />
-                <span>Nước Suối Nguồn Mát</span>
+                <span>{dict.menu.pureSpring}</span>
               </div>
               <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/70 dark:border-stone-700/60 shadow-sm text-xs font-bold text-[#3E5C46] dark:text-[#88B795]">
                 <Sprout className="w-4 h-4 text-[#614633] dark:text-amber-400" />
-                <span>Nông Sản Trong Ngày</span>
+                <span>{dict.menu.dailyFresh}</span>
               </div>
               <div className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/70 dark:border-stone-700/60 shadow-sm text-xs font-bold text-[#3E5C46] dark:text-[#88B795]">
                 <CheckCircle2 className="w-4 h-4 text-[#3E5C46] dark:text-emerald-400" />
-                <span>Không Phụ Gia Hóa Học</span>
+                <span>{dict.menu.noAdditives}</span>
               </div>
             </div>
           </div>
@@ -164,6 +164,7 @@ export default function MenuPage() {
               {MENU_CATEGORIES.map((cat) => {
                 const isActive = activeCategory === cat.id;
                 const count = getCategoryCount(cat.id);
+                const categoryLabel = dict.menu.categories[cat.id] || cat.name;
                 return (
                   <button
                     key={cat.id}
@@ -175,7 +176,7 @@ export default function MenuPage() {
                         : "bg-stone-100 dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white border border-stone-200/60 dark:border-stone-700/60"
                     }`}
                   >
-                    {cat.name} ({count})
+                    {categoryLabel} ({count})
                   </button>
                 );
               })}
@@ -185,7 +186,7 @@ export default function MenuPage() {
             <div className="relative shrink-0 sm:w-56">
               <input
                 type="text"
-                placeholder="Tìm món nhanh..."
+                placeholder={dict.menu.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-[#1E2B22] text-stone-800 dark:text-stone-100 rounded-full text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-inner"
@@ -209,11 +210,11 @@ export default function MenuPage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex items-end p-4 justify-between">
                 <span className="text-white font-serif text-lg font-bold">
-                  Signature: Cà Phê Muối Đắk Nông
+                  {dict.menu.signatureTitle}
                 </span>
                 {isSignatureOutOfStock && (
                   <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-xs font-bold shadow-md">
-                    Tạm Hết
+                    {dict.common.soldOut}
                   </span>
                 )}
               </div>
@@ -221,19 +222,19 @@ export default function MenuPage() {
             <div className="lg:col-span-7 flex flex-col gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-widest text-[#614633] dark:text-[#D1A684] font-bold">
-                  Món Được Yêu Thích Nhất
+                  {dict.menu.signatureTag}
                 </span>
                 {isSignatureOutOfStock && (
                   <span className="px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 text-xs font-bold">
-                    Tạm Hết Hôm Nay
+                    {dict.common.soldOutToday}
                   </span>
                 )}
               </div>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
-                Cà Phê Muối Gia Nghĩa &amp; Trà Hoa Đu Đủ Rừng
+                {dict.menu.signatureHeading}
               </h2>
               <p className="text-base text-stone-700 dark:text-stone-300 leading-relaxed">
-                Được ủ từ hạt Robusta chín mọng rang than củi, lớp kem muối biển béo ngậy mặn ngọt cân bằng hoàn hảo. Ngoài ra, ấm trà hoa đu đủ đực ngâm mật ong rừng luôn là sự lựa chọn thanh giọng, an lành nhất bên dòng suối mát.
+                {dict.menu.signatureDesc}
               </p>
               <div className="pt-2 flex items-center gap-3">
                 <a
@@ -241,7 +242,9 @@ export default function MenuPage() {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
                 >
                   <PhoneCall className="w-4 h-4" />
-                  <span>Gọi Hotline Gọi Món: 038 285 1688</span>
+                  <span>
+                    {isEn ? "Call Hotline to Order: 038 285 1688" : "Gọi Hotline Gọi Món: 038 285 1688"}
+                  </span>
                 </a>
               </div>
             </div>
@@ -251,10 +254,10 @@ export default function MenuPage() {
           <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors duration-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 dark:border-stone-700/60 gap-2">
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
-                Danh Sách Món ({filteredItems.length} món)
+                {dict.menu.menuListHeading} ({filteredItems.length} {isEn ? "items" : "món"})
               </h3>
               <span className="text-xs text-stone-500 dark:text-stone-400">
-                Giá niêm yết đã bao gồm phục vụ tại bàn sát bờ suối
+                {dict.menu.menuListSubheading}
               </span>
             </div>
 
@@ -283,7 +286,7 @@ export default function MenuPage() {
                         </span>
                         {isOutOfStock ? (
                           <span className="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold">
-                            Tạm Hết
+                            {dict.common.soldOut}
                           </span>
                         ) : (
                           item.tag && (
@@ -307,7 +310,7 @@ export default function MenuPage() {
                         <button
                           type="button"
                           disabled
-                          title="Món đang tạm hết"
+                          title={dict.common.soldOut}
                           className="w-7 h-7 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 flex items-center justify-center cursor-not-allowed"
                         >
                           <span className="text-xs font-bold">✕</span>
@@ -315,7 +318,7 @@ export default function MenuPage() {
                       ) : (
                         <a
                           href="tel:0382851688"
-                          title="Gọi đặt món"
+                          title={isEn ? "Call to order" : "Gọi đặt món"}
                           className="w-7 h-7 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
@@ -333,17 +336,23 @@ export default function MenuPage() {
             <div className="flex flex-col gap-2 max-w-xl text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-2 text-[#3E5C46] dark:text-[#F5F4EE] font-bold font-serif text-xl">
                 <span>🌿</span>
-                <span>Cam Kết Từ Bếp &amp; Quầy Bar Cẩm Cù</span>
+                <span>
+                  {isEn ? "Commitment from Cam Cu Kitchen & Bar" : "Cam Kết Từ Bếp & Quầy Bar Cẩm Cù"}
+                </span>
               </div>
               <p className="text-base text-stone-700 dark:text-stone-300 leading-relaxed">
-                Nguyên liệu tươi sạch mỗi ngày • Hỗ trợ điều chỉnh độ ngọt và đá theo khẩu vị riêng của quý khách để có trải nghiệm vừa ý nhất.
+                {isEn
+                  ? "Fresh daily local produce • Customizable sweetness and ice levels for your perfect beverage experience."
+                  : "Nguyên liệu tươi sạch mỗi ngày • Hỗ trợ điều chỉnh độ ngọt và đá theo khẩu vị riêng của quý khách để có trải nghiệm vừa ý nhất."}
               </p>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-xs font-semibold text-stone-800 dark:text-stone-300">
                 <span className="flex items-center gap-1 text-[#3E5C46] dark:text-[#88B795]">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Giảm ngọt theo khẩu vị
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  {isEn ? "Custom sweetness to taste" : "Giảm ngọt theo khẩu vị"}
                 </span>
                 <span className="flex items-center gap-1 text-[#3E5C46] dark:text-[#88B795]">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Phục vụ tại bàn sát dòng suối
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  {isEn ? "Table service right beside stream" : "Phục vụ tại bàn sát dòng suối"}
                 </span>
               </div>
             </div>
@@ -354,7 +363,9 @@ export default function MenuPage() {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] shadow-md transition-all"
               >
                 <PhoneCall className="w-4 h-4" />
-                <span>Gọi Hotline: 038 285 1688</span>
+                <span>
+                  {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
+                </span>
               </a>
               <a
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
@@ -363,7 +374,7 @@ export default function MenuPage() {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60 hover:bg-stone-50 dark:hover:bg-white/10 transition-colors"
               >
                 <Navigation className="w-4 h-4" />
-                <span>Ghé Thăm Trực Tiếp</span>
+                <span>{isEn ? "Visit in Person" : "Ghé Thăm Trực Tiếp"}</span>
               </a>
             </div>
           </section>

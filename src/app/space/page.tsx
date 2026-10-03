@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LightboxModal, { LightboxPhoto } from "@/components/LightboxModal";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   getSharedData,
   KEYS,
@@ -14,20 +14,18 @@ import {
 import {
   Droplets,
   Trees,
-  Volume2,
-  VolumeX,
   Play,
   Pause,
   PhoneCall,
   Navigation,
   CheckCircle2,
-  Sparkles,
   Maximize2,
-  MapPin,
-  Clock
 } from "lucide-react";
 
 export default function SpacePage() {
+  const { locale, dict } = useLanguage();
+  const isEn = locale === "en";
+
   const [activeFilter, setActiveFilter] = useState("all");
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [galleryPhotos, setGalleryPhotos] = useState<SharedGalleryItem[]>([]);
@@ -104,18 +102,18 @@ export default function SpacePage() {
       case "stream":
       case "suoi":
       case "bo-suoi":
-        return "Bờ Suối Tự Nhiên";
+        return isEn ? "Natural Stream" : "Bờ Suối Tự Nhiên";
       case "wooden-terrace":
       case "hien-go":
-        return "Hiên Gỗ & Chòi Mộc";
+        return isEn ? "Wooden Terrace & Pavilions" : "Hiên Gỗ & Chòi Mộc";
       case "checkin":
       case "check-in":
-        return "Góc Check-in & Cảnh Quan";
+        return isEn ? "Scenic Check-in Spot" : "Góc Check-in & Cảnh Quan";
       case "workspace":
       case "chill-work":
-        return "Bàn Ghế Làm Việc / Đọc Sách";
+        return isEn ? "Co-working / Reading Nook" : "Bàn Ghế Làm Việc / Đọc Sách";
       default:
-        return "Không Gian Quán";
+        return isEn ? "Sanctuary Corner" : "Không Gian Quán";
     }
   };
 
@@ -137,11 +135,13 @@ export default function SpacePage() {
     })
     .map((g, idx) => ({
       id: g.id || `dyn_${idx}`,
-      title: g.title || "Góc Không Gian Cẩm Cù House",
+      title: g.title || (isEn ? "Cam Cu House Stream Corner" : "Góc Không Gian Cẩm Cù House"),
       subtitle: getCategorySubtitle(g.category),
       description:
         (g as { caption?: string }).caption ||
-        "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông được cập nhật mới nhất từ ban quản lý.",
+        (isEn
+          ? "A serene rustic moment by the Dak Nong rock stream."
+          : "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông được cập nhật mới nhất từ ban quản lý."),
       image: g.url,
       category: mapAdminCategoryToSpace(g.category),
       tag: getCategorySubtitle(g.category),
@@ -206,13 +206,23 @@ export default function SpacePage() {
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs tracking-wider uppercase mb-3 shadow-sm border border-stone-200/70 dark:border-stone-700/60">
                 <Droplets className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
-                <span>Space &amp; Stream Sanctuary • Gia Nghĩa</span>
+                <span>{dict.space.badge} • Gia Nghĩa</span>
               </div>
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight leading-tight">
-                Không Gian Sinh Thái <span className="text-[#614633] dark:text-[#E8A87C] italic font-normal">•</span> Sự Tĩnh Lặng Bên Bờ Suối Đá
+                {isEn ? (
+                  <>
+                    Eco Sanctuary <span className="text-[#614633] dark:text-[#E8A87C] italic font-normal">•</span> Serenity by the Rock Stream
+                  </>
+                ) : (
+                  <>
+                    Không Gian Sinh Thái <span className="text-[#614633] dark:text-[#E8A87C] italic font-normal">•</span> Sự Tĩnh Lặng Bên Bờ Suối Đá
+                  </>
+                )}
               </h1>
               <p className="mt-3 text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed">
-                Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông.
+                {isEn
+                  ? "Every corner at Cam Cu House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
+                  : "Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông."}
               </p>
             </div>
 
@@ -220,7 +230,7 @@ export default function SpacePage() {
             <div className="flex items-center gap-4 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/70 dark:border-stone-700/60 px-5 py-3 rounded-2xl shadow-sm self-start lg:self-end">
               <div className="flex flex-col">
                 <span className="text-[11px] text-stone-500 dark:text-stone-400 uppercase tracking-wider font-semibold">
-                  Nhiệt Độ Thung Lũng
+                  {isEn ? "Valley Temp" : "Nhiệt Độ Thung Lũng"}
                 </span>
                 <span className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#88B795]">
                   22°C - 26°C
@@ -229,10 +239,10 @@ export default function SpacePage() {
               <div className="w-px h-8 bg-stone-200 dark:bg-stone-700" />
               <div className="flex flex-col">
                 <span className="text-[11px] text-stone-500 dark:text-stone-400 uppercase tracking-wider font-semibold">
-                  Bờ Suối Tự Nhiên
+                  {isEn ? "Natural Stream" : "Bờ Suối Tự Nhiên"}
                 </span>
                 <span className="font-serif text-xl font-bold text-[#396663] dark:text-[#E8A87C]">
-                  Đá Bazan Cổ
+                  {isEn ? "Basalt Pebbles" : "Đá Bazan Cổ"}
                 </span>
               </div>
             </div>
@@ -241,181 +251,128 @@ export default function SpacePage() {
           {/* Filter Tabs - Responsive with Horizontal Scrollbar Hidden on Mobile/Tablet */}
           <div className="w-full flex items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
             <div className="flex items-center gap-2 p-1.5 bg-stone-100 dark:bg-[#1E2B22] rounded-2xl sm:rounded-full border border-stone-200/70 dark:border-stone-700/60 overflow-x-auto no-scrollbar w-full sm:w-auto">
-              {SPACE_CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveFilter(cat.id)}
-                  type="button"
-                  className={`min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
-                    activeFilter === cat.id
-                      ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
-                      : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
-                  }`}
-                >
-                  {cat.id === "all" ? `Tất Cả Không Gian (${allItems.length})` : cat.name}
-                </button>
-              ))}
+              {SPACE_CATEGORIES.map((cat) => {
+                const label = dict.space.categories[cat.id] || cat.name;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveFilter(cat.id)}
+                    type="button"
+                    className={`min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
+                      activeFilter === cat.id
+                        ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
+                        : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
+                    }`}
+                  >
+                    {cat.id === "all" ? `${label} (${allItems.length})` : label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="hidden lg:flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 font-medium shrink-0">
-              <span className="w-2 h-2 rounded-full bg-[#396663] dark:bg-[#88B795] animate-pulse" />
-              <span>Bấm vào bất kỳ ảnh nào để phóng to xem Lightbox</span>
+              <span>
+                {filteredItems.length} {isEn ? "scenic stream spots" : "góc ảnh bờ suối"}
+              </span>
             </div>
           </div>
         </section>
 
-        {/* Responsive Multi-Device Gallery Grid (Desktop 3-4 cols, Tablet 2 cols, Mobile 1-2 cols) */}
-        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-20">
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-start"
-          >
-            <AnimatePresence>
-              {filteredItems.map((item, index) => (
-                <motion.article
-                  layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  key={item.id}
-                  onClick={() => handleOpenLightbox(index)}
-                  className="group relative cursor-pointer flex flex-col bg-white dark:bg-[#1E2B22] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1"
-                >
-                  {/* Photo Frame (Standardized 4:3 Aspect Ratio) */}
-                  <div className="relative w-full aspect-[4/3] overflow-hidden bg-stone-100 dark:bg-stone-800">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
+        {/* Gallery Grid Section */}
+        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredItems.map((item, idx) => (
+              <div
+                key={item.id}
+                onClick={() => handleOpenLightbox(idx)}
+                className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/25 to-transparent flex flex-col justify-end p-4 text-white">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5">
+                    {item.subtitle}
+                  </span>
+                  <h3 className="font-serif text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-stone-200/90 line-clamp-2 mt-0.5">
+                    {item.description}
+                  </p>
+                </div>
 
-                    {/* Tag badge */}
-                    <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-black/70 backdrop-blur-md text-[#3E5C46] dark:text-emerald-300 text-[11px] font-bold shadow-sm border border-white/60 dark:border-white/10">
-                      <Sparkles className="w-3 h-3 text-[#614633] dark:text-amber-400" />
-                      <span>{item.tag}</span>
-                    </div>
-
-                    {/* Expand indicator icon */}
-                    <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
-                      <Maximize2 className="w-3.5 h-3.5" />
-                    </div>
-
-                    {/* Content overlay */}
-                    <div className="absolute bottom-3 left-3 right-3 text-white">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 block mb-0.5">
-                        {item.subtitle}
-                      </span>
-                      <h3 className="font-serif text-base sm:text-lg font-bold leading-snug line-clamp-1 group-hover:text-emerald-200 transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-[11px] text-stone-200/90 mt-1 line-clamp-2 leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                  <Maximize2 className="w-4 h-4" />
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
-        {/* Sensory Audio Guide */}
-        <section className="w-full bg-stone-100/70 dark:bg-[#18241D] border-y border-stone-200 dark:border-stone-800 py-14 sm:py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10">
-            <div className="max-w-xl">
-              <span className="text-xs uppercase tracking-widest text-[#396663] dark:text-[#88B795] font-bold">
-                Cảm Nhận Giác Quan
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold mt-1">
-                Dành Cho Tâm Hồn Cần Chốn Chữa Lành
-              </h2>
-              <p className="text-base text-stone-700 dark:text-stone-300 mt-3 leading-relaxed">
-                Không ồn ào còi xe, không ánh đèn nhân tạo chói lóa. Ở Cẩm Cù House, thanh âm chủ đạo là tiếng suối reo trên đá bazan, tiếng chim hót trên ngọn sầu riêng cổ và tiếng xào xạc của gió luồn qua rặng tre ngà.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-5 border border-stone-200/60 dark:border-stone-700/60 flex items-start gap-3">
-                  <Droplets className="w-6 h-6 text-[#396663] dark:text-[#88B795] shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Tiếng Nước Tự Nhiên</h4>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">Âm thanh trắng làm dịu sóng não căng thẳng.</p>
-                  </div>
-                </div>
-                <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-5 border border-stone-200/60 dark:border-stone-700/60 flex items-start gap-3">
-                  <Trees className="w-6 h-6 text-[#614633] dark:text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Hương Rừng &amp; Hoa Cù</h4>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">Mùi thơm thảo mộc tự nhiên ngát lành trong gió.</p>
-                  </div>
-                </div>
+        {/* Stream Ambience Floating Audio Bar */}
+        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-10">
+          <div className="bg-stone-200/80 dark:bg-[#1E2B22] p-6 sm:p-8 rounded-2xl border border-stone-300/60 dark:border-stone-700/60 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-[#3E5C46] text-white flex items-center justify-center shrink-0">
+                <Droplets className="w-6 h-6 animate-pulse" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif font-bold text-lg text-[#2D4233] dark:text-[#F5F4EE]">
+                  {isEn ? "Highland Stream Natural Audio" : "Thanh Âm Suối Nguồn Cao Nguyên"}
+                </span>
+                <span className="text-xs text-stone-600 dark:text-stone-300">
+                  {isEn
+                    ? "Recorded live on location beside the basalt rock stream at Cam Cu House"
+                    : "Thu âm trực tiếp bên bờ suối đá Cẩm Cù House • Đắk Nông"}
+                </span>
               </div>
             </div>
 
-            {/* Audio Stream Player Simulator Card */}
-            <div className="w-full lg:w-96 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-xl rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 flex flex-col items-center text-center relative">
-              <div className="w-20 h-20 rounded-full bg-[#396663]/15 dark:bg-[#88B795]/15 text-[#396663] dark:text-[#88B795] flex items-center justify-center mb-4 shadow-sm relative">
-                {isPlayingAudio ? (
-                  <Volume2 className="w-9 h-9 text-[#396663] dark:text-[#88B795] animate-pulse" />
-                ) : (
-                  <VolumeX className="w-9 h-9 text-[#396663] dark:text-[#88B795]" />
-                )}
-                {isPlayingAudio && (
-                  <span className="absolute inset-0 rounded-full border-2 border-[#396663] dark:border-[#88B795] animate-ping opacity-30" />
-                )}
-              </div>
-              <span className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wider font-semibold">
-                Thanh Âm Thực Địa
-              </span>
-              <h3 className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] mt-1">
-                Tiếng Suối Đá Gia Nghĩa
-              </h3>
-              <p className="text-xs text-stone-600 dark:text-stone-300 mt-2 mb-6">
-                {isPlayingAudio
-                  ? "Đang phát mô phỏng: Tiếng suối róc rách qua ghềnh đá bazan tự nhiên..."
-                  : "Bấm để nghe đoạn âm thanh thực tế bên bờ suối Cẩm Cù House lúc ban mai."}
-              </p>
-              <button
-                type="button"
-                onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-                className={`w-full min-h-[44px] py-3.5 px-6 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
-                  isPlayingAudio
-                    ? "bg-[#396663] text-white"
-                    : "bg-[#3E5C46] text-white hover:bg-[#2D4233]"
-                }`}
-              >
-                {isPlayingAudio ? (
-                  <>
-                    <Pause className="w-4 h-4" />
-                    <span>Tạm Dừng Thanh Âm Suối</span>
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 fill-current" />
-                    <span>Nghe Tiếng Suối Chảy</span>
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+              className={`min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
+                isPlayingAudio
+                  ? "bg-[#396663] text-white"
+                  : "bg-[#3E5C46] text-white hover:bg-[#2D4233]"
+              }`}
+            >
+              {isPlayingAudio ? (
+                <>
+                  <Pause className="w-4 h-4" />
+                  <span>{dict.space.muteAudio}</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>{dict.space.playAudio}</span>
+                </>
+              )}
+            </button>
           </div>
         </section>
 
         {/* Eco Charter Section */}
-        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-16">
+        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12">
           <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 sm:p-10 border border-stone-200/60 dark:border-stone-700/60 relative overflow-hidden">
             <div className="relative z-10 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-bold mb-3">
                 <Trees className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-                <span>Lời Hứa Xanh Từ Cẩm Cù House</span>
+                <span>{isEn ? "Eco Commitment from Cam Cu House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-                Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên &amp; Giảm Thiểu Nhựa
+                {isEn
+                  ? "Preserving Natural Basalt Streams & Plastic-Free Living"
+                  : "Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên & Giảm Thiểu Nhựa"}
               </h2>
               <p className="mt-3 text-base text-stone-700 dark:text-stone-300 leading-relaxed">
-                Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối.
+                {isEn
+                  ? "We treasure every pebble and blade of grass along our stream bank. Cam Cu House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
+                  : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 p-4 rounded-2xl bg-stone-50 dark:bg-[#16231A] border border-stone-200 dark:border-stone-800">
@@ -424,8 +381,12 @@ export default function SpacePage() {
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">Không Nhựa 1 Lần</p>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-400">100% vật liệu tự nhiên</p>
+                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">
+                      {isEn ? "Single-Use Plastic Free" : "Không Nhựa 1 Lần"}
+                    </p>
+                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                      {isEn ? "100% natural materials" : "100% vật liệu tự nhiên"}
+                    </p>
                   </div>
                 </div>
 
@@ -434,8 +395,12 @@ export default function SpacePage() {
                     <Droplets className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">Bảo Vệ Nguồn Nước</p>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-400">Lọc thải khép kín an toàn</p>
+                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">
+                      {isEn ? "Water Source Protection" : "Bảo Vệ Nguồn Nước"}
+                    </p>
+                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                      {isEn ? "Safe closed-loop filtration" : "Lọc thải khép kín an toàn"}
+                    </p>
                   </div>
                 </div>
 
@@ -444,8 +409,12 @@ export default function SpacePage() {
                     <Trees className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">Hệ Sinh Thái Rừng</p>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-400">Gìn giữ thảm thực vật bản địa</p>
+                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">
+                      {isEn ? "Forest Ecosystem" : "Hệ Sinh Thái Rừng"}
+                    </p>
+                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
+                      {isEn ? "Preserving native flora" : "Gìn giữ thảm thực vật bản địa"}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -458,7 +427,7 @@ export default function SpacePage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
                 >
-                  <span>Chỉ Đường Tới Quán</span>
+                  <span>{dict.common.getDirections}</span>
                   <Navigation className="w-4 h-4" />
                 </a>
                 <a
@@ -466,7 +435,9 @@ export default function SpacePage() {
                   className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] hover:bg-stone-200 dark:hover:bg-[#28392E] transition-colors text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60"
                 >
                   <PhoneCall className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-                  <span>Gọi Hotline: 038 285 1688</span>
+                  <span>
+                    {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
+                  </span>
                 </a>
               </div>
             </div>

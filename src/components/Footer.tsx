@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { 
   MapPin, 
@@ -8,8 +10,12 @@ import {
   Sparkles, 
   Navigation 
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
+  const { locale, dict } = useLanguage();
+  const isEn = locale === "en";
+
   return (
     <footer className="w-full bg-[#1B281D] text-stone-300 pt-16 pb-10 border-t border-stone-800 shadow-xl">
       <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
@@ -24,7 +30,9 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-sm text-stone-400 leading-relaxed">
-            Khu ẩm thực &amp; cà phê sinh thái bên dòng suối mát lành miền cao nguyên Đắk Nông. Chốn dừng chân mộc mạc gìn giữ tự nhiên và mang lại sự an yên cho tâm hồn.
+            {isEn
+              ? "An eco-friendly coffee & dining sanctuary nestled beside a cool natural stream in the Dak Nong highlands. A rustic haven honoring nature and bringing tranquility to the soul."
+              : "Khu ẩm thực & cà phê sinh thái bên dòng suối mát lành miền cao nguyên Đắk Nông. Chốn dừng chân mộc mạc gìn giữ tự nhiên và mang lại sự an yên cho tâm hồn."}
           </p>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-stone-800/80 rounded-full text-emerald-300 text-xs font-medium w-fit border border-stone-700">
             <MapPin className="w-3.5 h-3.5 text-emerald-400" />
@@ -35,26 +43,26 @@ export default function Footer() {
         {/* Col 2: Navigation */}
         <div className="flex flex-col gap-3">
           <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase">
-            Điều Hướng Nhanh
+            {dict.contact.quickLinksTitle}
           </span>
           <nav className="flex flex-col gap-2.5 text-sm text-stone-300">
             <Link href="/" className="hover:text-white hover:translate-x-1 transition-all">
-              Trang Chủ
+              {dict.nav.home}
             </Link>
             <Link href="/about" className="hover:text-white hover:translate-x-1 transition-all">
-              Câu Chuyện Cẩm Cù
+              {dict.nav.about}
             </Link>
             <Link href="/space" className="hover:text-white hover:translate-x-1 transition-all">
-              Không Gian Suối
+              {dict.nav.space}
             </Link>
             <Link href="/menu" className="hover:text-white hover:translate-x-1 transition-all">
-              Thực Đơn 50+ Món
+              {dict.nav.menu}
             </Link>
             <Link href="/contact" className="hover:text-white hover:translate-x-1 transition-all">
-              Chỉ Đường &amp; Liên Hệ
+              {dict.nav.contact}
             </Link>
             <Link href="/admin" className="hover:text-white hover:translate-x-1 transition-all text-xs text-stone-400">
-              Quản Trị Viên
+              {dict.common.admin}
             </Link>
           </nav>
         </div>
@@ -62,23 +70,23 @@ export default function Footer() {
         {/* Col 3: Hours & Hotlines */}
         <div className="flex flex-col gap-3">
           <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase">
-            Giờ Mở Cửa &amp; Hotline
+            {dict.contact.openingHoursTitle}
           </span>
           <div className="text-sm text-stone-300 flex flex-col gap-1.5 bg-stone-800/60 p-4 rounded-2xl border border-stone-700/60">
             <div className="flex items-center gap-1.5 font-semibold text-white">
               <Clock className="w-4 h-4 text-emerald-400" />
-              <span>Thời gian phục vụ</span>
+              <span>{isEn ? "Service Hours" : "Thời gian phục vụ"}</span>
             </div>
             <p className="text-xs text-stone-400 mt-1">
-              <strong className="text-stone-200">Thứ 2 - Thứ 5:</strong> 07:00 - 18:00
+              <strong className="text-stone-200">{isEn ? "Mon - Thu:" : "Thứ 2 - Thứ 5:"}</strong> 07:00 - 18:00
             </p>
             <p className="text-xs text-stone-400">
-              <strong className="text-stone-200">Thứ 6 - Chủ Nhật:</strong> 07:00 - 22:00
+              <strong className="text-stone-200">{isEn ? "Fri - Sun:" : "Thứ 6 - Chủ Nhật:"}</strong> 07:00 - 22:00
             </p>
           </div>
 
           <div className="mt-1 flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-stone-400">Hotline Đón Tiếp:</span>
+            <span className="text-xs font-semibold text-stone-400">{dict.contact.hotlineTitle}</span>
             <div className="flex flex-col gap-1 text-sm font-bold text-emerald-300">
               <a href="tel:0382851688" className="hover:text-emerald-200 flex items-center gap-2">
                 <PhoneCall className="w-3.5 h-3.5 text-emerald-400" />
@@ -95,13 +103,13 @@ export default function Footer() {
         {/* Col 4: Address & Social */}
         <div className="flex flex-col gap-3">
           <span className="text-xs font-bold text-emerald-400 tracking-wider uppercase">
-            Địa Chỉ &amp; Kết Nối
+            {dict.contact.addressTitle}
           </span>
           <p className="text-sm text-stone-400 leading-relaxed">
-            Hẻm 437 Hùng Vương, Phường Nghĩa Trung, Thành phố Gia Nghĩa, Tỉnh Đắk Nông
+            {dict.common.addressFull}
           </p>
           <p className="text-xs text-emerald-300 font-medium bg-emerald-950/40 p-2.5 rounded-xl border border-emerald-800/40">
-            Đường bê tông rộng, xe ô tô 4 – 16 chỗ vào quay đầu tận sân quán.
+            {dict.common.carParkingNote}
           </p>
 
           <a 
@@ -147,7 +155,7 @@ export default function Footer() {
               href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
               target="_blank"
               rel="noopener noreferrer"
-              title="Google Maps"
+              title={dict.common.openGoogleMaps}
               className="w-9 h-9 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-emerald-400 hover:bg-[#3E5C46] hover:text-white transition-all shadow-sm hover:scale-105"
             >
               <Navigation className="w-4 h-4" />
@@ -158,9 +166,9 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
-        <p>© 2026 Cẩm Cù House coffee &amp; Food. All rights reserved.</p>
+        <p>{dict.common.allRightsReserved}</p>
         <p className="text-emerald-400/80 font-medium">
-          Thiết kế theo dòng chảy thiên nhiên Gia Nghĩa • Đắk Nông
+          {dict.common.curatedByNature}
         </p>
       </div>
     </footer>

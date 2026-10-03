@@ -16,13 +16,14 @@ import {
 import ThemeToggle from "@/components/ThemeToggle";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
+import { getStoreStatusI18n } from "@/lib/translations";
 
-const NAV_LINKS = [
-  { href: "/", label: "Trang Chủ" },
-  { href: "/about", label: "Giới Thiệu" },
-  { href: "/space", label: "Không Gian Suối" },
-  { href: "/menu", label: "Thực Đơn" },
-  { href: "/contact", label: "Chỉ Đường & Liên Hệ" },
+const NAV_ITEMS = [
+  { href: "/", labelVi: "Trang Chủ", labelEn: "Home" },
+  { href: "/about", labelVi: "Câu Chuyện", labelEn: "Our Story" },
+  { href: "/space", labelVi: "Không Gian Suối", labelEn: "Stream Sanctuary" },
+  { href: "/menu", labelVi: "Thực Đơn", labelEn: "Menu" },
+  { href: "/contact", labelVi: "Chỉ Đường & Liên Hệ", labelEn: "Directions & Contact" },
 ];
 
 import {
@@ -38,10 +39,9 @@ import {
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { language, setLanguage } = useLanguage();
-  const lang = language.toLowerCase() === "en" ? "EN" : "VN";
-  const setLang = (l: "VN" | "EN") => setLanguage(l.toLowerCase());
+  const { locale, setLocale, dict } = useLanguage();
   const storeStatus = useStoreStatus();
+  const i18nStatus = getStoreStatusI18n(storeStatus, locale);
 
   const [settings, setSettings] = useState({
     isOpen: true,
@@ -139,12 +139,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-hidden truncate">
             <span className="bg-[#3E5C46] px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
-              {pinnedNews ? "Bảng Tin Quán" : "Giờ Mở Cửa (GMT+7)"}
+              {pinnedNews ? dict.common.noticeBoard : dict.common.openingHoursGMT}
             </span>
             <span className="truncate font-medium">
               {pinnedNews
                 ? `${pinnedNews.title}: ${pinnedNews.content}`
-                : storeStatus.badgeText}
+                : i18nStatus.badgeText}
             </span>
           </div>
 
@@ -152,12 +152,12 @@ export default function Navbar() {
             <span className="flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${getDotColor()} ${storeStatus.isOpen ? "animate-pulse" : ""}`} />
               <span className="font-semibold text-white">
-                {storeStatus.shortBadge}
+                {i18nStatus.shortBadge}
               </span>
             </span>
             <span>•</span>
             <span className="text-stone-300 font-medium">
-              {storeStatus.scheduleText}
+              {i18nStatus.scheduleText}
             </span>
           </div>
         </div>
@@ -175,7 +175,7 @@ export default function Navbar() {
               Cẩm Cù House
             </span>
             <span className="text-[10px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium tracking-wide">
-              coffee &amp; Food • Gia Nghĩa
+              {locale === "en" ? "coffee & Food • Gia Nghia" : "coffee & Food • Gia Nghĩa"}
             </span>
           </div>
           
@@ -184,26 +184,27 @@ export default function Navbar() {
             <Clock className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
             <span className="flex items-center gap-1.5">
               <span className={`w-1.5 h-1.5 rounded-full ${getPillDotColor()} ${storeStatus.isOpen ? "animate-pulse" : ""}`} />
-              <span className="font-semibold">{storeStatus.shortBadge}</span>
+              <span className="font-semibold">{i18nStatus.shortBadge}</span>
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation - Centered */}
         <nav className="hidden lg:flex items-center gap-1 p-1 bg-stone-100/90 dark:bg-[#1E2B22]/90 rounded-full border border-stone-200/70 dark:border-stone-700/60 shadow-inner">
-          {NAV_LINKS.map((link) => {
-            const isActive = pathname === link.href;
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname === item.href;
+            const label = locale === "en" ? item.labelEn : item.labelVi;
             return (
               <Link
-                key={link.href}
-                href={link.href}
+                key={item.href}
+                href={item.href}
                 className={`relative px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 ${
                   isActive
                     ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
                     : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
                 }`}
               >
-                {link.label}
+                {label}
               </Link>
             );
           })}
@@ -214,28 +215,44 @@ export default function Navbar() {
           {/* Theme Toggle Button (Light / Dark) */}
           <ThemeToggle />
 
-          {/* Language Toggle */}
-          <div className="hidden sm:inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-0.5 text-xs font-semibold text-stone-600 dark:text-stone-300 border border-stone-200/60 dark:border-stone-700/60">
+          {/* Bilingual Language Switcher (VN | EN) with Smooth Animated Slider */}
+          <div className="inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-1 text-xs font-bold text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700/60 shadow-inner relative">
             <button
               type="button"
-              onClick={() => setLang("VN")}
-              className={`px-2.5 py-1 rounded-full transition-all ${
-                lang === "VN"
-                  ? "bg-white dark:bg-[#2D4233] text-[#3E5C46] dark:text-[#F5F4EE] shadow-sm font-bold"
-                  : "hover:text-stone-900 dark:hover:text-white"
+              onClick={() => setLocale("vi")}
+              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 ${
+                locale === "vi"
+                  ? "text-white"
+                  : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
               }`}
+              aria-label="Tiếng Việt"
             >
+              {locale === "vi" && (
+                <motion.span
+                  layoutId="activeLangPillDesktop"
+                  className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
+                  transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                />
+              )}
               VN
             </button>
             <button
               type="button"
-              onClick={() => setLang("EN")}
-              className={`px-2.5 py-1 rounded-full transition-all ${
-                lang === "EN"
-                  ? "bg-white dark:bg-[#2D4233] text-[#3E5C46] dark:text-[#F5F4EE] shadow-sm font-bold"
-                  : "hover:text-stone-900 dark:hover:text-white"
+              onClick={() => setLocale("en")}
+              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 ${
+                locale === "en"
+                  ? "text-white"
+                  : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
               }`}
+              aria-label="English"
             >
+              {locale === "en" && (
+                <motion.span
+                  layoutId="activeLangPillDesktop"
+                  className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
+                  transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                />
+              )}
               EN
             </button>
           </div>
@@ -246,14 +263,16 @@ export default function Navbar() {
             className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-[0_4px_14px_rgba(62,92,70,0.25)] hover:-translate-y-0.5 shrink-0"
           >
             <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
-            <span className="hidden sm:inline">Gọi Hotline:</span>
+            <span className="hidden sm:inline">
+              {locale === "en" ? "Hotline:" : "Gọi Hotline:"}
+            </span>
             <span>{settings.hotline1}</span>
           </a>
 
           {/* Admin link */}
           <a
             href="https://admin.camcuhouse.online"
-            title="Quản trị viên (admin.camcuhouse.online)"
+            title={dict.common.admin}
             className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white flex items-center justify-center shrink-0 shadow-sm transition-transform hover:scale-105"
           >
             <User className="w-4 h-4" />
@@ -285,7 +304,7 @@ export default function Navbar() {
               <span className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${getPillDotColor()} ${storeStatus.isOpen ? "animate-pulse" : ""}`} />
                 <span className="font-bold text-stone-900 dark:text-white">
-                  {storeStatus.badgeText}
+                  {i18nStatus.badgeText}
                 </span>
               </span>
               <span className="hidden sm:flex items-center gap-1 font-semibold text-[#3E5C46] dark:text-[#88B795]">
@@ -296,12 +315,13 @@ export default function Navbar() {
 
             {/* Mobile Nav Links */}
             <div className="flex flex-col gap-1 pt-1">
-              {NAV_LINKS.map((link) => {
-                const isActive = pathname === link.href;
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname === item.href;
+                const label = locale === "en" ? item.labelEn : item.labelVi;
                 return (
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    key={item.href}
+                    href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`px-4 py-3 min-h-[44px] flex items-center rounded-xl text-sm font-semibold transition-all ${
                       isActive
@@ -309,7 +329,7 @@ export default function Navbar() {
                         : "text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800/60"
                     }`}
                   >
-                    {link.label}
+                    {label}
                   </Link>
                 );
               })}
@@ -318,22 +338,48 @@ export default function Navbar() {
             {/* Theme Toggle & Language in Mobile */}
             <div className="pt-3 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">Giao diện:</span>
+                <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                  {dict.common.themeLabel}
+                </span>
                 <ThemeToggle showLabel />
               </div>
-              <div className="inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-0.5 text-xs font-semibold text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60">
+
+              {/* Mobile Language Switcher */}
+              <div className="relative inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-1 text-xs font-bold text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 shadow-inner">
                 <button
                   type="button"
-                  onClick={() => setLang("VN")}
-                  className={`px-3 py-1.5 rounded-full ${lang === "VN" ? "bg-white dark:bg-[#2D4233] text-[#3E5C46] dark:text-white shadow-sm font-bold" : ""}`}
+                  onClick={() => setLocale("vi")}
+                  className={`relative px-3 py-1.5 rounded-full transition-colors duration-200 z-10 ${
+                    locale === "vi"
+                      ? "text-white"
+                      : "text-stone-500 dark:text-stone-400"
+                  }`}
                 >
+                  {locale === "vi" && (
+                    <motion.span
+                      layoutId="activeLangPillMobile"
+                      className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
+                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                    />
+                  )}
                   VN
                 </button>
                 <button
                   type="button"
-                  onClick={() => setLang("EN")}
-                  className={`px-3 py-1.5 rounded-full ${lang === "EN" ? "bg-white dark:bg-[#2D4233] text-[#3E5C46] dark:text-white shadow-sm font-bold" : ""}`}
+                  onClick={() => setLocale("en")}
+                  className={`relative px-3 py-1.5 rounded-full transition-colors duration-200 z-10 ${
+                    locale === "en"
+                      ? "text-white"
+                      : "text-stone-500 dark:text-stone-400"
+                  }`}
                 >
+                  {locale === "en" && (
+                    <motion.span
+                      layoutId="activeLangPillMobile"
+                      className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
+                      transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                    />
+                  )}
                   EN
                 </button>
               </div>
@@ -346,7 +392,9 @@ export default function Navbar() {
                 className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold shadow-md active:scale-95 transition-transform"
               >
                 <PhoneCall className="w-4 h-4" />
-                <span>Gọi Hotline: {settings.hotline1}</span>
+                <span>
+                  {locale === "en" ? "Call Hotline:" : "Gọi Hotline:"} {settings.hotline1}
+                </span>
               </a>
               <a
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
@@ -355,7 +403,7 @@ export default function Navbar() {
                 className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-sm font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
               >
                 <MapPin className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
-                <span>Mở Google Maps</span>
+                <span>{dict.common.openGoogleMaps}</span>
               </a>
             </div>
           </motion.div>

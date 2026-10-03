@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import LightboxModal, { LightboxPhoto } from "@/components/LightboxModal";
+import LightboxModal from "@/components/LightboxModal";
 import { useStoreStatus } from "@/lib/openingHours";
+import { useLanguage } from "@/context/LanguageContext";
+import { getStoreStatusI18n } from "@/lib/translations";
 import {
   Compass,
   Star,
@@ -71,6 +73,10 @@ const HOME_SPACE_PREVIEWS = [
 
 export default function HomePage() {
   const storeStatus = useStoreStatus();
+  const { locale, dict } = useLanguage();
+  const isEn = locale === "en";
+  const i18nStatus = getStoreStatusI18n(storeStatus, locale);
+
   const [settings, setSettings] = useState({
     isOpen: true,
     statusText: "Quán đang mở cửa đón khách",
@@ -171,10 +177,10 @@ export default function HomePage() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="px-2.5 py-0.5 rounded-full bg-emerald-800 text-emerald-200 text-[10px] font-bold uppercase tracking-wider">
                       {pinnedNews.category === "event" || pinnedNews.type === "event"
-                        ? "Sự Kiện"
+                        ? (isEn ? "Special Event" : "Sự Kiện")
                         : pinnedNews.category === "special" || pinnedNews.type === "special"
-                        ? "Món Đặc Sản"
-                        : "Bảng Tin Quán"}
+                        ? (isEn ? "Specialty" : "Món Đặc Sản")
+                        : dict.common.noticeBoard}
                     </span>
                     <span className="text-sm sm:text-base font-bold text-white">
                       {pinnedNews.title}
@@ -190,7 +196,7 @@ export default function HomePage() {
                   href="/menu"
                   className="px-4 py-2 rounded-full bg-[#F9F8F3] text-[#2D4233] text-xs font-bold hover:bg-white transition-all shadow-sm"
                 >
-                  Xem Thực Đơn
+                  {dict.common.viewMenu}
                 </Link>
               </div>
             </div>
@@ -202,35 +208,35 @@ export default function HomePage() {
           {/* Eyebrow Coordinate Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-200/80 dark:bg-[#1E2B22] text-xs font-semibold uppercase tracking-widest text-[#3E5C46] dark:text-[#88B795] mb-6 shadow-sm border border-stone-300/60 dark:border-stone-700/60">
             <Compass className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
-            <span>Tọa độ 11.99° N, 107.69° E • Gia Nghĩa, Đắk Nông</span>
+            <span>{dict.common.coordinates}</span>
           </div>
 
           {/* Hero Headlines */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-tight max-w-4xl mx-auto mb-4">
-            CẨM CÙ HOUSE <br />
+            {dict.home.heroTitleLine1} <br />
             <span className="italic font-normal text-[#7D5E4A] dark:text-[#E8A87C] text-2xl sm:text-4xl lg:text-5xl block mt-2">
-              Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
+              {dict.home.heroTitleLine2}
             </span>
           </h1>
 
           {/* Subtitle Description */}
           <p className="text-stone-600 dark:text-stone-300 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Thưởng thức tách cà phê Robusta rang củi nguyên bản, lắng nghe dòng suối róc rách giữa thung lũng xanh thanh bình miền cao nguyên Đắk Nông.
+            {dict.home.heroDescription}
           </p>
 
           {/* Trust Badges */}
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs sm:text-sm font-medium text-stone-700 dark:text-stone-300 mb-8">
             <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#1E2B22] shadow-sm border border-stone-200/80 dark:border-stone-700/60">
               <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-              100% Đề Xuất Hài Lòng
+              {dict.home.badgeRecommended}
             </span>
             <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#1E2B22] shadow-sm border border-stone-200/80 dark:border-stone-700/60">
               <DollarSign className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-              Mức Giá Bình Dân (20k - 45k)
+              {dict.home.badgePrice}
             </span>
             <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white dark:bg-[#1E2B22] shadow-sm border border-stone-200/80 dark:border-stone-700/60">
               <Leaf className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
-              Nguyên Liệu Xanh Sạch
+              {dict.home.badgeOrganic}
             </span>
           </div>
 
@@ -240,7 +246,7 @@ export default function HomePage() {
               href="/space"
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-7 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] hover:-translate-y-0.5"
             >
-              <span>Khám Phá Góc Suối</span>
+              <span>{dict.common.exploreStream}</span>
               <ArrowUpRight className="w-4 h-4" />
             </Link>
             <Link
@@ -248,14 +254,14 @@ export default function HomePage() {
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-7 py-3 rounded-full bg-white dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#F5F4EE] text-sm font-semibold hover:bg-stone-50 dark:hover:bg-[#28392E] border border-stone-300/80 dark:border-stone-700/60 transition-all shadow-sm hover:-translate-y-0.5"
             >
               <UtensilsCrossed className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-              <span>Xem Thực Đơn 50+ Món</span>
+              <span>{dict.common.viewMenu}</span>
             </Link>
             <a
               href="tel:0382851688"
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#F4EFEA] dark:bg-[#1E2B22] hover:bg-[#EAE2D9] text-[#2D4233] dark:text-[#88B795] text-sm font-semibold transition-all shadow-sm border border-stone-300/60 dark:border-stone-700/60 hover:-translate-y-0.5"
             >
               <PhoneCall className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-              <span>Hotline: 038 285 1688</span>
+              <span>Hotline: {settings.hotline1}</span>
             </a>
             <a
               href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
@@ -264,7 +270,7 @@ export default function HomePage() {
               className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] hover:bg-stone-200 dark:hover:bg-[#28392E] text-stone-700 dark:text-stone-300 text-sm font-semibold transition-all border border-stone-300/60 dark:border-stone-700/60"
             >
               <MapPin className="w-4 h-4 text-[#7D5E4A] dark:text-[#E8A87C]" />
-              <span>Chỉ Đường Tới Quán</span>
+              <span>{dict.common.getDirections}</span>
             </a>
           </div>
 
@@ -292,25 +298,25 @@ export default function HomePage() {
                 />
               </span>
               <span className="font-semibold text-stone-800 dark:text-stone-100">
-                {storeStatus.badgeText}
+                {i18nStatus.badgeText}
               </span>
             </div>
             <span>•</span>
             <div className="flex items-center gap-3 font-semibold text-[#2D4233] dark:text-[#88B795]">
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> {storeStatus.scheduleText}
+                <Clock className="w-3.5 h-3.5" /> {i18nStatus.scheduleText}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Thermometer className="w-3.5 h-3.5" /> 23°C
+                <Thermometer className="w-3.5 h-3.5" /> {dict.home.tempText}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Wind className="w-3.5 h-3.5" /> Gió mát nhẹ
+                <Wind className="w-3.5 h-3.5" /> {dict.home.windText}
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Droplets className="w-3.5 h-3.5" /> Nước trong veo
+                <Droplets className="w-3.5 h-3.5" /> {dict.home.waterText}
               </span>
             </div>
           </div>
@@ -322,25 +328,25 @@ export default function HomePage() {
           >
             <img
               src="/uploads/gallery/1788250253551-943009233.jpg"
-              alt="Chòi Gỗ Mộc Ngắm Đồi Xanh tại Cẩm Cù House Gia Nghĩa"
+              alt={dict.home.heroCardTitle}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-transparent flex items-end justify-between p-6 sm:p-10">
               <div className="text-left text-white">
                 <span className="text-xs uppercase font-semibold tracking-wider text-emerald-300">
-                  Không Gian Sinh Thái Suối Reo
+                  {dict.home.streamEcoSpace}
                 </span>
                 <p className="text-lg sm:text-2xl font-serif font-bold mt-1">
-                  Chòi Gỗ Mộc Ngắm Đồi Xanh &amp; Hiên Suối Thanh Bình
+                  {dict.home.heroCardTitle}
                 </p>
                 <p className="text-xs sm:text-sm text-stone-200 mt-1 max-w-xl">
-                  Hiên gỗ lợp lá thoáng đãng phóng tầm mắt ra thung lũng Đắk Nông lộng gió ban mai.
+                  {dict.home.heroCardDesc}
                 </p>
               </div>
 
               <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold group-hover:bg-[#3E5C46] transition-colors">
                 <Maximize2 className="w-3.5 h-3.5" />
-                <span>Xem lớn</span>
+                <span>{dict.common.viewLarger}</span>
               </div>
             </div>
           </div>
@@ -352,14 +358,14 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
                 <Flower2 className="w-3.5 h-3.5" />
-                <span>Nét Đẹp Bản Địa</span>
+                <span>{isEn ? "Highland Authenticity" : "Nét Đẹp Bản Địa"}</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-                Chuyện Cẩm Cù House • Góc Bình Yên Bên Dòng Suối
+                {dict.home.pillarsHeading}
               </h2>
             </div>
             <p className="text-sm sm:text-base text-stone-700 dark:text-stone-300 max-w-md">
-              Không ồn ào khói bụi, nơi đây chỉ có tiếng nước reo bên bờ đá và hương thơm nồng nàn của cà phê rang củi Đắk Nông.
+              {dict.home.pillarsSubheading}
             </p>
           </div>
 
@@ -370,12 +376,14 @@ export default function HomePage() {
                 <Coffee className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                Robusta Rang Củi
+                {dict.home.pillar2Title}
               </h3>
               <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                Tuyển chọn từng hạt cà phê chín mọng từ nương rẫy, rang thủ công bằng củi lửa mộc mạc lưu giữ hậu vị đậm đà.
+                {dict.home.pillar2Desc}
               </p>
-              <span className="text-xs font-semibold text-[#3E5C46] dark:text-[#88B795]">Hương vị truyền thống</span>
+              <span className="text-xs font-semibold text-[#3E5C46] dark:text-[#88B795]">
+                {isEn ? "Artisanal Roasting" : "Hương vị truyền thống"}
+              </span>
             </div>
 
             {/* Card 2 */}
@@ -384,12 +392,14 @@ export default function HomePage() {
                 <Waves className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                Dòng Suối Mát Lành
+                {dict.home.pillar1Title}
               </h3>
               <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                Dòng nước tự nhiên chảy qua bờ đá rêu phong, tạo nên khúc nhạc êm ả xua tan mọi mỏi mệt trong nhịp sống thường nhật.
+                {dict.home.pillar1Desc}
               </p>
-              <span className="text-xs font-semibold text-[#396663] dark:text-[#88B795]">Thiên nhiên 100%</span>
+              <span className="text-xs font-semibold text-[#396663] dark:text-[#88B795]">
+                {isEn ? "100% Pure Nature" : "Thiên nhiên 100%"}
+              </span>
             </div>
 
             {/* Card 3 */}
@@ -398,12 +408,16 @@ export default function HomePage() {
                 <Flower2 className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                Hoa Cẩm Cù Nở Rộ
+                {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
               </h3>
               <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà.
+                {isEn
+                  ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
+                  : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
               </p>
-              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">Biểu tượng quán</span>
+              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">
+                {isEn ? "Cafe Emblem" : "Biểu tượng quán"}
+              </span>
             </div>
 
             {/* Card 4 */}
@@ -412,12 +426,14 @@ export default function HomePage() {
                 <Leaf className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                Không Gian Sinh Thái
+                {dict.home.pillar4Title}
               </h3>
               <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                Khuôn viên xanh rợp bóng cây sầu riêng cổ và rặng tre ngà, mang lại nguồn không khí mát lành 22°C - 26°C quanh năm.
+                {dict.home.pillar4Desc}
               </p>
-              <span className="text-xs font-semibold text-[#7D5E4A] dark:text-[#E8A87C]">Bảo tồn tự nhiên</span>
+              <span className="text-xs font-semibold text-[#7D5E4A] dark:text-[#E8A87C]">
+                {isEn ? "Nature Preserved" : "Bảo tồn tự nhiên"}
+              </span>
             </div>
           </div>
         </section>
@@ -428,17 +444,17 @@ export default function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
                 <Waves className="w-3.5 h-3.5" />
-                <span>Không Gian Mở Bên Bờ Suối</span>
+                <span>{isEn ? "Open Stream Space" : "Không Gian Mở Bên Bờ Suối"}</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-                Góc Check-in &amp; Thư Thái Tự Nhiên
+                {isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"}
               </h2>
             </div>
             <Link
               href="/space"
               className="inline-flex items-center gap-2 text-sm font-semibold text-[#3E5C46] dark:text-[#88B795] hover:text-[#2D4233] dark:hover:text-emerald-300 transition-colors"
             >
-              <span>Xem toàn bộ 30+ góc ảnh không gian</span>
+              <span>{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh không gian"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -482,10 +498,10 @@ export default function HomePage() {
           <div className="text-center max-w-2xl mx-auto mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
               <Star className="w-3.5 h-3.5 fill-[#3E5C46] text-[#3E5C46] dark:fill-[#88B795] dark:text-[#88B795]" />
-              <span>Đánh Giá Từ Khách Hàng</span>
+              <span>{isEn ? "Guest Reviews" : "Đánh Giá Từ Khách Hàng"}</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-              Cảm Nhận Từ Lữ Khách Ghé Chơi
+              {isEn ? "Reflections from Visiting Guests" : "Cảm Nhận Từ Lữ Khách Ghé Chơi"}
             </h2>
           </div>
 
@@ -497,7 +513,9 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed mb-6 italic">
-                &ldquo;Không gian bờ suối quá đẹp và thư thái. Cà phê muối ở đây cực kỳ thơm béo, ngồi nhâm nhi nghe tiếng nước chảy cả buổi không biết chán.&rdquo;
+                {isEn
+                  ? "&ldquo;The riverside space is stunning and so relaxing. Salt coffee here is rich and creamy, sitting by the murmuring water all afternoon never gets old.&rdquo;"
+                  : "&ldquo;Không gian bờ suối quá đẹp và thư thái. Cà phê muối ở đây cực kỳ thơm béo, ngồi nhâm nhi nghe tiếng nước chảy cả buổi không biết chán.&rdquo;"}
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#3E5C46]/15 dark:bg-[#88B795]/20 flex items-center justify-center font-bold text-[#3E5C46] dark:text-[#88B795]">
@@ -505,7 +523,9 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Hoàng Nam</h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">Khách du lịch TP.HCM</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    {isEn ? "Visitor from HCMC" : "Khách du lịch TP.HCM"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -517,7 +537,9 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed mb-6 italic">
-                &ldquo;Đường vào rất dễ đi, xe ô tô 7 chỗ chạy vào tận sân thoải mái. Quán mộc mạc, nhiều góc chụp ảnh với hoa cẩm cù rất xinh xắn.&rdquo;
+                {isEn
+                  ? "&ldquo;The access road is smooth, 7-seater cars drive right into the yard comfortably. Rustic ambience, lovely photo corners with hoya flowers.&rdquo;"
+                  : "&ldquo;Đường vào rất dễ đi, xe ô tô 7 chỗ chạy vào tận sân thoải mái. Quán mộc mạc, nhiều góc chụp ảnh với hoa cẩm cù rất xinh xắn.&rdquo;"}
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#396663]/15 dark:bg-[#396663]/30 flex items-center justify-center font-bold text-[#396663] dark:text-emerald-300">
@@ -525,7 +547,9 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Thanh Thảo</h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">Khách địa phương Gia Nghĩa</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    {isEn ? "Local resident of Gia Nghia" : "Khách địa phương Gia Nghĩa"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -537,7 +561,9 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed mb-6 italic">
-                &ldquo;Trà hoa đu đủ rất đặc biệt, uống mát lành tốt cho sức khỏe. Đồ ăn sáng như bò kho bánh mì cũng rất ngon và giá cả hợp lý.&rdquo;
+                {isEn
+                  ? "&ldquo;Wild papaya flower tea is very special, soothing and health-promoting. Breakfast dishes like beef stew with bread are also delicious and reasonably priced.&rdquo;"
+                  : "&ldquo;Trà hoa đu đủ rất đặc biệt, uống mát lành tốt cho sức khỏe. Đồ ăn sáng như bò kho bánh mì cũng rất ngon và giá cả hợp lý.&rdquo;"}
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-amber-600/15 flex items-center justify-center font-bold text-amber-700 dark:text-amber-400">
@@ -545,7 +571,9 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Minh Trí</h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">Ghé thăm cuối tuần</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">
+                    {isEn ? "Weekend Guest" : "Ghé thăm cuối tuần"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -557,37 +585,39 @@ export default function HomePage() {
           <div className="bg-[#3E5C46] dark:bg-[#18261D] rounded-3xl p-8 sm:p-12 lg:p-16 text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8 border border-white/10">
             <div className="max-w-2xl">
               <span className="text-emerald-200 text-xs uppercase tracking-wider font-semibold">
-                Chào Đón Bạn Ghé Thăm
+                {isEn ? "Warmest Hospitality" : "Chào Đón Bạn Ghé Thăm"}
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-2 mb-4 leading-tight">
-                Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối
+                {isEn ? "Visit Cam Cu House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
               </h2>
               <p className="text-stone-200 text-sm sm:text-base leading-relaxed mb-6">
-                Địa chỉ: Hẻm 437 Hùng Vương, Phường Nghĩa Trung, Thành phố Gia Nghĩa, Tỉnh Đắk Nông. Lịch mở cửa: Thứ 2 - T5 (07:00 - 18:00) | Thứ 6 - CN (07:00 - 22:00).
+                {dict.common.addressFull}. {i18nStatus.scheduleText}.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-xs text-emerald-100">
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  Đường ô tô vào tận nơi
+                  {isEn ? "Direct car access" : "Đường ô tô vào tận nơi"}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  Chỗ đỗ xe rộng rãi miễn phí
+                  {isEn ? "Free spacious parking" : "Chỗ đỗ xe rộng rãi miễn phí"}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  Wifi cáp quang tốc độ cao
+                  {isEn ? "High-speed WiFi" : "Wifi cáp quang tốc độ cao"}
                 </span>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full lg:w-auto">
               <a
-                href="tel:0382851688"
+                href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
                 className="inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-lg hover:-translate-y-0.5"
               >
                 <PhoneCall className="w-5 h-5 text-[#3E5C46]" />
-                <span>Gọi Hotline: 038 285 1688</span>
+                <span>
+                  {isEn ? "Call Hotline:" : "Gọi Hotline:"} {settings.hotline1}
+                </span>
               </a>
               <a
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
@@ -596,7 +626,7 @@ export default function HomePage() {
                 className="inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5"
               >
                 <MapPin className="w-5 h-5 text-emerald-300" />
-                <span>Xem Bản Đồ Chỉ Đường</span>
+                <span>{dict.common.getDirections}</span>
               </a>
             </div>
           </div>
