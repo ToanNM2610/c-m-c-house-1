@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
+import IntroSplashScreen from "@/components/IntroSplashScreen";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
 import { getStoreStatusI18n } from "@/lib/translations";
@@ -181,6 +182,7 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-300 overflow-x-hidden w-full max-w-full">
+      <IntroSplashScreen />
       <Navbar />
 
       <main className="pt-20 sm:pt-28 overflow-x-hidden">

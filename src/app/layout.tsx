@@ -36,8 +36,6 @@ export const metadata: Metadata = {
   },
 };
 
-import IntroSplashScreen from "@/components/IntroSplashScreen";
-
 export default function RootLayout({
   children,
 }: {
@@ -68,7 +66,6 @@ export default function RootLayout({
       <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <LanguageProvider>
-            <IntroSplashScreen />
             {children}
           </LanguageProvider>
         </ThemeProvider>
