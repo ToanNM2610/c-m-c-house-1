@@ -184,8 +184,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main Header Container - Fixed Height & No Horizontal Overflow */}
-      <div className="h-14 sm:h-20 w-full px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
+      {/* Main Header Container */}
+      <div className="h-14 sm:h-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
         {/* Brand / Logo */}
         <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0 group btn-press-sm">
           <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 flex items-center justify-center text-[#3E5C46] dark:text-[#88B795] group-hover:bg-[#3E5C46] group-hover:text-white dark:group-hover:bg-[#88B795] dark:group-hover:text-[#121A15] transition-all duration-300 shadow-sm shrink-0">
@@ -231,8 +231,8 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Actions Deck: Exactly 3 neat controls on mobile (Theme, VN/EN, Hamburger) */}
-        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        {/* Actions Deck: Theme & VN/EN Language Switcher (plus Mobile Hamburger on mobile) */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 pr-1 sm:pr-2">
           {/* 1. Theme Toggle Button (Light / Dark) */}
           <ThemeToggle />
 
@@ -241,7 +241,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setLocale("vi")}
-              className={`relative px-2 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
+              className={`relative px-2.5 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
                 locale === "vi"
                   ? "text-white"
                   : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
@@ -260,7 +260,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setLocale("en")}
-              className={`relative px-2 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
+              className={`relative px-2.5 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
                 locale === "en"
                   ? "text-white"
                   : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
@@ -278,25 +278,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Hotline CTA (Desktop & Tablet only to prevent mobile overflow) */}
-          <a
-            href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-            className="btn-press hidden xl:inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-[0_4px_14px_rgba(62,92,70,0.25)] hover:-translate-y-0.5 shrink-0"
-          >
-            <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
-            <span>{settings.hotline1}</span>
-          </a>
-
-          {/* Admin link (Desktop only) */}
-          <a
-            href="https://admin.camcuhouse.online"
-            title={dict.common.admin}
-            className="btn-press hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white items-center justify-center shrink-0 shadow-sm"
-          >
-            <User className="w-4 h-4" />
-          </a>
-
-          {/* 3. Mobile Hamburger Menu Button (Min 40-44px touch target) */}
+          {/* 3. Mobile Hamburger Menu Button (lg:hidden) */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -392,6 +374,13 @@ export default function Navbar() {
                 >
                   <Navigation className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
                   <span>{dict.common.openGoogleMaps}</span>
+                </a>
+                <a
+                  href="https://admin.camcuhouse.online"
+                  className="btn-press w-full min-h-[40px] flex items-center justify-center gap-2 py-2.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 text-xs font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>{dict.common.admin}</span>
                 </a>
               </div>
             </motion.div>
