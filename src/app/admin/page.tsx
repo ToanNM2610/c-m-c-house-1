@@ -1279,7 +1279,7 @@ export default function AdminPage() {
                               type="button"
                               onClick={() => handleDeleteAnnouncement(a.id)}
                               title="Xóa tin này"
-                              className="p-2 text-stone-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                              className="btn-press p-2 text-stone-400 hover:text-red-500 hover:bg-red-50 hover:scale-110 active:scale-95 rounded-lg transition-all duration-200"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1327,12 +1327,12 @@ export default function AdminPage() {
                             <button
                               type="button"
                               onClick={() => handleToggleStock(item.id, inStock)}
-                              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                              className={`btn-press relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                                 inStock ? "bg-[#3E5C46]" : "bg-stone-300"
                               }`}
                             >
                               <span
-                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-out transform-gpu ${
                                   inStock ? "translate-x-5" : "translate-x-0"
                                 }`}
                               />
@@ -1844,7 +1844,7 @@ export default function AdminPage() {
                               e.stopPropagation();
                               handleDeletePhoto(photo.id);
                             }}
-                            className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors shadow-sm z-10"
+                            className="btn-press absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-red-600 hover:scale-110 active:scale-95 transition-all duration-200 shadow-sm z-10"
                             title="Xóa ảnh này khỏi thư viện"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1957,12 +1957,12 @@ export default function AdminPage() {
                       <button
                         type="button"
                         onClick={() => setSettings({ ...settings, isOpen: !settings.isOpen })}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                        className={`btn-press relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
                           settings.isOpen ? "bg-[#3E5C46]" : "bg-red-400"
                         }`}
                       >
                         <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200 ease-out transform-gpu ${
                             settings.isOpen ? "translate-x-5" : "translate-x-0"
                           }`}
                         />

@@ -107,7 +107,7 @@ export default function LightboxModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         onClick={onClose}
         className="fixed inset-0 z-[100] flex flex-col items-center justify-between bg-black/92 backdrop-blur-md p-3 sm:p-6 select-none"
         onTouchStart={handleTouchStart}
@@ -132,7 +132,7 @@ export default function LightboxModal({
             type="button"
             onClick={onClose}
             aria-label="Đóng cửa sổ xem ảnh"
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-all border border-white/15 shadow-lg hover:scale-105"
+            className="btn-press w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/10 hover:bg-white/20 active:bg-white/30 text-white flex items-center justify-center transition-all border border-white/15 shadow-lg"
           >
             <X className="w-5 h-5" />
           </button>
@@ -149,7 +149,7 @@ export default function LightboxModal({
               type="button"
               onClick={handlePrev}
               aria-label="Ảnh trước đó"
-              className="absolute left-1 sm:left-4 z-20 w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center transition-all hover:scale-110 shadow-xl"
+              className="btn-press absolute left-1 sm:left-4 z-20 w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center transition-all shadow-xl"
             >
               <ChevronLeft className="w-6 h-6" />
             </button>
@@ -161,11 +161,11 @@ export default function LightboxModal({
               key={currentPhoto.url}
               src={currentPhoto.url}
               alt={currentPhoto.title}
-              initial={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.28, ease: "easeOut" }}
-              className="max-h-[68vh] sm:max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl drop-shadow-[0_15px_35px_rgba(0,0,0,0.6)]"
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="max-h-[68vh] sm:max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl drop-shadow-[0_15px_35px_rgba(0,0,0,0.6)] transform-gpu"
             />
           </div>
 
@@ -175,7 +175,7 @@ export default function LightboxModal({
               type="button"
               onClick={handleNext}
               aria-label="Ảnh tiếp theo"
-              className="absolute right-1 sm:right-4 z-20 w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center transition-all hover:scale-110 shadow-xl"
+              className="btn-press absolute right-1 sm:right-4 z-20 w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center transition-all shadow-xl"
             >
               <ChevronRight className="w-6 h-6" />
             </button>

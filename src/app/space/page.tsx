@@ -258,7 +258,7 @@ export default function SpacePage() {
                     key={cat.id}
                     onClick={() => setActiveFilter(cat.id)}
                     type="button"
-                    className={`min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
+                    className={`btn-press-sm min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
                       activeFilter === cat.id
                         ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
                         : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
@@ -283,24 +283,24 @@ export default function SpacePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredItems.map((item, idx) => (
               <div
-                key={item.id}
+                key={`${activeFilter}_${item.id}`}
                 onClick={() => handleOpenLightbox(idx)}
-                className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1"
+                className={`animate-fade-in stagger-${(idx % 8) + 1} group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] transform-gpu`}
               >
                 <img
                   src={item.image}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out transform-gpu"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/25 to-transparent flex flex-col justify-end p-4 text-white">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5">
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
                     {item.subtitle}
                   </span>
                   <h3 className="font-serif text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-stone-200/90 line-clamp-2 mt-0.5">
+                  <p className="text-xs text-stone-200/90 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
                     {item.description}
                   </p>
                 </div>
@@ -335,7 +335,7 @@ export default function SpacePage() {
             <button
               type="button"
               onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-              className={`min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
+              className={`btn-press min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
                 isPlayingAudio
                   ? "bg-[#396663] text-white"
                   : "bg-[#3E5C46] text-white hover:bg-[#2D4233]"
@@ -425,14 +425,14 @@ export default function SpacePage() {
                   href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
+                  className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
                 >
                   <span>{dict.common.getDirections}</span>
                   <Navigation className="w-4 h-4" />
                 </a>
                 <a
                   href="tel:0382851688"
-                  className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] hover:bg-stone-200 dark:hover:bg-[#28392E] transition-colors text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60"
+                  className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] hover:bg-stone-200 dark:hover:bg-[#28392E] transition-colors text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60"
                 >
                   <PhoneCall className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
                   <span>

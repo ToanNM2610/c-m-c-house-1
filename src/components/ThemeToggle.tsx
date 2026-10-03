@@ -34,7 +34,7 @@ export default function ThemeToggle({ className = "", showLabel = false }: Theme
     <button
       type="button"
       onClick={toggleTheme}
-      className={`relative inline-flex items-center justify-center gap-2 w-9 h-9 sm:w-10 sm:h-10 min-w-[40px] min-h-[40px] rounded-full transition-all duration-300 shadow-sm ${
+      className={`btn-press relative inline-flex items-center justify-center gap-2 w-9 h-9 sm:w-10 sm:h-10 min-w-[40px] min-h-[40px] rounded-full transition-all duration-300 shadow-sm ${
         isDark
           ? "bg-[#1E2B22] hover:bg-[#25362B] text-amber-300 border border-stone-700/70 hover:shadow-emerald-950/40"
           : "bg-white hover:bg-stone-50 text-[#3E5C46] border border-stone-200/80 hover:shadow-stone-200"

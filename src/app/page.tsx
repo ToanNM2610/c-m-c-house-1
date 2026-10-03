@@ -88,6 +88,25 @@ export default function HomePage() {
   const [announcements, setAnnouncements] = useState<SharedAnnouncement[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Soft Parallax offset: di chuyển chậm hơn chữ phía trước 1 nhịp nhẹ (tối đa translateY 12-14px)
+  const heroParallaxOffset = Math.min(Math.round(scrollY * 0.04), 14);
 
   useEffect(() => {
     // 1. Immediately hydrate from Shared Storage & Cookie (survives F5)
@@ -194,7 +213,7 @@ export default function HomePage() {
               <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                 <Link
                   href="/menu"
-                  className="px-4 py-2 rounded-full bg-[#F9F8F3] text-[#2D4233] text-xs font-bold hover:bg-white transition-all shadow-sm"
+                  className="btn-press px-4 py-2 rounded-full bg-[#F9F8F3] text-[#2D4233] text-xs font-bold hover:bg-white transition-all shadow-sm"
                 >
                   {dict.common.viewMenu}
                 </Link>
@@ -240,25 +259,25 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons with Micro-interactions */}
           <div className="flex flex-wrap items-center justify-center gap-3.5 mb-10">
             <Link
               href="/space"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-7 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] hover:-translate-y-0.5"
+              className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-7 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] hover:-translate-y-0.5"
             >
               <span>{dict.common.exploreStream}</span>
               <ArrowUpRight className="w-4 h-4" />
             </Link>
             <Link
               href="/menu"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-7 py-3 rounded-full bg-white dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#F5F4EE] text-sm font-semibold hover:bg-stone-50 dark:hover:bg-[#28392E] border border-stone-300/80 dark:border-stone-700/60 transition-all shadow-sm hover:-translate-y-0.5"
+              className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-7 py-3 rounded-full bg-white dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#F5F4EE] text-sm font-semibold hover:bg-stone-50 dark:hover:bg-[#28392E] border border-stone-300/80 dark:border-stone-700/60 transition-all shadow-sm hover:-translate-y-0.5"
             >
               <UtensilsCrossed className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
               <span>{dict.common.viewMenu}</span>
             </Link>
             <a
               href="tel:0382851688"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#F4EFEA] dark:bg-[#1E2B22] hover:bg-[#EAE2D9] text-[#2D4233] dark:text-[#88B795] text-sm font-semibold transition-all shadow-sm border border-stone-300/60 dark:border-stone-700/60 hover:-translate-y-0.5"
+              className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#F4EFEA] dark:bg-[#1E2B22] hover:bg-[#EAE2D9] text-[#2D4233] dark:text-[#88B795] text-sm font-semibold transition-all shadow-sm border border-stone-300/60 dark:border-stone-700/60 hover:-translate-y-0.5"
             >
               <PhoneCall className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
               <span>Hotline: {settings.hotline1}</span>
@@ -267,33 +286,24 @@ export default function HomePage() {
               href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] hover:bg-stone-200 dark:hover:bg-[#28392E] text-stone-700 dark:text-stone-300 text-sm font-semibold transition-all border border-stone-300/60 dark:border-stone-700/60"
+              className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] hover:bg-stone-200 dark:hover:bg-[#28392E] text-stone-700 dark:text-stone-300 text-sm font-semibold transition-all border border-stone-300/60 dark:border-stone-700/60"
             >
               <MapPin className="w-4 h-4 text-[#7D5E4A] dark:text-[#E8A87C]" />
               <span>{dict.common.getDirections}</span>
             </a>
           </div>
 
-          {/* Real-time Atmospheric Meter Badge & Store Status (GMT+7 Live Status) */}
+          {/* Real-time Atmospheric Meter Badge & Store Status (GMT+7 Live Status with Breathing Pulse Ring) */}
           <div className="inline-flex flex-wrap items-center justify-center gap-3 px-5 py-2.5 rounded-full bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/80 dark:border-stone-700/60 shadow-sm text-stone-600 dark:text-stone-300 text-xs mb-10 transition-colors">
             <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
+              <span className="relative flex h-2.5 w-2.5 items-center justify-center">
                 <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full ${
+                  className={`w-2.5 h-2.5 rounded-full ${
                     storeStatus.badgeType === "open"
-                      ? "bg-emerald-400"
+                      ? "bg-emerald-500 animate-pulse-ring-emerald"
                       : storeStatus.badgeType === "closing_soon"
-                      ? "bg-amber-400"
-                      : "bg-rose-400"
-                  } opacity-75`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                    storeStatus.badgeType === "open"
-                      ? "bg-emerald-500"
-                      : storeStatus.badgeType === "closing_soon"
-                      ? "bg-amber-500"
-                      : "bg-rose-500"
+                      ? "bg-amber-500 animate-pulse-ring-amber"
+                      : "bg-rose-500 animate-pulse-ring-rose"
                   }`}
                 />
               </span>
@@ -321,15 +331,16 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Hero Stream Photo Frame (Authentic High-Res Cafe Stream Photo) */}
+          {/* Hero Stream Photo Frame with Soft Parallax */}
           <div
             onClick={() => handleOpenLightbox(0)}
-            className="group relative cursor-pointer max-w-5xl mx-auto h-72 sm:h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-stone-700/60"
+            style={{ transform: `translateY(${heroParallaxOffset}px)` }}
+            className="group relative cursor-pointer max-w-5xl mx-auto h-72 sm:h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-stone-700/60 transform-gpu transition-transform duration-100 ease-out will-change-transform"
           >
             <img
               src="/uploads/gallery/1788250253551-943009233.jpg"
               alt={dict.home.heroCardTitle}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out transform-gpu"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-transparent flex items-end justify-between p-6 sm:p-10">
               <div className="text-left text-white">
@@ -452,7 +463,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/space"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#3E5C46] dark:text-[#88B795] hover:text-[#2D4233] dark:hover:text-emerald-300 transition-colors"
+              className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[#3E5C46] dark:text-[#88B795] hover:text-[#2D4233] dark:hover:text-emerald-300 transition-colors"
             >
               <span>{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh không gian"}</span>
               <ArrowRight className="w-4 h-4" />
@@ -465,22 +476,22 @@ export default function HomePage() {
               <div
                 key={photo.url}
                 onClick={() => handleOpenLightbox(idx)}
-                className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1"
+                className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] transform-gpu"
               >
                 <img
                   src={photo.url}
                   alt={photo.title}
                   loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out transform-gpu"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.subtitle}
                   </span>
                   <h3 className="font-serif text-sm sm:text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors">
                     {photo.title}
                   </h3>
-                  <p className="text-[11px] text-stone-200/90 line-clamp-1 mt-0.5">
+                  <p className="text-[11px] text-stone-200/90 line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.caption}
                   </p>
                 </div>
@@ -612,7 +623,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full lg:w-auto">
               <a
                 href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-lg hover:-translate-y-0.5"
+                className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-lg hover:-translate-y-0.5"
               >
                 <PhoneCall className="w-5 h-5 text-[#3E5C46]" />
                 <span>
@@ -623,7 +634,7 @@ export default function HomePage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5"
+                className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5"
               >
                 <MapPin className="w-5 h-5 text-emerald-300" />
                 <span>{dict.common.getDirections}</span>

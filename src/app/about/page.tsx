@@ -258,7 +258,7 @@ export default function AboutPage() {
             <div className="flex flex-wrap items-center justify-center gap-4">
               <a
                 href="tel:0382851688"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-md"
+                className="btn-press inline-flex items-center gap-2 px-7 py-3 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-md"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>{isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}</span>
@@ -267,7 +267,7 @@ export default function AboutPage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md"
+                className="btn-press inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md"
               >
                 <Navigation className="w-4 h-4 text-emerald-300" />
                 <span>{dict.common.openGoogleMaps}</span>

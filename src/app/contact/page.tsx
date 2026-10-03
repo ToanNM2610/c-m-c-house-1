@@ -149,7 +149,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <a
                     href="tel:0382851688"
-                    className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center justify-between group"
+                    className="btn-press p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center justify-between group shadow-sm"
                   >
                     <div className="flex flex-col">
                       <span className="text-xs text-stone-500 dark:text-stone-400">Hotline 1 (Zalo)</span>
@@ -160,7 +160,7 @@ export default function ContactPage() {
 
                   <a
                     href="tel:0774659000"
-                    className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center justify-between group"
+                    className="btn-press p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center justify-between group shadow-sm"
                   >
                     <div className="flex flex-col">
                       <span className="text-xs text-stone-500 dark:text-stone-400">Hotline 2</span>
@@ -212,7 +212,7 @@ export default function ContactPage() {
                     href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-4 px-6 rounded-full bg-[#3E5C46] text-white text-sm font-bold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] flex items-center justify-center gap-2 active:scale-[0.99]"
+                    className="btn-press w-full py-4 px-6 rounded-full bg-[#3E5C46] text-white text-sm font-bold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] flex items-center justify-center gap-2"
                   >
                     <Navigation className="w-4 h-4" />
                     <span>{dict.common.openGoogleMaps}</span>
@@ -241,7 +241,7 @@ export default function ContactPage() {
                     href="https://www.facebook.com/share/1DVLMySW8H/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3.5 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center gap-3"
+                    className="btn-press p-3.5 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center gap-3 shadow-sm"
                   >
                     <Share2 className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
                     <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">Facebook</span>
@@ -251,7 +251,7 @@ export default function ContactPage() {
                     href="https://www.tiktok.com/@camcuhousedaknong"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3.5 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center gap-3"
+                    className="btn-press p-3.5 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center gap-3 shadow-sm"
                   >
                     <span className="font-bold text-xs text-[#3E5C46] dark:text-[#88B795]">TT</span>
                     <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">TikTok</span>
@@ -261,7 +261,7 @@ export default function ContactPage() {
                     href="https://youtube.com/@Cam_Cu_House"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3.5 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center gap-3"
+                    className="btn-press p-3.5 rounded-xl bg-stone-50 dark:bg-[#16231A] hover:bg-stone-100 dark:hover:bg-white/5 border border-stone-200 dark:border-stone-700/60 transition-colors flex items-center gap-3 shadow-sm"
                   >
                     <span className="text-red-500 font-bold text-xs">YT</span>
                     <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">YouTube</span>

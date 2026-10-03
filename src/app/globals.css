@@ -38,7 +38,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
 }
 
 h1, h2, h3, h4, .font-serif, .font-display, .font-headline {
@@ -56,6 +56,144 @@ html.dark body {
   color: #F5F4EE !important;
 }
 
+/* ==========================================================================
+   ANIMATION KEYFRAMES & UTILITY MOTION SYSTEM (60 FPS GPU-OPTIMIZED)
+   ========================================================================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes pulseRingAmber {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+@keyframes pulseRingRose {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(244, 63, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
+  }
+}
+
+/* Custom Animation Utility Classes */
+.animate-fade-in {
+  animation: fadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-fade-up {
+  animation: fadeUp 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-pulse-ring-emerald {
+  animation: pulseRing 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-ring-amber {
+  animation: pulseRingAmber 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-ring-rose {
+  animation: pulseRingRose 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Stagger Utilities */
+.stagger-1 { animation-delay: 35ms; }
+.stagger-2 { animation-delay: 70ms; }
+.stagger-3 { animation-delay: 105ms; }
+.stagger-4 { animation-delay: 140ms; }
+.stagger-5 { animation-delay: 175ms; }
+.stagger-6 { animation-delay: 210ms; }
+.stagger-7 { animation-delay: 245ms; }
+.stagger-8 { animation-delay: 280ms; }
+
+/* Micro-interactions & Transform Utilities */
+.btn-press {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, background-color 200ms ease;
+  will-change: transform;
+}
+.btn-press:active {
+  transform: scale(0.95);
+}
+
+.btn-press-sm {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.btn-press-sm:active {
+  transform: scale(0.97);
+}
+
+.hover-card-zoom {
+  overflow: hidden;
+}
+.hover-card-zoom img {
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.hover-card-zoom:hover img {
+  transform: scale(1.05);
+}
+
+/* Hardware Acceleration Helpers */
+.transform-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* Hide scrollbar for clean luxury feel */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -64,4 +202,3 @@ html.dark body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-

@@ -170,9 +170,9 @@ export default function MenuPage() {
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
                     type="button"
-                    className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
+                    className={`btn-press-sm shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
                       isActive
-                        ? "bg-[#3E5C46] text-white shadow-sm"
+                        ? "bg-[#3E5C46] text-white shadow-sm font-bold"
                         : "bg-stone-100 dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white border border-stone-200/60 dark:border-stone-700/60"
                     }`}
                   >
@@ -189,7 +189,7 @@ export default function MenuPage() {
                 placeholder={dict.menu.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-[#1E2B22] text-stone-800 dark:text-stone-100 rounded-full text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-inner"
+                className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-[#1E2B22] text-stone-800 dark:text-stone-100 rounded-full text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-inner transition-colors duration-200"
               />
               <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -199,12 +199,12 @@ export default function MenuPage() {
         {/* Main Menu Grid Layout */}
         <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 flex flex-col gap-10">
           {/* Spotlight Story Card */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors duration-200">
+          <div className="group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm hover:shadow-lg hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300">
             <div className="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] relative">
               <img
                 src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
                 alt="Cà phê muối Đắk Nông"
-                className={`w-full h-full object-cover transition-transform duration-500 hover:scale-105 ${
+                className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 transform-gpu ${
                   isSignatureOutOfStock ? "grayscale-[40%] opacity-80" : ""
                 }`}
               />
@@ -239,7 +239,7 @@ export default function MenuPage() {
               <div className="pt-2 flex items-center gap-3">
                 <a
                   href="tel:0382851688"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
+                  className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
                 >
                   <PhoneCall className="w-4 h-4" />
                   <span>
@@ -262,12 +262,12 @@ export default function MenuPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
-              {filteredItems.map((item) => {
+              {filteredItems.map((item, idx) => {
                 const isOutOfStock = item.inStock === false;
                 return (
                   <div
-                    key={item.id}
-                    className={`flex items-start justify-between py-2.5 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-2 rounded-xl transition-all ${
+                    key={`${activeCategory}_${searchQuery}_${item.id}`}
+                    className={`animate-fade-in stagger-${(idx % 8) + 1} flex items-start justify-between py-2.5 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-2 rounded-xl transition-all duration-200 hover:-translate-y-0.5 ${
                       isOutOfStock
                         ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 grayscale-[30%]"
                         : "hover:bg-stone-50 dark:hover:bg-white/5"
@@ -319,7 +319,7 @@ export default function MenuPage() {
                         <a
                           href="tel:0382851688"
                           title={isEn ? "Call to order" : "Gọi đặt món"}
-                          className="w-7 h-7 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors"
+                          className="btn-press-sm w-7 h-7 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors shadow-sm"
                         >
                           <Plus className="w-3.5 h-3.5" />
                         </a>
@@ -360,7 +360,7 @@ export default function MenuPage() {
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full md:w-auto">
               <a
                 href="tel:0382851688"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] shadow-md transition-all"
+                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] shadow-md transition-all"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>
@@ -371,7 +371,7 @@ export default function MenuPage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60 hover:bg-stone-50 dark:hover:bg-white/10 transition-colors"
+                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60 hover:bg-stone-50 dark:hover:bg-white/10 transition-colors"
               >
                 <Navigation className="w-4 h-4" />
                 <span>{isEn ? "Visit in Person" : "Ghé Thăm Trực Tiếp"}</span>

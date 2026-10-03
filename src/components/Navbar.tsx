@@ -119,23 +119,23 @@ export default function Navbar() {
   const pinnedNews =
     announcements.find((a) => a.isPinned || a.isHighlighted) || announcements[0] || null;
 
-  // Status badge color helpers
-  const getDotColor = () => {
-    if (storeStatus.badgeType === "open") return "bg-emerald-400";
-    if (storeStatus.badgeType === "closing_soon") return "bg-amber-400";
-    return "bg-rose-400";
+  // Status badge color & breathing pulse ring helpers
+  const getDotClass = () => {
+    if (storeStatus.badgeType === "open") return "bg-emerald-400 animate-pulse-ring-emerald";
+    if (storeStatus.badgeType === "closing_soon") return "bg-amber-400 animate-pulse-ring-amber";
+    return "bg-rose-400 animate-pulse-ring-rose";
   };
 
-  const getPillDotColor = () => {
-    if (storeStatus.badgeType === "open") return "bg-emerald-500";
-    if (storeStatus.badgeType === "closing_soon") return "bg-amber-500";
-    return "bg-rose-500";
+  const getPillDotClass = () => {
+    if (storeStatus.badgeType === "open") return "bg-emerald-500 animate-pulse-ring-emerald";
+    if (storeStatus.badgeType === "closing_soon") return "bg-amber-500 animate-pulse-ring-amber";
+    return "bg-rose-500 animate-pulse-ring-rose";
   };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80 shadow-[0_2px_12px_rgba(37,51,38,0.04)] transition-colors duration-300">
       {/* Top Announcement Bar */}
-      <div className="w-full bg-[#2D4233] dark:bg-[#16231A] text-stone-200 text-[11px] sm:text-xs py-1.5 px-4 border-b border-stone-800/20 dark:border-stone-800/60">
+      <div className="w-full bg-[#2D4233] dark:bg-[#16231A] text-stone-200 text-[11px] sm:text-xs py-1.5 px-4 border-b border-stone-800/20 dark:border-stone-800/60 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-hidden truncate">
             <span className="bg-[#3E5C46] px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
@@ -150,7 +150,7 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-3 shrink-0 text-stone-300">
             <span className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${getDotColor()} ${storeStatus.isOpen ? "animate-pulse" : ""}`} />
+              <span className={`w-2 h-2 rounded-full ${getDotClass()}`} />
               <span className="font-semibold text-white">
                 {i18nStatus.shortBadge}
               </span>
@@ -166,7 +166,7 @@ export default function Navbar() {
       {/* Main Header Container */}
       <div className="h-16 sm:h-20 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Brand / Logo */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
+        <Link href="/" className="flex items-center gap-3 shrink-0 group btn-press-sm">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 flex items-center justify-center text-[#3E5C46] dark:text-[#88B795] group-hover:bg-[#3E5C46] group-hover:text-white dark:group-hover:bg-[#88B795] dark:group-hover:text-[#121A15] transition-all duration-300 shadow-sm">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-current animate-pulse" />
           </div>
@@ -183,7 +183,7 @@ export default function Navbar() {
           <div className="hidden xl:flex items-center gap-1.5 ml-2 px-3 py-1 bg-stone-100 dark:bg-[#1E2B22] rounded-full text-stone-700 dark:text-stone-300 text-xs border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors">
             <Clock className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
             <span className="flex items-center gap-1.5">
-              <span className={`w-1.5 h-1.5 rounded-full ${getPillDotColor()} ${storeStatus.isOpen ? "animate-pulse" : ""}`} />
+              <span className={`w-2 h-2 rounded-full ${getPillDotClass()}`} />
               <span className="font-semibold">{i18nStatus.shortBadge}</span>
             </span>
           </div>
@@ -198,7 +198,7 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 ${
+                className={`relative px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 btn-press-sm ${
                   isActive
                     ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
                     : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
@@ -220,7 +220,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setLocale("vi")}
-              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 ${
+              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm ${
                 locale === "vi"
                   ? "text-white"
                   : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
@@ -239,7 +239,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setLocale("en")}
-              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 ${
+              className={`relative px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm ${
                 locale === "en"
                   ? "text-white"
                   : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
@@ -260,7 +260,7 @@ export default function Navbar() {
           {/* Hotline CTA */}
           <a
             href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-            className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-[0_4px_14px_rgba(62,92,70,0.25)] hover:-translate-y-0.5 shrink-0"
+            className="btn-press inline-flex items-center justify-center gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-[0_4px_14px_rgba(62,92,70,0.25)] hover:-translate-y-0.5 shrink-0"
           >
             <PhoneCall className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-bounce" />
             <span className="hidden sm:inline">
@@ -273,7 +273,7 @@ export default function Navbar() {
           <a
             href="https://admin.camcuhouse.online"
             title={dict.common.admin}
-            className="w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white flex items-center justify-center shrink-0 shadow-sm transition-transform hover:scale-105"
+            className="btn-press w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white flex items-center justify-center shrink-0 shadow-sm"
           >
             <User className="w-4 h-4" />
           </a>
@@ -282,7 +282,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-[#2A3B30] transition-colors border border-stone-200 dark:border-stone-700/60"
+            className="btn-press lg:hidden w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-[#2A3B30] transition-colors border border-stone-200 dark:border-stone-700/60"
             aria-label="Toggle Navigation"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
@@ -302,7 +302,7 @@ export default function Navbar() {
             {/* Realtime Status Bar in Mobile Drawer */}
             <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800 text-xs text-stone-600 dark:text-stone-300">
               <span className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full ${getPillDotColor()} ${storeStatus.isOpen ? "animate-pulse" : ""}`} />
+                <span className={`w-2.5 h-2.5 rounded-full ${getPillDotClass()}`} />
                 <span className="font-bold text-stone-900 dark:text-white">
                   {i18nStatus.badgeText}
                 </span>
@@ -389,7 +389,7 @@ export default function Navbar() {
             <div className="pt-2 flex flex-col sm:flex-row gap-2">
               <a
                 href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold shadow-md active:scale-95 transition-transform"
+                className="btn-press w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-[#3E5C46] text-white text-sm font-semibold shadow-md"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>
@@ -400,7 +400,7 @@ export default function Navbar() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-sm font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
+                className="btn-press w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-sm font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
               >
                 <MapPin className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
                 <span>{dict.common.openGoogleMaps}</span>
