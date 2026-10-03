@@ -41,7 +41,23 @@ export interface TranslationDictionary {
     temporarilyClosed: string;
     seeYouTomorrow: string;
   };
+  introSplash: {
+    skip: string;
+    slogan: string;
+  };
   home: {
+    introBadge: string;
+    introTitle: string;
+    introDesc: string;
+    introMetric1Val: string;
+    introMetric1Label: string;
+    introMetric2Val: string;
+    introMetric2Label: string;
+    introMetric3Val: string;
+    introMetric3Label: string;
+    introCta: string;
+    introPhotoMainCaption: string;
+    introPhotoSubCaption: string;
     heroTitleLine1: string;
     heroTitleLine2: string;
     heroDescription: string;
@@ -146,7 +162,24 @@ export const translations: Record<Locale, TranslationDictionary> = {
       temporarilyClosed: "Tạm nghỉ",
       seeYouTomorrow: "Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ngày mai",
     },
+    introSplash: {
+      skip: "Bỏ qua ✕",
+      slogan: "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá • Đắk Nông",
+    },
     home: {
+      introBadge: "🌿 VỀ CẨM CÙ HOUSE",
+      introTitle: "Nơi thời gian lắng lại cùng tiếng suối róc rách",
+      introDesc:
+        "Nép mình bên dòng suối đá mát rượi của cao nguyên Gia Nghĩa, Cẩm Cù House gìn giữ nét mộc mạc nguyên bản. Những hạt cà phê Robusta chín mọng được thu hái từ rẫy đất đỏ bazan, rang củi thủ công đượm mùi khói thơm ấm nồng, hòa quyện cùng làn gió mát và thanh âm suối reo thanh khiết.",
+      introMetric1Val: "800m+",
+      introMetric1Label: "Độ cao cao nguyên",
+      introMetric2Val: "100%",
+      introMetric2Label: "Robusta rang củi mộc",
+      introMetric3Val: "0 khói bụi",
+      introMetric3Label: "Thiên nhiên thuần khiết",
+      introCta: "Đọc trọn vẹn câu chuyện →",
+      introPhotoMainCaption: "Dòng suối đá tự nhiên róc rách quanh năm",
+      introPhotoSubCaption: "Góc chòi gỗ & Cà phê muối bốc khói",
       heroTitleLine1: "CẨM CÙ HOUSE",
       heroTitleLine2: "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá",
       heroDescription:
@@ -270,7 +303,24 @@ export const translations: Record<Locale, TranslationDictionary> = {
       temporarilyClosed: "Temporarily Closed",
       seeYouTomorrow: "Currently Closed • See you tomorrow at 07:00",
     },
+    introSplash: {
+      skip: "Skip ✕",
+      slogan: "A Rustic Sanctuary by the Stream • Dak Nong",
+    },
     home: {
+      introBadge: "🌿 ABOUT CAM CU HOUSE",
+      introTitle: "Where time slows down by the whispering stream",
+      introDesc:
+        "Nestled beside the cool rock stream of Gia Nghia highlands, Cam Cu House preserves pristine rustic tranquility. Ripe Robusta cherries hand-picked from fertile volcanic soils are artisanal firewood-roasted with a warm smoky aroma, harmonizing with the mountain breeze and the pure melody of flowing water.",
+      introMetric1Val: "800m+",
+      introMetric1Label: "Highland Elevation",
+      introMetric2Val: "100%",
+      introMetric2Label: "Wood-fired Robusta",
+      introMetric3Val: "0 Pollution",
+      introMetric3Label: "Pristine Nature",
+      introCta: "Read Our Full Story →",
+      introPhotoMainCaption: "Natural pebble stream flowing year-round",
+      introPhotoSubCaption: "Wooden deck & Steaming salt coffee",
       heroTitleLine1: "CAM CU HOUSE",
       heroTitleLine2: "A Rustic Retreat by the Rock Stream",
       heroDescription:

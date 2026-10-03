@@ -362,6 +362,112 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* INTRO SECTION: ARTISTIC STORY & BENTO VISUAL COLLAGE */}
+        <section id="intro" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 border-b border-stone-200/70 dark:border-stone-800/60">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            {/* Left Column: Artistic Narrative & Highlight Metrics (7 cols on lg) */}
+            <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 border border-[#3E5C46]/20 dark:border-[#88B795]/30 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold w-fit shadow-xs">
+                <Leaf className="w-3.5 h-3.5" />
+                <span>{dict.home.introBadge}</span>
+              </div>
+
+              {/* Title */}
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-[1.2]">
+                {dict.home.introTitle}
+              </h2>
+
+              {/* Story Paragraph */}
+              <p className="text-sm sm:text-base text-stone-700 dark:text-stone-300 leading-relaxed max-w-2xl">
+                {dict.home.introDesc}
+              </p>
+
+              {/* 3 Highlight Metrics Grid */}
+              <div className="grid grid-cols-3 gap-2.5 sm:gap-4 pt-2">
+                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5">
+                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#2D4233] dark:text-[#88B795] tracking-tight">
+                    {dict.home.introMetric1Val}
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                    {dict.home.introMetric1Label}
+                  </span>
+                </div>
+
+                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5">
+                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#7D5E4A] dark:text-[#D1A684] tracking-tight">
+                    {dict.home.introMetric2Val}
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                    {dict.home.introMetric2Label}
+                  </span>
+                </div>
+
+                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5">
+                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#396663] dark:text-teal-400 tracking-tight">
+                    {dict.home.introMetric3Val}
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                    {dict.home.introMetric3Label}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <Link
+                  href="/about"
+                  className="btn-press inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#2D4233] dark:bg-[#25362B] text-white text-xs sm:text-sm font-bold hover:bg-[#1E2B22] dark:hover:bg-[#1E2B22] shadow-[0_4px_16px_rgba(45,66,51,0.2)] hover:shadow-md transition-all group"
+                >
+                  <span>{dict.home.introCta}</span>
+                  <ArrowRight className="w-4 h-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Column: Bento Artistic Dual Photo Frame (5 cols on lg) */}
+            <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+              {/* Primary Large Photo: Natural Pebble Stream */}
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] shadow-xl sm:shadow-2xl border border-stone-200/60 dark:border-stone-800/60 bg-stone-100 dark:bg-stone-800 group">
+                <img
+                  src="/uploads/gallery/1788250253562-580915883.jpg"
+                  alt={dict.home.introPhotoMainCaption}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out transform-gpu"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-transparent to-transparent flex items-end p-4 sm:p-5">
+                  <div className="flex items-center gap-1.5 text-xs text-white/95 font-medium drop-shadow-sm">
+                    <Waves className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+                    <span className="truncate">{dict.home.introPhotoMainCaption}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Secondary Overlapping Photo: Steaming Salt Coffee / Wooden Pavilion Deck */}
+              <div className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-1/2 sm:w-5/12 rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_12px_32px_rgba(0,0,0,0.35)] border-2 sm:border-4 border-white dark:border-[#1E2B22] bg-stone-100 dark:bg-stone-800 group transform-gpu hover:scale-105 transition-transform duration-300">
+                <img
+                  src="/uploads/gallery/1788250253554-875120458.jpg"
+                  alt={dict.home.introPhotoSubCaption}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex items-end p-2.5 sm:p-3">
+                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-amber-200 font-semibold truncate">
+                    <Coffee className="w-3 h-3 text-amber-300 shrink-0" />
+                    <span className="truncate">{isEn ? "Firewood Coffee" : "Cà phê mộc"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nature Badge Floating Indicator */}
+              <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#1E2B22]/95 backdrop-blur-md border border-stone-200/80 dark:border-stone-700/60 shadow-lg text-[10px] sm:text-xs font-bold text-[#2D4233] dark:text-[#88B795]">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>100% Pure Highland Air</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* SECTION 1: 4 PILLARS - VÌ SAO CHỌN CẨM CÙ HOUSE */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
