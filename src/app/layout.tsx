@@ -1,11 +1,12 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Playfair_Display, Be_Vietnam_Pro } from "next/font/google";
+import { Playfair_Display, Be_Vietnam_Pro, Quicksand } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import MobileBottomBar from "@/components/MobileBottomBar";
+import IntroSplashScreen from "@/components/IntroSplashScreen";
 import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
@@ -19,6 +20,13 @@ const beVietnam = Be_Vietnam_Pro({
   subsets: ["latin", "vietnamese"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-be-vietnam",
+  display: "swap",
+});
+
+const quicksand = Quicksand({
+  subsets: ["latin", "vietnamese"],
+  weight: ["500", "600", "700"],
+  variable: "--font-quicksand",
   display: "swap",
 });
 
@@ -46,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${beVietnam.variable}`}>
+    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${beVietnam.variable} ${quicksand.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -61,6 +69,12 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
+                  var seenIntro = sessionStorage.getItem('cc_intro') === '1';
+                  var hasForce = /[?&]intro=1/.test(location.search);
+                  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                  if ((!seenIntro || hasForce) && !prefersReduced) {
+                    document.documentElement.classList.add('intro-lock');
+                  }
                 } catch(e) {}
               })();
             `,
@@ -68,6 +82,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
+        <IntroSplashScreen />
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>
