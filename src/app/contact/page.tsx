@@ -16,7 +16,8 @@ import {
   Share2,
   Trees,
   Compass,
-  Headphones
+  Headphones,
+  ShieldCheck
 } from "lucide-react";
 
 function AnimatedDigit({ to, duration = 1.0 }: { to: number; duration?: number }) {
@@ -331,6 +332,65 @@ export default function ContactPage() {
                     <span className="text-red-500 font-bold text-xs">YT</span>
                     <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">YouTube</span>
                   </a>
+                </div>
+              </motion.div>
+
+              {/* Card 6: Parking & Travel Guidance (Trượt vào nhịp 3 phía phải, cân bằng 3-3 đối xứng tuyệt đối) */}
+              <motion.div
+                initial={{ opacity: 0, x: 28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.32 }}
+                className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/20 text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center shrink-0">
+                    <Car className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#3E5C46] dark:text-[#88B795]">
+                      {isEn ? "Travel & Parking Amenities" : "Tiện Ích Đỗ Xe & Cung Đường"}
+                    </span>
+                    <h3 className="font-serif text-lg font-bold text-[#1B281D] dark:text-[#F5F4EE]">
+                      {isEn ? "Spacious Yard & Road Guidance" : "Bãi Đỗ Rộng Rãi & Chỉ Dẫn Cụ Thể"}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5 text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/70 dark:border-stone-700/60">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <p>
+                      <strong className="text-[#1B281D] dark:text-white font-semibold">
+                        {isEn ? "Free parking yard:" : "Bãi đỗ xe ô tô miễn phí:"}
+                      </strong>{" "}
+                      {isEn
+                        ? "Accommodates 4-to-16-seater vehicles comfortably, wide turning radius with 24/7 security."
+                        : "Sức chứa thoải mái cho xe 4 – 16 chỗ, sân quay đầu rộng rãi, có camera an ninh quan sát."}
+                    </p>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/70 dark:border-stone-700/60">
+                    <Compass className="w-4 h-4 text-[#7D5E4A] dark:text-[#D1A684] shrink-0 mt-0.5" />
+                    <p>
+                      <strong className="text-[#1B281D] dark:text-white font-semibold">
+                        {isEn ? "From Highway 14:" : "Từ Quốc Lộ 14:"}
+                      </strong>{" "}
+                      {isEn
+                        ? "Turn into Alley 437 Hung Vuong (300m paved concrete road along tree canopy directly into the cafe gate)."
+                        : "Rẽ vào Hẻm 437 Hùng Vương (khoảng 300m đường bê tông bằng phẳng, rợp bóng mát vào tận cổng quán)."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 border-t border-stone-200 dark:border-stone-700/60">
+                  <span className="flex items-center gap-1.5">
+                    <Trees className="w-3.5 h-3.5 text-emerald-500" />
+                    {isEn ? "Highland eco-stream sanctuary" : "Không gian sinh thái mộc mạc"}
+                  </span>
+                  <span className="font-semibold text-[#3E5C46] dark:text-[#88B795]">
+                    {isEn ? "Support 24/7" : "Hỗ trợ đoàn đông"}
+                  </span>
                 </div>
               </motion.div>
             </div>

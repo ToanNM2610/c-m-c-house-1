@@ -8,7 +8,8 @@ import {
   Mail, 
   Share2, 
   Sparkles, 
-  Navigation 
+  Navigation,
+  ArrowUp
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -17,8 +18,8 @@ export default function Footer() {
   const isEn = locale === "en";
 
   return (
-    <footer className="w-full bg-[#1B281D] text-stone-300 pt-16 pb-10 border-t border-stone-800 shadow-xl">
-      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+    <footer className="w-full bg-[#1B281D] text-stone-300 pt-16 pb-8 border-t border-stone-800 shadow-xl overflow-hidden relative">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 mb-12">
         {/* Col 1: Brand Info */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2.5">
@@ -164,11 +165,28 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
+      {/* Bottom Bar with Back to Top Button */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
         <p>{dict.common.allRightsReserved}</p>
+
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="btn-press inline-flex items-center gap-2 px-4 py-2 rounded-full bg-stone-800/90 hover:bg-[#3E5C46] text-stone-300 hover:text-white transition-all text-xs font-semibold border border-stone-700/70 shadow-sm"
+        >
+          <ArrowUp className="w-3.5 h-3.5 text-emerald-400" />
+          <span>{isEn ? "Back to top" : "Lên đầu trang"}</span>
+        </button>
+
         <p className="text-emerald-400/80 font-medium">
           {dict.common.curatedByNature}
+        </p>
+      </div>
+
+      {/* Giant Watermark Typography at Footer Bottom */}
+      <div className="w-full overflow-hidden select-none pointer-events-none pt-10 pb-0">
+        <p className="font-serif text-center font-extrabold text-[12vw] leading-none tracking-tight text-white/[0.04] whitespace-nowrap">
+          CẨM CÙ HOUSE
         </p>
       </div>
     </footer>

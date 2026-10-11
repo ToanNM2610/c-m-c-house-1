@@ -5,12 +5,9 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Clock, 
   PhoneCall, 
-  User, 
   Menu as MenuIcon, 
   X, 
-  MapPin, 
   Sparkles,
   Compass,
   Navigation,
@@ -135,12 +132,6 @@ export default function Navbar() {
     return "bg-rose-400 animate-pulse-ring-rose";
   };
 
-  const getPillDotClass = () => {
-    if (storeStatus.badgeType === "open") return "bg-emerald-500 animate-pulse-ring-emerald";
-    if (storeStatus.badgeType === "closing_soon") return "bg-amber-500 animate-pulse-ring-amber";
-    return "bg-rose-500 animate-pulse-ring-rose";
-  };
-
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80 shadow-[0_2px_12px_rgba(37,51,38,0.04)] transition-colors duration-300">
       {/* Top Announcement Bar */}
@@ -199,15 +190,6 @@ export default function Navbar() {
             </span>
             <span className="text-[9px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium tracking-wide truncate hidden xs:block">
               {locale === "en" ? "coffee & Food • Gia Nghia" : "coffee & Food • Gia Nghĩa"}
-            </span>
-          </div>
-          
-          {/* Quick Realtime Hours Pill (Desktop only) */}
-          <div className="hidden xl:flex items-center gap-1.5 ml-2 px-3 py-1 bg-stone-100 dark:bg-[#1E2B22] rounded-full text-stone-700 dark:text-stone-300 text-xs border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors">
-            <Clock className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
-            <span className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${getPillDotClass()}`} />
-              <span className="font-semibold">{i18nStatus.shortBadge}</span>
             </span>
           </div>
         </Link>
@@ -302,101 +284,105 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu with Backdrop */}
+      {/* Full-screen Mobile Burger Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setMobileMenuOpen(false)}
-              className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm top-14 sm:top-20"
-            />
-
-            {/* Slide Down Drawer Menu */}
-            <motion.div
-              initial={{ opacity: 0, y: -8, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto" }}
-              exit={{ opacity: 0, y: -8, height: 0 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:hidden fixed top-14 sm:top-20 left-0 w-full z-50 bg-[#F9F8F3] dark:bg-[#121A15] border-b border-stone-200 dark:border-stone-800 px-5 py-5 flex flex-col gap-4 shadow-2xl max-h-[calc(100vh-60px)] overflow-y-auto"
-            >
-              {/* Realtime Status Bar with Coordinates in Drawer */}
-              <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-800 text-xs text-stone-600 dark:text-stone-300">
-                <span className="flex items-center gap-2">
-                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${getPillDotClass()}`} />
-                  <span className="font-bold text-stone-900 dark:text-white truncate">
-                    {i18nStatus.badgeText}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:hidden fixed inset-0 z-[100] bg-[#121A15]/98 backdrop-blur-2xl px-6 py-6 sm:py-8 flex flex-col justify-between overflow-y-auto"
+          >
+            {/* Top Bar inside Fullscreen Menu: Logo & Close Button */}
+            <div className="flex items-center justify-between border-b border-stone-800/80 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-[#3E5C46] flex items-center justify-center text-white shadow-md">
+                  <Sparkles className="w-4 h-4 text-emerald-200 animate-pulse" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-serif text-lg font-bold text-white tracking-wide">
+                    Cẩm Cù House
                   </span>
-                </span>
-                <span className="flex items-center gap-1 font-semibold text-[#3E5C46] dark:text-[#88B795] shrink-0">
-                  <MapPin className="w-3.5 h-3.5" />
-                  Gia Nghĩa
-                </span>
+                  <span className="text-[10px] text-stone-400 font-medium">
+                    coffee & Food • Gia Nghĩa
+                  </span>
+                </div>
               </div>
 
-              {/* Navigation Links with Active Indicator */}
-              <nav className="flex flex-col gap-1.5">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = pathname === item.href;
-                  const label = locale === "en" ? item.labelEn : item.labelVi;
-                  return (
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn-press w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center border border-white/20 transition-all active:scale-95"
+                aria-label="Đóng menu"
+              >
+                <X className="w-5 h-5 text-rose-400" />
+              </button>
+            </div>
+
+            {/* Center Navigation Links - Large Elegant Typography */}
+            <nav className="flex flex-col gap-3 py-6 my-auto">
+              {NAV_ITEMS.map((item, idx) => {
+                const isActive = pathname === item.href;
+                const label = locale === "en" ? item.labelEn : item.labelVi;
+                return (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * idx, duration: 0.3 }}
+                  >
                     <Link
-                      key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`btn-press px-4 py-3 min-h-[46px] flex items-center justify-between rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+                      className={`flex items-center justify-between py-2.5 text-2xl sm:text-3xl font-serif font-bold transition-all ${
                         isActive
-                          ? "bg-[#3E5C46] text-white shadow-sm font-bold"
-                          : "text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800/60"
+                          ? "text-emerald-300 translate-x-2"
+                          : "text-stone-300 hover:text-white"
                       }`}
                     >
-                      <span className="whitespace-nowrap">{label}</span>
-                      {isActive && <span className="w-2 h-2 rounded-full bg-emerald-300 shrink-0" />}
+                      <span>{label}</span>
+                      {isActive && (
+                        <span className="text-xs font-sans tracking-widest text-emerald-400 uppercase font-semibold">
+                          • Đang xem
+                        </span>
+                      )}
                     </Link>
-                  );
-                })}
-              </nav>
+                  </motion.div>
+                );
+              })}
+            </nav>
 
-              {/* Coordinates Pill */}
-              <div className="p-3 rounded-xl bg-stone-100 dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 flex items-center gap-2.5 text-xs text-stone-600 dark:text-stone-300">
-                <Compass className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795] shrink-0" />
-                <span className="font-medium truncate">{dict.common.coordinates} • Đắk Nông</span>
+            {/* Bottom Utilities in Fullscreen Menu */}
+            <div className="flex flex-col gap-3 pt-4 border-t border-stone-800/80">
+              <div className="flex items-center justify-between text-xs text-stone-400">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <Compass className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>11.99° N, 107.69° E • Gia Nghĩa</span>
+                </span>
+                <span className="text-emerald-400 font-semibold">{i18nStatus.shortBadge}</span>
               </div>
 
-              {/* Action Buttons: Hotline & Directions */}
-              <div className="pt-1 flex flex-col gap-2.5">
+              <div className="grid grid-cols-2 gap-2 pt-1">
                 <a
                   href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                  className="btn-press w-full min-h-[48px] flex items-center justify-center gap-2 py-3.5 rounded-full bg-[#3E5C46] text-white text-sm font-bold shadow-md active:scale-95 transition-transform"
+                  className="btn-press flex items-center justify-center gap-2 py-3 rounded-xl bg-[#3E5C46] text-white text-xs font-bold shadow-md"
                 >
-                  <PhoneCall className="w-4 h-4 animate-bounce" />
-                  <span>
-                    {locale === "en" ? "Call Hotline:" : "Gọi Hotline Trực Tiếp:"} {settings.hotline1}
-                  </span>
+                  <PhoneCall className="w-3.5 h-3.5" />
+                  <span>Gọi {settings.hotline1}</span>
                 </a>
                 <a
                   href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-press w-full min-h-[44px] flex items-center justify-center gap-2 py-3 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-sm font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
+                  className="btn-press flex items-center justify-center gap-2 py-3 rounded-xl bg-white/10 text-white text-xs font-bold border border-white/20"
                 >
-                  <Navigation className="w-4 h-4 text-[#396663] dark:text-[#88B795]" />
-                  <span>{dict.common.openGoogleMaps}</span>
-                </a>
-                <a
-                  href="https://admin.camcuhouse.online"
-                  className="btn-press w-full min-h-[40px] flex items-center justify-center gap-2 py-2.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 text-xs font-semibold hover:bg-stone-200 dark:hover:bg-[#25362B] border border-stone-200 dark:border-stone-700/60"
-                >
-                  <User className="w-3.5 h-3.5" />
-                  <span>{dict.common.admin}</span>
+                  <Navigation className="w-3.5 h-3.5 text-emerald-300" />
+                  <span>Chỉ Đường</span>
                 </a>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </header>

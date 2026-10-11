@@ -354,3 +354,55 @@ html.dark .nav-hover-line::after {
   scrollbar-width: none;
 }
 
+/* ==========================================================================
+   SLIM MOSS GREEN SCROLLBAR (THANH CUỘN MẢNH XANH RÊU CAO CẤP)
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121A15;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3E5C46;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #537D5F;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3E5C46 #121A15;
+}
+
+/* ==========================================================================
+   AUTO-SLIDING GUEST REVIEW MARQUEE TRACK
+   ========================================================================== */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 38s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+
+

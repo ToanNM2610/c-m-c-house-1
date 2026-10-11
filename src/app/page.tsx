@@ -30,7 +30,9 @@ import {
   Waves,
   Sparkles,
   Clock,
-  Maximize2
+  Maximize2,
+  Flame,
+  Wind
 } from "lucide-react";
 
 import {
@@ -73,6 +75,100 @@ const HOME_SPACE_PREVIEWS = [
     category: "checkin",
   },
 ];
+
+const GUEST_REVIEWS = [
+  {
+    name: "Hoàng Nam",
+    roleVi: "Khách du lịch TP.HCM",
+    roleEn: "Visitor from HCMC",
+    quoteVi: "Không gian bờ suối quá đẹp và thư thái. Cà phê muối ở đây cực kỳ thơm béo, ngồi nhâm nhi nghe tiếng nước chảy cả buổi không biết chán.",
+    quoteEn: "The riverside space is stunning and so relaxing. Salt coffee here is rich and creamy, sitting by the water all afternoon never gets old.",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
+  },
+  {
+    name: "Thanh Thảo",
+    roleVi: "Khách địa phương Gia Nghĩa",
+    roleEn: "Local resident of Gia Nghia",
+    quoteVi: "Đường vào rất dễ đi, xe ô tô 7 chỗ chạy vào tận sân thoải mái. Quán mộc mạc, nhiều góc chụp ảnh với hoa cẩm cù rất xinh xắn.",
+    quoteEn: "The access road is smooth, 7-seater cars drive right into the yard comfortably. Rustic ambience with lovely hoya flower corners.",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
+  },
+  {
+    name: "Minh Trí",
+    roleVi: "Ghé thăm cuối tuần",
+    roleEn: "Weekend Traveler",
+    quoteVi: "Trà hoa đu đủ rất đặc biệt, uống mát lành tốt cho sức khỏe. Đồ ăn sáng như bò kho bánh mì cũng rất ngon và giá cả hợp lý.",
+    quoteEn: "Wild papaya flower tea is truly unique, crisp and soothing. Breakfast dishes like beef stew with bread are also delicious.",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
+  },
+  {
+    name: "Lan Anh & Gia Đình",
+    roleVi: "Du khách Hà Nội",
+    roleEn: "Family from Hanoi",
+    quoteVi: "Cả nhà 3 thế hệ đến đây nghỉ chân đều thích mê. Không khí trong lành 0 khói bụi, các bé thích mê ngắm đàn cá bên suối đá tự nhiên.",
+    quoteEn: "Our 3-generation family loved resting here. Crisp air with zero dust, kids were captivated watching stream water over natural stones.",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
+  },
+  {
+    name: "Đức Huy",
+    roleVi: "Nhiếp ảnh gia tự do",
+    roleEn: "Freelance Photographer",
+    quoteVi: "Ánh sáng tự nhiên buổi sớm xuyên qua tán cây và hiên gỗ chụp góc nào cũng như tranh. Cà phê mộc rang củi giữ nguyên hương vị cao nguyên.",
+    quoteEn: "Morning rays filtering through highland foliage onto the timber deck make every shot cinematic. Firewood roasted coffee is top-tier.",
+    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
+  },
+  {
+    name: "Thu Phương",
+    roleVi: "Khách phượt Tây Nguyên",
+    roleEn: "Backpacker in Central Highlands",
+    quoteVi: "Đi cung đường Đắk Nông ghé quán là quyết định tuyệt vời nhất. Nhân viên chu đáo, tiếng suối reo xua tan hết mệt mỏi đường dài.",
+    quoteEn: "Dropping by during our Dak Nong road trip was the highlight. Friendly hospitality and murmuring stream water washed all fatigue away.",
+    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
+  },
+];
+
+function MetricCounter({
+  target,
+  suffix = "",
+  duration = 1.4,
+}: {
+  target: number;
+  suffix?: string;
+  duration?: number;
+}) {
+  const [count, setCount] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+    let startTime: number | null = null;
+    let animationFrame: number;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+      // easeOutQuart
+      const ease = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.round(ease * target));
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(step);
+      }
+    };
+
+    animationFrame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [hasStarted, target, duration]);
+
+  return (
+    <motion.span
+      onViewportEnter={() => setHasStarted(true)}
+      viewport={{ once: true, margin: "-10px" }}
+    >
+      {count}
+      {suffix}
+    </motion.span>
+  );
+}
 
 export default function HomePage() {
   const storeStatus = useStoreStatus();
@@ -298,9 +394,9 @@ export default function HomePage() {
               <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3 w-full">
                 <a
                   href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-[#F4EFEA] dark:bg-[#1A261E] hover:bg-[#EAE2D9] text-[#2D4233] dark:text-[#88B795] text-xs sm:text-sm font-semibold transition-all shadow-xs border border-stone-300/60 dark:border-stone-700/60 truncate"
+                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-[#3E5C46] dark:bg-[#283C2F] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-sm border border-[#2D4233]/40 truncate"
                 >
-                  <PhoneCall className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#88B795] shrink-0" />
+                  <PhoneCall className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
                   <span className="truncate">Hotline: {settings.hotline1}</span>
                 </a>
                 <a
@@ -352,33 +448,23 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Real-time Atmospheric Meter Badge & Store Status */}
+            {/* Real-time Atmospheric Meter Badge & Natural Climate Gauge */}
             <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/80 dark:border-stone-700/60 shadow-xs text-stone-600 dark:text-stone-300 text-[11px] sm:text-xs transition-colors">
-              <div className="flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2 items-center justify-center">
-                  <span
-                    className={`w-2 h-2 rounded-full ${
-                      storeStatus.badgeType === "open"
-                        ? "bg-emerald-500 animate-pulse-ring-emerald"
-                        : storeStatus.badgeType === "closing_soon"
-                        ? "bg-amber-500 animate-pulse-ring-amber"
-                        : "bg-rose-500 animate-pulse-ring-rose"
-                    }`}
-                  />
-                </span>
-                <span className="font-semibold text-stone-800 dark:text-stone-100">
-                  {i18nStatus.shortBadge}
+              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="flex items-center gap-1">
+                  <Thermometer className="w-3.5 h-3.5" /> 23°C • {isEn ? "Gentle Breeze" : "Gió Mát Nhẹ"}
                 </span>
               </div>
               <span>•</span>
-              <div className="flex items-center gap-2 font-semibold text-[#2D4233] dark:text-[#88B795]">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> {i18nStatus.scheduleText}
-                </span>
-                <span className="hidden sm:inline">•</span>
-                <span className="hidden sm:flex items-center gap-1">
-                  <Thermometer className="w-3.5 h-3.5" /> {dict.home.tempText}
-                </span>
+              <div className="flex items-center gap-1.5 font-medium text-stone-700 dark:text-stone-200">
+                <Waves className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
+                <span>{isEn ? "Crystal Stream Echo" : "Suối Reo Trong Lành"}</span>
+              </div>
+              <span className="hidden sm:inline">•</span>
+              <div className="hidden sm:flex items-center gap-1 font-semibold text-[#2D4233] dark:text-[#88B795]">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{isEn ? "07:00 – 22:00 Daily" : "07:00 – 22:00 Hàng Ngày"}</span>
               </div>
             </div>
           </div>
@@ -405,29 +491,41 @@ export default function HomePage() {
                 {dict.home.introDesc}
               </p>
 
-              {/* 3 Highlight Metrics Grid */}
+              {/* 3 Highlight Metrics Grid with Live Counters & Distinct Icons */}
               <div className="grid grid-cols-3 gap-2.5 sm:gap-4 pt-2">
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5">
+                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5 group">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Compass className="w-3.5 h-3.5 text-[#2D4233] dark:text-[#88B795]" />
+                    <span className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
+                  </div>
                   <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#2D4233] dark:text-[#88B795] tracking-tight">
-                    {dict.home.introMetric1Val}
+                    <MetricCounter target={800} suffix="m+" />
                   </span>
                   <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
                     {dict.home.introMetric1Label}
                   </span>
                 </div>
 
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5">
+                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5 group">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Flame className="w-3.5 h-3.5 text-[#7D5E4A] dark:text-[#D1A684]" />
+                    <span className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
+                  </div>
                   <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#7D5E4A] dark:text-[#D1A684] tracking-tight">
-                    {dict.home.introMetric2Val}
+                    <MetricCounter target={100} suffix="%" />
                   </span>
                   <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
                     {dict.home.introMetric2Label}
                   </span>
                 </div>
 
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5">
+                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5 group">
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Wind className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
+                    <span className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
+                  </div>
                   <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#396663] dark:text-teal-400 tracking-tight">
-                    {dict.home.introMetric3Val}
+                    <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-normal text-stone-500">{isEn ? "dust" : "khói bụi"}</span>
                   </span>
                   <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
                     {dict.home.introMetric3Label}
@@ -447,10 +545,16 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Bento Artistic Dual Photo Frame (5 cols on lg) */}
+            {/* Right Column: Bento Artistic Dual Photo Frame with Parallax Floating */}
             <div className="lg:col-span-5 relative mt-4 lg:mt-0">
               {/* Primary Large Photo: Natural Pebble Stream */}
-              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] shadow-xl sm:shadow-2xl border border-stone-200/60 dark:border-stone-800/60 bg-stone-100 dark:bg-stone-800 group">
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] shadow-2xl border-2 sm:border-4 border-white dark:border-[#1E2B22] bg-stone-100 dark:bg-stone-800 group"
+              >
                 <img
                   src="/uploads/gallery/1788250253562-580915883.jpg"
                   alt={dict.home.introPhotoMainCaption}
@@ -463,10 +567,17 @@ export default function HomePage() {
                     <span className="truncate">{dict.home.introPhotoMainCaption}</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Secondary Overlapping Photo: Steaming Salt Coffee / Wooden Pavilion Deck */}
-              <div className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-1/2 sm:w-5/12 rounded-xl sm:rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_12px_32px_rgba(0,0,0,0.35)] border-2 sm:border-4 border-white dark:border-[#1E2B22] bg-stone-100 dark:bg-stone-800 group transform-gpu hover:scale-105 transition-transform duration-300">
+              {/* Secondary Overlapping Photo: Steaming Salt Coffee / Parallax hover floating */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                whileHover={{ y: -8, scale: 1.03 }}
+                className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-1/2 sm:w-5/12 rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_16px_36px_rgba(0,0,0,0.35)] border-2 sm:border-4 border-white dark:border-[#1E2B22] bg-stone-100 dark:bg-stone-800 group transform-gpu transition-all duration-300"
+              >
                 <img
                   src="/uploads/gallery/1788250253554-875120458.jpg"
                   alt={dict.home.introPhotoSubCaption}
@@ -479,7 +590,7 @@ export default function HomePage() {
                     <span className="truncate">{isEn ? "Firewood Coffee" : "Cà phê mộc"}</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Nature Badge Floating Indicator */}
               <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#1E2B22]/95 backdrop-blur-md border border-stone-200/80 dark:border-stone-700/60 shadow-lg text-[10px] sm:text-xs font-bold text-[#2D4233] dark:text-[#88B795]">
@@ -508,71 +619,95 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1 */}
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 hover:shadow-md transition-all flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-2xl bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center mb-4">
-                <Coffee className="w-6 h-6" />
+            {/* Card 1: Hương vị truyền thống */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/40 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Coffee className="w-7 h-7" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-amber-800 dark:group-hover:text-amber-300 transition-colors">
+                  {dict.home.pillar2Title}
+                </h3>
+                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                  {dict.home.pillar2Desc}
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                {dict.home.pillar2Title}
-              </h3>
-              <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                {dict.home.pillar2Desc}
-              </p>
-              <span className="text-xs font-semibold text-[#3E5C46] dark:text-[#88B795]">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40">
                 {isEn ? "Artisanal Roasting" : "Hương vị truyền thống"}
               </span>
-            </div>
+            </motion.div>
 
-            {/* Card 2 */}
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 hover:shadow-md transition-all flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-2xl bg-[#396663]/10 dark:bg-[#396663]/25 text-[#396663] dark:text-[#88B795] flex items-center justify-center mb-4">
-                <Waves className="w-6 h-6" />
+            {/* Card 2: Thiên nhiên 100% */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-teal-500/10 dark:bg-teal-950/40 text-[#396663] dark:text-teal-300 border border-teal-200/50 dark:border-teal-900/40 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Waves className="w-7 h-7" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-teal-800 dark:group-hover:text-teal-300 transition-colors">
+                  {dict.home.pillar1Title}
+                </h3>
+                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                  {dict.home.pillar1Desc}
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                {dict.home.pillar1Title}
-              </h3>
-              <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                {dict.home.pillar1Desc}
-              </p>
-              <span className="text-xs font-semibold text-[#396663] dark:text-[#88B795]">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/60 dark:border-teal-900/40">
                 {isEn ? "100% Pure Nature" : "Thiên nhiên 100%"}
               </span>
-            </div>
+            </motion.div>
 
-            {/* Card 3 */}
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 hover:shadow-md transition-all flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-2xl bg-amber-600/10 text-amber-700 dark:text-amber-400 flex items-center justify-center mb-4">
-                <Flower2 className="w-6 h-6" />
+            {/* Card 3: Hoa Cẩm Cù Nở Rộ */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-rose-500/10 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Flower2 className="w-7 h-7" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-rose-700 dark:group-hover:text-rose-300 transition-colors">
+                  {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
+                </h3>
+                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                  {isEn
+                    ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
+                    : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
-              </h3>
-              <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                {isEn
-                  ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
-                  : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
-              </p>
-              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900/40">
                 {isEn ? "Cafe Emblem" : "Biểu tượng quán"}
               </span>
-            </div>
+            </motion.div>
 
-            {/* Card 4 */}
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 hover:shadow-md transition-all flex flex-col justify-between">
-              <div className="w-12 h-12 rounded-2xl bg-[#7D5E4A]/10 text-[#7D5E4A] dark:text-[#E8A87C] flex items-center justify-center mb-4">
-                <Leaf className="w-6 h-6" />
+            {/* Card 4: Bảo tồn tự nhiên */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-14 h-14 rounded-2xl bg-[#3E5C46]/10 dark:bg-[#3E5C46]/25 text-[#3E5C46] dark:text-[#88B795] border border-[#3E5C46]/20 dark:border-[#88B795]/30 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Leaf className="w-7 h-7" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-emerald-800 dark:group-hover:text-emerald-300 transition-colors">
+                  {dict.home.pillar4Title}
+                </h3>
+                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                  {dict.home.pillar4Desc}
+                </p>
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2">
-                {dict.home.pillar4Title}
-              </h3>
-              <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-4">
-                {dict.home.pillar4Desc}
-              </p>
-              <span className="text-xs font-semibold text-[#7D5E4A] dark:text-[#E8A87C]">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-[#3E5C46]/10 dark:bg-[#88B795]/20 text-[#3E5C46] dark:text-[#88B795] border border-[#3E5C46]/20 dark:border-[#88B795]/30">
                 {isEn ? "Nature Preserved" : "Bảo tồn tự nhiên"}
               </span>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -633,8 +768,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION 3: TESTIMONIALS */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        {/* SECTION 3: TESTIMONIALS (Dải trượt tự động mượt mà + Chân dung người thật) */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 overflow-hidden">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
               <Star className="w-3.5 h-3.5 fill-[#3E5C46] text-[#3E5C46] dark:fill-[#88B795] dark:text-[#88B795]" />
@@ -643,79 +778,48 @@ export default function HomePage() {
             <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
               {isEn ? "Reflections from Visiting Guests" : "Cảm Nhận Từ Lữ Khách Ghé Chơi"}
             </h2>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mt-2">
+              {isEn ? "Continuous stream • Hover or touch to pause" : "Dải trượt tự động • Rê chuột để dừng đọc"}
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 flex flex-col justify-between">
-              <div className="flex items-center gap-1 text-amber-500 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed mb-6 italic">
-                {isEn
-                  ? "&ldquo;The riverside space is stunning and so relaxing. Salt coffee here is rich and creamy, sitting by the murmuring water all afternoon never gets old.&rdquo;"
-                  : "&ldquo;Không gian bờ suối quá đẹp và thư thái. Cà phê muối ở đây cực kỳ thơm béo, ngồi nhâm nhi nghe tiếng nước chảy cả buổi không biết chán.&rdquo;"}
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#3E5C46]/15 dark:bg-[#88B795]/20 flex items-center justify-center font-bold text-[#3E5C46] dark:text-[#88B795]">
-                  H
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Hoàng Nam</h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    {isEn ? "Visitor from HCMC" : "Khách du lịch TP.HCM"}
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Marquee Track Slider */}
+          <div className="relative w-full overflow-hidden mask-gradient-x">
+            <div className="animate-marquee-track flex gap-6 pb-4">
+              {[...GUEST_REVIEWS, ...GUEST_REVIEWS].map((review, i) => (
+                <div
+                  key={`${review.name}-${i}`}
+                  className="w-[310px] sm:w-[360px] shrink-0 bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center gap-1 text-amber-500 mb-3">
+                      {[...Array(5)].map((_, sIdx) => (
+                        <Star key={sIdx} className="w-3.5 h-3.5 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-stone-700 dark:text-stone-300 text-xs sm:text-sm leading-relaxed mb-5 italic">
+                      &ldquo;{isEn ? review.quoteEn : review.quoteVi}&rdquo;
+                    </p>
+                  </div>
 
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 flex flex-col justify-between">
-              <div className="flex items-center gap-1 text-amber-500 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed mb-6 italic">
-                {isEn
-                  ? "&ldquo;The access road is smooth, 7-seater cars drive right into the yard comfortably. Rustic ambience, lovely photo corners with hoya flowers.&rdquo;"
-                  : "&ldquo;Đường vào rất dễ đi, xe ô tô 7 chỗ chạy vào tận sân thoải mái. Quán mộc mạc, nhiều góc chụp ảnh với hoa cẩm cù rất xinh xắn.&rdquo;"}
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#396663]/15 dark:bg-[#396663]/30 flex items-center justify-center font-bold text-[#396663] dark:text-emerald-300">
-                  T
+                  <div className="flex items-center gap-3 pt-3 border-t border-stone-100 dark:border-stone-800">
+                    <img
+                      src={review.avatar}
+                      alt={review.name}
+                      loading="lazy"
+                      className="w-11 h-11 rounded-full object-cover ring-2 ring-[#3E5C46]/30 shadow-xs shrink-0"
+                    />
+                    <div>
+                      <h4 className="text-sm font-bold text-[#1B281D] dark:text-white leading-tight">
+                        {review.name}
+                      </h4>
+                      <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
+                        {isEn ? review.roleEn : review.roleVi}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Thanh Thảo</h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    {isEn ? "Local resident of Gia Nghia" : "Khách địa phương Gia Nghĩa"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 border border-stone-200/60 dark:border-stone-700/60 flex flex-col justify-between">
-              <div className="flex items-center gap-1 text-amber-500 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current" />
-                ))}
-              </div>
-              <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed mb-6 italic">
-                {isEn
-                  ? "&ldquo;Wild papaya flower tea is very special, soothing and health-promoting. Breakfast dishes like beef stew with bread are also delicious and reasonably priced.&rdquo;"
-                  : "&ldquo;Trà hoa đu đủ rất đặc biệt, uống mát lành tốt cho sức khỏe. Đồ ăn sáng như bò kho bánh mì cũng rất ngon và giá cả hợp lý.&rdquo;"}
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-amber-600/15 flex items-center justify-center font-bold text-amber-700 dark:text-amber-400">
-                  M
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-[#1B281D] dark:text-white">Minh Trí</h4>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    {isEn ? "Weekend Guest" : "Ghé thăm cuối tuần"}
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -752,9 +856,9 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full lg:w-auto">
               <a
                 href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-lg hover:-translate-y-0.5"
+                className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[#1B281D] hover:bg-[#121A15] text-white border border-emerald-400/40 font-bold text-sm transition-all shadow-lg hover:-translate-y-0.5"
               >
-                <PhoneCall className="w-5 h-5 text-[#3E5C46]" />
+                <PhoneCall className="w-5 h-5 text-emerald-300" />
                 <span>
                   {isEn ? "Call Hotline:" : "Gọi Hotline:"} {settings.hotline1}
                 </span>
