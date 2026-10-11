@@ -15,7 +15,6 @@ import {
 import ThemeToggle from "@/components/ThemeToggle";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
-import { useTransitionContext } from "@/context/TransitionContext";
 import { getStoreStatusI18n } from "@/lib/translations";
 
 const NAV_ITEMS = [
@@ -40,7 +39,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { locale, setLocale, dict } = useLanguage();
-  const { triggerCircleReveal } = useTransitionContext();
   const storeStatus = useStoreStatus();
   const i18nStatus = getStoreStatusI18n(storeStatus, locale);
 
@@ -209,7 +207,6 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={(e) => triggerCircleReveal(e.clientX, e.clientY)}
                 className={`relative inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
                   isActive
                     ? "text-white font-bold"
