@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { useLanguage } from "@/context/LanguageContext";
+import { motion } from "framer-motion";
 import {
   MapPin,
   Clock,
@@ -16,6 +18,25 @@ import {
   Compass,
   Headphones
 } from "lucide-react";
+
+function AnimatedDigit({ to, duration = 1.0 }: { to: number; duration?: number }) {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const stepTime = Math.max(Math.floor((duration * 1000) / (to || 1)), 25);
+    const timer = setInterval(() => {
+      start += 1;
+      if (start <= to) {
+        setVal(start);
+      } else {
+        clearInterval(timer);
+      }
+    }, stepTime);
+    return () => clearInterval(timer);
+  }, [to, duration]);
+
+  return <span>{String(val).padStart(2, "0")}</span>;
+}
 
 export default function ContactPage() {
   const { locale, dict } = useLanguage();
@@ -66,13 +87,19 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* 2-Column Balanced Core Section */}
+        {/* 2-Column Balanced Core Section: Card trượt vào lần lượt, giờ mở cửa đếm số, nút Google Maps có pulse nhẹ */}
         <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Detailed Information (Stagger 2: 120ms) */}
-            <div className="animate-fade-up-2 lg:col-span-6 flex flex-col gap-6">
-              {/* Address Card */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+            {/* Left Column: Detailed Information */}
+            <div className="lg:col-span-6 flex flex-col gap-6">
+              {/* Card 1: Address Card (Trượt vào nhịp 1) */}
+              <motion.div
+                initial={{ opacity: 0, x: -28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.08 }}
+                className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center shrink-0">
                     <MapPin className="w-6 h-6" />
@@ -96,10 +123,16 @@ export default function ContactPage() {
                     {dict.common.carParkingNote}
                   </p>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Hours Card */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+              {/* Card 2: Hours Card (Trượt vào nhịp 2 + Giờ mở cửa đếm số) */}
+              <motion.div
+                initial={{ opacity: 0, x: -28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.18 }}
+                className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-[#396663]/10 dark:bg-teal-900/30 text-[#396663] dark:text-teal-400 flex items-center justify-center shrink-0">
                     <Clock className="w-6 h-6" />
@@ -121,7 +154,9 @@ export default function ContactPage() {
                     <span className="text-xs text-[#614633] dark:text-[#D1A684] uppercase font-bold">
                       {isEn ? "Mon – Thu" : "Thứ 2 – Thứ 5"}
                     </span>
-                    <span className="font-serif text-xl text-[#3E5C46] dark:text-[#88B795] font-bold">07:00 – 18:00</span>
+                    <span className="font-serif text-xl text-[#3E5C46] dark:text-[#88B795] font-bold">
+                      <AnimatedDigit to={7} />:00 – <AnimatedDigit to={18} />:00
+                    </span>
                     <span className="text-[11px] text-stone-500 dark:text-stone-400">
                       {isEn ? "Daytime tranquil sanctuary" : "Không gian tĩnh dưỡng ban ngày"}
                     </span>
@@ -130,16 +165,24 @@ export default function ContactPage() {
                     <span className="text-xs text-[#396663] dark:text-emerald-300 font-bold uppercase">
                       {isEn ? "Fri – Sun" : "Thứ 6 – Chủ Nhật"}
                     </span>
-                    <span className="font-serif text-xl text-[#396663] dark:text-emerald-300 font-bold">07:00 – 22:00</span>
+                    <span className="font-serif text-xl text-[#396663] dark:text-emerald-300 font-bold">
+                      <AnimatedDigit to={7} />:00 – <AnimatedDigit to={22} />:00
+                    </span>
                     <span className="text-[11px] text-stone-500 dark:text-stone-400">
                       {isEn ? "Evening tea & riverside music" : "Trà thơm, lửa trại & nhạc bên suối"}
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Hotline Reception & Mail */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+              {/* Card 3: Hotline Reception & Mail (Trượt vào nhịp 3) */}
+              <motion.div
+                initial={{ opacity: 0, x: -28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.28 }}
+                className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-[#614633]/10 dark:bg-amber-900/30 text-[#614633] dark:text-amber-400 flex items-center justify-center shrink-0">
                     <Headphones className="w-6 h-6" />
@@ -188,13 +231,19 @@ export default function ContactPage() {
                     <span>thuynhu8788@gmail.com</span>
                   </a>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
-            {/* Right Column: Direction CTA & Social Channels (Stagger 3: 200ms) */}
-            <div className="animate-fade-up-3 lg:col-span-6 flex flex-col gap-6">
-              {/* Google Maps Primary CTA Card */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border-2 border-[#3E5C46]/30 dark:border-[#88B795]/30 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+            {/* Right Column: Direction CTA & Social Channels */}
+            <div className="lg:col-span-6 flex flex-col gap-6">
+              {/* Card 4: Google Maps Primary CTA Card (Trượt vào nhịp 1 phía phải + Nút Maps pulse nhẹ) */}
+              <motion.div
+                initial={{ opacity: 0, x: 28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.12 }}
+                className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border-2 border-[#3E5C46]/30 dark:border-[#88B795]/30 shadow-sm flex flex-col gap-4 transition-colors duration-200"
+              >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-[#3E5C46] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <Navigation className="w-6 h-6 text-emerald-200" />
@@ -216,20 +265,28 @@ export default function ContactPage() {
                 </p>
 
                 <div className="pt-2">
-                  <a
+                  <motion.a
                     href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-press w-full py-4 px-6 rounded-full bg-[#3E5C46] text-white text-sm font-bold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.25)] flex items-center justify-center gap-2"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative btn-press w-full py-4 px-6 rounded-full bg-[#3E5C46] text-white text-sm font-bold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.35)] flex items-center justify-center gap-2 ring-4 ring-[#3E5C46]/30 animate-pulse"
                   >
                     <Navigation className="w-4 h-4" />
                     <span>{dict.common.openGoogleMaps}</span>
-                  </a>
+                  </motion.a>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Social Channels Deck */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200">
+              {/* Card 5: Social Channels Deck (Trượt vào nhịp 2 phía phải) */}
+              <motion.div
+                initial={{ opacity: 0, x: 28 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.22 }}
+                className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4 transition-colors duration-200"
+              >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#396663]/10 dark:bg-teal-900/30 text-[#396663] dark:text-teal-400 flex items-center justify-center shrink-0">
                     <Share2 className="w-5 h-5" />
@@ -275,7 +332,7 @@ export default function ContactPage() {
                     <span className="text-xs font-semibold text-stone-800 dark:text-stone-200">YouTube</span>
                   </a>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

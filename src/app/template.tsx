@@ -35,17 +35,17 @@ export default function Template({ children }: { children: ReactNode }) {
         };
       case "cross-fade":
         return {
-          initial: { opacity: 0 },
-          animate: { opacity: 1 },
-          transition: { duration: 0.45, ease: "easeInOut" as const },
+          initial: { opacity: 0, scale: 0.95 },
+          animate: { opacity: 1, scale: 1 },
+          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
         };
       case "stagger-panels":
       case "curtain-wipe":
       default:
         return {
-          initial: { opacity: 0, y: 8 },
-          animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const, delay: 0.28 },
+          initial: { opacity: 0, scale: 0.95, y: 8 },
+          animate: { opacity: 1, scale: 1, y: 0 },
+          transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const, delay: 0.25 },
         };
     }
   };

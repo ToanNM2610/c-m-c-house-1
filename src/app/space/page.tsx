@@ -8,6 +8,7 @@ import MaskRevealImage from "@/components/motion/MaskRevealImage";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
 import { useLanguage } from "@/context/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   getSharedData,
   KEYS,
@@ -288,39 +289,51 @@ export default function SpacePage() {
           </div>
         </section>
 
-        {/* Gallery Grid Section (Stagger 3: 200ms) - Mask Reveal Image kéo từ trái sang phải */}
+        {/* Gallery Grid Section: Card ảnh stagger khi lọc tab (FLIP), hover zoom + nổi chữ, lightbox phóng to */}
         <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredItems.map((item, idx) => (
-              <div
-                key={`${activeFilter}_${item.id}`}
-                onClick={() => handleOpenLightbox(idx)}
-                className={`animate-fade-in stagger-${(idx % 8) + 1} group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] transform-gpu`}
-              >
-                <MaskRevealImage
-                  src={item.image}
-                  alt={item.title}
-                  aspectRatio="aspect-[4/3]"
-                  delay={0.06 * (idx % 6)}
-                />
-                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
-                    {item.subtitle}
-                  </span>
-                  <h3 className="font-serif text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-stone-200/90 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
-                    {item.description}
-                  </p>
-                </div>
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <AnimatePresence mode="popLayout">
+              {filteredItems.map((item, idx) => (
+                <motion.div
+                  layout
+                  key={item.id}
+                  initial={{ opacity: 0, scale: 0.92, y: 15 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{
+                    duration: 0.35,
+                    delay: Math.min((idx % 8) * 0.04, 0.2),
+                    layout: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
+                  }}
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  onClick={() => handleOpenLightbox(idx)}
+                  className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-2xl border border-stone-200/70 dark:border-stone-700/60 transition-shadow duration-300 transform-gpu"
+                >
+                  <MaskRevealImage
+                    src={item.image}
+                    alt={item.title}
+                    aspectRatio="aspect-[4/3]"
+                    delay={0.05 * (idx % 6)}
+                  />
+                  <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-1.5">
+                      {item.subtitle}
+                    </span>
+                    <h3 className="font-serif text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors transform group-hover:-translate-y-1 duration-300">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-stone-200/90 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-1">
+                      {item.description}
+                    </p>
+                  </div>
 
-                <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
-                  <Maximize2 className="w-4 h-4" />
-                </div>
-              </div>
-            ))}
-          </div>
+                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                    <Maximize2 className="w-4 h-4" />
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </section>
 
         {/* Stream Ambience Floating Audio Bar */}

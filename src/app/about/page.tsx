@@ -1,11 +1,13 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MaskRevealImage from "@/components/motion/MaskRevealImage";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { useLanguage } from "@/context/LanguageContext";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import {
   Flower2,
   Droplets,
@@ -18,6 +20,104 @@ import {
   PhoneCall,
   Navigation,
 } from "lucide-react";
+
+function ScrollWord({
+  word,
+  range,
+  progress,
+}: {
+  word: string;
+  range: [number, number];
+  progress: MotionValue<number>;
+}) {
+  const opacity = useTransform(progress, range, [0.18, 1]);
+  return (
+    <motion.span
+      style={{ opacity }}
+      className="inline-block transition-opacity font-serif font-bold text-2xl sm:text-3xl lg:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] mr-2 mb-2 leading-relaxed"
+    >
+      {word}
+    </motion.span>
+  );
+}
+
+function GoldenFlowerParallaxSection({ isEn }: { isEn: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 0.9", "end 0.2"],
+  });
+
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [-35, 35]);
+
+  const quote = isEn
+    ? "Under the Central Highlands forest canopy, each yellow blossom and Hoya cluster blooms quietly, listening to the stream, weaving serenity for all who return."
+    : "Dưới bóng rừng Tây Nguyên, từng khóm hoa chuông vàng rực rỡ và hoa Cẩm Cù kiên định nở son sắt bên bờ suối, dệt nên khoảng trời an yên cho mỗi bước chân dừng lại.";
+
+  const words = quote.split(" ");
+
+  return (
+    <section
+      ref={containerRef}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 w-full border-t border-stone-200/70 dark:border-stone-800"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        {/* Left Column: Chữ fill màu khi cuộn */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100/80 dark:bg-amber-950/40 text-[#7D5E4A] dark:text-amber-300 text-xs font-bold uppercase tracking-wider w-fit border border-amber-200/60 dark:border-amber-800/40">
+            <Flower2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>{isEn ? "Golden Blossom Scroll Reveal" : "Sắc Hoa & Dòng Suối Chảy"}</span>
+          </div>
+
+          <div className="flex flex-wrap mt-2">
+            {words.map((word, i) => {
+              const start = i / words.length;
+              const end = Math.min((i + 1) / words.length, 1);
+              return (
+                <ScrollWord
+                  key={i}
+                  word={word}
+                  range={[start, end]}
+                  progress={scrollYProgress}
+                />
+              );
+            })}
+          </div>
+
+          <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 italic mt-2">
+            {isEn
+              ? "• Scroll to reveal the words and feel the mountain breath"
+              : "• Cuộn trang để màu chữ lan dần theo nhịp thở núi rừng"}
+          </p>
+        </div>
+
+        {/* Right Column: Ảnh hoa vàng Parallax */}
+        <div className="lg:col-span-5 relative overflow-hidden rounded-3xl shadow-2xl border-4 border-white dark:border-stone-700/60 aspect-[4/5] bg-stone-100 dark:bg-stone-800">
+          <motion.div
+            style={{ y: parallaxY }}
+            className="w-full h-[120%] -top-[10%] relative will-change-transform"
+          >
+            <img
+              src="/uploads/gallery/1788250253557-29323827.jpg"
+              alt="Băng Ghế Mộc Bên Vườn Hoa Vàng Cẩm Cù House"
+              className="w-full h-full object-cover scale-105"
+            />
+          </motion.div>
+          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex flex-col justify-end p-6 text-white">
+            <span className="text-xs text-amber-300 font-semibold uppercase tracking-wider">
+              {isEn ? "Parallax View" : "Khung Cảnh Parallax"}
+            </span>
+            <p className="font-serif text-lg font-bold mt-1">
+              {isEn
+                ? "Golden Bell Blossoms by the Stream Hill"
+                : "Vườn Hoa Chuông Vàng Ven Triền Suối"}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function AboutPage() {
   const { locale, dict } = useLanguage();
@@ -175,6 +275,9 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
+
+        {/* SECTION 1.5: Sắc Hoa Chuông Vàng Parallax & Chữ Fill Màu Khi Cuộn */}
+        <GoldenFlowerParallaxSection isEn={isEn} />
 
         {/* SECTION 2: Triết Lý Cà Phê Mộc & Ẩm Thực Lành */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full border-t border-stone-200/70 dark:border-stone-800">

@@ -18,6 +18,7 @@ import {
 import ThemeToggle from "@/components/ThemeToggle";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTransitionContext } from "@/context/TransitionContext";
 import { getStoreStatusI18n } from "@/lib/translations";
 
 const NAV_ITEMS = [
@@ -42,6 +43,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { locale, setLocale, dict } = useLanguage();
+  const { triggerCircleReveal } = useTransitionContext();
   const storeStatus = useStoreStatus();
   const i18nStatus = getStoreStatusI18n(storeStatus, locale);
 
@@ -219,13 +221,21 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
+                onClick={(e) => triggerCircleReveal(e.clientX, e.clientY)}
+                className={`relative inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
                   isActive
-                    ? "bg-[#2D4233] text-white rounded-full shadow-sm font-bold"
+                    ? "text-white font-bold"
                     : "text-stone-300 hover:text-white hover:bg-stone-800/40 rounded-full"
                 }`}
               >
-                <span className={`whitespace-nowrap ${!isActive ? "link-hover-underline" : ""}`}>
+                {isActive && (
+                  <motion.span
+                    layoutId="activeNavPillDesktop"
+                    className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-md -z-10"
+                    transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className={`relative z-10 whitespace-nowrap ${!isActive ? "link-hover-underline" : ""}`}>
                   {label}
                 </span>
               </Link>

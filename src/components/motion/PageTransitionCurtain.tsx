@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTransitionContext } from "@/context/TransitionContext";
 
 interface PageTransitionCurtainProps {
@@ -10,6 +11,7 @@ interface PageTransitionCurtainProps {
 
 export default function PageTransitionCurtain({ onComplete }: PageTransitionCurtainProps) {
   const { mode, direction, clickCoords } = useTransitionContext();
+  const pathname = usePathname();
 
   // Nếu là chế độ thuần Cross-Fade mộc mạc, không cần vẽ màn che bao phủ
   if (mode === "cross-fade") {
@@ -117,10 +119,22 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
     );
   }
 
-  // Chế độ 1 mặc định: Màn che trượt đơn sắc Nâu Robusta (#3E2723) kèm Logo
+  // Chế độ 1 mặc định: Màn che xanh rêu trượt lên (#2D4233) + Tên trang hiện giữa màn hình
+  const getPageTitle = (path: string) => {
+    if (!path || path === "/") return "TRANG CHỦ";
+    if (path.startsWith("/about")) return "CÂU CHUYỆN";
+    if (path.startsWith("/space")) return "KHÔNG GIAN SUỐI";
+    if (path.startsWith("/menu")) return "THỰC ĐƠN";
+    if (path.startsWith("/contact")) return "CHỈ ĐƯỜNG & LIÊN HỆ";
+    if (path.startsWith("/admin")) return "QUẢN TRỊ VIÊN";
+    return "CẨM CÙ HOUSE";
+  };
+
+  const currentTitle = getPageTitle(pathname || "");
+
   return (
     <motion.div
-      key="page-curtain-single"
+      key="page-curtain-moss-green"
       initial={{ y: "0%" }}
       animate={{ y: "-100%" }}
       transition={{
@@ -129,22 +143,22 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
         delay: 0.08,
       }}
       onAnimationComplete={onComplete}
-      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[#3E2723] text-[#FDFBF7] shadow-2xl"
+      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[#2D4233] text-[#FDFBF7] shadow-2xl"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(93,64,55,0.4)_0%,rgba(62,39,35,0.95)_100%)] opacity-80" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(62,92,70,0.5)_0%,rgba(32,49,37,0.98)_100%)] opacity-90" />
 
-      {/* Vòng tròn Circle Reveal nở bung nếu có click */}
+      {/* 2. Circle reveal mở từ vị trí click menu */}
       {clickCoords && (
         <motion.div
-          initial={{ scale: 0, opacity: 0.4 }}
-          animate={{ scale: 25, opacity: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          initial={{ scale: 0, opacity: 0.5 }}
+          animate={{ scale: 30, opacity: 0 }}
+          transition={{ duration: 0.75, ease: "easeOut" }}
           style={{
             position: "absolute",
             left: clickCoords.x,
             top: clickCoords.y,
-            width: 20,
-            height: 20,
+            width: 24,
+            height: 24,
             borderRadius: "9999px",
             backgroundColor: "#FDFBF7",
             transform: "translate(-50%, -50%)",
@@ -152,26 +166,27 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
         />
       )}
 
-      {/* Huy hiệu Cẩm Cù House giữa màn che */}
+      {/* 1. Màn che xanh rêu trượt lên + tên trang hiện giữa màn hình */}
       <motion.div
         initial={{ opacity: 1, scale: 1 }}
         animate={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.4, delay: 0.25 }}
+        transition={{ duration: 0.45, delay: 0.22 }}
         className="relative z-10 flex flex-col items-center text-center px-6"
       >
-        <div className="w-12 h-12 rounded-full border border-amber-300/40 bg-amber-950/40 flex items-center justify-center text-amber-200 mb-3 shadow-lg shadow-black/30">
-          <Sparkles className="w-5 h-5 text-amber-200 animate-pulse" />
+        <div className="w-12 h-12 rounded-full border border-emerald-300/40 bg-emerald-950/50 flex items-center justify-center text-emerald-200 mb-3 shadow-lg shadow-black/40">
+          <Sparkles className="w-5 h-5 text-emerald-200 animate-pulse" />
         </div>
 
-        <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-widest text-[#FDFBF7] uppercase drop-shadow-md">
-          Cẩm Cù House
+        {/* Tên trang hiện giữa màn hình */}
+        <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-widest text-[#FDFBF7] uppercase drop-shadow-md">
+          {currentTitle}
         </h2>
 
-        <p className="text-[10px] sm:text-xs font-sans tracking-[0.25em] text-stone-300 uppercase mt-1">
-          coffee & food • Gia Nghĩa
+        <p className="text-[10px] sm:text-xs font-sans tracking-[0.3em] text-emerald-200/90 uppercase mt-2 font-medium">
+          CẨM CÙ HOUSE • GIA NGHĨA
         </p>
 
-        <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-amber-200/50 to-transparent mt-3" />
+        <div className="w-24 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent mt-3.5" />
       </motion.div>
     </motion.div>
   );

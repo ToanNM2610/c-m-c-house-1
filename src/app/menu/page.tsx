@@ -7,6 +7,7 @@ import DishDetailModal from "@/components/motion/DishDetailModal";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
 import { useLanguage } from "@/context/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Droplets,
   Sprout,
@@ -224,7 +225,7 @@ export default function MenuPage() {
               <img
                 src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
                 alt="Cà phê muối Đắk Nông"
-                className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 transform-gpu ${
+                className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-hover:rotate-1.5 transform-gpu ${
                   isSignatureOutOfStock ? "grayscale-[40%] opacity-80" : ""
                 }`}
               />
@@ -270,7 +271,7 @@ export default function MenuPage() {
             </div>
           </div>
 
-          {/* Menu Items List */}
+          {/* Menu Items List - Món lọc theo tab có hiệu ứng FLIP, card nảy nhẹ khi hover */}
           <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors duration-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 dark:border-stone-700/60 gap-2">
               <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
@@ -281,75 +282,87 @@ export default function MenuPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
-              {filteredItems.map((item, idx) => {
-                const isOutOfStock = item.inStock === false;
-                return (
-                  <div
-                    key={`${activeCategory}_${searchQuery}_${item.id}`}
-                    onClick={() => handleOpenDish(item)}
-                    className={`animate-fade-in stagger-${(idx % 8) + 1} flex items-start justify-between py-3 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-3 rounded-xl transition-all duration-200 dish-card-hover cursor-pointer ${
-                      isOutOfStock
-                        ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 grayscale-[30%]"
-                        : "hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
-                    }`}
-                  >
-                    <div className="flex flex-col min-w-0 pr-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span
-                          className={`text-sm font-bold transition-colors ${
-                            isOutOfStock
-                              ? "text-stone-500 line-through"
-                              : "text-[#1B281D] dark:text-[#F5F4EE] group-hover:text-[#3E5C46] dark:group-hover:text-[#88B795]"
-                          }`}
-                        >
-                          {item.name}
-                        </span>
-                        {isOutOfStock ? (
-                          <span className="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold">
-                            {dict.common.soldOut}
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
+              <AnimatePresence mode="popLayout">
+                {filteredItems.map((item, _idx) => {
+                  const isOutOfStock = item.inStock === false;
+                  return (
+                    <motion.div
+                      layout
+                      key={item.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      whileHover={{ y: -3.5, scale: 1.015 }}
+                      transition={{
+                        layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
+                        y: { type: "spring", stiffness: 450, damping: 25 },
+                        scale: { type: "spring", stiffness: 450, damping: 25 },
+                      }}
+                      onClick={() => handleOpenDish(item)}
+                      className={`flex items-start justify-between py-3 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-3 rounded-xl transition-all duration-200 dish-card-hover cursor-pointer ${
+                        isOutOfStock
+                          ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 grayscale-[30%]"
+                          : "hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
+                      }`}
+                    >
+                      <div className="flex flex-col min-w-0 pr-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span
+                            className={`text-sm font-bold transition-colors ${
+                              isOutOfStock
+                                ? "text-stone-500 line-through"
+                                : "text-[#1B281D] dark:text-[#F5F4EE] group-hover:text-[#3E5C46] dark:group-hover:text-[#88B795]"
+                            }`}
+                          >
+                            {item.name}
                           </span>
-                        ) : (
-                          item.tag && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-emerald-300 text-[10px] font-bold">
-                              {item.tag}
+                          {isOutOfStock ? (
+                            <span className="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold">
+                              {dict.common.soldOut}
                             </span>
-                          )
+                          ) : (
+                            item.tag && (
+                              <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-emerald-300 text-[10px] font-bold">
+                                {item.tag}
+                              </span>
+                            )
+                          )}
+                        </div>
+                        {item.description && (
+                          <span className="text-xs text-stone-600 dark:text-stone-400 line-clamp-1 mt-0.5">
+                            {item.description}
+                          </span>
                         )}
                       </div>
-                      {item.description && (
-                        <span className="text-xs text-stone-600 dark:text-stone-400 line-clamp-1 mt-0.5">
-                          {item.description}
+                      <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                        <span className="font-serif text-sm font-bold text-[#614633] dark:text-[#D1A684]">
+                          {item.price.toLocaleString("vi-VN")}đ
                         </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                      <span className="font-serif text-sm font-bold text-[#614633] dark:text-[#D1A684]">
-                        {item.price.toLocaleString("vi-VN")}đ
-                      </span>
-                      {isOutOfStock ? (
-                        <button
-                          type="button"
-                          disabled
-                          title={dict.common.soldOut}
-                          className="w-7 h-7 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 flex items-center justify-center cursor-not-allowed"
-                        >
-                          <span className="text-xs font-bold">✕</span>
-                        </button>
-                      ) : (
-                        <a
-                          href="tel:0382851688"
-                          title={isEn ? "Call to order" : "Gọi đặt món"}
-                          className="btn-press-sm w-7 h-7 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors shadow-sm"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                        {isOutOfStock ? (
+                          <button
+                            type="button"
+                            disabled
+                            title={dict.common.soldOut}
+                            className="w-7 h-7 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 flex items-center justify-center cursor-not-allowed"
+                          >
+                            <span className="text-xs font-bold">✕</span>
+                          </button>
+                        ) : (
+                          <a
+                            href="tel:0382851688"
+                            title={isEn ? "Call to order" : "Gọi đặt món"}
+                            className="btn-press-sm w-7 h-7 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors shadow-sm"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
           </div>
 
           {/* Bottom Commitment & Hotline Banner */}

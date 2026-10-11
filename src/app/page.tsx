@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
@@ -315,9 +316,13 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) - Parallax nhẹ khi cuộn & Zoom chậm Ken Burns */}
+          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) - Parallax nhẹ khi cuộn, clip-path mở dần & Zoom chậm Ken Burns */}
           <div className="animate-fade-up-3">
-            <div
+            <motion.div
+              initial={{ clipPath: "inset(10% 6% 10% 6% round 24px)", opacity: 0.8 }}
+              whileInView={{ clipPath: "inset(0% 0% 0% 0% round 24px)", opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] as const, delay: 0.15 }}
               onClick={() => handleOpenLightbox(0)}
               style={{ transform: `translateY(${heroParallaxOffset}px)` }}
               className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white dark:border-stone-700/60 transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
@@ -345,7 +350,7 @@ export default function HomePage() {
                   <span className="hidden xs:inline">{dict.common.viewLarger}</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Real-time Atmospheric Meter Badge & Store Status */}
             <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/80 dark:border-stone-700/60 shadow-xs text-stone-600 dark:text-stone-300 text-[11px] sm:text-xs transition-colors">
