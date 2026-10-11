@@ -210,8 +210,6 @@ export default function SpacePage() {
 
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] transition-colors duration-300">
-      <Navbar />
-
       <main className="pt-24 sm:pt-28">
         {/* Top Narrative Intro */}
         <section className="relative w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 sm:pt-10 pb-8">

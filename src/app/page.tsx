@@ -279,8 +279,6 @@ export default function HomePage() {
 
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-300 overflow-x-hidden w-full max-w-full">
-      <Navbar />
-
       <main className="pt-20 sm:pt-28 overflow-x-hidden">
         {/* Dynamic Announcement Banner from Shared Cookie Store: Render only if pinnedNews exists */}
         {pinnedNews && (
@@ -469,7 +467,7 @@ export default function HomePage() {
         </section>
 
         {/* INTRO SECTION: ARTISTIC STORY & BENTO VISUAL COLLAGE */}
-        <section id="intro" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 border-b border-stone-200/70 dark:border-stone-800/60">
+        <section id="story-intro" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 border-b border-stone-200/70 dark:border-stone-800/60">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             {/* Left Column: Artistic Narrative & Highlight Metrics (7 cols on lg) */}
             <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">

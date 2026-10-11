@@ -132,6 +132,9 @@ export default function Navbar() {
     return "bg-rose-400 animate-pulse-ring-rose";
   };
 
+  // Không hiển thị Navbar khách hàng trên trang Admin
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80 shadow-[0_2px_12px_rgba(37,51,38,0.04)] transition-colors duration-300">
       {/* Top Announcement Bar */}

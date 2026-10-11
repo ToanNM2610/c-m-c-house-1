@@ -45,8 +45,6 @@ export default function ContactPage() {
 
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
-      <Navbar />
-
       <main className="pt-20">
         {/* Top Ambient Banner */}
         <section className="animate-fade-up-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-8">

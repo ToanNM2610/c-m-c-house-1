@@ -125,8 +125,6 @@ export default function AboutPage() {
 
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
-      <Navbar />
-
       <main className="pt-20">
         {/* Top Narrative Intro */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-12 w-full text-center">

@@ -277,7 +277,7 @@ export default function IntroSplashScreen() {
   if (!isVisible) return null;
 
   return (
-    <div id="intro" ref={containerRef} role="dialog" aria-label="Đang tải Cẩm Cù House">
+    <div id="camcu-intro-splash" ref={containerRef} role="dialog" aria-label="Đang tải Cẩm Cù House">
       <canvas id="fx" />
       <div className="glow" />
       <div className="vig" />

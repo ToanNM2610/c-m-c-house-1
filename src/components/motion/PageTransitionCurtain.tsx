@@ -3,14 +3,11 @@
 import { motion } from "framer-motion";
 import { Flower2 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useTransitionContext } from "@/context/TransitionContext";
-
 interface PageTransitionCurtainProps {
   onComplete?: () => void;
 }
 
 export default function PageTransitionCurtain({ onComplete }: PageTransitionCurtainProps) {
-  const { clickCoords } = useTransitionContext();
   const pathname = usePathname();
 
   // Xác định tên trang mục tiêu
@@ -41,24 +38,7 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(62,92,70,0.55)_0%,rgba(24,37,28,0.98)_100%)] opacity-95" />
 
-      {/* Circle reveal mở từ vị trí click menu */}
-      {clickCoords && (
-        <motion.div
-          initial={{ scale: 0, opacity: 0.6 }}
-          animate={{ scale: 35, opacity: 0 }}
-          transition={{ duration: 0.75, ease: "easeOut" }}
-          style={{
-            position: "absolute",
-            left: clickCoords.x,
-            top: clickCoords.y,
-            width: 24,
-            height: 24,
-            borderRadius: "9999px",
-            backgroundColor: "#FDFBF7",
-            transform: "translate(-50%, -50%)",
-          }}
-        />
-      )}
+
 
       {/* Huy hiệu & Tên trang hiện giữa màn hình */}
       <motion.div

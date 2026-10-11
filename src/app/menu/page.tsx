@@ -130,8 +130,6 @@ export default function MenuPage() {
 
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
-      <Navbar />
-
       <main className="pt-20">
         {/* Top Atmospheric Intro Header */}
         <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 pt-8 pb-12 bg-gradient-to-b from-stone-100/50 to-[#F9F8F3] dark:from-[#16231A] dark:to-[#121A15] transition-colors duration-200">

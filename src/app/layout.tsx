@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import MobileBottomBar from "@/components/MobileBottomBar";
+import Navbar from "@/components/Navbar";
 import IntroSplashScreen from "@/components/IntroSplashScreen";
 import "lenis/dist/lenis.css";
 
@@ -87,6 +88,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>
+              <Navbar />
               <SmoothScroll>
                 {children}
               </SmoothScroll>

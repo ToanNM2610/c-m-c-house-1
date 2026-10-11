@@ -53,7 +53,7 @@ export default function StaggerText({
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once, margin: "-40px" }}
+        viewport={{ once, margin: "0px" }}
         className="block"
       >
         {lines.map((line, idx) => (
