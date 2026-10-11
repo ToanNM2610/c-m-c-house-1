@@ -4,14 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import './intro.css';
 
-const SHOW_ONCE = true; // Chỉ chạy 1 lần mỗi phiên (thêm ?intro=1 để ép chạy lại)
+const SHOW_ONCE = true; // Chạy 1 lần mỗi phiên (truy cập ?intro=1 để chạy lại)
 
 const TITLE_CHARS = Array.from('CẨM CÙ HOUSE');
 
 export default function IntroSplashScreen() {
   const [isRendered, setIsRendered] = useState(true);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mainTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const fxRef = useRef<{ stop: () => void } | null>(null);
   const exitingRef = useRef(false);
 
@@ -22,9 +21,6 @@ export default function IntroSplashScreen() {
     if (!introEl) return;
 
     const root = document.documentElement;
-    const bar = introEl.querySelector('.bar') as HTMLElement | null;
-    const pct = introEl.querySelector('#pct') as HTMLElement | null;
-    const mk = introEl.querySelector('.mark') as HTMLElement | null;
     const canvas = introEl.querySelector('#fx') as HTMLCanvasElement | null;
     const skipBtn = introEl.querySelector('#skip') as HTMLButtonElement | null;
 
@@ -44,12 +40,23 @@ export default function IntroSplashScreen() {
       } catch (e) {}
     };
 
+    const hasForceParam = /[?&](intro|replay)=/i.test(window.location.search);
+    if (hasForceParam) {
+      try {
+        sessionStorage.removeItem('cc_intro');
+      } catch (e) {}
+    }
+
+    // Bảo vệ timeout 800ms để không bao giờ bị treo promise nếu window load event đã qua
     const ready = () =>
-      Promise.all([
-        document.fonts ? document.fonts.ready : Promise.resolve(),
-        document.readyState === 'complete'
-          ? Promise.resolve()
-          : new Promise((r) => window.addEventListener('load', r, { once: true })),
+      Promise.race([
+        Promise.all([
+          document.fonts ? document.fonts.ready : Promise.resolve(),
+          document.readyState === 'complete'
+            ? Promise.resolve()
+            : new Promise((r) => window.addEventListener('load', r, { once: true })),
+        ]),
+        new Promise((r) => setTimeout(r, 800)),
       ]);
 
     function fireflies(cv: HTMLCanvasElement) {
@@ -118,147 +125,153 @@ export default function IntroSplashScreen() {
       setIsRendered(false);
     }
 
-    function exit(fast = false) {
-      if (exitingRef.current) return;
-      exitingRef.current = true;
-      mainTimelineRef.current?.kill();
+    // GSAP context để quản lý toàn bộ scope và cleanup
+    const ctx = gsap.context(() => {
+      const bar = introEl.querySelector('.bar') as HTMLElement | null;
+      const pct = introEl.querySelector('#pct') as HTMLElement | null;
+      const mk = introEl.querySelector('.mark') as HTMLElement | null;
+      const chars = gsap.utils.toArray('.c') as HTMLElement[];
+      const petals = gsap.utils.toArray('.pt') as SVGElement[];
+      const rings = gsap.utils.toArray('.ring') as HTMLElement[];
 
-      const R = Math.hypot(window.innerWidth, window.innerHeight) / 2 + 80;
-      const m = { r: -70 };
+      function exit(fast = false) {
+        if (exitingRef.current) return;
+        exitingRef.current = true;
 
-      const exitTl = gsap.timeline({ onComplete: finish });
+        const R = Math.hypot(window.innerWidth, window.innerHeight) / 2 + 80;
+        const m = { r: -70 };
 
-      exitTl
-        .to(['.stage', '.meter', '#skip'], {
-          opacity: 0,
-          scale: fast ? 1 : 1.05,
-          duration: fast ? 0.2 : 0.45,
-          ease: 'power2.in',
-        })
-        .to(bar, { opacity: 0, duration: 0.3 }, 0)
-        .to(
-          m,
-          {
-            r: R,
-            duration: fast ? 0.6 : 1.15,
-            ease: 'power3.inOut',
-            onUpdate() {
-              if (introEl) {
-                const mask = `radial-gradient(circle at 50% 50%, transparent ${m.r}px, #000 ${m.r + 70}px)`;
-                introEl.style.webkitMaskImage = mask;
-                introEl.style.maskImage = mask;
-              }
+        const exitTl = gsap.timeline({ onComplete: finish });
+
+        exitTl
+          .to(['.stage', '.meter', '#skip'], {
+            opacity: 0,
+            scale: fast ? 1 : 1.05,
+            duration: fast ? 0.2 : 0.45,
+            ease: 'power2.in',
+          })
+          .to(bar, { opacity: 0, duration: 0.3 }, 0)
+          .to(
+            m,
+            {
+              r: R,
+              duration: fast ? 0.6 : 1.15,
+              ease: 'power3.inOut',
+              onUpdate() {
+                if (introEl) {
+                  const mask = `radial-gradient(circle at 50% 50%, transparent ${m.r}px, #000 ${m.r + 70}px)`;
+                  introEl.style.webkitMaskImage = mask;
+                  introEl.style.maskImage = mask;
+                }
+              },
             },
-          },
-          fast ? 0.05 : 0.3
-        )
-        .add(() => document.body.classList.add('intro-go'), fast ? 0.15 : 0.6);
-    }
-
-    function play() {
-      if (!introEl) return;
-      exitingRef.current = false;
-      mainTimelineRef.current?.kill();
-      fxRef.current?.stop();
-
-      document.body.classList.remove('intro-go');
-      root.classList.add('intro-lock');
-
-      introEl.style.display = '';
-      introEl.style.webkitMaskImage = 'none';
-      introEl.style.maskImage = 'none';
-
-      if (canvas) {
-        fxRef.current = fireflies(canvas);
+            fast ? 0.05 : 0.3
+          )
+          .add(() => document.body.classList.add('intro-go'), fast ? 0.15 : 0.6);
       }
 
-      if (mk) {
-        mk.style.setProperty('--L', Math.max(80, mk.getBoundingClientRect().top - 18) + 'px');
-      }
+      function play() {
+        if (!introEl) return;
+        exitingRef.current = false;
+        fxRef.current?.stop();
 
-      const chars = introEl.querySelectorAll('.c');
-      const petals = introEl.querySelectorAll('.pt');
-      const rings = introEl.querySelectorAll('.ring');
-      const prog = { v: 0 };
+        document.body.classList.remove('intro-go');
+        root.classList.add('intro-lock');
 
-      if (pct) pct.textContent = '0';
-      if (bar) {
-        bar.style.opacity = '1';
-        bar.style.transform = 'scaleX(0)';
-      }
+        introEl.style.display = '';
+        introEl.style.webkitMaskImage = 'none';
+        introEl.style.maskImage = 'none';
 
-      gsap.set(['.stage', '#skip'], { opacity: 1, scale: 1 });
-      gsap.set(chars, { yPercent: 115 });
-      gsap.set('.stream', { scaleY: 0, opacity: 1 });
-      gsap.set('.drop', { opacity: 0, y: 0, scale: 0.3 });
-      gsap.set(petals, { scale: 0, rotation: -25, svgOrigin: '0 0' });
-      gsap.set('.cor', { scale: 0, svgOrigin: '0 0' });
-      gsap.set(rings, { opacity: 0 });
-      gsap.set('.glow', { opacity: 0 });
-      gsap.set('.meter', { opacity: 0 });
-      gsap.set('.tag', { opacity: 0, y: 12 });
-      gsap.set('.loc', { opacity: 0 });
-      gsap.set('.word', { letterSpacing: '.42em' });
+        if (canvas) {
+          fxRef.current = fireflies(canvas);
+        }
 
-      mainTimelineRef.current = gsap
-        .timeline({
-          defaults: { ease: 'power2.out' },
-          onComplete: () => {
-            ready().then(() => exit(false));
-          },
-        })
-        .to('.meter', { opacity: 1, duration: 0.5 }, 0.15)
-        .to(
-          prog,
-          {
-            v: 100,
-            duration: 2.45,
-            ease: 'power1.inOut',
-            onUpdate() {
-              if (pct) pct.textContent = String(Math.round(prog.v));
-              if (bar) bar.style.transform = `scaleX(${prog.v / 100})`;
+        if (mk) {
+          mk.style.setProperty('--L', Math.max(80, mk.getBoundingClientRect().top - 18) + 'px');
+        }
+
+        const prog = { v: 0 };
+
+        if (pct) pct.textContent = '0';
+        if (bar) {
+          bar.style.opacity = '1';
+          bar.style.transform = 'scaleX(0)';
+        }
+
+        gsap.set(['.stage', '#skip'], { opacity: 1, scale: 1 });
+        gsap.set(chars, { yPercent: 115 });
+        gsap.set('.stream', { scaleY: 0, opacity: 1 });
+        gsap.set('.drop', { opacity: 0, y: 0, scale: 0.3 });
+        gsap.set(petals, { scale: 0, rotation: -25, svgOrigin: '0 0' });
+        gsap.set('.cor', { scale: 0, svgOrigin: '0 0' });
+        gsap.set(rings, { opacity: 0 });
+        gsap.set('.glow', { opacity: 0 });
+        gsap.set('.meter', { opacity: 0 });
+        gsap.set('.tag', { opacity: 0, y: 12 });
+        gsap.set('.loc', { opacity: 0 });
+        gsap.set('.word', { letterSpacing: '.42em' });
+
+        gsap
+          .timeline({
+            defaults: { ease: 'power2.out' },
+            onComplete: () => {
+              ready().then(() => exit(false));
             },
-          },
-          0.15
-        )
-        .to('.stream', { scaleY: 1, duration: 0.5, ease: 'power2.in' }, 0.2)
-        .to('.drop', { opacity: 1, scale: 1, duration: 0.12 }, 0.7)
-        .to('.drop', { y: 68, duration: 0.35, ease: 'power2.in' }, 0.8)
-        .add('hit', 1.15)
-        .set('.drop', { opacity: 0 }, 'hit')
-        .to('.stream', { opacity: 0, duration: 0.4 }, 'hit')
-        .fromTo(rings, { scale: 0.2, opacity: 0.9 }, { scale: 8, opacity: 0, duration: 1.5, stagger: 0.2 }, 'hit')
-        .to('.glow', { opacity: 1, duration: 1.2 }, 'hit')
-        .to(petals, { scale: 1, rotation: 0, duration: 1, ease: 'back.out(1.6)', stagger: 0.08 }, 'hit+=.05')
-        .to('.cor', { scale: 1, duration: 0.7, ease: 'back.out(2.2)' }, 'hit+=.45')
-        .to(chars, { yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.045 }, 'hit+=.35')
-        .to('.word', { letterSpacing: '.16em', duration: 1.5, ease: 'power3.out' }, 'hit+=.35')
-        .to('.tag', { opacity: 1, y: 0, duration: 0.7 }, 'hit+=.8')
-        .to('.loc', { opacity: 1, duration: 0.7 }, 'hit+=1');
-    }
-
-    const onSkipClick = () => exit(true);
-    skipBtn?.addEventListener('click', onSkipClick);
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && introEl.style.display !== 'none') {
-        exit(true);
+          })
+          .to('.meter', { opacity: 1, duration: 0.5 }, 0.15)
+          .to(
+            prog,
+            {
+              v: 100,
+              duration: 2.45,
+              ease: 'power1.inOut',
+              onUpdate() {
+                if (pct) pct.textContent = String(Math.round(prog.v));
+                if (bar) bar.style.transform = `scaleX(${prog.v / 100})`;
+              },
+            },
+            0.15
+          )
+          .to('.stream', { scaleY: 1, duration: 0.5, ease: 'power2.in' }, 0.2)
+          .to('.drop', { opacity: 1, scale: 1, duration: 0.12 }, 0.7)
+          .to('.drop', { y: 68, duration: 0.35, ease: 'power2.in' }, 0.8)
+          .add('hit', 1.15)
+          .set('.drop', { opacity: 0 }, 'hit')
+          .to('.stream', { opacity: 0, duration: 0.4 }, 'hit')
+          .fromTo(rings, { scale: 0.2, opacity: 0.9 }, { scale: 8, opacity: 0, duration: 1.5, stagger: 0.2 }, 'hit')
+          .to('.glow', { opacity: 1, duration: 1.2 }, 'hit')
+          .to(petals, { scale: 1, rotation: 0, duration: 1, ease: 'back.out(1.6)', stagger: 0.08 }, 'hit+=.05')
+          .to('.cor', { scale: 1, duration: 0.7, ease: 'back.out(2.2)' }, 'hit+=.45')
+          .to(chars, { yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.045 }, 'hit+=.35')
+          .to('.word', { letterSpacing: '.16em', duration: 1.5, ease: 'power3.out' }, 'hit+=.35')
+          .to('.tag', { opacity: 1, y: 0, duration: 0.7 }, 'hit+=.8')
+          .to('.loc', { opacity: 1, duration: 0.7 }, 'hit+=1');
       }
-    };
-    window.addEventListener('keydown', onKeyDown);
 
-    const hasForceParam = /[?&]intro=1/.test(window.location.search);
+      const onSkipClick = () => exit(true);
+      skipBtn?.addEventListener('click', onSkipClick);
 
-    if (reduce || (SHOW_ONCE && seen() && !hasForceParam)) {
-      finish();
-    } else {
-      play();
-    }
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && introEl.style.display !== 'none') {
+          exit(true);
+        }
+      };
+      window.addEventListener('keydown', onKeyDown);
+
+      if (reduce || (SHOW_ONCE && seen() && !hasForceParam)) {
+        finish();
+      } else {
+        play();
+      }
+
+      return () => {
+        skipBtn?.removeEventListener('click', onSkipClick);
+        window.removeEventListener('keydown', onKeyDown);
+      };
+    }, containerRef);
 
     return () => {
-      skipBtn?.removeEventListener('click', onSkipClick);
-      window.removeEventListener('keydown', onKeyDown);
-      mainTimelineRef.current?.kill();
+      ctx.revert();
       fxRef.current?.stop();
       root.classList.remove('intro-lock');
     };
