@@ -30,10 +30,20 @@ export default function SpacePage() {
   const isEn = locale === "en";
 
   const [activeFilter, setActiveFilter] = useState("all");
+  const [isFiltering, setIsFiltering] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [galleryPhotos, setGalleryPhotos] = useState<SharedGalleryItem[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const handleFilterChange = (catId: string) => {
+    if (catId === activeFilter) return;
+    setIsFiltering(true);
+    setActiveFilter(catId);
+    setTimeout(() => {
+      setIsFiltering(false);
+    }, 180);
+  };
 
   useEffect(() => {
     // 1. Hydrate shared gallery from storage & cookie
@@ -265,15 +275,15 @@ export default function SpacePage() {
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setActiveFilter(cat.id)}
+                    onClick={() => handleFilterChange(cat.id)}
                     type="button"
-                    className={`btn-press-sm min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
+                    className={`btn-press-sm min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
                       isActive
                         ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
-                        : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
+                        : "text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
                     }`}
                   >
-                    <span className={!isActive ? "link-hover-underline" : ""}>
+                    <span>
                       {cat.id === "all" ? `${label} (${allItems.length})` : label}
                     </span>
                   </button>
@@ -289,9 +299,22 @@ export default function SpacePage() {
           </div>
         </section>
 
-        {/* Gallery Grid Section: Card ảnh stagger khi lọc tab (FLIP), hover zoom + nổi chữ, lightbox phóng to */}
-        <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Gallery Grid Section: Card ảnh stagger khi lọc tab (FLIP), skeleton loading khi đổi tab, không hiện ô trống */}
+        <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16 min-h-[480px]">
+          {isFiltering ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl aspect-[4/3] bg-stone-200/70 dark:bg-[#1E2B22] animate-pulse border border-stone-200 dark:border-stone-700/60 p-4 flex flex-col justify-end"
+                >
+                  <div className="h-3 w-20 bg-stone-300 dark:bg-stone-700 rounded-full mb-2" />
+                  <div className="h-4 w-36 bg-stone-300 dark:bg-stone-700 rounded-full" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item, idx) => (
                 <motion.div
@@ -334,6 +357,7 @@ export default function SpacePage() {
               ))}
             </AnimatePresence>
           </motion.div>
+          )}
         </section>
 
         {/* Stream Ambience Floating Audio Bar */}

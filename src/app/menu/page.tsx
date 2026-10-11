@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Plus,
   Search,
+  X,
 } from "lucide-react";
 
 import {
@@ -175,41 +176,63 @@ export default function MenuPage() {
 
         {/* Sticky Dynamic Filter Navigation (Stagger 2: 120ms) */}
         <div className="animate-fade-up-2 sticky top-20 z-40 w-full bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md py-3 px-4 sm:px-6 lg:px-8 border-y border-stone-200/80 dark:border-stone-800/80 shadow-[0_4px_16px_rgba(37,51,38,0.03)] transition-colors duration-200">
-          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
-              {MENU_CATEGORIES.map((cat) => {
-                const isActive = activeCategory === cat.id;
-                const count = getCategoryCount(cat.id);
-                const categoryLabel = dict.menu.categories[cat.id] || cat.name;
-                return (
+          <div className="max-w-7xl mx-auto flex flex-col gap-3">
+            {/* Row 1: Search Bar (Hàng tìm kiếm riêng biệt, thoáng đãng) */}
+            <div className="w-full flex items-center justify-between gap-3">
+              <div className="relative w-full max-w-md">
+                <input
+                  type="text"
+                  placeholder={dict.menu.searchPlaceholder}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-9 py-2 bg-white dark:bg-[#1E2B22] text-stone-800 dark:text-stone-100 rounded-full text-sm border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-xs transition-colors duration-200"
+                />
+                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                {searchQuery && (
                   <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
                     type="button"
-                    className={`btn-press-sm shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
-                      isActive
-                        ? "bg-[#3E5C46] text-white shadow-sm font-bold"
-                        : "bg-stone-100 dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white border border-stone-200/60 dark:border-stone-700/60"
-                    }`}
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-0.5"
                   >
-                    <span className={!isActive ? "link-hover-underline" : ""}>
-                      {categoryLabel} ({count})
-                    </span>
+                    <X className="w-3.5 h-3.5" />
                   </button>
-                );
-              })}
+                )}
+              </div>
+
+              <span className="hidden sm:inline-block text-xs text-stone-500 dark:text-stone-400 font-medium whitespace-nowrap">
+                {filteredItems.length} {isEn ? "items found" : "món phù hợp"}
+              </span>
             </div>
 
-            {/* Quick Search */}
-            <div className="relative shrink-0 sm:w-56">
-              <input
-                type="text"
-                placeholder={dict.menu.searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-white dark:bg-[#1E2B22] text-stone-800 dark:text-stone-100 rounded-full text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-inner transition-colors duration-200"
-              />
-              <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            {/* Row 2: Category Tabs with Smooth Edge Fading */}
+            <div className="relative w-full overflow-hidden">
+              {/* Left & Right gradient fade masks to hint horizontal scrollability */}
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-[#F9F8F3] dark:from-[#121A15] to-transparent z-10" />
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-[#F9F8F3] dark:from-[#121A15] to-transparent z-10" />
+
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1">
+                {MENU_CATEGORIES.map((cat) => {
+                  const isActive = activeCategory === cat.id;
+                  const count = getCategoryCount(cat.id);
+                  const categoryLabel = dict.menu.categories[cat.id] || cat.name;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      type="button"
+                      className={`btn-press-sm shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                        isActive
+                          ? "bg-[#3E5C46] text-white shadow-sm font-bold"
+                          : "bg-stone-100 dark:bg-[#1E2B22] text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white border border-stone-200/60 dark:border-stone-700/60"
+                      }`}
+                    >
+                      <span>
+                        {categoryLabel} ({count})
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

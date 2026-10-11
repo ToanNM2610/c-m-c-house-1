@@ -137,41 +137,44 @@ export default function Navbar() {
       {/* Top Announcement Bar */}
       <div className="w-full bg-[#2D4233] dark:bg-[#16231A] text-stone-200 text-[11px] sm:text-xs py-1 px-3 sm:px-4 border-b border-stone-800/20 dark:border-stone-800/60 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
-          {/* Mobile Display: Clean left-right balance without horizontal overflow */}
-          <div className="flex md:hidden items-center justify-between w-full text-[11px]">
+          {/* Mobile Display: 1 Single Clean Status Pill */}
+          <div className="flex md:hidden items-center justify-between w-full text-xs">
             <span className="flex items-center gap-1.5 font-semibold text-white truncate">
               <span className={`w-2 h-2 rounded-full shrink-0 ${getDotClass()}`} />
               <span className="truncate">{i18nStatus.shortBadge}</span>
             </span>
-            <span className="text-stone-300 text-[10px] sm:text-[11px] font-medium shrink-0 ml-2">
+            <span className="text-stone-300 text-xs font-medium shrink-0 ml-2">
               {storeStatus.isOpen
                 ? (locale === "en" ? `Closes at ${storeStatus.closingTime}` : `Đóng lúc ${storeStatus.closingTime}`)
                 : (locale === "en" ? "Opens at 07:00" : "Mở lúc 07:00")}
             </span>
           </div>
 
-          {/* Desktop Display: Pinned Announcement / Detailed Schedule */}
-          <div className="hidden md:flex items-center gap-2 overflow-hidden truncate">
-            <span className="bg-[#3E5C46] px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
-              {pinnedNews ? dict.common.noticeBoard : dict.common.openingHoursGMT}
+          {/* Desktop Left: Announcement / Brand Philosophy */}
+          <div className="hidden md:flex items-center gap-2 overflow-hidden truncate text-xs">
+            <span className="bg-[#3E5C46] px-2.5 py-0.5 rounded text-[11px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
+              {pinnedNews ? dict.common.noticeBoard : "CẨM CÙ HOUSE"}
             </span>
-            <span className="truncate font-medium">
+            <span className="truncate font-medium text-stone-200">
               {pinnedNews
                 ? `${pinnedNews.title}: ${pinnedNews.content}`
-                : i18nStatus.badgeText}
+                : (locale === "en" ? "Eco coffee & dining sanctuary by the natural pebble stream in Gia Nghia" : "Chốn dừng chân ẩm thực & cà phê sinh thái mộc mạc bên dòng suối mát Gia Nghĩa")}
             </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-3 shrink-0 text-stone-300">
-            <span className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${getDotClass()}`} />
-              <span className="font-semibold text-white">
-                {i18nStatus.shortBadge}
+          {/* Desktop Right: 1 Single Unified Real-Time Status Pill */}
+          <div className="hidden md:flex items-center gap-2.5 shrink-0 text-xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-black/25 border border-white/10 text-white font-semibold">
+              <span className={`w-2 h-2 rounded-full shrink-0 ${getDotClass()}`} />
+              <span>{i18nStatus.shortBadge}</span>
+              <span className="text-stone-300 font-normal">
+                ({storeStatus.isOpen
+                  ? (locale === "en" ? `closes at ${storeStatus.closingTime}` : `đóng lúc ${storeStatus.closingTime}`)
+                  : (locale === "en" ? "opens at 07:00" : "mở lúc 07:00")})
               </span>
             </span>
-            <span>•</span>
             <span className="text-stone-300 font-medium">
-              {i18nStatus.scheduleText}
+              • {i18nStatus.scheduleText}
             </span>
           </div>
         </div>
