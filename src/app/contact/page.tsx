@@ -259,11 +259,26 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <p className="text-base text-stone-700 dark:text-stone-300 leading-relaxed">
+                <p className="text-sm sm:text-base text-stone-700 dark:text-stone-300 leading-relaxed">
                   {isEn
                     ? "Located at Alley 437 Hung Vuong, Nghia Trung Ward, Gia Nghia City. Wide concrete paved road, safe for all vehicles directly to our spacious yard."
                     : "Quán tọa lạc tại Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa. Tuyến đường bê tông sạch sẽ, bằng phẳng, ô tô vào tận bãi đỗ xe trong khuôn viên quán."}
                 </p>
+
+                {/* Embedded Interactive Google Map */}
+                <div className="w-full aspect-[16/10] sm:aspect-[16/8] rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700/60 shadow-inner bg-stone-100 dark:bg-stone-800">
+                  <iframe
+                    title="Bản đồ Google Maps Cẩm Cù House"
+                    src="https://www.google.com/maps?q=11.9912,107.6888&hl=vi&z=15&output=embed"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full h-full"
+                  />
+                </div>
 
                 <div className="pt-2">
                   <motion.a
@@ -272,7 +287,7 @@ export default function ContactPage() {
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="relative btn-press w-full py-4 px-6 rounded-full bg-[#3E5C46] text-white text-sm font-bold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.35)] flex items-center justify-center gap-2 ring-4 ring-[#3E5C46]/30 animate-pulse"
+                    className="relative btn-press w-full py-3.5 px-6 rounded-full bg-[#3E5C46] text-white text-sm font-bold hover:bg-[#2D4233] transition-all shadow-[0_6px_20px_rgba(62,92,70,0.3)] flex items-center justify-center gap-2 ring-4 ring-[#3E5C46]/20"
                   >
                     <Navigation className="w-4 h-4" />
                     <span>{dict.common.openGoogleMaps}</span>
