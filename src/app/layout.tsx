@@ -69,8 +69,9 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
-                  var seenIntro = sessionStorage.getItem('cc_intro') === '1';
-                  var hasForce = /[?&]intro=1/.test(location.search);
+                  var seenIntro = sessionStorage.getItem('cc_intro_v2') === '1';
+                  var params = new URLSearchParams(location.search);
+                  var hasForce = params.has('intro') || params.has('replay');
                   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                   if ((!seenIntro || hasForce) && !prefersReduced) {
                     document.documentElement.classList.add('intro-lock');
