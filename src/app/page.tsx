@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
+import GoogleReviewsSection from "@/components/GoogleReviewsSection";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
@@ -75,56 +75,7 @@ const HOME_SPACE_PREVIEWS = [
   },
 ];
 
-const GUEST_REVIEWS = [
-  {
-    name: "Hoàng Nam",
-    roleVi: "Khách du lịch TP.HCM",
-    roleEn: "Visitor from HCMC",
-    quoteVi: "Không gian bờ suối quá đẹp và thư thái. Cà phê muối ở đây cực kỳ thơm béo, ngồi nhâm nhi nghe tiếng nước chảy cả buổi không biết chán.",
-    quoteEn: "The riverside space is stunning and so relaxing. Salt coffee here is rich and creamy, sitting by the water all afternoon never gets old.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-  },
-  {
-    name: "Thanh Thảo",
-    roleVi: "Khách địa phương Gia Nghĩa",
-    roleEn: "Local resident of Gia Nghia",
-    quoteVi: "Đường vào rất dễ đi, xe ô tô 7 chỗ chạy vào tận sân thoải mái. Quán mộc mạc, nhiều góc chụp ảnh với hoa cẩm cù rất xinh xắn.",
-    quoteEn: "The access road is smooth, 7-seater cars drive right into the yard comfortably. Rustic ambience with lovely hoya flower corners.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-  },
-  {
-    name: "Minh Trí",
-    roleVi: "Ghé thăm cuối tuần",
-    roleEn: "Weekend Traveler",
-    quoteVi: "Trà hoa đu đủ rất đặc biệt, uống mát lành tốt cho sức khỏe. Đồ ăn sáng như bò kho bánh mì cũng rất ngon và giá cả hợp lý.",
-    quoteEn: "Wild papaya flower tea is truly unique, crisp and soothing. Breakfast dishes like beef stew with bread are also delicious.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-  },
-  {
-    name: "Lan Anh & Gia Đình",
-    roleVi: "Du khách Hà Nội",
-    roleEn: "Family from Hanoi",
-    quoteVi: "Cả nhà 3 thế hệ đến đây nghỉ chân đều thích mê. Không khí trong lành 0 khói bụi, các bé thích mê ngắm đàn cá bên suối đá tự nhiên.",
-    quoteEn: "Our 3-generation family loved resting here. Crisp air with zero dust, kids were captivated watching stream water over natural stones.",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-  },
-  {
-    name: "Đức Huy",
-    roleVi: "Nhiếp ảnh gia tự do",
-    roleEn: "Freelance Photographer",
-    quoteVi: "Ánh sáng tự nhiên buổi sớm xuyên qua tán cây và hiên gỗ chụp góc nào cũng như tranh. Cà phê mộc rang củi giữ nguyên hương vị cao nguyên.",
-    quoteEn: "Morning rays filtering through highland foliage onto the timber deck make every shot cinematic. Firewood roasted coffee is top-tier.",
-    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-  },
-  {
-    name: "Thu Phương",
-    roleVi: "Khách phượt Tây Nguyên",
-    roleEn: "Backpacker in Central Highlands",
-    quoteVi: "Đi cung đường Đắk Nông ghé quán là quyết định tuyệt vời nhất. Nhân viên chu đáo, tiếng suối reo xua tan hết mệt mỏi đường dài.",
-    quoteEn: "Dropping by during our Dak Nong road trip was the highlight. Friendly hospitality and murmuring stream water washed all fatigue away.",
-    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-  },
-];
+
 
 function MetricCounter({
   target,
@@ -764,61 +715,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* SECTION 3: TESTIMONIALS (Dải trượt tự động mượt mà + Chân dung người thật) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 overflow-hidden">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
-              <Star className="w-3.5 h-3.5 fill-[#3E5C46] text-[#3E5C46] dark:fill-[#88B795] dark:text-[#88B795]" />
-              <span>{isEn ? "Guest Reviews" : "Đánh Giá Từ Khách Hàng"}</span>
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-              {isEn ? "Reflections from Visiting Guests" : "Cảm Nhận Từ Lữ Khách Ghé Chơi"}
-            </h2>
-            <p className="text-xs text-stone-500 dark:text-stone-400 mt-2">
-              {isEn ? "Continuous stream • Hover or touch to pause" : "Dải trượt tự động • Rê chuột để dừng đọc"}
-            </p>
-          </div>
-
-          {/* Marquee Track Slider */}
-          <div className="relative w-full overflow-hidden mask-gradient-x">
-            <div className="animate-marquee-track flex gap-6 pb-4">
-              {[...GUEST_REVIEWS, ...GUEST_REVIEWS].map((review, i) => (
-                <div
-                  key={`${review.name}-${i}`}
-                  className="w-[310px] sm:w-[360px] shrink-0 bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center gap-1 text-amber-500 mb-3">
-                      {[...Array(5)].map((_, sIdx) => (
-                        <Star key={sIdx} className="w-3.5 h-3.5 fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-stone-700 dark:text-stone-300 text-xs sm:text-sm leading-relaxed mb-5 italic">
-                      &ldquo;{isEn ? review.quoteEn : review.quoteVi}&rdquo;
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-3 border-t border-stone-100 dark:border-stone-800">
-                    <img
-                      src={review.avatar}
-                      alt={review.name}
-                      loading="lazy"
-                      className="w-11 h-11 rounded-full object-cover ring-2 ring-[#3E5C46]/30 shadow-xs shrink-0"
-                    />
-                    <div>
-                      <h4 className="text-sm font-bold text-[#1B281D] dark:text-white leading-tight">
-                        {review.name}
-                      </h4>
-                      <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-                        {isEn ? review.roleEn : review.roleVi}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* SECTION 3: AUTHENTIC GOOGLE MAPS REVIEWS & TESTIMONIALS */}
+        <GoogleReviewsSection isEn={isEn} />
 
         {/* SECTION 4: INVITATION & DIRECTIONS CTA */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
