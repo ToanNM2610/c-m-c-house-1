@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { Playfair_Display, Be_Vietnam_Pro } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { TransitionProvider } from "@/context/TransitionContext";
 import SmoothScroll from "@/components/motion/SmoothScroll";
+import TransitionModeSelector from "@/components/motion/TransitionModeSelector";
 import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
@@ -68,9 +70,12 @@ export default function RootLayout({
       <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <LanguageProvider>
-            <SmoothScroll>
-              {children}
-            </SmoothScroll>
+            <TransitionProvider>
+              <SmoothScroll>
+                {children}
+              </SmoothScroll>
+              <TransitionModeSelector />
+            </TransitionProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
