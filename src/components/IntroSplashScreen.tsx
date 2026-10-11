@@ -1,231 +1,334 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import './intro.css';
 
-const INTRO_STORAGE_KEY = 'camcu_intro_seen_v1';
+const SHOW_ONCE = true; // Chỉ chạy 1 lần mỗi phiên (thêm ?intro=1 để ép chạy lại)
+
+const TITLE_CHARS = Array.from('CẨM CÙ HOUSE');
 
 export default function IntroSplashScreen() {
-  const [show, setShow] = useState(false);
-  const [isSplitting, setIsSplitting] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [isRendered, setIsRendered] = useState(true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mainTimelineRef = useRef<gsap.core.Timeline | null>(null);
+  const fxRef = useRef<{ stop: () => void } | null>(null);
+  const exitingRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    setMounted(true);
 
-    // Kiểm tra xem người dùng đã từng xem hoặc bấm bỏ qua chưa
-    const hasSeenIntro = localStorage.getItem(INTRO_STORAGE_KEY);
-    if (hasSeenIntro === 'true') {
-      return;
-    }
+    const introEl = containerRef.current;
+    if (!introEl) return;
 
-    setShow(true);
-    // Khóa cuộn tuyệt đối trên cả body và html
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
+    const root = document.documentElement;
+    const bar = introEl.querySelector('.bar') as HTMLElement | null;
+    const pct = introEl.querySelector('#pct') as HTMLElement | null;
+    const mk = introEl.querySelector('.mark') as HTMLElement | null;
+    const canvas = introEl.querySelector('#fx') as HTMLCanvasElement | null;
+    const skipBtn = introEl.querySelector('#skip') as HTMLButtonElement | null;
 
-    // Chạy bộ đếm 0 -> 100% trong 1.5 giây
-    const startTime = performance.now();
-    const duration = 1500; // 1.5 giây
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let animId: number;
-    const updateProgress = (now: number) => {
-      const elapsed = now - startTime;
-      const current = Math.min(Math.round((elapsed / duration) * 100), 100);
-      setProgress(current);
-
-      if (current < 100) {
-        animId = requestAnimationFrame(updateProgress);
-      } else {
-        // Đạt 100%: Màn che tách đôi dứt khoát mở ra trang chủ
-        setIsSplitting(true);
-        localStorage.setItem(INTRO_STORAGE_KEY, 'true');
-        setTimeout(() => {
-          setShow(false);
-          document.body.style.overflow = '';
-          document.documentElement.style.overflow = '';
-        }, 550);
+    const seen = () => {
+      try {
+        return sessionStorage.getItem('cc_intro') === '1';
+      } catch (e) {
+        return false;
       }
     };
 
-    animId = requestAnimationFrame(updateProgress);
+    const mark = () => {
+      try {
+        sessionStorage.setItem('cc_intro', '1');
+      } catch (e) {}
+    };
+
+    const ready = () =>
+      Promise.all([
+        document.fonts ? document.fonts.ready : Promise.resolve(),
+        document.readyState === 'complete'
+          ? Promise.resolve()
+          : new Promise((r) => window.addEventListener('load', r, { once: true })),
+      ]);
+
+    function fireflies(cv: HTMLCanvasElement) {
+      const c = cv.getContext('2d');
+      if (!c) return { stop() {} };
+      let w = 0,
+        h = 0,
+        d = 1,
+        p: Array<{ x: number; y: number; r: number; v: number; a: number; s: number }> = [],
+        id: number,
+        on = true;
+
+      const rs = () => {
+        d = Math.min(window.devicePixelRatio || 1, 2);
+        w = cv.width = window.innerWidth * d;
+        h = cv.height = window.innerHeight * d;
+        p = Array.from({ length: Math.min(48, Math.round(window.innerWidth / 26)) }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: (0.7 + Math.random() * 1.6) * d,
+          v: (0.08 + Math.random() * 0.22) * d,
+          a: Math.random() * 6.28,
+          s: 0.4 + Math.random() * 1.2,
+        }));
+      };
+
+      rs();
+      window.addEventListener('resize', rs);
+
+      (function loop(t: number) {
+        if (!on) return;
+        c.clearRect(0, 0, w, h);
+        c.globalCompositeOperation = 'lighter';
+        for (const q of p) {
+          q.y -= q.v;
+          q.x += Math.sin((t / 1800) * q.s + q.a) * 0.25 * d;
+          if (q.y < -10) q.y = h + 10;
+          const k = 0.35 + 0.65 * Math.abs(Math.sin((t / 900) * q.s + q.a));
+          const g = c.createRadialGradient(q.x, q.y, 0, q.x, q.y, q.r * 7);
+          g.addColorStop(0, `rgba(226,240,170,${0.5 * k})`);
+          g.addColorStop(1, 'rgba(226,240,170,0)');
+          c.fillStyle = g;
+          c.beginPath();
+          c.arc(q.x, q.y, q.r * 7, 0, 6.283);
+          c.fill();
+        }
+        id = requestAnimationFrame(loop);
+      })(0);
+
+      return {
+        stop() {
+          on = false;
+          cancelAnimationFrame(id);
+          window.removeEventListener('resize', rs);
+        },
+      };
+    }
+
+    function finish() {
+      if (introEl) introEl.style.display = 'none';
+      root.classList.remove('intro-lock');
+      document.body.classList.add('intro-go');
+      fxRef.current?.stop();
+      mark();
+      document.dispatchEvent(new CustomEvent('camcu:intro-done'));
+      setIsRendered(false);
+    }
+
+    function exit(fast = false) {
+      if (exitingRef.current) return;
+      exitingRef.current = true;
+      mainTimelineRef.current?.kill();
+
+      const R = Math.hypot(window.innerWidth, window.innerHeight) / 2 + 80;
+      const m = { r: -70 };
+
+      const exitTl = gsap.timeline({ onComplete: finish });
+
+      exitTl
+        .to(['.stage', '.meter', '#skip'], {
+          opacity: 0,
+          scale: fast ? 1 : 1.05,
+          duration: fast ? 0.2 : 0.45,
+          ease: 'power2.in',
+        })
+        .to(bar, { opacity: 0, duration: 0.3 }, 0)
+        .to(
+          m,
+          {
+            r: R,
+            duration: fast ? 0.6 : 1.15,
+            ease: 'power3.inOut',
+            onUpdate() {
+              if (introEl) {
+                const mask = `radial-gradient(circle at 50% 50%, transparent ${m.r}px, #000 ${m.r + 70}px)`;
+                introEl.style.webkitMaskImage = mask;
+                introEl.style.maskImage = mask;
+              }
+            },
+          },
+          fast ? 0.05 : 0.3
+        )
+        .add(() => document.body.classList.add('intro-go'), fast ? 0.15 : 0.6);
+    }
+
+    function play() {
+      if (!introEl) return;
+      exitingRef.current = false;
+      mainTimelineRef.current?.kill();
+      fxRef.current?.stop();
+
+      document.body.classList.remove('intro-go');
+      root.classList.add('intro-lock');
+
+      introEl.style.display = '';
+      introEl.style.webkitMaskImage = 'none';
+      introEl.style.maskImage = 'none';
+
+      if (canvas) {
+        fxRef.current = fireflies(canvas);
+      }
+
+      if (mk) {
+        mk.style.setProperty('--L', Math.max(80, mk.getBoundingClientRect().top - 18) + 'px');
+      }
+
+      const chars = introEl.querySelectorAll('.c');
+      const petals = introEl.querySelectorAll('.pt');
+      const rings = introEl.querySelectorAll('.ring');
+      const prog = { v: 0 };
+
+      if (pct) pct.textContent = '0';
+      if (bar) {
+        bar.style.opacity = '1';
+        bar.style.transform = 'scaleX(0)';
+      }
+
+      gsap.set(['.stage', '#skip'], { opacity: 1, scale: 1 });
+      gsap.set(chars, { yPercent: 115 });
+      gsap.set('.stream', { scaleY: 0, opacity: 1 });
+      gsap.set('.drop', { opacity: 0, y: 0, scale: 0.3 });
+      gsap.set(petals, { scale: 0, rotation: -25, svgOrigin: '0 0' });
+      gsap.set('.cor', { scale: 0, svgOrigin: '0 0' });
+      gsap.set(rings, { opacity: 0 });
+      gsap.set('.glow', { opacity: 0 });
+      gsap.set('.meter', { opacity: 0 });
+      gsap.set('.tag', { opacity: 0, y: 12 });
+      gsap.set('.loc', { opacity: 0 });
+      gsap.set('.word', { letterSpacing: '.42em' });
+
+      mainTimelineRef.current = gsap
+        .timeline({
+          defaults: { ease: 'power2.out' },
+          onComplete: () => {
+            ready().then(() => exit(false));
+          },
+        })
+        .to('.meter', { opacity: 1, duration: 0.5 }, 0.15)
+        .to(
+          prog,
+          {
+            v: 100,
+            duration: 2.45,
+            ease: 'power1.inOut',
+            onUpdate() {
+              if (pct) pct.textContent = String(Math.round(prog.v));
+              if (bar) bar.style.transform = `scaleX(${prog.v / 100})`;
+            },
+          },
+          0.15
+        )
+        .to('.stream', { scaleY: 1, duration: 0.5, ease: 'power2.in' }, 0.2)
+        .to('.drop', { opacity: 1, scale: 1, duration: 0.12 }, 0.7)
+        .to('.drop', { y: 68, duration: 0.35, ease: 'power2.in' }, 0.8)
+        .add('hit', 1.15)
+        .set('.drop', { opacity: 0 }, 'hit')
+        .to('.stream', { opacity: 0, duration: 0.4 }, 'hit')
+        .fromTo(rings, { scale: 0.2, opacity: 0.9 }, { scale: 8, opacity: 0, duration: 1.5, stagger: 0.2 }, 'hit')
+        .to('.glow', { opacity: 1, duration: 1.2 }, 'hit')
+        .to(petals, { scale: 1, rotation: 0, duration: 1, ease: 'back.out(1.6)', stagger: 0.08 }, 'hit+=.05')
+        .to('.cor', { scale: 1, duration: 0.7, ease: 'back.out(2.2)' }, 'hit+=.45')
+        .to(chars, { yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.045 }, 'hit+=.35')
+        .to('.word', { letterSpacing: '.16em', duration: 1.5, ease: 'power3.out' }, 'hit+=.35')
+        .to('.tag', { opacity: 1, y: 0, duration: 0.7 }, 'hit+=.8')
+        .to('.loc', { opacity: 1, duration: 0.7 }, 'hit+=1');
+    }
+
+    const onSkipClick = () => exit(true);
+    skipBtn?.addEventListener('click', onSkipClick);
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && introEl.style.display !== 'none') {
+        exit(true);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+
+    const hasForceParam = /[?&]intro=1/.test(window.location.search);
+
+    if (reduce || (SHOW_ONCE && seen() && !hasForceParam)) {
+      finish();
+    } else {
+      play();
+    }
 
     return () => {
-      cancelAnimationFrame(animId);
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      skipBtn?.removeEventListener('click', onSkipClick);
+      window.removeEventListener('keydown', onKeyDown);
+      mainTimelineRef.current?.kill();
+      fxRef.current?.stop();
+      root.classList.remove('intro-lock');
     };
   }, []);
 
-  const handleSkip = () => {
-    // Lưu lựa chọn để không bao giờ chạy lại ở các lần truy cập sau
-    localStorage.setItem(INTRO_STORAGE_KEY, 'true');
-    setIsSplitting(true);
-    setTimeout(() => {
-      setShow(false);
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    }, 280);
-  };
+  if (!isRendered) return null;
 
-  if (!show) return null;
-
-  const content = (
-    <div className="fixed inset-0 z-[9999999] pointer-events-auto flex items-center justify-center overflow-hidden bg-[#121A15] select-none">
-      {/* Nút Bỏ qua to, rõ, dễ bấm */}
-      <button
-        type="button"
-        onClick={handleSkip}
-        className="absolute top-5 right-5 sm:top-8 sm:right-8 z-50 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-white bg-black/50 hover:bg-black/75 border border-white/20 backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-xl"
-      >
-        <span>Bỏ qua / Skip</span>
-        <span className="text-emerald-300 font-bold">✕</span>
+  return (
+    <div id="intro" ref={containerRef} role="dialog" aria-label="Đang tải Cẩm Cù House">
+      <canvas id="fx" />
+      <div className="glow" />
+      <div className="vig" />
+      <div className="grain" />
+      <button id="skip" type="button" aria-label="Bỏ qua phần giới thiệu">
+        Bỏ qua <span aria-hidden="true">→</span>
       </button>
-
-      {/* MÀN CHE TÁCH ĐÔI TRÁI & PHẢI (Che kín 100% không để lộ trang chủ trước khi mở) */}
-      <motion.div
-        initial={{ x: '0%' }}
-        animate={{ x: isSplitting ? '-100%' : '0%' }}
-        transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] as const }}
-        className="absolute top-0 left-0 w-[50.5vw] h-full bg-[#121A15] border-r border-emerald-950/60 shadow-2xl z-20 pointer-events-none"
-      />
-      <motion.div
-        initial={{ x: '0%' }}
-        animate={{ x: isSplitting ? '100%' : '0%' }}
-        transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] as const }}
-        className="absolute top-0 right-0 w-[50.5vw] h-full bg-[#121A15] border-l border-emerald-950/60 shadow-2xl z-20 pointer-events-none"
-      />
-
-      {/* 1. DÒNG SUỐI CHẢY DỌC MÀN HÌNH */}
-      <div className="absolute inset-0 pointer-events-none flex justify-center items-start z-20">
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: isSplitting ? 0 : '46vh', opacity: isSplitting ? 0 : [0, 0.9, 1] }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="w-[2px] bg-gradient-to-b from-transparent via-teal-400 to-emerald-300 shadow-[0_0_12px_#34d399]"
-        />
+      <div className="stage">
+        <div className="mark">
+          <i className="stream" />
+          <i className="drop" />
+          <i className="ring" />
+          <i className="ring" />
+          <i className="ring" />
+          <svg className="flower" viewBox="-60 -60 120 120" aria-hidden="true">
+            <g fill="rgba(243,235,216,.1)" stroke="#f3ebd8" strokeWidth="1.3" strokeLinejoin="round">
+              <g transform="rotate(0)">
+                <path className="pt" d="M0 0C-12-16-10-38 0-54 10-38 12-16 0 0Z" />
+              </g>
+              <g transform="rotate(72)">
+                <path className="pt" d="M0 0C-12-16-10-38 0-54 10-38 12-16 0 0Z" />
+              </g>
+              <g transform="rotate(144)">
+                <path className="pt" d="M0 0C-12-16-10-38 0-54 10-38 12-16 0 0Z" />
+              </g>
+              <g transform="rotate(216)">
+                <path className="pt" d="M0 0C-12-16-10-38 0-54 10-38 12-16 0 0Z" />
+              </g>
+              <g transform="rotate(288)">
+                <path className="pt" d="M0 0C-12-16-10-38 0-54 10-38 12-16 0 0Z" />
+              </g>
+            </g>
+            <g className="cor" fill="#cc7755">
+              <circle r="6" />
+              <circle cx="0" cy="-13" r="2.6" />
+              <circle cx="12.4" cy="-4" r="2.6" />
+              <circle cx="7.6" cy="10.5" r="2.6" />
+              <circle cx="-7.6" cy="10.5" r="2.6" />
+              <circle cx="-12.4" cy="-4" r="2.6" />
+            </g>
+          </svg>
+        </div>
+        <h1 className="word" aria-label="Cẩm Cù House">
+          {TITLE_CHARS.map((ch, idx) =>
+            ch === ' ' ? (
+              <span key={idx} className="sp" />
+            ) : (
+              <span key={idx} className="m">
+                <span className="c">{ch}</span>
+              </span>
+            )
+          )}
+        </h1>
+        <p className="tag">Chốn dừng chân mộc mạc bên suối đá</p>
+        <p className="loc">Gia Nghĩa • Đắk Nông</p>
       </div>
-
-      {/* KHỐI NỘI DUNG CHÍNH (NẰM TRÊN MÀN CHE) */}
-      <motion.div
-        animate={{ opacity: isSplitting ? 0 : 1, scale: isSplitting ? 0.94 : 1 }}
-        transition={{ duration: 0.35 }}
-        className="relative z-30 flex flex-col items-center text-center px-6 max-w-lg"
-      >
-        {/* 2. GIỌT NƯỚC RƠI & LAN TỎA VÒNG TRÒN (WATER DROPLET & RIPPLE) */}
-        <div className="relative w-24 h-24 flex items-center justify-center mb-2">
-          {/* Giọt nước rơi từ trên xuống */}
-          <motion.div
-            initial={{ y: -45, opacity: 0, scale: 0.6 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            transition={{ duration: 0.55, ease: 'easeIn' }}
-            className="w-3.5 h-3.5 rounded-full bg-teal-200 shadow-[0_0_16px_#2dd4bf] z-10"
-          />
-
-          {/* Các vòng sóng tròn lan tỏa (Water Ripples) */}
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [0, 2.2, 4], opacity: [0, 0.8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut', delay: 0.3 }}
-            className="absolute w-12 h-12 rounded-full border border-teal-400/60 pointer-events-none"
-          />
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: [0, 2.2, 4], opacity: [0, 0.6, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut', delay: 0.6 }}
-            className="absolute w-12 h-12 rounded-full border border-emerald-500/40 pointer-events-none"
-          />
-
-          {/* 3. HOA CẨM CÙ (HOYA) NỞ NÉT VẼ QUANH LOGO */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
-            {[0, 72, 144, 216, 288].map((angle, i) => (
-              <motion.path
-                key={i}
-                d="M50 50 Q45 20, 50 15 Q55 20, 50 50"
-                transform={`rotate(${angle} 50 50)`}
-                fill="none"
-                stroke="#6ee7b7"
-                strokeWidth="1.2"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.85 }}
-                transition={{ duration: 0.9, delay: 0.4 + i * 0.06, ease: 'easeInOut' }}
-              />
-            ))}
-          </svg>
-        </div>
-
-        {/* 5. KHÓI CÀ PHÊ BỐC LÊN (COFFEE STEAM WISPS) */}
-        <div className="relative flex justify-center w-full mb-1">
-          <svg className="w-20 h-7 overflow-visible opacity-60" viewBox="0 0 80 30">
-            <motion.path
-              d="M30 25 Q35 15, 32 8 Q29 0, 36 -10"
-              fill="none"
-              stroke="#e6d5bc"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              initial={{ pathLength: 0, y: 10, opacity: 0 }}
-              animate={{ pathLength: [0, 1, 1], y: [-5, -18, -30], opacity: [0, 0.7, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut', delay: 0.2 }}
-            />
-            <motion.path
-              d="M45 25 Q40 15, 46 8 Q50 0, 44 -10"
-              fill="none"
-              stroke="#e6d5bc"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              initial={{ pathLength: 0, y: 10, opacity: 0 }}
-              animate={{ pathLength: [0, 1, 1], y: [-5, -18, -30], opacity: [0, 0.7, 0] }}
-              transition={{ duration: 2.0, repeat: Infinity, ease: 'easeOut', delay: 0.5 }}
-            />
-          </svg>
-        </div>
-
-        {/* TIÊU ĐỀ THƯƠNG HIỆU */}
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-wider text-[#F9F8F3] drop-shadow-md mb-2"
-        >
-          CẨM CÙ HOUSE
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.9 }}
-          transition={{ duration: 0.45, delay: 0.5 }}
-          className="text-xs sm:text-sm font-sans text-stone-300 font-light tracking-[0.25em] uppercase mb-4"
-        >
-          Chốn Dừng Chân Bên Suối Đá Gia Nghĩa
-        </motion.p>
-
-        {/* 4. ĐẾM 0 → 100% KÈM TỌA ĐỘ CHẠY SỐ */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="w-full max-w-xs flex flex-col items-center gap-1.5"
-        >
-          <div className="w-full h-[2px] bg-stone-800/80 rounded-full overflow-hidden">
-            <motion.div
-              style={{ width: `${progress}%` }}
-              className="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-amber-300"
-            />
-          </div>
-
-          <div className="flex items-center justify-between w-full text-[11px] text-stone-400 font-mono tracking-wider pt-0.5">
-            <span>11.99° N, 107.69° E</span>
-            <span className="font-bold text-emerald-400">{progress}%</span>
-          </div>
-        </motion.div>
-      </motion.div>
+      <div className="meter" aria-hidden="true">
+        <span id="pct">0</span>
+        <small>%</small>
+      </div>
+      <i className="bar" />
     </div>
   );
-
-  return mounted && typeof document !== 'undefined'
-    ? createPortal(content, document.body)
-    : content;
 }
