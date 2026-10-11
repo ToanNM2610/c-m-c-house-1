@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { X, ChevronLeft, ChevronRight, Sparkles, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,6 +44,16 @@ export default function LightboxModal({
     }
   }, [isOpen]);
 
+  const handlePrev = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
+  }, [photos.length]);
+
+  const handleNext = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
+  }, [photos.length]);
+
   // Keyboard navigation: Escape, ArrowLeft, ArrowRight
   useEffect(() => {
     if (!isOpen) return;
@@ -60,21 +70,11 @@ export default function LightboxModal({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, photos.length]);
+  }, [isOpen, handleNext, handlePrev, onClose]);
 
   if (!isOpen || photos.length === 0) return null;
 
   const currentPhoto = photos[currentIndex] || photos[0];
-
-  const handlePrev = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1));
-  };
-
-  const handleNext = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setCurrentIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0));
-  };
 
   // Touch Swipe Gesture
   const handleTouchStart = (e: React.TouchEvent) => {

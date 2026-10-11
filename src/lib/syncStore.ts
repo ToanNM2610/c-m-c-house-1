@@ -39,7 +39,7 @@ export function getSharedData<T>(key: string, defaultValue: T): T {
   // 1. Try reading from Document Cookie
   try {
     const cookies = document.cookie.split(";");
-    for (let c of cookies) {
+    for (const c of cookies) {
       const [k, ...v] = c.trim().split("=");
       if (k === key) {
         const raw = decodeURIComponent(v.join("="));

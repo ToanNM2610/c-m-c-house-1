@@ -59,7 +59,7 @@ export function setSharedCookie(name: string, value: string, days: number = 365)
 export function getSharedCookie(name: string): string | null {
   if (typeof window === "undefined" || !document.cookie) return null;
   const cookies = document.cookie.split(";");
-  for (let c of cookies) {
+  for (const c of cookies) {
     const [k, ...v] = c.trim().split("=");
     if (k === name) {
       try {
