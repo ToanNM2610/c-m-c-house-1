@@ -6,6 +6,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
 import IntroSplashScreen from "@/components/IntroSplashScreen";
+import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
+import MaskRevealImage from "@/components/motion/MaskRevealImage";
+import KenBurnsImage from "@/components/motion/KenBurnsImage";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
 import { getStoreStatusI18n } from "@/lib/translations";
@@ -18,8 +21,6 @@ import {
   ArrowRight,
   UtensilsCrossed,
   Thermometer,
-  Wind,
-  Droplets,
   Coffee,
   PhoneCall,
   MapPin,
@@ -233,18 +234,25 @@ export default function HomePage() {
               <span>{dict.common.coordinates}</span>
             </div>
 
-            {/* Hero Headlines */}
-            <h1 className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-snug sm:leading-tight max-w-4xl mx-auto mb-1.5 sm:mb-3">
-              {dict.home.heroTitleLine1} <br className="hidden sm:inline" />
-              <span className="italic font-normal text-[#7D5E4A] dark:text-[#E8A87C] text-xl sm:text-4xl lg:text-5xl block sm:inline sm:ml-2">
-                {dict.home.heroTitleLine2}
-              </span>
-            </h1>
+            {/* Hero Headlines (Fade-up từng dòng stagger 0.1s) */}
+            <div className="mb-2 sm:mb-4">
+              <StaggerText
+                as="h1"
+                lines={[dict.home.heroTitleLine1, dict.home.heroTitleLine2]}
+                stagger={0.1}
+                className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-snug sm:leading-tight max-w-4xl mx-auto"
+                lineClassName="leading-tight"
+              />
+            </div>
 
-            {/* Subtitle Description */}
-            <p className="text-stone-600 dark:text-stone-300 text-xs sm:text-base max-w-2xl mx-auto mb-3 sm:mb-6 leading-relaxed line-clamp-3 sm:line-clamp-none px-2">
-              {dict.home.heroDescription}
-            </p>
+            {/* Subtitle Description (Fade-up dòng giới thiệu) */}
+            <div className="max-w-2xl mx-auto mb-3 sm:mb-6 px-2">
+              <StaggerParagraph
+                text={dict.home.heroDescription}
+                className="text-stone-600 dark:text-stone-300 text-xs sm:text-base leading-relaxed line-clamp-3 sm:line-clamp-none"
+                delay={0.2}
+              />
+            </div>
           </div>
 
           {/* 3 Trust Badges & CTA Buttons (Stagger 2: 120ms) */}
@@ -307,17 +315,17 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) */}
+          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) - Parallax nhẹ khi cuộn & Zoom chậm Ken Burns */}
           <div className="animate-fade-up-3">
             <div
               onClick={() => handleOpenLightbox(0)}
               style={{ transform: `translateY(${heroParallaxOffset}px)` }}
               className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white dark:border-stone-700/60 transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
             >
-              <img
+              <KenBurnsImage
                 src="/uploads/gallery/1788250253551-943009233.jpg"
                 alt={dict.home.heroCardTitle}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out transform-gpu"
+                overlayGradient={false}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex items-end justify-between p-4 sm:p-8">
                 <div className="text-left text-white max-w-xl">
@@ -571,20 +579,22 @@ export default function HomePage() {
                 <Waves className="w-3.5 h-3.5" />
                 <span>{isEn ? "Open Stream Space" : "Không Gian Mở Bên Bờ Suối"}</span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-                {isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"}
-              </h2>
+              <StaggerText
+                as="h2"
+                lines={[isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"]}
+                className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight"
+              />
             </div>
             <Link
               href="/space"
               className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[#3E5C46] dark:text-[#88B795] hover:text-[#2D4233] dark:hover:text-emerald-300 transition-colors"
             >
-              <span>{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh không gian"}</span>
+              <span className="link-hover-underline">{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh không gian"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* Grid 4 columns on Desktop, 2 on Tablet, 1-2 on Mobile */}
+          {/* Grid 4 columns on Desktop, 2 on Tablet, 1-2 on Mobile - Reveal bằng Mask kéo màn che từ trái sang phải */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {HOME_SPACE_PREVIEWS.map((photo, idx) => (
               <div
@@ -592,13 +602,13 @@ export default function HomePage() {
                 onClick={() => handleOpenLightbox(idx)}
                 className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] transform-gpu"
               >
-                <img
+                <MaskRevealImage
                   src={photo.url}
                   alt={photo.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out transform-gpu"
+                  aspectRatio="aspect-[4/3]"
+                  delay={0.08 * idx}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
+                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.subtitle}
                   </span>

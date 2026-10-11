@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LightboxModal, { LightboxPhoto } from "@/components/LightboxModal";
+import MaskRevealImage from "@/components/motion/MaskRevealImage";
+import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -208,22 +210,27 @@ export default function SpacePage() {
                 <Droplets className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
                 <span>{dict.space.badge} • Gia Nghĩa</span>
               </div>
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight leading-tight">
-                {isEn ? (
-                  <>
-                    Eco Sanctuary <span className="text-[#614633] dark:text-[#E8A87C] italic font-normal">•</span> Serenity by the Rock Stream
-                  </>
-                ) : (
-                  <>
-                    Không Gian Sinh Thái <span className="text-[#614633] dark:text-[#E8A87C] italic font-normal">•</span> Sự Tĩnh Lặng Bên Bờ Suối Đá
-                  </>
-                )}
-              </h1>
-              <p className="mt-3 text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed">
-                {isEn
-                  ? "Every corner at Cam Cu House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
-                  : "Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông."}
-              </p>
+              <StaggerText
+                as="h1"
+                lines={
+                  isEn
+                    ? ["Eco Sanctuary • Serenity by the Rock Stream"]
+                    : ["Không Gian Sinh Thái • Bên Bờ Suối Đá"]
+                }
+                stagger={0.1}
+                className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight leading-tight"
+              />
+              <div className="mt-3 max-w-2xl">
+                <StaggerParagraph
+                  text={
+                    isEn
+                      ? "Every corner at Cam Cu House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
+                      : "Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông."
+                  }
+                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed"
+                  delay={0.15}
+                />
+              </div>
             </div>
 
             {/* Quick Atmosphere Metrics */}
@@ -253,18 +260,21 @@ export default function SpacePage() {
             <div className="flex items-center gap-2 p-1.5 bg-stone-100 dark:bg-[#1E2B22] rounded-2xl sm:rounded-full border border-stone-200/70 dark:border-stone-700/60 overflow-x-auto no-scrollbar w-full sm:w-auto">
               {SPACE_CATEGORIES.map((cat) => {
                 const label = dict.space.categories[cat.id] || cat.name;
+                const isActive = activeFilter === cat.id;
                 return (
                   <button
                     key={cat.id}
                     onClick={() => setActiveFilter(cat.id)}
                     type="button"
                     className={`btn-press-sm min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
-                      activeFilter === cat.id
+                      isActive
                         ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
                         : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
                     }`}
                   >
-                    {cat.id === "all" ? `${label} (${allItems.length})` : label}
+                    <span className={!isActive ? "link-hover-underline" : ""}>
+                      {cat.id === "all" ? `${label} (${allItems.length})` : label}
+                    </span>
                   </button>
                 );
               })}
@@ -278,7 +288,7 @@ export default function SpacePage() {
           </div>
         </section>
 
-        {/* Gallery Grid Section (Stagger 3: 200ms) */}
+        {/* Gallery Grid Section (Stagger 3: 200ms) - Mask Reveal Image kéo từ trái sang phải */}
         <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredItems.map((item, idx) => (
@@ -287,13 +297,13 @@ export default function SpacePage() {
                 onClick={() => handleOpenLightbox(idx)}
                 className={`animate-fade-in stagger-${(idx % 8) + 1} group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] transform-gpu`}
               >
-                <img
+                <MaskRevealImage
                   src={item.image}
                   alt={item.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out transform-gpu"
+                  aspectRatio="aspect-[4/3]"
+                  delay={0.06 * (idx % 6)}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
+                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
                     {item.subtitle}
                   </span>
@@ -305,7 +315,7 @@ export default function SpacePage() {
                   </p>
                 </div>
 
-                <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
                   <Maximize2 className="w-4 h-4" />
                 </div>
               </div>

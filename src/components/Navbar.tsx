@@ -219,13 +219,15 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
+                className={`inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
                   isActive
                     ? "bg-[#2D4233] text-white rounded-full shadow-sm font-bold"
                     : "text-stone-300 hover:text-white hover:bg-stone-800/40 rounded-full"
                 }`}
               >
-                <span className="whitespace-nowrap">{label}</span>
+                <span className={`whitespace-nowrap ${!isActive ? "link-hover-underline" : ""}`}>
+                  {label}
+                </span>
               </Link>
             );
           })}

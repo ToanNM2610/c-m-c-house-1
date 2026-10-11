@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Playfair_Display, Be_Vietnam_Pro } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import SmoothScroll from "@/components/motion/SmoothScroll";
+import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
@@ -66,7 +68,9 @@ export default function RootLayout({
       <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <LanguageProvider>
-            {children}
+            <SmoothScroll>
+              {children}
+            </SmoothScroll>
           </LanguageProvider>
         </ThemeProvider>
       </body>

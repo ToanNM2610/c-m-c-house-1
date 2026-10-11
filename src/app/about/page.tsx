@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import MaskRevealImage from "@/components/motion/MaskRevealImage";
+import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   Flower2,
@@ -39,16 +41,21 @@ export default function AboutPage() {
                 <span className="text-xs text-stone-600 dark:text-stone-300 font-semibold">Gia Nghĩa • Đắk Nông</span>
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight max-w-3xl mb-4 leading-tight">
-                {dict.about.title} <br className="hidden sm:inline" />
-                <span className="italic font-normal text-[#7D5E4A] dark:text-[#D1A684] text-2xl sm:text-4xl lg:text-5xl block mt-2">
-                  {dict.about.subtitle}
-                </span>
-              </h1>
+              <StaggerText
+                as="h1"
+                lines={[dict.about.title, dict.about.subtitle]}
+                stagger={0.1}
+                className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight max-w-3xl mb-4 leading-tight"
+                lineClassName="leading-tight"
+              />
 
-              <p className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed mt-2">
-                {dict.about.description}
-              </p>
+              <div className="max-w-2xl mt-2">
+                <StaggerParagraph
+                  text={dict.about.description}
+                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed"
+                  delay={0.2}
+                />
+              </div>
             </div>
 
             {/* Coordinates & Badges */}
@@ -146,15 +153,15 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Visual Column (Stagger 3: 200ms) */}
+            {/* Visual Column (Stagger 3: 200ms) - Mask Reveal Image */}
             <div className="lg:col-span-5 relative animate-fade-up-3">
               <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-stone-700/60 aspect-[4/5] relative">
-                <img
+                <MaskRevealImage
                   src="/uploads/gallery/1788250253557-29323827.jpg"
                   alt="Không gian mộc mạc Cẩm Cù House"
-                  className="w-full h-full object-cover"
+                  aspectRatio="aspect-[4/5]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                   <span className="text-xs text-emerald-300 font-semibold uppercase tracking-wider">
                     {isEn ? "The Story of Cam Cu" : "Chuyện Cẩm Cù"}
                   </span>
@@ -172,15 +179,15 @@ export default function AboutPage() {
         {/* SECTION 2: Triết Lý Cà Phê Mộc & Ẩm Thực Lành */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full border-t border-stone-200/70 dark:border-stone-800">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Visual Column */}
+            {/* Visual Column - Mask Reveal Image */}
             <div className="lg:col-span-5 order-2 lg:order-1">
               <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-stone-700/60 aspect-[4/5] relative">
-                <img
+                <MaskRevealImage
                   src="/uploads/gallery/1788250253554-875120458.jpg"
                   alt="Hiên gỗ ven suối Cẩm Cù House"
-                  className="w-full h-full object-cover"
+                  aspectRatio="aspect-[4/5]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                   <span className="text-xs text-emerald-300 font-semibold uppercase tracking-wider">
                     {isEn ? "Artisanal Craft" : "Rang Củi Thủ Công"}
                   </span>

@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   MapPin,
@@ -33,12 +34,19 @@ export default function ContactPage() {
                 <Trees className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
                 <span>{dict.contact.badge}</span>
               </div>
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] tracking-tight">
-                {dict.contact.title}
-              </h1>
-              <p className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed mt-1">
-                {dict.contact.subtitle}
-              </p>
+              <StaggerText
+                as="h1"
+                lines={[dict.contact.title]}
+                stagger={0.1}
+                className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] tracking-tight"
+              />
+              <div className="mt-1">
+                <StaggerParagraph
+                  text={dict.contact.subtitle}
+                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed"
+                  delay={0.15}
+                />
+              </div>
             </div>
 
             {/* Quick Coordinate Badge */}

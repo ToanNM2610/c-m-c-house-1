@@ -46,22 +46,22 @@ export default function Footer() {
             {dict.contact.quickLinksTitle}
           </span>
           <nav className="flex flex-col gap-2.5 text-sm text-stone-300">
-            <Link href="/" className="hover:text-white hover:translate-x-1 transition-all">
+            <Link href="/" className="hover:text-white transition-colors w-fit link-hover-underline">
               {dict.nav.home}
             </Link>
-            <Link href="/about" className="hover:text-white hover:translate-x-1 transition-all">
+            <Link href="/about" className="hover:text-white transition-colors w-fit link-hover-underline">
               {dict.nav.about}
             </Link>
-            <Link href="/space" className="hover:text-white hover:translate-x-1 transition-all">
+            <Link href="/space" className="hover:text-white transition-colors w-fit link-hover-underline">
               {dict.nav.space}
             </Link>
-            <Link href="/menu" className="hover:text-white hover:translate-x-1 transition-all">
+            <Link href="/menu" className="hover:text-white transition-colors w-fit link-hover-underline">
               {dict.nav.menu}
             </Link>
-            <Link href="/contact" className="hover:text-white hover:translate-x-1 transition-all">
+            <Link href="/contact" className="hover:text-white transition-colors w-fit link-hover-underline">
               {dict.nav.contact}
             </Link>
-            <Link href="/admin" className="hover:text-white hover:translate-x-1 transition-all text-xs text-stone-400">
+            <Link href="/admin" className="hover:text-white transition-colors w-fit link-hover-underline text-xs text-stone-400">
               {dict.common.admin}
             </Link>
           </nav>

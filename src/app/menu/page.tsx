@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import DishDetailModal from "@/components/motion/DishDetailModal";
+import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
 import { useLanguage } from "@/context/LanguageContext";
 import {
-  Sparkles,
   Droplets,
   Sprout,
   PhoneCall,
@@ -33,6 +34,13 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [, setIsSyncing] = useState(false);
+  const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
+  const [dishModalOpen, setDishModalOpen] = useState(false);
+
+  const handleOpenDish = (dish: MenuItem) => {
+    setSelectedDish(dish);
+    setDishModalOpen(true);
+  };
 
   useEffect(() => {
     // 1. Hydrate immediately from LocalStorage & Shared Cookie to survive F5
@@ -132,12 +140,19 @@ export default function MenuPage() {
               <span>{dict.menu.badge}</span>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold max-w-3xl mb-3 tracking-tight">
-              {dict.menu.title}
-            </h1>
-            <p className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed mb-6">
-              {dict.menu.subtitle}
-            </p>
+            <StaggerText
+              as="h1"
+              lines={[dict.menu.title]}
+              stagger={0.1}
+              className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold max-w-3xl mb-3 tracking-tight"
+            />
+            <div className="max-w-2xl mb-6">
+              <StaggerParagraph
+                text={dict.menu.subtitle}
+                className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed"
+                delay={0.15}
+              />
+            </div>
 
             {/* Quick Trust Indicators Bento Snippet */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-2xl">
@@ -176,7 +191,9 @@ export default function MenuPage() {
                         : "bg-stone-100 dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white border border-stone-200/60 dark:border-stone-700/60"
                     }`}
                   >
-                    {categoryLabel} ({count})
+                    <span className={!isActive ? "link-hover-underline" : ""}>
+                      {categoryLabel} ({count})
+                    </span>
                   </button>
                 );
               })}
@@ -198,8 +215,11 @@ export default function MenuPage() {
 
         {/* Main Menu Grid Layout (Stagger 3: 200ms) */}
         <div className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 flex flex-col gap-10">
-          {/* Spotlight Story Card */}
-          <div className="group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm hover:shadow-lg hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300">
+          {/* Spotlight Story Card - Hover món phóng to nhẹ và bấm mở Shared Element */}
+          <div
+            onClick={() => signatureItem && handleOpenDish(signatureItem)}
+            className="group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm hover:shadow-lg hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300 dish-card-hover cursor-pointer"
+          >
             <div className="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] relative">
               <img
                 src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
@@ -267,10 +287,11 @@ export default function MenuPage() {
                 return (
                   <div
                     key={`${activeCategory}_${searchQuery}_${item.id}`}
-                    className={`animate-fade-in stagger-${(idx % 8) + 1} flex items-start justify-between py-2.5 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-2 rounded-xl transition-all duration-200 hover:-translate-y-0.5 ${
+                    onClick={() => handleOpenDish(item)}
+                    className={`animate-fade-in stagger-${(idx % 8) + 1} flex items-start justify-between py-3 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-3 rounded-xl transition-all duration-200 dish-card-hover cursor-pointer ${
                       isOutOfStock
                         ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 grayscale-[30%]"
-                        : "hover:bg-stone-50 dark:hover:bg-white/5"
+                        : "hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
                     }`}
                   >
                     <div className="flex flex-col min-w-0 pr-3">
@@ -380,6 +401,13 @@ export default function MenuPage() {
           </section>
         </div>
       </main>
+
+      {/* Shared Element Modal hiển thị chi tiết món ăn */}
+      <DishDetailModal
+        dish={selectedDish}
+        isOpen={dishModalOpen}
+        onClose={() => setDishModalOpen(false)}
+      />
 
       <Footer />
     </div>
