@@ -13,8 +13,8 @@ export interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
-  isDark: false,
+  theme: "dark",
+  isDark: true,
   toggleTheme: () => {},
   setTheme: () => {},
 });
@@ -32,7 +32,7 @@ export const applyTheme = (newTheme: Theme) => {
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -41,13 +41,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const cookieTheme = getSharedCookie(THEME_STORAGE_KEY) as Theme | null;
     const localTheme = (typeof window !== "undefined" ? localStorage.getItem(THEME_STORAGE_KEY) : null) as Theme | null;
     
-    let activeTheme: Theme = "light";
+    let activeTheme: Theme = "dark";
     if (cookieTheme === "light" || cookieTheme === "dark") {
       activeTheme = cookieTheme;
     } else if (localTheme === "light" || localTheme === "dark") {
       activeTheme = localTheme;
-    } else if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      activeTheme = "dark";
     }
 
     setThemeState(activeTheme);

@@ -285,96 +285,92 @@ export default function HomePage() {
         )}
 
         {/* HERO SECTION - WARM CREAM BEIGE / DARK FOREST NATURE */}
-        <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-8 pb-12 sm:pb-16 text-center w-full">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-10 pb-12 sm:pb-16 text-center w-full">
           {/* Eyebrow Coordinate Badge & Headlines (Stagger 1: 50ms) */}
           <div className="animate-fade-up-1">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-200/80 dark:bg-[#1E2B22] text-[10px] tracking-wider uppercase font-semibold text-[#3E5C46] dark:text-[#88B795] mb-2 sm:mb-4 shadow-sm border border-stone-300/60 dark:border-stone-700/60">
-              <Compass className="w-3 h-3 text-[#396663] dark:text-[#88B795]" />
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[var(--surface-2)] text-[12px] tracking-[0.12em] uppercase font-semibold text-[var(--accent-green)] mb-3 sm:mb-4 shadow-sm border border-[var(--border)]">
+              <Compass className="w-3.5 h-3.5 text-[var(--accent-green)]" />
               <span>{dict.common.coordinates}</span>
             </div>
 
-            {/* Hero Headlines */}
-            <div className="mb-2 sm:mb-4 max-w-[900px] mx-auto text-balance">
+            {/* Hero Headlines: Line 1 Kem, Line 2 Cam đất */}
+            <div className="mb-3 sm:mb-4 max-w-[900px] mx-auto text-balance">
               <StaggerText
                 as="h1"
                 lines={[dict.home.heroTitleLine1, dict.home.heroTitleLine2]}
                 stagger={0.1}
-                className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#F3EBD8] tracking-tight leading-snug sm:leading-tight max-w-[900px] mx-auto text-balance"
-                lineClassName="leading-tight"
+                className="font-serif font-bold tracking-tight text-balance max-w-[900px] mx-auto"
+                lineClassNames={[
+                  "text-[clamp(40px,6vw,76px)] leading-[1.15] text-[#F3EBD8]",
+                  "text-[clamp(24px,3.8vw,44px)] leading-[1.25] text-[#CC7755] font-semibold mt-2",
+                ]}
               />
             </div>
 
             {/* Subtitle Description */}
-            <div className="max-w-2xl mx-auto mb-3 sm:mb-6 px-2">
+            <div className="max-w-2xl mx-auto mb-4 sm:mb-6 px-2">
               <StaggerParagraph
                 text={dict.home.heroDescription}
-                className="text-[#F3EBD8]/75 text-xs sm:text-base leading-relaxed line-clamp-3 sm:line-clamp-none"
+                className="text-[var(--text-muted)] text-[15px] sm:text-[17px] leading-[1.7] max-w-[65ch] mx-auto"
                 delay={0.2}
               />
             </div>
           </div>
 
-          {/* 3 Trust Badges & CTA Buttons (Stagger 2: 120ms) */}
+          {/* 3 Trust Badges & 4 CTA Buttons (Stagger 2: 120ms) */}
           <div className="animate-fade-up-2">
-            {/* 3 Trust Badges: Exactly single horizontal row */}
-            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 my-2 sm:my-4">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+            {/* 3 Trust Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 my-3 sm:my-4">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--surface)] shadow-sm border border-[var(--border)] text-[12px] font-semibold text-[var(--text)]">
+                <Star className="w-3.5 h-3.5 fill-[#E0B872] text-[#E0B872]" />
                 {dict.home.badgeRecommended}
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
-                <DollarSign className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#88B795]" />
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--surface)] shadow-sm border border-[var(--border)] text-[12px] font-semibold text-[var(--text)]">
+                <DollarSign className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                 {dict.home.badgePrice}
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900/60 shadow-sm border border-stone-200/80 dark:border-stone-700/50 text-[11px] font-semibold text-stone-700 dark:text-stone-300">
-                <Leaf className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--surface)] shadow-sm border border-[var(--border)] text-[12px] font-semibold text-[var(--text)]">
+                <Leaf className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                 {dict.home.badgeOrganic}
               </span>
             </div>
 
-            {/* CTA Buttons: Clear Hierarchy */}
-            <div className="w-full max-w-md mx-auto sm:max-w-none flex flex-col gap-2 sm:gap-3.5 mb-6 sm:mb-8">
-              {/* Row 1: Primary Actions */}
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3.5 w-full">
-                <Link
-                  href="/space"
-                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[42px] sm:min-h-[44px] px-3 sm:px-7 py-2.5 rounded-full bg-[#2D4233] dark:bg-[#25362B] text-white text-xs sm:text-sm font-bold hover:bg-[#1E2B22] transition-all shadow-[0_4px_16px_rgba(45,66,51,0.25)]"
-                >
-                  <ArrowUpRight className="w-4 h-4 text-emerald-300" />
-                  <span className="truncate">{dict.common.exploreStream}</span>
-                </Link>
-                <Link
-                  href="/menu"
-                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[42px] sm:min-h-[44px] px-3 sm:px-7 py-2.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#F5F4EE] text-xs sm:text-sm font-bold hover:bg-stone-50 dark:hover:bg-[#28392E] border border-stone-300/80 dark:border-stone-700/60 transition-all shadow-sm"
-                >
-                  <UtensilsCrossed className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-                  <span className="truncate">{dict.common.viewMenu}</span>
-                </Link>
-              </div>
-
-              {/* Row 2: Secondary Utilities */}
-              <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-center sm:gap-3 w-full">
-                <a
-                  href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-[#3E5C46] dark:bg-[#283C2F] hover:bg-[#2D4233] text-white text-xs sm:text-sm font-semibold transition-all shadow-sm border border-[#2D4233]/40 truncate"
-                >
-                  <PhoneCall className="w-3.5 h-3.5 text-emerald-200 shrink-0" />
-                  <span className="truncate">Hotline: {settings.hotline1}</span>
-                </a>
-                <a
-                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-press inline-flex items-center justify-center gap-1.5 min-h-[38px] sm:min-h-[42px] px-2.5 sm:px-6 py-2 rounded-full bg-stone-100 dark:bg-[#1A261E] hover:bg-stone-200 dark:hover:bg-[#28392E] text-stone-700 dark:text-stone-300 text-xs sm:text-sm font-semibold transition-all border border-stone-300/60 dark:border-stone-700/60 truncate"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-[#7D5E4A] dark:text-[#E8A87C] shrink-0" />
-                  <span className="truncate">{dict.common.getDirections}</span>
-                </a>
-              </div>
+            {/* 4 CTA Buttons: Khám Phá Góc Suối chính, Xem Thực Đơn, Hotline, Chỉ Đường */}
+            <div className="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto mb-6 sm:mb-8">
+              <Link
+                href="/space"
+                className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md"
+              >
+                <ArrowUpRight className="w-4 h-4" />
+                <span>{dict.common.exploreStream}</span>
+              </Link>
+              <Link
+                href="/menu"
+                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
+              >
+                <UtensilsCrossed className="w-4 h-4 text-[var(--accent-green)]" />
+                <span>{dict.common.viewMenu}</span>
+              </Link>
+              <a
+                href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
+                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
+              >
+                <PhoneCall className="w-4 h-4 text-[#CC7755]" />
+                <span>Hotline: {settings.hotline1}</span>
+              </a>
+              <a
+                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
+              >
+                <MapPin className="w-4 h-4 text-[var(--accent-green)]" />
+                <span>{dict.common.getDirections}</span>
+              </a>
             </div>
           </div>
 
-          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) - Parallax nhẹ khi cuộn, clip-path mở dần & Zoom chậm Ken Burns */}
+          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) - bo 24px, mở bằng clip-path */}
           <div className="animate-fade-up-3">
             <motion.div
               initial={{ clipPath: "inset(10% 6% 10% 6% round 24px)", opacity: 0.8 }}
@@ -383,7 +379,7 @@ export default function HomePage() {
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] as const, delay: 0.15 }}
               onClick={() => handleOpenLightbox(0)}
               style={{ transform: `translateY(${heroParallaxOffset}px)` }}
-              className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white dark:border-stone-700/60 transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
+              className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-[24px] overflow-hidden shadow-xl sm:shadow-2xl border border-[var(--border)] transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
             >
               <KenBurnsImage
                 src="/uploads/gallery/1788250253551-943009233.jpg"
@@ -392,39 +388,39 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex items-end justify-between p-4 sm:p-8">
                 <div className="text-left text-white max-w-xl">
-                  <span className="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-emerald-300">
+                  <span className="text-[12px] uppercase font-bold tracking-[0.12em] text-[var(--accent-green)]">
                     {dict.home.streamEcoSpace}
                   </span>
-                  <p className="text-base sm:text-2xl font-serif font-bold mt-0.5 sm:mt-1 drop-shadow-sm">
+                  <p className="text-base sm:text-2xl font-serif font-bold mt-0.5 sm:mt-1 drop-shadow-sm text-[#F3EBD8]">
                     {dict.home.heroCardTitle}
                   </p>
-                  <p className="text-[11px] sm:text-sm text-stone-200 mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2">
+                  <p className="text-[14px] sm:text-[15px] text-[rgba(243,235,216,0.75)] mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2">
                     {dict.home.heroCardDesc}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold group-hover:bg-[#3E5C46] transition-colors shrink-0">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white text-[12px] font-semibold group-hover:bg-[#CC7755] group-hover:text-[#1B120E] transition-colors shrink-0">
                   <Maximize2 className="w-3.5 h-3.5" />
                   <span className="hidden xs:inline">{dict.common.viewLarger}</span>
                 </div>
               </div>
             </motion.div>
 
-            {/* Real-time Atmospheric Meter Badge & Natural Climate Gauge */}
-            <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/80 dark:border-stone-700/60 shadow-xs text-stone-600 dark:text-stone-300 text-[11px] sm:text-xs transition-colors">
-              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            {/* Dải trạng thái: một hàng pill nhỏ (nhiệt độ • không gian • giờ hôm nay) */}
+            <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-4 py-2 rounded-full bg-[var(--surface-2)] text-[var(--text)] border border-[var(--border)] text-[12px] sm:text-[13px] shadow-sm">
+              <div className="flex items-center gap-1.5 text-[var(--accent-green)] font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="flex items-center gap-1">
                   <Thermometer className="w-3.5 h-3.5" /> 23°C • {isEn ? "Gentle Breeze" : "Gió Mát Nhẹ"}
                 </span>
               </div>
-              <span>•</span>
-              <div className="flex items-center gap-1.5 font-medium text-stone-700 dark:text-stone-200">
-                <Waves className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
+              <span className="text-[var(--text-muted)]">•</span>
+              <div className="flex items-center gap-1.5 font-medium text-[var(--text)]">
+                <Waves className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                 <span>{isEn ? "Crystal Stream Echo" : "Suối Reo Trong Lành"}</span>
               </div>
-              <span>•</span>
-              <div className="flex items-center gap-1 font-semibold text-[#88B795]">
+              <span className="text-[var(--text-muted)]">•</span>
+              <div className="flex items-center gap-1 font-semibold text-[var(--accent-clay)]">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{isEn ? `07:00 – ${storeStatus.closingTime || "18:00"} Today` : `07:00 – ${storeStatus.closingTime || "18:00"} Hôm Nay`}</span>
               </div>
@@ -453,43 +449,43 @@ export default function HomePage() {
                 {dict.home.introDesc}
               </p>
 
-              {/* 3 Highlight Metrics Grid with Live Counters & Distinct Icons */}
-              <div className="grid grid-cols-3 gap-2.5 sm:gap-4 pt-2">
-                <div className="card-unified !p-3 sm:!p-4 flex flex-col justify-center">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Compass className="w-3.5 h-3.5 text-[#88B795]" />
-                    <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
+              {/* 3 Highlight Metrics Grid with Live Counters: nền --surface-2, số Playfair 40px cam đất */}
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
+                <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Compass className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+                    <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
                   </div>
-                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#88B795] tracking-tight">
+                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[#CC7755] tracking-tight leading-none">
                     <MetricCounter target={800} suffix="m+" />
                   </span>
-                  <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                  <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
                     {dict.home.introMetric1Label}
                   </span>
                 </div>
 
-                <div className="card-unified !p-3 sm:!p-4 flex flex-col justify-center">
-                  <div className="flex items-center gap-1.5 mb-1">
+                <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
+                  <div className="flex items-center gap-1.5 mb-1.5">
                     <Flame className="w-3.5 h-3.5 text-[#CC7755]" />
-                    <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
+                    <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
                   </div>
-                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#CC7755] tracking-tight">
+                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[#CC7755] tracking-tight leading-none">
                     <MetricCounter target={100} suffix="%" />
                   </span>
-                  <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                  <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
                     {dict.home.introMetric2Label}
                   </span>
                 </div>
 
-                <div className="card-unified !p-3 sm:!p-4 flex flex-col justify-center">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Wind className="w-3.5 h-3.5 text-[#88B795]" />
-                    <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
+                <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Wind className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+                    <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
                   </div>
-                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#88B795] tracking-tight">
-                    <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-normal text-[#F3EBD8]/70">{isEn ? "dust" : "khói bụi"}</span>
-                  </span>
-                  <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                  <div className="font-serif text-[28px] sm:text-[40px] font-bold text-[#CC7755] tracking-tight leading-none flex items-baseline gap-1">
+                    <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-sans font-normal text-[var(--text-muted)]">{isEn ? "dust" : "khói bụi"}</span>
+                  </div>
+                  <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
                     {dict.home.introMetric3Label}
                   </span>
                 </div>
@@ -584,17 +580,17 @@ export default function HomePage() {
             {/* Card 1: Hương vị truyền thống */}
             <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#CC7755] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                   <Coffee className="w-6 h-6" />
                 </div>
-                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
+                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
                   {dict.home.pillar2Title}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
                   {dict.home.pillar2Desc}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#CC7755] border border-[#F3EBD8]/10">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
                 {isEn ? "Artisanal Roasting" : "Hương vị truyền thống"}
               </span>
             </div>
@@ -602,17 +598,17 @@ export default function HomePage() {
             {/* Card 2: Thiên nhiên 100% */}
             <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                   <Waves className="w-6 h-6" />
                 </div>
-                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
+                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
                   {dict.home.pillar1Title}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
                   {dict.home.pillar1Desc}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
                 {isEn ? "100% Pure Nature" : "Thiên nhiên 100%"}
               </span>
             </div>
@@ -620,19 +616,19 @@ export default function HomePage() {
             {/* Card 3: Hoa Cẩm Cù Nở Rộ */}
             <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                   <Flower2 className="w-6 h-6" />
                 </div>
-                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
+                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
                   {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
                   {isEn
                     ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
                     : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
                 {isEn ? "Cafe Emblem" : "Biểu tượng quán"}
               </span>
             </div>
@@ -640,65 +636,65 @@ export default function HomePage() {
             {/* Card 4: Bảo tồn tự nhiên */}
             <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
                   <Leaf className="w-6 h-6" />
                 </div>
-                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
+                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
                   {dict.home.pillar4Title}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
                   {dict.home.pillar4Desc}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
                 {isEn ? "Nature Preserved" : "Bảo tồn tự nhiên"}
               </span>
             </div>
           </div>
         </section>
 
-        {/* SECTION 2: SPACE PREVIEWS (Multi-Device Responsive Grid with Lightbox) */}
+        {/* SECTION 2: SPACE PREVIEWS (4 ảnh tỷ lệ 4:5, chữ trên nền gradient tối đáy ảnh) */}
         <section className="container-unified section-unified">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#16231A] border border-[#F3EBD8]/10 text-[#88B795] text-[12px] font-semibold uppercase tracking-[0.12em] mb-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[var(--accent-green)] text-[12px] font-semibold uppercase tracking-[0.12em] mb-3">
                 <Waves className="w-3.5 h-3.5" />
                 <span>{isEn ? "Open Stream Space" : "Không Gian Mở Bên Bờ Suối"}</span>
               </div>
               <StaggerText
                 as="h2"
                 lines={[isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"]}
-                className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight"
+                className="font-serif text-3xl sm:text-4xl text-[var(--text)] font-bold tracking-tight"
               />
             </div>
             <Link
               href="/space"
-              className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[#88B795] hover:text-[#CC7755] transition-colors"
+              className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-green)] hover:text-[var(--accent-clay)] transition-colors"
             >
-              <span className="link-hover-underline">{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh không gian"}</span>
+              <span className="link-hover-underline">{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* Grid 4 columns on Desktop, 2 on Tablet, 1-2 on Mobile - Reveal bằng Mask kéo màn che từ trái sang phải */}
+          {/* Grid 4 ảnh tỷ lệ 4:5 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {HOME_SPACE_PREVIEWS.map((photo, idx) => (
               <div
                 key={photo.url}
                 onClick={() => handleOpenLightbox(idx)}
-                className="group relative cursor-pointer rounded-[20px] overflow-hidden aspect-[4/3] bg-[#16231A] border border-[#F3EBD8]/10 hover:border-[#F3EBD8]/25 transition-all duration-300 hover:-translate-y-[2px] active:scale-[0.98] transform-gpu"
+                className="group relative cursor-pointer rounded-[20px] overflow-hidden aspect-[4/5] bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--border-hover)] transition-all duration-300 hover:-translate-y-[2px] active:scale-[0.98] transform-gpu"
               >
                 <MaskRevealImage
                   src={photo.url}
                   alt={photo.title}
-                  aspectRatio="aspect-[4/3]"
+                  aspectRatio="aspect-[4/5]"
                   delay={0.08 * idx}
                 />
-                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
-                  <span className="text-[12px] font-semibold uppercase tracking-wider text-[#88B795] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
+                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/90 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-green)] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.subtitle}
                   </span>
-                  <h3 className="font-serif text-[17px] font-bold text-[#F3EBD8] line-clamp-1 group-hover:text-[#CC7755] transition-colors">
+                  <h3 className="font-serif text-[17px] font-bold text-[#F3EBD8] line-clamp-1 group-hover:text-[var(--accent-clay)] transition-colors">
                     {photo.title}
                   </h3>
                   <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
@@ -706,7 +702,7 @@ export default function HomePage() {
                   </p>
                 </div>
 
-                <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#CC7755] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
                   <Maximize2 className="w-3.5 h-3.5" />
                 </div>
               </div>
@@ -717,30 +713,30 @@ export default function HomePage() {
         {/* SECTION 3: AUTHENTIC GOOGLE MAPS REVIEWS & TESTIMONIALS */}
         <GoogleReviewsSection isEn={isEn} />
 
-        {/* SECTION 4: INVITATION & DIRECTIONS CTA */}
+        {/* SECTION 4: KHỐI KÊU GỌI CUỐI (nền --surface-2, tiêu đề 36px + địa chỉ + 2 nút) */}
         <section className="container-unified section-unified">
-          <div className="card-unified grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="card-accent grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 xl:col-span-8">
-              <span className="text-[#88B795] text-[12px] uppercase tracking-[0.12em] font-semibold">
+              <span className="text-[var(--accent-green)] text-[12px] uppercase tracking-[0.12em] font-semibold">
                 {isEn ? "Warmest Hospitality" : "Chào Đón Bạn Ghé Thăm"}
               </span>
-              <h2 className="font-serif text-[clamp(26px,3vw,36px)] font-bold mt-2 mb-4 leading-tight text-[#F3EBD8]">
+              <h2 className="font-serif text-[clamp(26px,3.5vw,36px)] font-bold mt-2 mb-4 leading-tight text-[var(--text)]">
                 {isEn ? "Visit Cam Cu House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
               </h2>
-              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed mb-6">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed mb-6">
                 {dict.common.addressFull}. {i18nStatus.scheduleText}.
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-emerald-100">
+              <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[var(--accent-green)]">
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
                   {isEn ? "Direct car access" : "Đường ô tô vào tận nơi"}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
                   {isEn ? "Free spacious parking" : "Chỗ đỗ xe rộng rãi miễn phí"}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
                   {isEn ? "High-speed WiFi" : "Wifi cáp quang tốc độ cao"}
                 </span>
               </div>
@@ -749,20 +745,20 @@ export default function HomePage() {
             <div className="lg:col-span-5 xl:col-span-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-start lg:justify-end gap-3.5 shrink-0 w-full">
               <a
                 href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="btn-press inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-[#1B281D] hover:bg-[#121A15] text-white border border-emerald-400/40 font-bold text-sm transition-all shadow-lg hover:-translate-y-0.5 whitespace-nowrap text-center"
+                className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md whitespace-nowrap text-center"
               >
-                <PhoneCall className="w-4 h-4 text-emerald-300 shrink-0" />
+                <PhoneCall className="w-4 h-4 text-[#1B120E] shrink-0" />
                 <span>
-                  {isEn ? "Hotline:" : "Hotline:"} {settings.hotline1}
+                  Hotline: {settings.hotline1}
                 </span>
               </a>
               <a
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-press inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5 whitespace-nowrap text-center"
+                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold whitespace-nowrap text-center"
               >
-                <MapPin className="w-4 h-4 text-emerald-300 shrink-0" />
+                <MapPin className="w-4 h-4 text-[var(--accent-green)] shrink-0" />
                 <span>{dict.common.getDirections}</span>
               </a>
             </div>

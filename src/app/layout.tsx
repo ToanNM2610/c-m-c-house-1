@@ -78,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${quicksand.variable} font-sans`}>
+    <html lang="vi" suppressHydrationWarning className={`dark ${playfair.variable} ${quicksand.variable} font-sans`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -88,10 +88,10 @@ export default function RootLayout({
                   var cookieMatch = document.cookie.match(/(?:^|;\\s*)camcu_theme=([^;]*)/);
                   var storedTheme = localStorage.getItem('camcu_theme');
                   var theme = (cookieMatch ? cookieMatch[1] : null) || storedTheme;
-                  if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                  } else {
+                  if (theme === 'light') {
                     document.documentElement.classList.remove('dark');
+                  } else {
+                    document.documentElement.classList.add('dark');
                   }
                   var seenIntro = sessionStorage.getItem('cc_intro') === '1';
                   var params = new URLSearchParams(location.search);

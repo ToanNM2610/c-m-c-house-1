@@ -219,9 +219,9 @@ export default function MenuPage() {
 
         {/* Main Menu Layout */}
         <div className="container-unified py-10 flex flex-col gap-8">
-          {/* Spotlight Story Card: Món được yêu thích nhất */}
+          {/* Spotlight Story Card: Món được yêu thích nhất - một khung chữ nền --surface-2, KHÔNG ảnh */}
           {signatureItem && (
-            <div className="w-full card-unified flex flex-col gap-3">
+            <div className="w-full card-accent flex flex-col gap-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="badge-unified">
                   {dict.menu.signatureTag}
@@ -233,22 +233,22 @@ export default function MenuPage() {
                 )}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-                <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
+                <h3 className="font-serif text-[clamp(24px,3vw,32px)] font-bold text-[#F3EBD8]">
                   {signatureItem.name}
                 </h3>
-                <span className="text-[18px] sm:text-[20px] font-bold text-[#CC7755] tabular-nums font-sans">
+                <span className="text-[20px] font-bold text-[#CC7755] tabular-nums font-sans">
                   {signatureItem.price.toLocaleString("vi-VN")}đ
                 </span>
               </div>
-              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed max-w-3xl">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed max-w-3xl">
                 {signatureItem.description || dict.menu.signatureDesc}
               </p>
               <div className="pt-2 flex items-center gap-3">
                 <a
                   href="tel:0382851688"
-                  className="btn-press inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#CC7755] text-white text-[14px] font-semibold hover:bg-[#b86645] transition-colors shadow-sm"
+                  className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md"
                 >
-                  <PhoneCall className="w-4 h-4" />
+                  <PhoneCall className="w-4 h-4 text-[#1B120E]" />
                   <span>
                     {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
                   </span>
@@ -257,80 +257,155 @@ export default function MenuPage() {
             </div>
           )}
 
-          {/* Menu Items List - Đường chấm dẫn tên và giá, nền xen kẽ nhẹ các hàng */}
+          {/* Menu Items List - 2 cột desktop, 1 cột mobile, tiêu đề nhóm Playfair 28px */}
           <div className="card-unified">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-[#F3EBD8]/10 gap-2">
-              <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
-                {dict.menu.menuListHeading} ({filteredItems.length} {isEn ? "items" : "món"})
-              </h3>
-              <span className="text-[14px] font-medium text-[#F3EBD8]/60">
-                {dict.menu.menuListSubheading}
-              </span>
-            </div>
+            {activeCategory === "all" ? (
+              // Grouped view by category with Playfair 28px headings
+              <div className="flex flex-col gap-10">
+                {MENU_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
+                  const catItems = filteredItems.filter((item) => item.category === cat.id);
+                  if (catItems.length === 0) return null;
+                  const catLabel = dict.menu.categories[cat.id] || cat.name;
 
-            <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2">
-              <AnimatePresence mode="popLayout">
-                {filteredItems.map((item, idx) => {
-                  const isOutOfStock = item.inStock === false;
-                  const isAlternate = idx % 2 === 1;
                   return (
-                    <motion.div
-                      layout
-                      key={item.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className={`flex flex-col px-3.5 py-2.5 rounded-xl transition-colors border border-transparent ${
-                        isAlternate ? "bg-[#1B281D]/45 hover:bg-[#1B281D]/70" : "bg-transparent hover:bg-[#1B281D]/30"
-                      } ${isOutOfStock ? "opacity-50" : ""}`}
-                    >
-                      <div className="flex items-baseline justify-between gap-2 w-full">
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span
-                            className={`text-[16px] sm:text-[17px] font-semibold transition-colors leading-snug ${
-                              isOutOfStock
-                                ? "text-[#F3EBD8]/50 line-through"
-                                : "text-[#F3EBD8] group-hover:text-[#CC7755]"
-                            }`}
-                          >
-                            {item.name}
-                          </span>
-                          {isOutOfStock ? (
-                            <span className="px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 border border-rose-800 text-[10px] font-bold">
-                              {dict.common.soldOut}
-                            </span>
-                          ) : (
-                            item.tag && (
-                              <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 text-[#CC7755] border border-[#CC7755]/30 text-[10px] font-bold">
-                                {item.tag}
-                              </span>
-                            )
-                          )}
-                        </div>
-
-                        {/* Leader dots nối tên và giá */}
-                        <div className="flex-1 border-b-2 border-dotted border-[#F3EBD8]/30 mx-2.5 self-center min-w-[20px]" />
-
-                        {/* Giá bên phải 17px màu cam #CC7755 */}
-                        <span className="text-[16px] sm:text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
-                          {item.price.toLocaleString("vi-VN")}đ
+                    <div key={cat.id} className="flex flex-col gap-4">
+                      {/* Tiêu đề nhóm Playfair 28px */}
+                      <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+                        <h3 className="font-serif text-[28px] font-bold text-[#F3EBD8]">
+                          {catLabel}
+                        </h3>
+                        <span className="text-[13px] font-semibold text-[var(--accent-green)]">
+                          {catItems.length} {isEn ? "items" : "món"}
                         </span>
                       </div>
 
-                      {item.description && (
-                        <p className="text-[15px] font-medium text-[#F3EBD8]/70 leading-relaxed mt-1 pr-6">
-                          {item.description}
-                        </p>
-                      )}
-                    </motion.div>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2">
+                        {catItems.map((item, idx) => {
+                          const isOutOfStock = item.inStock === false;
+                          const isAlternate = idx % 2 === 1;
+                          return (
+                            <div
+                              key={item.id}
+                              className={`flex flex-col px-3.5 py-2.5 rounded-xl transition-colors border border-transparent ${
+                                isAlternate ? "bg-[#1B281D]/45 hover:bg-[#1B281D]/70" : "bg-transparent hover:bg-[#1B281D]/30"
+                              } ${isOutOfStock ? "opacity-50" : ""}`}
+                            >
+                              <div className="flex items-baseline justify-between gap-2 w-full">
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span
+                                    className={`text-[17px] sm:text-[18px] font-semibold transition-colors leading-snug ${
+                                      isOutOfStock
+                                        ? "text-[#F3EBD8]/50 line-through"
+                                        : "text-[#F3EBD8] group-hover:text-[#CC7755]"
+                                    }`}
+                                  >
+                                    {item.name}
+                                  </span>
+                                  {isOutOfStock ? (
+                                    <span className="px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 border border-rose-800 text-[10px] font-bold">
+                                      {dict.common.soldOut}
+                                    </span>
+                                  ) : (
+                                    item.tag && (
+                                      <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 text-[#CC7755] border border-[#CC7755]/30 text-[10px] font-bold">
+                                        {item.tag}
+                                      </span>
+                                    )
+                                  )}
+                                </div>
+
+                                {/* Đường chấm dẫn nối tên và giá */}
+                                <div className="flex-1 border-b-2 border-dotted border-[rgba(243,235,216,0.25)] mx-2.5 self-center min-w-[20px]" />
+
+                                {/* Giá bên phải cam 17px */}
+                                <span className="text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
+                                  {item.price.toLocaleString("vi-VN")}đ
+                                </span>
+                              </div>
+
+                              {item.description && (
+                                <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mt-1 pr-6">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   );
                 })}
-              </AnimatePresence>
-            </motion.div>
+              </div>
+            ) : (
+              // Single category view with Playfair 28px heading
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+                  <h3 className="font-serif text-[28px] font-bold text-[#F3EBD8]">
+                    {dict.menu.categories[activeCategory] || activeCategory}
+                  </h3>
+                  <span className="text-[13px] font-semibold text-[var(--accent-green)]">
+                    {filteredItems.length} {isEn ? "items" : "món"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2">
+                  {filteredItems.map((item, idx) => {
+                    const isOutOfStock = item.inStock === false;
+                    const isAlternate = idx % 2 === 1;
+                    return (
+                      <div
+                        key={item.id}
+                        className={`flex flex-col px-3.5 py-2.5 rounded-xl transition-colors border border-transparent ${
+                          isAlternate ? "bg-[#1B281D]/45 hover:bg-[#1B281D]/70" : "bg-transparent hover:bg-[#1B281D]/30"
+                        } ${isOutOfStock ? "opacity-50" : ""}`}
+                      >
+                        <div className="flex items-baseline justify-between gap-2 w-full">
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span
+                              className={`text-[17px] sm:text-[18px] font-semibold transition-colors leading-snug ${
+                                isOutOfStock
+                                  ? "text-[#F3EBD8]/50 line-through"
+                                  : "text-[#F3EBD8] group-hover:text-[#CC7755]"
+                              }`}
+                            >
+                              {item.name}
+                            </span>
+                            {isOutOfStock ? (
+                              <span className="px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 border border-rose-800 text-[10px] font-bold">
+                                {dict.common.soldOut}
+                              </span>
+                            ) : (
+                              item.tag && (
+                                <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 text-[#CC7755] border border-[#CC7755]/30 text-[10px] font-bold">
+                                  {item.tag}
+                                </span>
+                              )
+                            )}
+                          </div>
+
+                          {/* Đường chấm dẫn nối tên và giá */}
+                          <div className="flex-1 border-b-2 border-dotted border-[rgba(243,235,216,0.25)] mx-2.5 self-center min-w-[20px]" />
+
+                          {/* Giá bên phải cam 17px */}
+                          <span className="text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
+                            {item.price.toLocaleString("vi-VN")}đ
+                          </span>
+                        </div>
+
+                        {item.description && (
+                          <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mt-1 pr-6">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Bottom Commitment & Hotline Banner */}
+          {/* Bottom Commitment & Hotline Banner: khung ngang có 2 nút (Gọi Hotline cam, Ghé Thăm Trực Tiếp viền) */}
           <section className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col gap-2 max-w-xl text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-2 text-[#F3EBD8] font-bold font-serif text-[20px] sm:text-[22px]">
@@ -339,17 +414,17 @@ export default function MenuPage() {
                   {isEn ? "Commitment from Cam Cu Kitchen & Bar" : "Cam Kết Từ Bếp & Quầy Bar Cẩm Cù"}
                 </span>
               </div>
-              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed">
                 {isEn
                   ? "Fresh daily local produce • Customizable sweetness and ice levels for your perfect beverage experience."
                   : "Nguyên liệu tươi sạch mỗi ngày • Hỗ trợ điều chỉnh độ ngọt và đá theo khẩu vị riêng của quý khách để có trải nghiệm vừa ý nhất."}
               </p>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-[13px] font-medium text-[#F3EBD8]/80">
-                <span className="flex items-center gap-1.5 text-[#88B795]">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-[13px] font-medium text-[var(--text-muted)]">
+                <span className="flex items-center gap-1.5 text-[var(--accent-green)]">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {isEn ? "Custom sweetness to taste" : "Giảm ngọt theo khẩu vị"}
                 </span>
-                <span className="flex items-center gap-1.5 text-[#88B795]">
+                <span className="flex items-center gap-1.5 text-[var(--accent-green)]">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {isEn ? "Table service right beside stream" : "Phục vụ tại bàn sát dòng suối"}
                 </span>
@@ -359,9 +434,9 @@ export default function MenuPage() {
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full md:w-auto">
               <a
                 href="tel:0382851688"
-                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#CC7755] text-white text-[14px] font-semibold hover:bg-[#b86645] shadow-md transition-all"
+                className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md w-full sm:w-auto whitespace-nowrap text-center"
               >
-                <PhoneCall className="w-4 h-4" />
+                <PhoneCall className="w-4 h-4 text-[#1B120E]" />
                 <span>
                   {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
                 </span>
@@ -370,9 +445,9 @@ export default function MenuPage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#16231A] text-[#F3EBD8] text-[14px] font-semibold border border-[#F3EBD8]/10 hover:bg-[#1E2B22] transition-colors"
+                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold w-full sm:w-auto whitespace-nowrap text-center"
               >
-                <Navigation className="w-4 h-4 text-[#88B795]" />
+                <Navigation className="w-4 h-4 text-[var(--accent-green)]" />
                 <span>{isEn ? "Visit in Person" : "Ghé Thăm Trực Tiếp"}</span>
               </a>
             </div>

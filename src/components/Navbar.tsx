@@ -134,72 +134,41 @@ export default function Navbar() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80 shadow-[0_2px_12px_rgba(37,51,38,0.04)] transition-colors duration-300">
-      {/* Top Announcement Bar */}
-      <div className="w-full bg-[#2D4233] dark:bg-[#16231A] text-stone-200 text-[11px] sm:text-xs py-1 px-3 sm:px-4 border-b border-stone-800/20 dark:border-stone-800/60 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
-          {/* Mobile Display: 1 Single Clean Status Pill */}
-          <div className="flex md:hidden items-center justify-between w-full text-xs">
-            <span className="flex items-center gap-1.5 font-semibold text-white truncate">
-              <span className={`w-2 h-2 rounded-full shrink-0 ${getDotClass()}`} />
-              <span className="truncate">{i18nStatus.shortBadge}</span>
-            </span>
-            <span className="text-stone-300 text-xs font-medium shrink-0 ml-2">
-              {storeStatus.isOpen
-                ? (locale === "en" ? `Closes at ${storeStatus.closingTime}` : `Đóng lúc ${storeStatus.closingTime}`)
-                : (locale === "en" ? "Opens at 07:00" : "Mở lúc 07:00")}
-            </span>
-          </div>
-
-          {/* Desktop Left: Announcement / Brand Philosophy */}
-          <div className="hidden md:flex items-center gap-2 overflow-hidden truncate text-xs">
-            <span className="bg-[#3E5C46] px-2.5 py-0.5 rounded text-[11px] uppercase font-bold tracking-wider text-emerald-200 shrink-0">
-              {pinnedNews ? dict.common.noticeBoard : "CẨM CÙ HOUSE"}
-            </span>
-            <span className="truncate font-medium text-stone-200">
-              {pinnedNews
-                ? `${pinnedNews.title}: ${pinnedNews.content}`
-                : (locale === "en" ? "Eco coffee & dining sanctuary by the natural pebble stream in Gia Nghia" : "Chốn dừng chân ẩm thực & cà phê sinh thái mộc mạc bên dòng suối mát Gia Nghĩa")}
-            </span>
-          </div>
-
-          {/* Desktop Right: 1 Single Unified Real-Time Status Pill */}
-          <div className="hidden md:flex items-center gap-2.5 shrink-0 text-xs">
-            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-black/25 border border-white/10 text-white font-semibold">
-              <span className={`w-2 h-2 rounded-full shrink-0 ${getDotClass()}`} />
-              <span>{i18nStatus.shortBadge}</span>
-              <span className="text-stone-300 font-normal">
-                ({storeStatus.isOpen
-                  ? (locale === "en" ? `closes at ${storeStatus.closingTime}` : `đóng lúc ${storeStatus.closingTime}`)
-                  : (locale === "en" ? "opens at 07:00" : "mở lúc 07:00")})
-              </span>
-            </span>
-            <span className="text-stone-300 font-medium">
-              • {i18nStatus.scheduleText}
-            </span>
-          </div>
+    <header className="fixed top-0 left-0 w-full z-50 bg-[#FDFBF7]/95 dark:bg-[#0F1A14]/95 backdrop-blur-md border-b border-[var(--border)] shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-colors duration-200">
+      {/* Top Announcement Bar: 1 dòng duy nhất 13px, trạng thái mở cửa + giờ hôm nay */}
+      <div className="w-full bg-[var(--surface)] text-[var(--text)] text-[13px] py-1.5 px-4 border-b border-[var(--border)] transition-colors duration-200">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2.5 text-[13px] font-medium text-center truncate">
+          <span className={`w-2 h-2 rounded-full shrink-0 ${getDotClass()}`} />
+          <span className="font-semibold">{i18nStatus.shortBadge}</span>
+          <span className="text-[var(--text-muted)]">•</span>
+          <span>
+            {storeStatus.isOpen
+              ? (locale === "en" ? `Closes at ${storeStatus.closingTime} today` : `Đóng lúc ${storeStatus.closingTime} hôm nay`)
+              : (locale === "en" ? "Opens at 07:00 today" : "Mở lúc 07:00 hôm nay")}
+          </span>
+          <span className="hidden sm:inline text-[var(--text-muted)]">•</span>
+          <span className="hidden sm:inline text-[var(--accent-green)] font-semibold">
+            {i18nStatus.scheduleText}
+          </span>
         </div>
       </div>
 
       {/* Main Header Container */}
-      <div className="h-14 sm:h-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
-        {/* Brand / Logo */}
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0 group btn-press-sm">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 flex items-center justify-center text-[#3E5C46] dark:text-[#88B795] group-hover:bg-[#3E5C46] group-hover:text-white dark:group-hover:bg-[#88B795] dark:group-hover:text-[#121A15] transition-all duration-300 shadow-sm shrink-0">
+      <div className="h-16 sm:h-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
+        {/* Brand / Logo: Playfair 24px */}
+        <Link href="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 min-w-0 group btn-press-sm">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[var(--surface-2)] flex items-center justify-center text-[var(--accent-green)] group-hover:bg-[var(--accent-clay)] group-hover:text-[#1B120E] transition-all duration-300 shadow-sm shrink-0">
             <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-current animate-pulse" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="font-serif text-base sm:text-2xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] tracking-tight group-hover:text-[#2D4233] dark:group-hover:text-[#88B795] transition-colors truncate">
+            <span className="font-serif text-[24px] font-bold text-[var(--text)] tracking-tight group-hover:text-[var(--accent-clay)] transition-colors truncate leading-tight">
               Cẩm Cù House
-            </span>
-            <span className="text-[9px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium tracking-wide truncate hidden xs:block">
-              {locale === "en" ? "Coffee & Food, Gia Nghia" : "Cà Phê & Ẩm Thực, Gia Nghĩa"}
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation - Centered Pill */}
-        <nav className="hidden lg:inline-flex flex-row items-center gap-1 sm:gap-1.5 md:gap-2 p-1.5 rounded-full bg-stone-900/60 dark:bg-stone-900/80 border border-stone-800/60 backdrop-blur-md max-w-max mx-auto shrink-0">
+        <nav className="hidden lg:inline-flex flex-row items-center gap-1 p-1.5 rounded-full bg-[var(--surface)] border border-[var(--border)] backdrop-blur-md max-w-max mx-auto shrink-0 shadow-sm">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             const label = locale === "en" ? item.labelEn : item.labelVi;
@@ -207,20 +176,20 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative inline-flex items-center justify-center whitespace-nowrap shrink-0 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 btn-press-sm ${
+                className={`relative inline-flex items-center justify-center whitespace-nowrap shrink-0 px-4 py-2 text-sm font-semibold rounded-full transition-all duration-200 btn-press-sm ${
                   isActive
-                    ? "text-white font-bold"
-                    : "text-stone-300 hover:text-white hover:bg-stone-800/40 rounded-full"
+                    ? "text-[var(--text)] font-bold"
+                    : "text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)]/60 rounded-full"
                 }`}
               >
                 {isActive && (
                   <motion.span
                     layoutId="activeNavPillDesktop"
-                    className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-md -z-10"
+                    className="absolute inset-0 bg-[var(--surface-2)] rounded-full shadow-sm border border-[var(--border)] -z-10"
                     transition={{ type: "spring", stiffness: 450, damping: 32 }}
                   />
                 )}
-                <span className={`relative z-10 whitespace-nowrap ${!isActive ? "link-hover-underline" : ""}`}>
+                <span className="relative z-10 whitespace-nowrap">
                   {label}
                 </span>
               </Link>
@@ -234,21 +203,21 @@ export default function Navbar() {
           <ThemeToggle />
 
           {/* 2. Bilingual Language Switcher (VN | EN) with Smooth Animated Slider */}
-          <div className="inline-flex items-center bg-stone-100 dark:bg-[#1E2B22] rounded-full p-0.5 sm:p-1 text-xs font-bold text-stone-600 dark:text-stone-300 border border-stone-200/80 dark:border-stone-700/60 shadow-inner relative shrink-0">
+          <div className="inline-flex items-center bg-[var(--surface-2)] rounded-full p-0.5 sm:p-1 text-xs font-bold text-[var(--text-muted)] border border-[var(--border)] shadow-inner relative shrink-0">
             <button
               type="button"
               onClick={() => setLocale("vi")}
-              className={`relative px-2.5 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
+              className={`relative px-2.5 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs font-semibold ${
                 locale === "vi"
-                  ? "text-white"
-                  : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
+                  ? "text-[var(--text)] font-bold"
+                  : "text-[var(--text-muted)] hover:text-[var(--text)]"
               }`}
               aria-label="Tiếng Việt"
             >
               {locale === "vi" && (
                 <motion.span
                   layoutId="activeLangPillDesktop"
-                  className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
+                  className="absolute inset-0 bg-[var(--surface)] rounded-full shadow-sm border border-[var(--border)] -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 32 }}
                 />
               )}
@@ -257,17 +226,17 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setLocale("en")}
-              className={`relative px-2.5 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs ${
+              className={`relative px-2.5 sm:px-3 py-1 rounded-full transition-colors duration-200 z-10 btn-press-sm text-[11px] sm:text-xs font-semibold ${
                 locale === "en"
-                  ? "text-white"
-                  : "text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
+                  ? "text-[var(--text)] font-bold"
+                  : "text-[var(--text-muted)] hover:text-[var(--text)]"
               }`}
               aria-label="English"
             >
               {locale === "en" && (
                 <motion.span
                   layoutId="activeLangPillDesktop"
-                  className="absolute inset-0 bg-[#3E5C46] dark:bg-[#2D4233] rounded-full shadow-sm -z-10"
+                  className="absolute inset-0 bg-[var(--surface)] rounded-full shadow-sm border border-[var(--border)] -z-10"
                   transition={{ type: "spring", stiffness: 450, damping: 32 }}
                 />
               )}
@@ -279,10 +248,10 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="btn-press lg:hidden w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full bg-stone-100 dark:bg-[#1E2B22] text-stone-800 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-[#2A3B30] transition-colors border border-stone-200 dark:border-stone-700/60 shrink-0"
+            className="btn-press lg:hidden w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full bg-[var(--surface-2)] text-[var(--text)] hover:bg-[var(--surface)] transition-colors border border-[var(--border)] shrink-0"
             aria-label="Mở menu điều hướng"
           >
-            {mobileMenuOpen ? <X className="w-4 h-4 text-rose-500" /> : <MenuIcon className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 text-rose-500" /> : <MenuIcon className="w-4 h-4 text-[var(--accent-green)]" />}
           </button>
         </div>
       </div>

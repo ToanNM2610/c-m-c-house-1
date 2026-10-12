@@ -264,35 +264,37 @@ export default function SpacePage() {
             </div>
           </div>
 
-          {/* Filter Tabs - Responsive (Stagger 2: 120ms) */}
-          <div className="animate-fade-up-2 w-full flex items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
-            <div className="flex items-center gap-2 p-1.5 bg-stone-100 dark:bg-[#1E2B22] rounded-2xl sm:rounded-full border border-stone-200/70 dark:border-stone-700/60 overflow-x-auto no-scrollbar w-full sm:w-auto">
-              {SPACE_CATEGORIES.map((cat) => {
-                const label = dict.space.categories[cat.id] || cat.name;
-                const isActive = activeFilter === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => handleFilterChange(cat.id)}
-                    type="button"
-                    className={`btn-press-sm min-h-[44px] px-5 py-2.5 rounded-xl sm:rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-300 shrink-0 ${
-                      isActive
-                        ? "bg-[#3E5C46] dark:bg-[#2D4233] text-white shadow-sm font-bold"
-                        : "text-stone-700 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10"
-                    }`}
-                  >
-                    <span>
-                      {cat.id === "all" ? `${label} (${allItems.length})` : label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+          {/* Filter Tabs - Sticky top-16 sm:top-20 */}
+          <div className="sticky top-16 sm:top-20 z-30 w-full bg-[#0F1A14]/95 backdrop-blur-md py-3 border-y border-[var(--border)] shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth w-full sm:w-auto py-1">
+                {SPACE_CATEGORIES.map((cat) => {
+                  const label = dict.space.categories[cat.id] || cat.name;
+                  const isActive = activeFilter === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => handleFilterChange(cat.id)}
+                      type="button"
+                      className={`btn-press-sm min-h-[44px] px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                        isActive
+                          ? "bg-[#CC7755] text-white shadow-sm font-bold"
+                          : "bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] border border-[var(--border)]"
+                      }`}
+                    >
+                      <span>
+                        {cat.id === "all" ? `${label} (${allItems.length})` : label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-            <div className="hidden lg:flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 font-medium shrink-0">
-              <span>
-                {filteredItems.length} {isEn ? "scenic stream spots" : "góc ảnh bờ suối"}
-              </span>
+              <div className="hidden lg:flex items-center gap-2 text-xs text-[var(--text-muted)] font-medium shrink-0">
+                <span>
+                  {filteredItems.length} {isEn ? "scenic stream spots" : "góc ảnh bờ suối"}
+                </span>
+              </div>
             </div>
           </div>
         </section>
@@ -304,10 +306,10 @@ export default function SpacePage() {
               {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] rounded-2xl aspect-[4/3] bg-stone-200/70 dark:bg-[#1E2B22] animate-pulse border border-stone-200 dark:border-stone-700/60 p-4 flex flex-col justify-end"
+                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] rounded-[20px] aspect-[4/3] bg-[var(--surface-2)] animate-pulse border border-[var(--border)] p-4 flex flex-col justify-end"
                 >
-                  <div className="h-3 w-20 bg-stone-300 dark:bg-stone-700 rounded-full mb-2" />
-                  <div className="h-4 w-36 bg-stone-300 dark:bg-stone-700 rounded-full" />
+                  <div className="h-3 w-20 bg-white/10 rounded-full mb-2" />
+                  <div className="h-4 w-36 bg-white/10 rounded-full" />
                 </div>
               ))}
             </div>
@@ -326,9 +328,9 @@ export default function SpacePage() {
                     delay: Math.min((idx % 8) * 0.04, 0.2),
                     layout: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
                   }}
-                  whileHover={{ y: -6, scale: 1.02 }}
+                  whileHover={{ y: -4, scale: 1.02 }}
                   onClick={() => handleOpenLightbox(idx)}
-                  className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-2xl border border-stone-200/70 dark:border-stone-700/60 transition-shadow duration-300 transform-gpu w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] shrink-0"
+                  className="group relative cursor-pointer rounded-[20px] overflow-hidden aspect-[4/3] bg-[var(--surface)] shadow-sm hover:shadow-2xl border border-[var(--border)] hover:border-[var(--border-hover)] transition-all duration-300 transform-gpu w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] shrink-0"
                 >
                   <MaskRevealImage
                     src={item.image}
@@ -337,18 +339,18 @@ export default function SpacePage() {
                     delay={0.05 * (idx % 6)}
                   />
                   <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/95 via-stone-950/70 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--accent-green)] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-1">
                       {item.subtitle}
                     </span>
-                    <h3 className="font-serif text-base font-bold text-white line-clamp-2 group-hover:text-emerald-200 transition-colors transform group-hover:-translate-y-1 duration-300 leading-snug">
+                    <h3 className="font-serif text-base font-bold text-[#F3EBD8] line-clamp-2 group-hover:text-[var(--accent-clay)] transition-colors transform group-hover:-translate-y-0.5 duration-300 leading-snug">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-[#F3EBD8]/85 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-1 font-medium">
+                    <p className="text-[13px] text-[rgba(243,235,216,0.80)] line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5 font-medium">
                       {item.description}
                     </p>
                   </div>
 
-                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#3E5C46] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#CC7755] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
                     <Maximize2 className="w-4 h-4" />
                   </div>
                 </motion.div>
@@ -362,14 +364,14 @@ export default function SpacePage() {
         <section className="container-unified pb-10">
           <div className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[#2D4233] text-[#88B795] flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] flex items-center justify-center shrink-0">
                 <Droplets className="w-6 h-6 animate-pulse" />
               </div>
               <div className="flex flex-col">
-                <span className="font-serif font-bold text-lg text-[#F3EBD8]">
+                <span className="font-serif font-bold text-lg text-[var(--text)]">
                   {isEn ? "Highland Stream Natural Audio" : "Thanh Âm Suối Nguồn Cao Nguyên"}
                 </span>
-                <span className="text-[15px] font-medium text-[#F3EBD8]/70">
+                <span className="text-[15px] font-medium text-[var(--text-muted)]">
                   {isEn
                     ? "Recorded live on location beside the basalt rock stream at Cam Cu House, Dak Nong"
                     : "Thu âm trực tiếp bên bờ suối đá Cẩm Cù House, Đắk Nông"}
@@ -380,16 +382,21 @@ export default function SpacePage() {
             <button
               type="button"
               onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-              className={`btn-press min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-md ${
+              className={`btn-primary min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-md ${
                 isPlayingAudio
-                  ? "bg-[#CC7755] text-white"
-                  : "bg-[#2D4233] text-[#F3EBD8] hover:bg-[#3E5C46]"
+                  ? "bg-[#CC7755] text-[#1B120E]"
+                  : "bg-[#CC7755] text-[#1B120E] hover:bg-[#D98A68]"
               }`}
             >
               {isPlayingAudio ? (
                 <>
                   <Pause className="w-4 h-4" />
                   <span>{dict.space.muteAudio}</span>
+                  <span className="flex items-center gap-0.5 ml-1">
+                    <span className="w-1 h-3 bg-[#1B120E] rounded-full animate-pulse" />
+                    <span className="w-1 h-4 bg-[#1B120E] rounded-full animate-pulse delay-75" />
+                    <span className="w-1 h-2 bg-[#1B120E] rounded-full animate-pulse delay-150" />
+                  </span>
                 </>
               ) : (
                 <>
@@ -401,86 +408,87 @@ export default function SpacePage() {
           </div>
         </section>
 
-        {/* Eco Charter Section */}
+        {/* Eco Charter Section (Bảo Tồn Dòng Nước Suối: khối nền --surface-2, 3 cam kết dạng icon + chữ ngang hàng, 2 nút cuối) */}
         <section className="section-unified">
           <div className="container-unified">
-            <div className="card-unified relative overflow-hidden">
-              <div className="relative z-10 max-w-3xl">
+            <div className="card-accent relative overflow-hidden">
+              <div className="relative z-10 max-w-4xl">
                 <div className="badge-unified inline-flex items-center gap-2 mb-4">
-                  <Trees className="w-3.5 h-3.5 text-[#88B795]" />
+                  <Trees className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                   <span>{isEn ? "Eco Commitment from Cam Cu House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
                 </div>
-                <h3 className="font-serif text-[20px] sm:text-[22px] text-[#F3EBD8] font-bold tracking-tight mb-4">
+                <h3 className="font-serif text-[clamp(24px,3.2vw,32px)] text-[var(--text)] font-bold tracking-tight mb-4 leading-tight">
                   {isEn
                     ? "Preserving Natural Basalt Streams & Plastic-Free Living"
                     : "Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên & Giảm Thiểu Nhựa"}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]">
+                <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed max-w-[65ch]">
                   {isEn
                     ? "We treasure every pebble and blade of grass along our stream bank. Cam Cu House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
                     : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-[#F3EBD8]/10">
+                {/* 3 cam kết dạng icon + chữ ngang hàng */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-[var(--border)]">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#2D4233] flex items-center justify-center text-[#88B795] shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center text-[var(--accent-green)] shrink-0 border border-[var(--border)]">
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-[15px] font-bold text-[#F3EBD8]">
+                      <p className="text-[15px] font-bold text-[var(--text)]">
                         {isEn ? "Single-Use Plastic Free" : "Không Nhựa 1 Lần"}
                       </p>
-                      <p className="text-[14px] font-medium text-[#F3EBD8]/70">
+                      <p className="text-[14px] font-medium text-[var(--text-muted)]">
                         {isEn ? "100% natural materials" : "100% vật liệu tự nhiên"}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#2D4233] flex items-center justify-center text-[#88B795] shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center text-[var(--accent-green)] shrink-0 border border-[var(--border)]">
                       <Droplets className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-[15px] font-bold text-[#F3EBD8]">
+                      <p className="text-[15px] font-bold text-[var(--text)]">
                         {isEn ? "Water Source Protection" : "Bảo Vệ Nguồn Nước"}
                       </p>
-                      <p className="text-[14px] font-medium text-[#F3EBD8]/70">
+                      <p className="text-[14px] font-medium text-[var(--text-muted)]">
                         {isEn ? "Safe closed-loop filtration" : "Lọc thải khép kín an toàn"}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#422216] flex items-center justify-center text-[#CC7755] shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center text-[#CC7755] shrink-0 border border-[var(--border)]">
                       <Trees className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-[15px] font-bold text-[#F3EBD8]">
+                      <p className="text-[15px] font-bold text-[var(--text)]">
                         {isEn ? "Forest Ecosystem" : "Hệ Sinh Thái Rừng"}
                       </p>
-                      <p className="text-[14px] font-medium text-[#F3EBD8]/70">
+                      <p className="text-[14px] font-medium text-[var(--text-muted)]">
                         {isEn ? "Preserving native flora" : "Gìn giữ thảm thực vật bản địa"}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Action Callouts */}
+                {/* 2 nút cuối */}
                 <div className="mt-8 flex flex-wrap items-center gap-3.5">
                   <a
                     href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#CC7755] text-white text-[14px] font-semibold hover:bg-[#b86645] transition-colors shadow-sm"
+                    className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md"
                   >
                     <span>{dict.common.getDirections}</span>
                     <Navigation className="w-4 h-4" />
                   </a>
                   <a
                     href="tel:0382851688"
-                    className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#121A15] text-[#F3EBD8] hover:bg-[#1E2B22] transition-colors text-[14px] font-semibold border border-[#F3EBD8]/10"
+                    className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
                   >
-                    <PhoneCall className="w-4 h-4 text-[#88B795]" />
+                    <PhoneCall className="w-4 h-4 text-[#CC7755]" />
                     <span>
                       {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
                     </span>

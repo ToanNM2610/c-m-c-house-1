@@ -26,17 +26,16 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
   return (
     <motion.div
       key={`page-curtain-${pathname}`}
-      initial={{ y: "0%" }}
-      animate={{ y: "-100%" }}
+      initial={{ clipPath: "circle(150% at 50% 50%)", opacity: 1 }}
+      animate={{ clipPath: "circle(0% at 50% 50%)", opacity: 1 }}
       transition={{
         duration: 0.75,
-        ease: [0.76, 0, 0.24, 1] as const,
+        ease: [0.2, 0.7, 0.2, 1] as const,
         delay: 0.2,
       }}
       onAnimationComplete={onComplete}
-      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[#2D4233] text-[#FDFBF7] shadow-2xl overflow-hidden"
+      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[#183A28] text-[#F3EBD8] shadow-2xl overflow-hidden"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(62,92,70,0.55)_0%,rgba(24,37,28,0.98)_100%)] opacity-95" />
 
 
 

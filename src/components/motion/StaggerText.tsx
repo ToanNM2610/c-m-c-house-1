@@ -7,6 +7,7 @@ interface StaggerTextProps {
   as?: "h1" | "h2" | "h3" | "h4" | "p" | "div";
   className?: string;
   lineClassName?: string;
+  lineClassNames?: string[];
   delay?: number;
   stagger?: number;
   once?: boolean;
@@ -17,6 +18,7 @@ export default function StaggerText({
   as: Component = "h2",
   className = "",
   lineClassName = "",
+  lineClassNames,
   delay = 0.05,
   stagger = 0.1, // Chuẩn stagger 0.1s theo yêu cầu
   once = true,
@@ -60,7 +62,7 @@ export default function StaggerText({
           <span key={idx} className="block overflow-hidden py-0.5">
             <motion.span
               variants={lineVariants}
-              className={`block transform-gpu ${lineClassName}`}
+              className={`block transform-gpu ${lineClassNames?.[idx] || lineClassName}`}
             >
               {line}
             </motion.span>
