@@ -325,6 +325,9 @@ export default function CamcuIntro() {
             letterSpacing: '0.22em',
             duration: 1.4,
             ease: 'power3.out',
+            onComplete() {
+              if (brandTitle) brandTitle.style.overflow = 'visible';
+            },
           },
           0.65
         )

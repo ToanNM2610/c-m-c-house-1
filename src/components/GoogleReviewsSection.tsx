@@ -29,7 +29,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-1",
     name: "Minh Tuấn",
     initial: "T",
-    avatarBg: "bg-[#2D4233] text-[#FDFBF7]", // Xanh rêu trầm thương hiệu
+    avatarBg: "bg-[#2D4233] text-[#88B795] border border-[#88B795]/30",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide • Cấp 6",
     badgeTextEn: "Local Guide • Level 6",
@@ -51,7 +51,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-2",
     name: "Thanh Trúc",
     initial: "T",
-    avatarBg: "bg-[#CC7755] text-white", // Cam đất ấm áp
+    avatarBg: "bg-[#422216] text-[#CC7755] border border-[#CC7755]/30",
     badgeType: "review_count",
     badgeTextVi: "18 bài đánh giá • 6 ảnh",
     badgeTextEn: "18 reviews • 6 photos",
@@ -73,7 +73,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-3",
     name: "Hải Đăng",
     initial: "Đ",
-    avatarBg: "bg-[#4A5D23] text-white", // Rêu lá mộc mạc
+    avatarBg: "bg-[#2D4233] text-[#88B795] border border-[#88B795]/30",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide • Cấp 5",
     badgeTextEn: "Local Guide • Level 5",
@@ -95,7 +95,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-4",
     name: "Ngọc Mai",
     initial: "M",
-    avatarBg: "bg-[#7D5E4A] text-white", // Nâu đất bazan
+    avatarBg: "bg-[#422216] text-[#CC7755] border border-[#CC7755]/30",
     badgeType: "review_count",
     badgeTextVi: "12 bài đánh giá",
     badgeTextEn: "12 reviews",
@@ -117,7 +117,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-5",
     name: "Hoàng Nam",
     initial: "N",
-    avatarBg: "bg-[#396663] text-white", // Xanh suối biếc
+    avatarBg: "bg-[#2D4233] text-[#88B795] border border-[#88B795]/30",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide • Cấp 7",
     badgeTextEn: "Local Guide • Level 7",
@@ -139,7 +139,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-6",
     name: "Thu Phương",
     initial: "P",
-    avatarBg: "bg-[#9E5A3F] text-white", // Đất nung cao nguyên
+    avatarBg: "bg-[#422216] text-[#CC7755] border border-[#CC7755]/30",
     badgeType: "review_count",
     badgeTextVi: "27 bài đánh giá • 14 ảnh",
     badgeTextEn: "27 reviews • 14 photos",
@@ -203,23 +203,23 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
     "https://maps.google.com/?q=C%E1%BA%A9m+C%C3%B9+House+Gia+Ngh%C4%A9a+%C4%90%E1%BA%AFk+N%C3%B4ng";
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 overflow-hidden">
+    <section className="container-unified section-unified overflow-hidden">
       {/* 1. Header & Social Proof Section */}
       <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10 sm:mb-12">
         {/* Pill Badge: [Logo Google 4 màu] Đánh giá được xác minh trên Google Maps */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-[#1E2B22] border border-stone-200/90 dark:border-stone-700/70 shadow-xs text-xs font-semibold text-stone-700 dark:text-stone-200 mb-4 transition-transform hover:scale-105">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#16231A] border border-[#F3EBD8]/10 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#88B795] mb-4">
           <GoogleGIcon className="w-4 h-4 shrink-0" />
           <span>
             {isEn
               ? "Verified Reviews on Google Maps"
               : "Đánh giá được xác minh trên Google Maps"}
           </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
         </div>
 
         {/* Big Rating + Stars */}
         <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3">
-          <span className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight">
+          <span className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#F3EBD8] tracking-tight">
             4.9
           </span>
           <div className="flex flex-col items-start justify-center">
@@ -228,19 +228,19 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                 <Star key={idx} className="w-5 h-5 sm:w-6 sm:h-6 fill-[#FBBC04] text-[#FBBC04]" />
               ))}
             </div>
-            <span className="text-xs sm:text-sm font-bold text-stone-600 dark:text-stone-300 mt-1">
+            <span className="text-[14px] font-semibold text-[rgba(243,235,216,0.72)] mt-1">
               {isEn ? "4.9 / 5.0 Rating" : "4.9 / 5.0 Tuyệt Vời"}
             </span>
           </div>
         </div>
 
         {/* Section Heading */}
-        <h2 className="font-serif text-2xl sm:text-4xl text-[#2D4233] dark:text-[#F5F4EE] font-bold tracking-tight mb-2">
+        <h2 className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight mb-2">
           {isEn ? "Reflections from Visiting Guests" : "Cảm Nhận Từ Lữ Khách Ghé Chơi"}
         </h2>
 
         {/* Subtitle */}
-        <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 max-w-xl leading-relaxed">
+        <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] max-w-xl leading-relaxed">
           {isEn
             ? "Based on over 120+ authentic reviews from guests visiting Cẩm Cù House in Gia Nghĩa, Đắk Nông"
             : "Dựa trên hơn 120+ lượt đánh giá từ khách ghé thăm Cẩm Cù House tại Gia Nghĩa, Đắk Nông"}
@@ -252,7 +252,7 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white dark:bg-[#1E2B22] hover:bg-stone-50 dark:hover:bg-[#283C2F] text-[#2D4233] dark:text-[#88B795] border border-stone-300/80 dark:border-stone-700/80 text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all group"
+            className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#16231A] hover:bg-[#1B281D] text-[#F3EBD8] border border-[#F3EBD8]/15 text-[14px] font-semibold transition-all group"
           >
             <GoogleGIcon className="w-4 h-4 shrink-0" />
             <span>
@@ -260,7 +260,7 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                 ? "View all reviews on Google Maps"
                 : "Xem tất cả đánh giá trên Google Maps"}
             </span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-stone-400 group-hover:text-emerald-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <ArrowUpRight className="w-3.5 h-3.5 text-[#88B795] group-hover:text-[#CC7755] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </a>
         </div>
       </div>
@@ -283,7 +283,7 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
           {[...GOOGLE_REVIEWS_DATA, ...GOOGLE_REVIEWS_DATA].map((review, i) => (
             <div
               key={`${review.id}-${i}`}
-              className="w-[340px] sm:w-[420px] shrink-0 bg-white dark:bg-[#18261D]/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-stone-200/90 dark:border-stone-700/80 shadow-md hover:shadow-2xl hover:border-[#3E5C46]/50 dark:hover:border-[#88B795]/60 transition-all duration-300 flex flex-col justify-between group"
+              className="w-[340px] sm:w-[420px] shrink-0 card-unified flex flex-col justify-between group"
             >
               {/* Card Header: Avatar, Name, Google Badge */}
               <div>
@@ -291,25 +291,25 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                   <div className="flex items-center gap-3.5 min-w-0">
                     {/* Brand Synchronized Initial Avatar */}
                     <div
-                      className={`w-11 h-11 rounded-full ${review.avatarBg} font-bold text-base flex items-center justify-center shrink-0 shadow-sm ring-2 ring-stone-200/50 dark:ring-emerald-500/30 select-none`}
+                      className={`w-11 h-11 rounded-full ${review.avatarBg} font-bold text-base flex items-center justify-center shrink-0 shadow-sm select-none`}
                     >
                       {review.initial}
                     </div>
 
                     <div className="flex flex-col min-w-0">
-                      <h3 className="text-base font-bold text-[#1B281D] dark:text-[#F5F4EE] truncate leading-tight group-hover:text-[#3E5C46] dark:group-hover:text-[#88B795] transition-colors">
+                      <h3 className="text-[17px] sm:text-[18px] font-semibold text-[#F3EBD8] truncate leading-tight group-hover:text-[#CC7755] transition-colors">
                         {review.name}
                       </h3>
 
                       {review.badgeType === "local_guide" ? (
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#E37400] dark:text-[#FFA040] mt-1 truncate">
+                        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[#CC7755] mt-1 truncate">
                           <LocalGuideStar className="w-3.5 h-3.5 shrink-0" />
                           <span className="truncate">
                             {isEn ? review.badgeTextEn : review.badgeTextVi}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-stone-500 dark:text-stone-400 mt-1 truncate font-medium">
+                        <span className="text-[12px] text-[rgba(243,235,216,0.72)] mt-1 truncate font-medium">
                           {isEn ? review.badgeTextEn : review.badgeTextVi}
                         </span>
                       )}
@@ -317,7 +317,7 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                   </div>
 
                   {/* Google small watermarked logo stamp */}
-                  <div className="shrink-0 p-1.5 rounded-full bg-stone-100 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60">
+                  <div className="shrink-0 p-1.5 rounded-full bg-[#121A15] border border-[#F3EBD8]/10">
                     <GoogleGIcon className="w-4 h-4" />
                   </div>
                 </div>
@@ -329,35 +329,35 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                       <Star key={sIdx} className="w-4 h-4 fill-[#FBBC04] text-[#FBBC04]" />
                     ))}
                   </div>
-                  <span className="text-stone-300 dark:text-stone-600 font-bold">•</span>
-                  <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                  <span className="text-[#F3EBD8]/30 font-bold">•</span>
+                  <span className="text-[14px] text-[rgba(243,235,216,0.72)] font-medium">
                     {isEn ? review.timeEn : review.timeVi}
                   </span>
                 </div>
 
-                {/* Review Body (Tăng cỡ chữ, rõ ràng, dễ đọc) */}
-                <p className="text-stone-800 dark:text-stone-100 text-[14px] sm:text-[15px] leading-relaxed mb-5 font-sans">
+                {/* Review Body (Tăng cỡ chữ >= 15px, rõ ràng, dễ đọc) */}
+                <p className="text-[#F3EBD8] text-[15px] sm:text-[16px] leading-[1.7] mb-5">
                   &ldquo;{isEn ? review.contentEn : review.contentVi}&rdquo;
                 </p>
               </div>
 
               {/* Review Meta Tags: Service, Price, Recommendation */}
-              <div className="pt-3.5 border-t border-stone-100 dark:border-stone-800 flex flex-col gap-2 text-xs text-stone-500 dark:text-stone-400">
+              <div className="pt-3.5 border-t border-[#F3EBD8]/10 flex flex-col gap-2 text-[14px] text-[rgba(243,235,216,0.72)]">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-md bg-stone-100 dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#88B795] font-semibold text-[11px] sm:text-xs">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#121A15] text-[#88B795] border border-[#F3EBD8]/10 font-semibold text-[12px] uppercase tracking-wider">
                     {isEn ? review.dineInEn : review.dineInVi}
                   </span>
-                  <span className="text-stone-300 dark:text-stone-600">•</span>
-                  <span className="font-medium text-stone-600 dark:text-stone-300">
+                  <span className="text-[#F3EBD8]/30">•</span>
+                  <span className="font-medium text-[#F3EBD8]">
                     {isEn ? review.priceEn : review.priceVi}
                   </span>
                 </div>
 
-                <div className="text-xs text-stone-600 dark:text-stone-300 truncate">
-                  <span className="font-semibold text-stone-500 dark:text-stone-400">
+                <div className="text-[14px] text-[rgba(243,235,216,0.72)] truncate">
+                  <span className="font-semibold text-[rgba(243,235,216,0.6)]">
                     {isEn ? "Recommended: " : "Đề xuất: "}
                   </span>
-                  <span className="text-[#3E5C46] dark:text-[#88B795] font-medium">
+                  <span className="text-[#CC7755] font-medium">
                     {isEn ? review.recommendEn : review.recommendVi}
                   </span>
                 </div>

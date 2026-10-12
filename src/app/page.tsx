@@ -433,63 +433,63 @@ export default function HomePage() {
         </section>
 
         {/* INTRO SECTION: ARTISTIC STORY & BENTO VISUAL COLLAGE */}
-        <section id="story-intro" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 border-b border-stone-200/70 dark:border-stone-800/60">
+        <section id="story-intro" className="container-unified section-unified border-b border-[#F3EBD8]/10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             {/* Left Column: Artistic Narrative & Highlight Metrics (7 cols on lg) */}
             <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 border border-[#3E5C46]/20 dark:border-[#88B795]/30 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold w-fit shadow-xs">
-                <Leaf className="w-3.5 h-3.5" />
+              <div className="badge-unified w-fit">
+                <Leaf className="w-3.5 h-3.5 text-[#88B795]" />
                 <span>{dict.home.introBadge}</span>
               </div>
 
               {/* Title */}
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-[1.2]">
+              <h2 className="font-serif text-[clamp(28px,3.8vw,48px)] font-bold text-[#F3EBD8] tracking-tight leading-[1.2]">
                 {dict.home.introTitle}
               </h2>
 
               {/* Story Paragraph */}
-              <p className="text-sm sm:text-base text-stone-700 dark:text-stone-300 leading-relaxed max-w-2xl">
+              <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]">
                 {dict.home.introDesc}
               </p>
 
               {/* 3 Highlight Metrics Grid with Live Counters & Distinct Icons */}
               <div className="grid grid-cols-3 gap-2.5 sm:gap-4 pt-2">
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5 group">
+                <div className="card-unified !p-3 sm:!p-4 flex flex-col justify-center">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Compass className="w-3.5 h-3.5 text-[#2D4233] dark:text-[#88B795]" />
-                    <span className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
+                    <Compass className="w-3.5 h-3.5 text-[#88B795]" />
+                    <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
                   </div>
-                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#2D4233] dark:text-[#88B795] tracking-tight">
+                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#88B795] tracking-tight">
                     <MetricCounter target={800} suffix="m+" />
                   </span>
-                  <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                  <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-medium mt-0.5 sm:mt-1 line-clamp-1">
                     {dict.home.introMetric1Label}
                   </span>
                 </div>
 
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5 group">
+                <div className="card-unified !p-3 sm:!p-4 flex flex-col justify-center">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Flame className="w-3.5 h-3.5 text-[#7D5E4A] dark:text-[#D1A684]" />
-                    <span className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
+                    <Flame className="w-3.5 h-3.5 text-[#CC7755]" />
+                    <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
                   </div>
-                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#7D5E4A] dark:text-[#D1A684] tracking-tight">
+                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#CC7755] tracking-tight">
                     <MetricCounter target={100} suffix="%" />
                   </span>
-                  <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                  <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-medium mt-0.5 sm:mt-1 line-clamp-1">
                     {dict.home.introMetric2Label}
                   </span>
                 </div>
 
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-[#1E2B22]/90 border border-stone-200/70 dark:border-stone-700/60 shadow-xs flex flex-col justify-center transition-all hover:-translate-y-0.5 group">
+                <div className="card-unified !p-3 sm:!p-4 flex flex-col justify-center">
                   <div className="flex items-center gap-1.5 mb-1">
-                    <Wind className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
-                    <span className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
+                    <Wind className="w-3.5 h-3.5 text-[#88B795]" />
+                    <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
                   </div>
-                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#396663] dark:text-teal-400 tracking-tight">
-                    <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-normal text-stone-500">{isEn ? "dust" : "khói bụi"}</span>
+                  <span className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-[#88B795] tracking-tight">
+                    <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-normal text-[#F3EBD8]/70">{isEn ? "dust" : "khói bụi"}</span>
                   </span>
-                  <span className="text-[11px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium mt-0.5 sm:mt-1 line-clamp-1">
+                  <span className="text-[11px] sm:text-xs text-[#F3EBD8]/70 font-medium mt-0.5 sm:mt-1 line-clamp-1">
                     {dict.home.introMetric3Label}
                   </span>
                 </div>
@@ -499,10 +499,10 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link
                   href="/about"
-                  className="btn-press inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#2D4233] dark:bg-[#25362B] text-white text-xs sm:text-sm font-bold hover:bg-[#1E2B22] dark:hover:bg-[#1E2B22] shadow-[0_4px_16px_rgba(45,66,51,0.2)] hover:shadow-md transition-all group"
+                  className="btn-press inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#16231A] text-[#F3EBD8] text-xs sm:text-sm font-bold hover:bg-[#CC7755] hover:text-white border border-[#F3EBD8]/10 transition-all group"
                 >
                   <span>{dict.home.introCta}</span>
-                  <ArrowRight className="w-4 h-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 text-[#CC7755] group-hover:text-white group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
@@ -564,132 +564,116 @@ export default function HomePage() {
         </section>
 
         {/* SECTION 1: 4 PILLARS - VÌ SAO CHỌN CẨM CÙ HOUSE */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <section className="container-unified section-unified">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#16231A] border border-[#F3EBD8]/10 text-[#88B795] text-[12px] font-semibold uppercase tracking-[0.12em] mb-3">
                 <Flower2 className="w-3.5 h-3.5" />
                 <span>{isEn ? "Highland Authenticity" : "Nét Đẹp Bản Địa"}</span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
+              <h2 className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight">
                 {dict.home.pillarsHeading}
               </h2>
             </div>
-            <p className="text-sm sm:text-base text-stone-700 dark:text-stone-300 max-w-md">
+            <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] max-w-md leading-relaxed">
               {dict.home.pillarsSubheading}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Card 1: Hương vị truyền thống */}
-            <motion.div
-              whileHover={{ y: -6 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
-            >
+            <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/40 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Coffee className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#CC7755] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Coffee className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-amber-800 dark:group-hover:text-amber-300 transition-colors">
+                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {dict.home.pillar2Title}
                 </h3>
-                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {dict.home.pillar2Desc}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/40">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#CC7755] border border-[#F3EBD8]/10">
                 {isEn ? "Artisanal Roasting" : "Hương vị truyền thống"}
               </span>
-            </motion.div>
+            </div>
 
             {/* Card 2: Thiên nhiên 100% */}
-            <motion.div
-              whileHover={{ y: -6 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
-            >
+            <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-14 h-14 rounded-2xl bg-teal-500/10 dark:bg-teal-950/40 text-[#396663] dark:text-teal-300 border border-teal-200/50 dark:border-teal-900/40 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Waves className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Waves className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-teal-800 dark:group-hover:text-teal-300 transition-colors">
+                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {dict.home.pillar1Title}
                 </h3>
-                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {dict.home.pillar1Desc}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/60 dark:border-teal-900/40">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10">
                 {isEn ? "100% Pure Nature" : "Thiên nhiên 100%"}
               </span>
-            </motion.div>
+            </div>
 
             {/* Card 3: Hoa Cẩm Cù Nở Rộ */}
-            <motion.div
-              whileHover={{ y: -6 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
-            >
+            <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-14 h-14 rounded-2xl bg-rose-500/10 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/40 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Flower2 className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Flower2 className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-rose-700 dark:group-hover:text-rose-300 transition-colors">
+                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
                 </h3>
-                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {isEn
                     ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
                     : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900/40">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10">
                 {isEn ? "Cafe Emblem" : "Biểu tượng quán"}
               </span>
-            </motion.div>
+            </div>
 
             {/* Card 4: Bảo tồn tự nhiên */}
-            <motion.div
-              whileHover={{ y: -6 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="group bg-white/95 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl p-6 border border-stone-200/70 dark:border-stone-700/60 hover:border-[#3E5C46]/60 dark:hover:border-[#88B795]/60 hover:shadow-[0_14px_30px_rgba(62,92,70,0.14)] transition-all flex flex-col justify-between"
-            >
+            <div className="card-unified flex flex-col justify-between group">
               <div>
-                <div className="w-14 h-14 rounded-2xl bg-[#3E5C46]/10 dark:bg-[#3E5C46]/25 text-[#3E5C46] dark:text-[#88B795] border border-[#3E5C46]/20 dark:border-[#88B795]/30 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Leaf className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                  <Leaf className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#1B281D] dark:text-white mb-2 group-hover:text-emerald-800 dark:group-hover:text-emerald-300 transition-colors">
+                <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {dict.home.pillar4Title}
                 </h3>
-                <p className="text-sm text-stone-700 dark:text-stone-300 leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {dict.home.pillar4Desc}
                 </p>
               </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-xs font-semibold bg-[#3E5C46]/10 dark:bg-[#88B795]/20 text-[#3E5C46] dark:text-[#88B795] border border-[#3E5C46]/20 dark:border-[#88B795]/30">
+              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[#1B281D] text-[#88B795] border border-[#F3EBD8]/10">
                 {isEn ? "Nature Preserved" : "Bảo tồn tự nhiên"}
               </span>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* SECTION 2: SPACE PREVIEWS (Multi-Device Responsive Grid with Lightbox) */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <section className="container-unified section-unified">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold mb-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#16231A] border border-[#F3EBD8]/10 text-[#88B795] text-[12px] font-semibold uppercase tracking-[0.12em] mb-3">
                 <Waves className="w-3.5 h-3.5" />
                 <span>{isEn ? "Open Stream Space" : "Không Gian Mở Bên Bờ Suối"}</span>
               </div>
               <StaggerText
                 as="h2"
                 lines={[isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"]}
-                className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight"
+                className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight"
               />
             </div>
             <Link
               href="/space"
-              className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[#3E5C46] dark:text-[#88B795] hover:text-[#2D4233] dark:hover:text-emerald-300 transition-colors"
+              className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[#88B795] hover:text-[#CC7755] transition-colors"
             >
               <span className="link-hover-underline">{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh không gian"}</span>
               <ArrowRight className="w-4 h-4" />
@@ -702,7 +686,7 @@ export default function HomePage() {
               <div
                 key={photo.url}
                 onClick={() => handleOpenLightbox(idx)}
-                className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-xl border border-stone-200/70 dark:border-stone-700/60 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98] transform-gpu"
+                className="group relative cursor-pointer rounded-[20px] overflow-hidden aspect-[4/3] bg-[#16231A] border border-[#F3EBD8]/10 hover:border-[#F3EBD8]/25 transition-all duration-300 hover:-translate-y-[2px] active:scale-[0.98] transform-gpu"
               >
                 <MaskRevealImage
                   src={photo.url}
@@ -711,13 +695,13 @@ export default function HomePage() {
                   delay={0.08 * idx}
                 />
                 <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
+                  <span className="text-[12px] font-semibold uppercase tracking-wider text-[#88B795] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.subtitle}
                   </span>
-                  <h3 className="font-serif text-sm sm:text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors">
+                  <h3 className="font-serif text-[17px] font-bold text-[#F3EBD8] line-clamp-1 group-hover:text-[#CC7755] transition-colors">
                     {photo.title}
                   </h3>
-                  <p className="text-[11px] text-stone-200/90 line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
+                  <p className="text-[14px] text-[rgba(243,235,216,0.72)] line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.caption}
                   </p>
                 </div>
@@ -734,16 +718,16 @@ export default function HomePage() {
         <GoogleReviewsSection isEn={isEn} />
 
         {/* SECTION 4: INVITATION & DIRECTIONS CTA */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="bg-[#3E5C46] dark:bg-[#18261D] rounded-3xl p-8 sm:p-12 lg:p-16 text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-8 border border-white/10">
+        <section className="container-unified section-unified">
+          <div className="card-unified flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl">
-              <span className="text-emerald-200 text-xs uppercase tracking-wider font-semibold">
+              <span className="text-[#88B795] text-[12px] uppercase tracking-[0.12em] font-semibold">
                 {isEn ? "Warmest Hospitality" : "Chào Đón Bạn Ghé Thăm"}
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-2 mb-4 leading-tight">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-2 mb-4 leading-tight text-[#F3EBD8]">
                 {isEn ? "Visit Cam Cu House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
               </h2>
-              <p className="text-stone-200 text-sm sm:text-base leading-relaxed mb-6">
+              <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-6">
                 {dict.common.addressFull}. {i18nStatus.scheduleText}.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-xs text-emerald-100">

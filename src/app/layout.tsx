@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Be_Vietnam_Pro, Quicksand } from "next/font/google";
+import { Playfair_Display, Quicksand } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
@@ -11,22 +11,15 @@ import CamcuIntro from "@/components/CamcuIntro";
 import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["600", "700"],
   variable: "--font-playfair",
   display: "swap",
 });
 
-const beVietnam = Be_Vietnam_Pro({
-  subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-be-vietnam",
-  display: "swap",
-});
-
 const quicksand = Quicksand({
-  subsets: ["latin", "vietnamese"],
-  weight: ["500", "600", "700"],
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-quicksand",
   display: "swap",
 });
@@ -85,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${beVietnam.variable} ${quicksand.variable}`}>
+    <html lang="vi" suppressHydrationWarning className={`${playfair.variable} ${quicksand.variable} font-sans`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -115,7 +108,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
+      <body suppressHydrationWarning className="bg-[#121A15] text-[#F3EBD8] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
         <CamcuIntro />
         <ThemeProvider>
           <LanguageProvider>

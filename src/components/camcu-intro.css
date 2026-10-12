@@ -122,7 +122,7 @@ html.intro-seen #camcu-intro-pro {
   position: absolute;
   left: 0;
   right: 0;
-  top: 36%;
+  top: 35%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -132,6 +132,7 @@ html.intro-seen #camcu-intro-pro {
   z-index: 10;
   text-align: center;
   padding: 0 4vw;
+  overflow: visible;
 }
 
 #camcu-intro-pro .brand-title {
@@ -139,7 +140,9 @@ html.intro-seen #camcu-intro-pro {
   font-family: var(--font-playfair), "Playfair Display", Georgia, serif;
   font-weight: 700;
   font-size: clamp(38px, 8.8vw, 96px);
-  line-height: 1.1;
+  line-height: 1.35;
+  padding-top: 0.55em;
+  padding-bottom: 0.15em;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   background: linear-gradient(180deg, #ffffff 0%, #fbedd8 55%, #dfb589 100%);
@@ -147,17 +150,26 @@ html.intro-seen #camcu-intro-pro {
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 35px rgba(232, 152, 88, 0.5));
   will-change: transform, opacity;
+  overflow: visible;
 }
 
 #camcu-intro-pro .brand-tagline {
-  margin-top: 10px;
+  margin-top: 14px;
   font-family: var(--font-quicksand), Quicksand, system-ui, sans-serif;
   font-weight: 600;
-  font-size: clamp(12px, 1.8vw, 16px);
-  letter-spacing: 0.32em;
+  font-size: clamp(12px, 1.8vw, 15px);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--cc-intro-sage);
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+  color: #F3EBD8;
+  background: rgba(10, 24, 16, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 8px 24px;
+  border-radius: 9999px;
+  border: 1px solid rgba(243, 235, 216, 0.25);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  line-height: 1.4;
 }
 
 /* Lớp đồi trung cảnh (Layer 4) */

@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import DishDetailModal from "@/components/motion/DishDetailModal";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
-import { MENU_ITEMS, MENU_CATEGORIES, MenuItem, getMenuItemImage } from "@/data/menu";
+import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,11 +12,8 @@ import {
   PhoneCall,
   Navigation,
   CheckCircle2,
-  Plus,
   Search,
   X,
-  Coffee,
-  Leaf,
 } from "lucide-react";
 
 import {
@@ -30,64 +25,6 @@ import {
   getStoredData,
 } from "@/utils/storage";
 
-function MenuItemThumbnail({
-  src,
-  category,
-  isOutOfStock,
-}: {
-  src?: string;
-  category: string;
-  isOutOfStock: boolean;
-}) {
-  const [hasError, setHasError] = useState(false);
-  const isCoffee = category === "coffee";
-  const hasValidSrc = Boolean(src && src.trim().length > 0 && !hasError);
-
-  if (!hasValidSrc) {
-    return (
-      <div
-        className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-[#2D4233]/40 bg-gradient-to-br from-[#1B281D] to-[#121A15] shadow-inner flex items-center justify-center transition-colors group-hover:border-[#CC7755]/50"
-        aria-hidden="true"
-      >
-        {isCoffee ? (
-          <Coffee className="w-6 h-6 sm:w-7 sm:h-7 text-[#88B795] group-hover:scale-110 transition-transform duration-300" />
-        ) : (
-          <Leaf className="w-6 h-6 sm:w-7 sm:h-7 text-[#88B795] group-hover:scale-110 transition-transform duration-300" />
-        )}
-        {isOutOfStock && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
-            <span className="text-[10px] uppercase font-bold text-white bg-rose-600 px-1.5 py-0.5 rounded shadow">
-              Hết
-            </span>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-stone-200/60 dark:border-white/10 shadow-sm bg-[#16231A]">
-      <img
-        src={src}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        onError={() => setHasError(true)}
-        className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
-          isOutOfStock ? "grayscale contrast-75" : ""
-        }`}
-      />
-      {isOutOfStock && (
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
-          <span className="text-[10px] uppercase font-bold text-white bg-rose-600 px-1.5 py-0.5 rounded">
-            Hết
-          </span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function MenuPage() {
   const { locale, dict } = useLanguage();
   const isEn = locale === "en";
@@ -95,14 +32,6 @@ export default function MenuPage() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(MENU_ITEMS);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [, setIsSyncing] = useState(false);
-  const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
-  const [dishModalOpen, setDishModalOpen] = useState(false);
-
-  const handleOpenDish = (dish: MenuItem) => {
-    setSelectedDish(dish);
-    setDishModalOpen(true);
-  };
 
   useEffect(() => {
     // 1. Hydrate immediately from LocalStorage & Shared Cookie to survive F5
@@ -140,7 +69,6 @@ export default function MenuPage() {
 
     // 2. Fetch server updates
     async function loadMenu() {
-      setIsSyncing(true);
       try {
         const res = await fetch("/api/admin/menu");
         if (res.ok) {
@@ -163,8 +91,6 @@ export default function MenuPage() {
         }
       } catch (err) {
         console.error("Lỗi đồng bộ thực đơn từ máy chủ:", err);
-      } finally {
-        setIsSyncing(false);
       }
     }
     loadMenu();
@@ -189,14 +115,14 @@ export default function MenuPage() {
   const isSignatureOutOfStock = signatureItem?.inStock === false;
 
   return (
-    <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
+    <div className="bg-[#121A15] min-h-screen text-[#F3EBD8] font-sans selection:bg-[#CC7755] selection:text-white transition-colors duration-200">
       <main className="pt-20">
         {/* Top Atmospheric Intro Header */}
-        <section className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 pt-8 pb-12 bg-gradient-to-b from-stone-100/50 to-[#F9F8F3] dark:from-[#16231A] dark:to-[#121A15] transition-colors duration-200">
-          <div className="animate-fade-up-1 max-w-5xl mx-auto relative z-10 flex flex-col items-center text-center">
+        <section className="relative w-full overflow-hidden pt-8 pb-10">
+          <div className="container-unified flex flex-col items-center text-center">
             {/* Botanical badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold shadow-sm mb-5 border border-stone-200 dark:border-stone-700/60">
-              <Sprout className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
+            <div className="badge-unified inline-flex items-center gap-2 mb-4">
+              <Sprout className="w-3.5 h-3.5 text-[#88B795]" />
               <span>{dict.menu.badge}</span>
             </div>
 
@@ -204,38 +130,38 @@ export default function MenuPage() {
               as="h1"
               lines={[dict.menu.title]}
               stagger={0.1}
-              className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold max-w-3xl mb-3 tracking-tight"
+              className="font-serif text-[clamp(36px,5vw,60px)] text-[#F3EBD8] font-bold max-w-3xl mb-3 tracking-tight leading-tight"
             />
             <div className="max-w-2xl mb-6">
               <StaggerParagraph
                 text={dict.menu.subtitle}
-                className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed"
+                className="text-[16px] sm:text-[17px] text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]"
                 delay={0.15}
               />
             </div>
 
             {/* Quick Trust Indicators Bento Snippet */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-2xl">
-              <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/70 dark:border-stone-700/60 shadow-sm text-xs font-bold text-[#3E5C46] dark:text-[#88B795]">
-                <Droplets className="w-4 h-4 text-[#396663] dark:text-teal-400" />
+              <div className="card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#88B795]">
+                <Droplets className="w-4 h-4 text-[#88B795]" />
                 <span>{dict.menu.pureSpring}</span>
               </div>
-              <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/70 dark:border-stone-700/60 shadow-sm text-xs font-bold text-[#3E5C46] dark:text-[#88B795]">
-                <Sprout className="w-4 h-4 text-[#614633] dark:text-amber-400" />
+              <div className="card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#CC7755]">
+                <Sprout className="w-4 h-4 text-[#CC7755]" />
                 <span>{dict.menu.dailyFresh}</span>
               </div>
-              <div className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/70 dark:border-stone-700/60 shadow-sm text-xs font-bold text-[#3E5C46] dark:text-[#88B795]">
-                <CheckCircle2 className="w-4 h-4 text-[#3E5C46] dark:text-emerald-400" />
+              <div className="col-span-2 sm:col-span-1 card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#88B795]">
+                <CheckCircle2 className="w-4 h-4 text-[#88B795]" />
                 <span>{dict.menu.noAdditives}</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Sticky Dynamic Filter Navigation (Stagger 2: 120ms) */}
-        <div className="animate-fade-up-2 sticky top-20 z-40 w-full bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-md py-3 px-4 sm:px-6 lg:px-8 border-y border-stone-200/80 dark:border-stone-800/80 shadow-[0_4px_16px_rgba(37,51,38,0.03)] transition-colors duration-200">
-          <div className="max-w-7xl mx-auto flex flex-col gap-3">
-            {/* Row 1: Search Bar (Hàng tìm kiếm riêng biệt, thoáng đãng) */}
+        {/* Sticky Dynamic Filter Navigation */}
+        <div className="sticky top-20 z-40 w-full bg-[#121A15]/95 backdrop-blur-md py-3.5 border-y border-[#F3EBD8]/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+          <div className="container-unified flex flex-col gap-3">
+            {/* Row 1: Search Bar */}
             <div className="w-full flex items-center justify-between gap-3">
               <div className="relative w-full max-w-md">
                 <input
@@ -243,32 +169,28 @@ export default function MenuPage() {
                   placeholder={dict.menu.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 bg-white dark:bg-[#1E2B22] text-stone-800 dark:text-stone-100 rounded-full text-sm border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] shadow-xs transition-colors duration-200"
+                  className="w-full pl-9 pr-9 py-2.5 bg-[#16231A] text-[#F3EBD8] placeholder-[#F3EBD8]/40 rounded-full text-sm border border-[#F3EBD8]/10 focus:outline-none focus:border-[#CC7755] transition-colors"
                 />
-                <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#F3EBD8]/50 absolute left-3 top-1/2 -translate-y-1/2" />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 p-0.5"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#F3EBD8]/50 hover:text-[#F3EBD8] p-0.5"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
                 )}
               </div>
 
-              <span className="hidden sm:inline-block text-xs text-stone-500 dark:text-stone-400 font-medium whitespace-nowrap">
+              <span className="hidden sm:inline-block text-[13px] text-[#F3EBD8]/60 font-medium whitespace-nowrap">
                 {filteredItems.length} {isEn ? "items found" : "món phù hợp"}
               </span>
             </div>
 
             {/* Row 2: Category Tabs with Smooth Edge Fading */}
             <div className="relative w-full overflow-hidden">
-              {/* Left & Right gradient fade masks to hint horizontal scrollability */}
-              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-[#F9F8F3] dark:from-[#121A15] to-transparent z-10" />
-              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-[#F9F8F3] dark:from-[#121A15] to-transparent z-10" />
-
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-1">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
                 {MENU_CATEGORIES.map((cat) => {
                   const isActive = activeCategory === cat.id;
                   const count = getCategoryCount(cat.id);
@@ -280,8 +202,8 @@ export default function MenuPage() {
                       type="button"
                       className={`btn-press-sm shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                         isActive
-                          ? "bg-[#3E5C46] text-white shadow-sm font-bold"
-                          : "bg-stone-100 dark:bg-[#1E2B22] text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white border border-stone-200/60 dark:border-stone-700/60"
+                          ? "bg-[#CC7755] text-white shadow-sm font-bold"
+                          : "bg-[#16231A] text-[#F3EBD8]/75 hover:text-[#F3EBD8] hover:bg-[#1E2B22] border border-[#F3EBD8]/10"
                       }`}
                     >
                       <span>
@@ -295,166 +217,111 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* Main Menu Grid Layout (Stagger 3: 200ms) */}
-        <div className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-10 flex flex-col gap-10">
-          {/* Spotlight Story Card - Hover món phóng to nhẹ và bấm mở Shared Element */}
-          <div
-            onClick={() => signatureItem && handleOpenDish(signatureItem)}
-            className="group grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm hover:shadow-lg hover:shadow-stone-900/5 dark:hover:shadow-black/20 hover:-translate-y-1 transition-all duration-300 dish-card-hover cursor-pointer"
-          >
-            <div className="lg:col-span-5 rounded-2xl overflow-hidden aspect-[4/3] relative">
-              <img
-                src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
-                alt="Cà phê muối Đắk Nông"
-                className={`w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-hover:rotate-1.5 transform-gpu ${
-                  isSignatureOutOfStock ? "grayscale-[40%] opacity-80" : ""
-                }`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex items-end p-4 justify-between">
-                <span className="text-white font-serif text-lg font-bold">
-                  {dict.menu.signatureTitle}
-                </span>
-                {isSignatureOutOfStock && (
-                  <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white text-xs font-bold shadow-md">
-                    {dict.common.soldOut}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="lg:col-span-7 flex flex-col gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-widest text-[#614633] dark:text-[#D1A684] font-bold">
+        {/* Main Menu Layout */}
+        <div className="container-unified py-10 flex flex-col gap-8">
+          {/* Spotlight Story Card: Món được yêu thích nhất - Chiếm trọn chiều ngang, CHỈ CÒN CHỮ, không còn ảnh */}
+          {signatureItem && (
+            <div className="w-full card-unified flex flex-col gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="badge-unified">
                   {dict.menu.signatureTag}
                 </span>
                 {isSignatureOutOfStock && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 text-xs font-bold">
+                  <span className="px-2.5 py-0.5 rounded-full bg-rose-950/60 text-rose-300 text-xs font-semibold border border-rose-800">
                     {dict.common.soldOutToday}
                   </span>
                 )}
               </div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
-                {dict.menu.signatureHeading}
-              </h2>
-              <p className="text-base text-stone-700 dark:text-stone-300 leading-relaxed">
-                {dict.menu.signatureDesc}
+              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#F3EBD8]">
+                  {signatureItem.name}
+                </h2>
+                <span className="text-[20px] font-bold text-[#CC7755] tabular-nums">
+                  {signatureItem.price.toLocaleString("vi-VN")}đ
+                </span>
+              </div>
+              <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 leading-relaxed max-w-3xl">
+                {signatureItem.description || dict.menu.signatureDesc}
               </p>
               <div className="pt-2 flex items-center gap-3">
                 <a
                   href="tel:0382851688"
-                  className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
+                  className="btn-press inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#CC7755] text-white text-[14px] font-semibold hover:bg-[#b86645] transition-colors shadow-sm"
                 >
                   <PhoneCall className="w-4 h-4" />
                   <span>
-                    {isEn ? "Call Hotline to Order: 038 285 1688" : "Gọi Hotline Gọi Món: 038 285 1688"}
+                    {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
                   </span>
                 </a>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Menu Items List - Món lọc theo tab có hiệu ứng FLIP, card nảy nhẹ khi hover */}
-          <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm transition-colors duration-200">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-stone-200 dark:border-stone-700/60 gap-2">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+          {/* Menu Items List - 2 cột desktop, 1 cột mobile. Leader dots nối tên và giá. Bỏ lặp nút Gọi món. */}
+          <div className="card-unified">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-[#F3EBD8]/10 gap-2">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#F3EBD8]">
                 {dict.menu.menuListHeading} ({filteredItems.length} {isEn ? "items" : "món"})
               </h3>
-              <span className="text-xs text-stone-500 dark:text-stone-400">
+              <span className="text-[13px] text-[#F3EBD8]/60">
                 {dict.menu.menuListSubheading}
               </span>
             </div>
 
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-4">
               <AnimatePresence mode="popLayout">
-                {filteredItems.map((item, _idx) => {
+                {filteredItems.map((item) => {
                   const isOutOfStock = item.inStock === false;
-                  const itemImg = getMenuItemImage(item);
                   return (
                     <motion.div
                       layout
                       key={item.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      whileHover={{ y: -3, scale: 1.01 }}
-                      transition={{
-                        layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
-                        y: { type: "spring", stiffness: 400, damping: 25 },
-                        scale: { type: "spring", stiffness: 400, damping: 25 },
-                      }}
-                      onClick={() => handleOpenDish(item)}
-                      className={`flex items-center gap-3.5 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer group ${
-                        isOutOfStock
-                          ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 grayscale-[30%]"
-                          : "bg-white/70 dark:bg-[#16231A]/70 hover:bg-white dark:hover:bg-[#16231A] border-stone-200/80 dark:border-stone-700/60 hover:border-[#CC7755]/40 dark:hover:border-[#CC7755]/50 hover:shadow-md"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={`flex flex-col py-3 border-b border-[#F3EBD8]/10 group transition-colors ${
+                        isOutOfStock ? "opacity-50" : ""
                       }`}
                     >
-                      {/* Dish Thumbnail Image */}
-                      <MenuItemThumbnail
-                        src={itemImg}
-                        category={item.category}
-                        isOutOfStock={isOutOfStock}
-                      />
-
-                      {/* Dish Details */}
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-baseline justify-between gap-2 w-full">
+                        <div className="flex items-center gap-2 shrink-0">
                           <span
-                            className={`text-[15px] sm:text-base font-bold transition-colors leading-snug ${
+                            className={`text-[17px] sm:text-[18px] font-semibold transition-colors leading-snug ${
                               isOutOfStock
-                                ? "text-stone-500 line-through"
-                                : "text-[#1B281D] dark:text-[#F5F4EE] group-hover:text-[#CC7755] dark:group-hover:text-[#E28B6A]"
+                                ? "text-[#F3EBD8]/50 line-through"
+                                : "text-[#F3EBD8] group-hover:text-[#CC7755]"
                             }`}
                           >
                             {item.name}
                           </span>
                           {isOutOfStock ? (
-                            <span className="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold">
+                            <span className="px-2 py-0.5 rounded-full bg-rose-950/60 text-rose-300 border border-rose-800 text-[10px] font-bold">
                               {dict.common.soldOut}
                             </span>
                           ) : (
                             item.tag && (
-                              <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 dark:bg-[#CC7755]/25 text-[#CC7755] dark:text-[#E28B6A] border border-[#CC7755]/30 text-[10px] font-bold">
+                              <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 text-[#CC7755] border border-[#CC7755]/30 text-[10px] font-bold">
                                 {item.tag}
                               </span>
                             )
                           )}
                         </div>
 
-                        {item.description && (
-                          <span className="text-xs sm:text-[13px] text-stone-600 dark:text-stone-300 line-clamp-2 mt-1 leading-relaxed">
-                            {item.description}
-                          </span>
-                        )}
+                        {/* Leader dots nối tên và giá */}
+                        <div className="flex-1 border-b border-dotted border-[#F3EBD8]/25 mx-2 self-center min-w-[20px]" />
 
-                        <div className="flex items-center justify-between mt-2 pt-1">
-                          <span className="font-serif text-base sm:text-lg font-bold text-[#614633] dark:text-[#D1A684]">
-                            {item.price.toLocaleString("vi-VN")}đ
-                          </span>
-
-                          <div className="flex items-center gap-2">
-                            {isOutOfStock ? (
-                              <button
-                                type="button"
-                                disabled
-                                title={dict.common.soldOut}
-                                className="w-7 h-7 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 flex items-center justify-center cursor-not-allowed"
-                              >
-                                <span className="text-xs font-bold">✕</span>
-                              </button>
-                            ) : (
-                              <a
-                                href="tel:0382851688"
-                                onClick={(e) => e.stopPropagation()}
-                                title={isEn ? "Call to order" : "Gọi đặt món"}
-                                className="btn-press-sm inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors border border-stone-200 dark:border-stone-700/60 shadow-sm"
-                              >
-                                <PhoneCall className="w-3 h-3" />
-                                <span className="hidden sm:inline text-[11px]">Gọi món</span>
-                              </a>
-                            )}
-                          </div>
-                        </div>
+                        {/* Giá bên phải 17px màu cam #CC7755 */}
+                        <span className="text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
+                          {item.price.toLocaleString("vi-VN")}đ
+                        </span>
                       </div>
+
+                      {item.description && (
+                        <p className="text-[14px] sm:text-[15px] text-[#F3EBD8]/70 leading-relaxed mt-1 pr-8">
+                          {item.description}
+                        </p>
+                      )}
                     </motion.div>
                   );
                 })}
@@ -463,25 +330,25 @@ export default function MenuPage() {
           </div>
 
           {/* Bottom Commitment & Hotline Banner */}
-          <section className="w-full rounded-2xl bg-stone-100/80 dark:bg-[#16231A] p-8 sm:p-10 border border-stone-200/70 dark:border-stone-800/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 transition-colors duration-200">
+          <section className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col gap-2 max-w-xl text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-[#3E5C46] dark:text-[#F5F4EE] font-bold font-serif text-xl">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-[#F3EBD8] font-bold font-serif text-xl">
                 <span>🌿</span>
                 <span>
                   {isEn ? "Commitment from Cam Cu Kitchen & Bar" : "Cam Kết Từ Bếp & Quầy Bar Cẩm Cù"}
                 </span>
               </div>
-              <p className="text-base text-stone-700 dark:text-stone-300 leading-relaxed">
+              <p className="text-[15px] text-[#F3EBD8]/75 leading-relaxed">
                 {isEn
                   ? "Fresh daily local produce • Customizable sweetness and ice levels for your perfect beverage experience."
                   : "Nguyên liệu tươi sạch mỗi ngày • Hỗ trợ điều chỉnh độ ngọt và đá theo khẩu vị riêng của quý khách để có trải nghiệm vừa ý nhất."}
               </p>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-xs font-semibold text-stone-800 dark:text-stone-300">
-                <span className="flex items-center gap-1 text-[#3E5C46] dark:text-[#88B795]">
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-[13px] font-medium text-[#F3EBD8]/80">
+                <span className="flex items-center gap-1.5 text-[#88B795]">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {isEn ? "Custom sweetness to taste" : "Giảm ngọt theo khẩu vị"}
                 </span>
-                <span className="flex items-center gap-1 text-[#3E5C46] dark:text-[#88B795]">
+                <span className="flex items-center gap-1.5 text-[#88B795]">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   {isEn ? "Table service right beside stream" : "Phục vụ tại bàn sát dòng suối"}
                 </span>
@@ -491,7 +358,7 @@ export default function MenuPage() {
             <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full md:w-auto">
               <a
                 href="tel:0382851688"
-                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] shadow-md transition-all"
+                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#CC7755] text-white text-[14px] font-semibold hover:bg-[#b86645] shadow-md transition-all"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>
@@ -502,23 +369,15 @@ export default function MenuPage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60 hover:bg-stone-50 dark:hover:bg-white/10 transition-colors"
+                className="btn-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#16231A] text-[#F3EBD8] text-[14px] font-semibold border border-[#F3EBD8]/10 hover:bg-[#1E2B22] transition-colors"
               >
-                <Navigation className="w-4 h-4" />
+                <Navigation className="w-4 h-4 text-[#88B795]" />
                 <span>{isEn ? "Visit in Person" : "Ghé Thăm Trực Tiếp"}</span>
               </a>
             </div>
           </section>
         </div>
       </main>
-
-      {/* Shared Element Modal hiển thị chi tiết món ăn */}
-      <DishDetailModal
-        dish={selectedDish}
-        dishImage={selectedDish ? getMenuItemImage(selectedDish) : undefined}
-        isOpen={dishModalOpen}
-        onClose={() => setDishModalOpen(false)}
-      />
 
       <Footer />
     </div>

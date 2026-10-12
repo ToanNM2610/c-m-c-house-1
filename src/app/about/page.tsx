@@ -352,37 +352,39 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* SECTION 3: Lời Mời Ghé Thăm */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full">
-          <div className="bg-[#3E5C46] dark:bg-[#18261D] rounded-3xl p-8 sm:p-12 text-white text-center flex flex-col items-center">
-            <span className="text-emerald-200 text-xs font-semibold uppercase tracking-wider mb-2">
-              {isEn ? "Highland Hospitality" : "Lời Hẹn Ước"}
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold max-w-2xl mb-4">
-              {isEn
-                ? "Cam Cu House Awaits Your Arrival Beside the Stream"
-                : "Cẩm Cù House Chờ Đón Bạn Bên Bờ Suối Mát"}
-            </h2>
-            <p className="text-stone-200 text-sm sm:text-base max-w-xl mb-8 leading-relaxed">
-              {dict.common.addressFull}
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <a
-                href="tel:0382851688"
-                className="btn-press inline-flex items-center gap-2 px-7 py-3 rounded-full bg-white text-[#3E5C46] font-bold text-sm hover:bg-stone-100 transition-all shadow-md"
-              >
-                <PhoneCall className="w-4 h-4" />
-                <span>{isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}</span>
-              </a>
-              <a
-                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-press inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md"
-              >
-                <Navigation className="w-4 h-4 text-emerald-300" />
-                <span>{dict.common.openGoogleMaps}</span>
-              </a>
+        {/* SECTION 3: Lời Hẹn Ước */}
+        <section className="section-unified">
+          <div className="container-unified">
+            <div className="card-unified text-center flex flex-col items-center">
+              <span className="badge-unified mb-3">
+                {isEn ? "Highland Hospitality" : "Lời Hẹn Ước"}
+              </span>
+              <h2 className="font-serif text-[clamp(26px,3.5vw,40px)] font-bold text-[#F3EBD8] max-w-2xl mb-4 leading-tight">
+                {isEn
+                  ? "Cam Cu House Awaits Your Arrival Beside the Stream"
+                  : "Cẩm Cù House Chờ Đón Bạn Bên Bờ Suối Mát"}
+              </h2>
+              <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 max-w-xl mb-8 leading-relaxed">
+                {dict.common.addressFull}
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <a
+                  href="tel:0382851688"
+                  className="btn-press inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#CC7755] text-white font-bold text-[14px] hover:bg-[#b86645] transition-all shadow-md"
+                >
+                  <PhoneCall className="w-4 h-4" />
+                  <span>{isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}</span>
+                </a>
+                <a
+                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-press inline-flex items-center gap-2 px-7 py-3 rounded-full bg-[#121A15] text-[#F3EBD8] font-semibold text-[14px] hover:bg-[#1E2B22] border border-[#F3EBD8]/10 transition-all shadow-md"
+                >
+                  <Navigation className="w-4 h-4 text-[#88B795]" />
+                  <span>{dict.common.openGoogleMaps}</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>

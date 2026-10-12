@@ -359,17 +359,17 @@ export default function SpacePage() {
         </section>
 
         {/* Stream Ambience Floating Audio Bar */}
-        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-10">
-          <div className="bg-stone-200/80 dark:bg-[#1E2B22] p-6 sm:p-8 rounded-2xl border border-stone-300/60 dark:border-stone-700/60 flex flex-col md:flex-row items-center justify-between gap-6">
+        <section className="container-unified pb-10">
+          <div className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[#3E5C46] text-white flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-full bg-[#2D4233] text-[#88B795] flex items-center justify-center shrink-0">
                 <Droplets className="w-6 h-6 animate-pulse" />
               </div>
               <div className="flex flex-col">
-                <span className="font-serif font-bold text-lg text-[#2D4233] dark:text-[#F5F4EE]">
+                <span className="font-serif font-bold text-lg text-[#F3EBD8]">
                   {isEn ? "Highland Stream Natural Audio" : "Thanh Âm Suối Nguồn Cao Nguyên"}
                 </span>
-                <span className="text-xs text-stone-600 dark:text-stone-300">
+                <span className="text-[14px] text-[#F3EBD8]/70">
                   {isEn
                     ? "Recorded live on location beside the basalt rock stream at Cam Cu House"
                     : "Thu âm trực tiếp bên bờ suối đá Cẩm Cù House • Đắk Nông"}
@@ -380,10 +380,10 @@ export default function SpacePage() {
             <button
               type="button"
               onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-              className={`btn-press min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-2 shadow-md ${
+              className={`btn-press min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-md ${
                 isPlayingAudio
-                  ? "bg-[#396663] text-white"
-                  : "bg-[#3E5C46] text-white hover:bg-[#2D4233]"
+                  ? "bg-[#CC7755] text-white"
+                  : "bg-[#2D4233] text-[#F3EBD8] hover:bg-[#3E5C46]"
               }`}
             >
               {isPlayingAudio ? (
@@ -402,88 +402,90 @@ export default function SpacePage() {
         </section>
 
         {/* Eco Charter Section */}
-        <section className="w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-12">
-          <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm shadow-sm rounded-2xl p-6 sm:p-10 border border-stone-200/60 dark:border-stone-700/60 relative overflow-hidden">
-            <div className="relative z-10 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#3E5C46]/10 dark:bg-[#88B795]/15 text-[#3E5C46] dark:text-[#88B795] text-xs font-bold mb-3">
-                <Trees className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-                <span>{isEn ? "Eco Commitment from Cam Cu House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight">
-                {isEn
-                  ? "Preserving Natural Basalt Streams & Plastic-Free Living"
-                  : "Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên & Giảm Thiểu Nhựa"}
-              </h2>
-              <p className="mt-3 text-base text-stone-700 dark:text-stone-300 leading-relaxed">
-                {isEn
-                  ? "We treasure every pebble and blade of grass along our stream bank. Cam Cu House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
-                  : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
-              </p>
+        <section className="section-unified">
+          <div className="container-unified">
+            <div className="card-unified relative overflow-hidden">
+              <div className="relative z-10 max-w-3xl">
+                <div className="badge-unified inline-flex items-center gap-2 mb-4">
+                  <Trees className="w-3.5 h-3.5 text-[#88B795]" />
+                  <span>{isEn ? "Eco Commitment from Cam Cu House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
+                </div>
+                <h2 className="font-serif text-[clamp(24px,3vw,36px)] text-[#F3EBD8] font-bold tracking-tight mb-4">
+                  {isEn
+                    ? "Preserving Natural Basalt Streams & Plastic-Free Living"
+                    : "Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên & Giảm Thiểu Nhựa"}
+                </h2>
+                <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]">
+                  {isEn
+                    ? "We treasure every pebble and blade of grass along our stream bank. Cam Cu House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
+                    : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
+                </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 p-4 rounded-2xl bg-stone-50 dark:bg-[#16231A] border border-stone-200 dark:border-stone-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#396663]/15 flex items-center justify-center text-[#396663] dark:text-[#88B795] shrink-0">
-                    <CheckCircle2 className="w-5 h-5" />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-[#F3EBD8]/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#2D4233] flex items-center justify-center text-[#88B795] shrink-0">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-semibold text-[#F3EBD8]">
+                        {isEn ? "Single-Use Plastic Free" : "Không Nhựa 1 Lần"}
+                      </p>
+                      <p className="text-[13px] text-[#F3EBD8]/70">
+                        {isEn ? "100% natural materials" : "100% vật liệu tự nhiên"}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">
-                      {isEn ? "Single-Use Plastic Free" : "Không Nhựa 1 Lần"}
-                    </p>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                      {isEn ? "100% natural materials" : "100% vật liệu tự nhiên"}
-                    </p>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#2D4233] flex items-center justify-center text-[#88B795] shrink-0">
+                      <Droplets className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-semibold text-[#F3EBD8]">
+                        {isEn ? "Water Source Protection" : "Bảo Vệ Nguồn Nước"}
+                      </p>
+                      <p className="text-[13px] text-[#F3EBD8]/70">
+                        {isEn ? "Safe closed-loop filtration" : "Lọc thải khép kín an toàn"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#422216] flex items-center justify-center text-[#CC7755] shrink-0">
+                      <Trees className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-semibold text-[#F3EBD8]">
+                        {isEn ? "Forest Ecosystem" : "Hệ Sinh Thái Rừng"}
+                      </p>
+                      <p className="text-[13px] text-[#F3EBD8]/70">
+                        {isEn ? "Preserving native flora" : "Gìn giữ thảm thực vật bản địa"}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#3E5C46]/15 flex items-center justify-center text-[#3E5C46] dark:text-emerald-400 shrink-0">
-                    <Droplets className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">
-                      {isEn ? "Water Source Protection" : "Bảo Vệ Nguồn Nước"}
-                    </p>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                      {isEn ? "Safe closed-loop filtration" : "Lọc thải khép kín an toàn"}
-                    </p>
-                  </div>
+                {/* Action Callouts */}
+                <div className="mt-8 flex flex-wrap items-center gap-3.5">
+                  <a
+                    href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#CC7755] text-white text-[14px] font-semibold hover:bg-[#b86645] transition-colors shadow-sm"
+                  >
+                    <span>{dict.common.getDirections}</span>
+                    <Navigation className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="tel:0382851688"
+                    className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 rounded-full bg-[#121A15] text-[#F3EBD8] hover:bg-[#1E2B22] transition-colors text-[14px] font-semibold border border-[#F3EBD8]/10"
+                  >
+                    <PhoneCall className="w-4 h-4 text-[#88B795]" />
+                    <span>
+                      {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
+                    </span>
+                  </a>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-amber-600/15 flex items-center justify-center text-amber-800 dark:text-amber-300 shrink-0">
-                    <Trees className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#1B281D] dark:text-white">
-                      {isEn ? "Forest Ecosystem" : "Hệ Sinh Thái Rừng"}
-                    </p>
-                    <p className="text-[11px] text-stone-600 dark:text-stone-400">
-                      {isEn ? "Preserving native flora" : "Gìn giữ thảm thực vật bản địa"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Callouts */}
-              <div className="mt-8 flex flex-wrap items-center gap-3.5">
-                <a
-                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-[#3E5C46] text-white text-xs sm:text-sm font-semibold hover:bg-[#2D4233] transition-colors shadow-sm"
-                >
-                  <span>{dict.common.getDirections}</span>
-                  <Navigation className="w-4 h-4" />
-                </a>
-                <a
-                  href="tel:0382851688"
-                  className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] hover:bg-stone-200 dark:hover:bg-[#28392E] transition-colors text-xs sm:text-sm font-semibold border border-stone-200 dark:border-stone-700/60"
-                >
-                  <PhoneCall className="w-4 h-4 text-[#3E5C46] dark:text-[#88B795]" />
-                  <span>
-                    {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
-                  </span>
-                </a>
               </div>
             </div>
           </div>
