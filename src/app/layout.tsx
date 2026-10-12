@@ -1,5 +1,5 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Be_Vietnam_Pro, Quicksand } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -31,8 +31,22 @@ const quicksand = Quicksand({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F9F8F3" },
+    { media: "(prefers-color-scheme: dark)", color: "#121A15" },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "Cẩm Cù House coffee & Food | Chốn Dừng Chân Bên Suối Gia Nghĩa",
+  metadataBase: new URL("https://camcuhouse.online"),
+  title: {
+    default: "Cẩm Cù House coffee & Food | Chốn Dừng Chân Bên Suối Gia Nghĩa",
+    template: "%s | Cẩm Cù House",
+  },
   description: "Khu nghỉ dưỡng ẩm thực & cà phê sinh thái bên bờ suối mát lạnh miền cao nguyên Đắk Nông. Thưởng thức cà phê Robusta rang củi mộc và thực đơn 50+ món đặc sản bản địa.",
   keywords: [
     "Cẩm Cù House",
@@ -43,9 +57,25 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Cẩm Cù House coffee & Food • Gia Nghĩa Đắk Nông",
-    description: "Chốn dừng chân mộc mạc bên bờ suối đất thiên nhiên.",
-    type: "website",
+    description: "Chốn dừng chân mộc mạc bên bờ suối thiên nhiên.",
+    url: "https://camcuhouse.online",
+    siteName: "Cẩm Cù House",
     locale: "vi_VN",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-home.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Cẩm Cù House coffee & Food",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cẩm Cù House coffee & Food • Gia Nghĩa Đắk Nông",
+    description: "Chốn dừng chân mộc mạc bên bờ suối thiên nhiên.",
+    images: ["/images/og-home.jpg"],
   },
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Sparkles, PhoneCall, Leaf, Coffee } from "lucide-react";
 import { MenuItem } from "@/data/menu";
@@ -18,6 +18,12 @@ export default function DishDetailModal({
   isOpen,
   onClose,
 }: DishDetailModalProps) {
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [dish?.id]);
+
   // Đóng khi bấm phím Escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -35,17 +41,7 @@ export default function DishDetailModal({
 
   if (!isOpen || !dish) return null;
 
-  const defaultImg =
-    dishImage ||
-    (dish.category === "coffee"
-      ? "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1000&q=80"
-      : dish.category === "tea"
-      ? "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=1000&q=80"
-      : dish.category === "smoothie"
-      ? "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=1000&q=80"
-      : dish.category === "food"
-      ? "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1000&q=80"
-      : "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1000&q=80");
+  const imgSrc = dishImage || dish.image;
 
   return (
     <AnimatePresence>
@@ -84,13 +80,28 @@ export default function DishDetailModal({
           </button>
 
           {/* Shared Element: Ảnh món phóng to thành Hero trang chi tiết */}
-          <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-stone-900">
-            <motion.img
-              layoutId={`dish-img-${dish.id}`}
-              src={defaultImg}
-              alt={dish.name}
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-            />
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-[#16231A]">
+            {!imgSrc || imgError ? (
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#1B281D] to-[#121A15] text-[#88B795] p-6">
+                {dish.category === "coffee" ? (
+                  <Coffee className="w-16 h-16 sm:w-20 sm:h-20 text-[#88B795]/80 stroke-[1.5]" />
+                ) : (
+                  <Leaf className="w-16 h-16 sm:w-20 sm:h-20 text-[#88B795]/80 stroke-[1.5]" />
+                )}
+                <span className="text-xs uppercase tracking-widest text-[#88B795]/70 mt-3 font-semibold">
+                  Cẩm Cù House
+                </span>
+              </div>
+            ) : (
+              <motion.img
+                layoutId={`dish-img-${dish.id}`}
+                src={imgSrc}
+                alt=""
+                aria-hidden="true"
+                onError={() => setImgError(true)}
+                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#16231A] via-transparent to-transparent opacity-80" />
 
             {/* Tag đặc biệt nổi trên ảnh */}

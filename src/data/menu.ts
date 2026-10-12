@@ -24,7 +24,7 @@ export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
 
 export function getMenuItemImage(item: MenuItem): string {
   if (item.image) return item.image;
-  return CATEGORY_FALLBACK_IMAGES[item.category] || "/images/coffee-drink.png";
+  return "";
 }
 
 export const MENU_CATEGORIES = [

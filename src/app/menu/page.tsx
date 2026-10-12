@@ -17,6 +17,8 @@ import {
   Plus,
   Search,
   X,
+  Coffee,
+  Leaf,
 } from "lucide-react";
 
 import {
@@ -27,6 +29,64 @@ import {
   CAMCU_MENU_OVERRIDES_KEY,
   getStoredData,
 } from "@/utils/storage";
+
+function MenuItemThumbnail({
+  src,
+  category,
+  isOutOfStock,
+}: {
+  src?: string;
+  category: string;
+  isOutOfStock: boolean;
+}) {
+  const [hasError, setHasError] = useState(false);
+  const isCoffee = category === "coffee";
+  const hasValidSrc = Boolean(src && src.trim().length > 0 && !hasError);
+
+  if (!hasValidSrc) {
+    return (
+      <div
+        className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-[#2D4233]/40 bg-gradient-to-br from-[#1B281D] to-[#121A15] shadow-inner flex items-center justify-center transition-colors group-hover:border-[#CC7755]/50"
+        aria-hidden="true"
+      >
+        {isCoffee ? (
+          <Coffee className="w-6 h-6 sm:w-7 sm:h-7 text-[#88B795] group-hover:scale-110 transition-transform duration-300" />
+        ) : (
+          <Leaf className="w-6 h-6 sm:w-7 sm:h-7 text-[#88B795] group-hover:scale-110 transition-transform duration-300" />
+        )}
+        {isOutOfStock && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex items-center justify-center">
+            <span className="text-[10px] uppercase font-bold text-white bg-rose-600 px-1.5 py-0.5 rounded shadow">
+              Hết
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-stone-200/60 dark:border-white/10 shadow-sm bg-[#16231A]">
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        onError={() => setHasError(true)}
+        className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+          isOutOfStock ? "grayscale contrast-75" : ""
+        }`}
+      />
+      {isOutOfStock && (
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
+          <span className="text-[10px] uppercase font-bold text-white bg-rose-600 px-1.5 py-0.5 rounded">
+            Hết
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function MenuPage() {
   const { locale, dict } = useLanguage();
@@ -329,23 +389,11 @@ export default function MenuPage() {
                       }`}
                     >
                       {/* Dish Thumbnail Image */}
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-stone-200/60 dark:border-white/10 shadow-sm bg-stone-200 dark:bg-stone-800">
-                        <img
-                          src={itemImg}
-                          alt={item.name}
-                          loading="lazy"
-                          className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
-                            isOutOfStock ? "grayscale contrast-75" : ""
-                          }`}
-                        />
-                        {isOutOfStock && (
-                          <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
-                            <span className="text-[10px] uppercase font-bold text-white bg-rose-600 px-1.5 py-0.5 rounded">
-                              Hết
-                            </span>
-                          </div>
-                        )}
-                      </div>
+                      <MenuItemThumbnail
+                        src={itemImg}
+                        category={item.category}
+                        isOutOfStock={isOutOfStock}
+                      />
 
                       {/* Dish Details */}
                       <div className="flex flex-col min-w-0 flex-1">

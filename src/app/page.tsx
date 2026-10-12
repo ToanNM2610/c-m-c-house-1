@@ -426,7 +426,7 @@ export default function HomePage() {
               <span className="hidden sm:inline">•</span>
               <div className="hidden sm:flex items-center gap-1 font-semibold text-[#2D4233] dark:text-[#88B795]">
                 <Clock className="w-3.5 h-3.5" />
-                <span>{isEn ? "07:00 – 22:00 Daily" : "07:00 – 22:00 Hàng Ngày"}</span>
+                <span>{isEn ? `07:00 – ${storeStatus.closingTime || "18:00"} Today` : `07:00 – ${storeStatus.closingTime || "18:00"} Hôm Nay`}</span>
               </div>
             </div>
           </div>

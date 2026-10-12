@@ -62,9 +62,6 @@ export default function Footer() {
             <Link href="/contact" className="hover:text-white transition-colors w-fit link-hover-underline">
               {dict.nav.contact}
             </Link>
-            <Link href="/admin" className="hover:text-white transition-colors w-fit link-hover-underline text-xs text-stone-400">
-              {dict.common.admin}
-            </Link>
           </nav>
         </div>
 
