@@ -235,12 +235,12 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
         </div>
 
         {/* Section Heading */}
-        <h2 className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight mb-2">
+        <h2 className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight mb-2 max-w-[900px] mx-auto text-balance">
           {isEn ? "Reflections from Visiting Guests" : "Cảm Nhận Từ Lữ Khách Ghé Chơi"}
         </h2>
 
         {/* Subtitle */}
-        <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] max-w-xl leading-relaxed">
+        <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] max-w-xl mx-auto leading-relaxed">
           {isEn
             ? "Based on over 120+ authentic reviews from guests visiting Cẩm Cù House in Gia Nghĩa, Đắk Nông"
             : "Dựa trên hơn 120+ lượt đánh giá từ khách ghé thăm Cẩm Cù House tại Gia Nghĩa, Đắk Nông"}
@@ -336,7 +336,7 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                 </div>
 
                 {/* Review Body (Tăng cỡ chữ >= 15px, rõ ràng, dễ đọc) */}
-                <p className="text-[#F3EBD8] text-[15px] sm:text-[16px] leading-[1.7] mb-5">
+                <p className="text-[#F3EBD8] text-[15px] sm:text-[16px] font-medium leading-[1.7] mb-5">
                   &ldquo;{isEn ? review.contentEn : review.contentVi}&rdquo;
                 </p>
               </div>

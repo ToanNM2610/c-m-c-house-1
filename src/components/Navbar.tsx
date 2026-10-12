@@ -48,7 +48,7 @@ export default function Navbar() {
     hoursWeekday: "07:00 - 18:00",
     hoursWeekend: "07:00 - 22:00",
     hotline1: "038 285 1688",
-    topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
+    topBanner: "🌿 Chào mừng đến với Cẩm Cù House, Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
   });
   const [announcements, setAnnouncements] = useState<SharedAnnouncement[]>([]);
 
@@ -193,7 +193,7 @@ export default function Navbar() {
               Cẩm Cù House
             </span>
             <span className="text-[9px] sm:text-xs text-stone-600 dark:text-stone-400 font-medium tracking-wide truncate hidden xs:block">
-              {locale === "en" ? "coffee & Food • Gia Nghia" : "coffee & Food • Gia Nghĩa"}
+              {locale === "en" ? "Coffee & Food, Gia Nghia" : "Cà Phê & Ẩm Thực, Gia Nghĩa"}
             </span>
           </div>
         </Link>

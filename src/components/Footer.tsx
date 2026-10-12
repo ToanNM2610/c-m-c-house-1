@@ -180,8 +180,8 @@ export default function Footer() {
       </div>
 
       {/* Giant Architectural Cropped Typography at Footer Bottom: Opacity .10-.14, bottom half clipped, no overflow, no occlusion */}
-      <div className="w-full overflow-hidden select-none pointer-events-none mt-8 h-[5.5vw] min-h-[40px] max-h-[80px] relative flex justify-center items-start opacity-[0.12]">
-        <p className="font-serif text-center font-bold text-[11vw] leading-none tracking-[0.06em] whitespace-nowrap text-[#F3EBD8] -translate-y-[20%]">
+      <div className="w-full overflow-hidden select-none pointer-events-none mt-8 h-[8vw] min-h-[50px] max-h-[110px] relative flex justify-center items-start opacity-[0.12]">
+        <p className="font-serif text-center font-bold text-[12vw] leading-none tracking-[0.06em] whitespace-nowrap text-[#F3EBD8] -translate-y-[15%]">
           CẨM CÙ HOUSE
         </p>
       </div>

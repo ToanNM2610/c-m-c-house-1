@@ -129,9 +129,9 @@ export const translations: Record<Locale, TranslationDictionary> = {
   vi: {
     common: {
       brandName: "Cẩm Cù House",
-      brandTagline: "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá",
-      brandSubtitle: "coffee & Food • Gia Nghĩa",
-      coordinates: "Tọa độ 11.99° N, 107.69° E • Gia Nghĩa, Đắk Nông",
+      brandTagline: "Chốn Dừng Chân Mộc\u00A0Mạc Bên Bờ Suối Đá",
+      brandSubtitle: "Cà Phê & Ẩm Thực, Gia Nghĩa",
+      coordinates: "Tọa độ 11.99° N, 107.69° E, Gia Nghĩa, Đắk Nông",
       openGoogleMaps: "Mở Google Maps",
       callHotline: "Gọi Hotline",
       callToOrder: "Gọi Hotline Gọi Món",
@@ -144,7 +144,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       themeLabel: "Giao diện:",
       admin: "Quản Trị Viên",
       allRightsReserved: "© 2026 Cẩm Cù House coffee & Food. All rights reserved.",
-      curatedByNature: "Thiết kế theo dòng chảy thiên nhiên Gia Nghĩa • Đắk Nông",
+      curatedByNature: "Thiết kế theo dòng chảy thiên nhiên Gia Nghĩa, Đắk Nông",
       addressFull: "Hẻm 437 Hùng Vương, Phường Nghĩa Trung, Thành phố Gia Nghĩa, Tỉnh Đắk Nông",
       carParkingNote: "Đường bê tông rộng, xe ô tô 4 – 16 chỗ vào quay đầu tận sân quán.",
       soldOut: "Tạm Hết",
@@ -160,11 +160,11 @@ export const translations: Record<Locale, TranslationDictionary> = {
       closed: "Đã đóng cửa",
       closingSoon: "Sắp đến giờ đóng cửa",
       temporarilyClosed: "Tạm nghỉ",
-      seeYouTomorrow: "Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ngày mai",
+      seeYouTomorrow: "Quán đã đóng cửa, Hẹn gặp bạn lúc 07:00 ngày mai",
     },
     introSplash: {
       skip: "Bỏ qua ✕",
-      slogan: "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá • Đắk Nông",
+      slogan: "Chốn Dừng Chân Mộc\u00A0Mạc Bên Bờ Suối Đá, Đắk Nông",
     },
     home: {
       introBadge: "🌿 VỀ CẨM CÙ HOUSE",
@@ -181,7 +181,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       introPhotoMainCaption: "Dòng suối đá tự nhiên róc rách quanh năm",
       introPhotoSubCaption: "Góc chòi gỗ & Cà phê muối bốc khói",
       heroTitleLine1: "CẨM CÙ HOUSE",
-      heroTitleLine2: "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá",
+      heroTitleLine2: "Chốn Dừng Chân Mộc\u00A0Mạc Bên Bờ Suối Đá",
       heroDescription:
         "Thưởng thức tách cà phê Robusta rang củi nguyên bản, lắng nghe dòng suối róc rách giữa thung lũng xanh thanh bình miền cao nguyên Đắk Nông.",
       badgeRecommended: "100% Đề Xuất Hài Lòng",
@@ -206,7 +206,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
     },
     menu: {
       badge: "Ẩm Thực Tự Nhiên & Nông Sản Bản Địa Gia Nghĩa",
-      title: "Thực Đơn Mộc Mạc • Thức Uống Xanh & Món Ăn Lành",
+      title: "Thực Đơn Mộc\u00A0Mạc, Thức Uống Xanh & Món Ăn Lành",
       subtitle:
         "Mỗi món nước hay món ăn đều trọn vẹn hương vị mộc mạc, chế biến từ nông sản Đắk Nông tươi rói, kết hợp cùng không gian tiếng suối róc rách trong trẻo.",
       pureSpring: "Nước Suối Nguồn Mát",
@@ -256,7 +256,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       pureStream: "Suối nguồn tự nhiên 100%",
     },
     contact: {
-      badge: "Khu Ẩm Thực & Cà Phê Sinh Thái Bên Suối • Gia Nghĩa",
+      badge: "Khu Ẩm Thực & Cà Phê Sinh Thái Bên Suối, Gia Nghĩa",
       title: "Từ Gia Nghĩa, Cẩm Cù House Chờ Đón Bạn",
       subtitle:
         "Một chốn bình yên giấu mình bên dòng suối mát rượi, rất dễ tìm với đường ô tô rộng thoáng vào tận hiên quán. Mở Google Maps hoặc gọi hotline để được đón tiếp chu đáo nhất!",
@@ -270,9 +270,9 @@ export const translations: Record<Locale, TranslationDictionary> = {
   en: {
     common: {
       brandName: "Cam Cu House",
-      brandTagline: "A Rustic Retreat by the Rock Stream",
-      brandSubtitle: "coffee & Food • Gia Nghia",
-      coordinates: "Coordinates 11.99° N, 107.69° E • Gia Nghia, Dak Nong",
+      brandTagline: "A Rustic Sanctuary by the Rock Stream",
+      brandSubtitle: "Coffee & Food, Gia Nghia",
+      coordinates: "Coordinates 11.99° N, 107.69° E, Gia Nghia, Dak Nong",
       openGoogleMaps: "Open Google Maps",
       callHotline: "Call Hotline",
       callToOrder: "Call Hotline to Order",
@@ -285,7 +285,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       themeLabel: "Theme:",
       admin: "Admin Portal",
       allRightsReserved: "© 2026 Cam Cu House coffee & Food. All rights reserved.",
-      curatedByNature: "Crafted following the natural flow of Gia Nghia • Dak Nong",
+      curatedByNature: "Crafted following the natural flow of Gia Nghia, Dak Nong",
       addressFull: "Alley 437 Hung Vuong, Nghia Trung Ward, Gia Nghia City, Dak Nong Province",
       carParkingNote: "Wide paved access road; 4 to 16-seater cars can park and turn around directly in our courtyard.",
       soldOut: "Sold Out",
@@ -301,11 +301,11 @@ export const translations: Record<Locale, TranslationDictionary> = {
       closed: "Closed",
       closingSoon: "Closing Soon",
       temporarilyClosed: "Temporarily Closed",
-      seeYouTomorrow: "Currently Closed • See you tomorrow at 07:00",
+      seeYouTomorrow: "Currently Closed, See you tomorrow at 07:00",
     },
     introSplash: {
       skip: "Skip ✕",
-      slogan: "A Rustic Sanctuary by the Stream • Dak Nong",
+      slogan: "A Rustic Sanctuary by the Stream, Dak Nong",
     },
     home: {
       introBadge: "🌿 ABOUT CAM CU HOUSE",
@@ -347,7 +347,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
     },
     menu: {
       badge: "Natural Cuisine & Gia Nghia Highland Harvest",
-      title: "Rustic Menu • Green Sips & Wholesome Bites",
+      title: "Rustic Sanctuary Menu, Pure Sips & Wholesome Bites",
       subtitle:
         "Every drink and dish carries the pure, unpretentious flavors of fresh Dak Nong produce, accompanied by the gentle melody of the stream.",
       pureSpring: "Chilled Spring Water",
@@ -397,7 +397,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       pureStream: "100% Natural Stream Spring",
     },
     contact: {
-      badge: "Eco Coffee & Food Sanctuary Beside Stream • Gia Nghia",
+      badge: "Eco Coffee & Food Sanctuary Beside Stream, Gia Nghia",
       title: "From Gia Nghia, Cam Cu House Welcomes You",
       subtitle:
         "A peaceful retreat hidden beside the crystal stream, easily accessible by car right to our courtyard. Open Google Maps or call our hotline for the warmest welcome!",

@@ -418,7 +418,7 @@ export default function CamcuIntro() {
         {/* Layer 3: Chữ CẨM CÙ nổi lên giữa 2 lớp núi */}
         <div className="brand-layer">
           <h1 className="brand-title">CẨM CÙ</h1>
-          <p className="brand-tagline">Chốn Dừng Chân Bên Suối Đá • Gia Nghĩa</p>
+          <p className="brand-tagline">Chốn Dừng Chân Bên Suối Đá, Gia Nghĩa</p>
         </div>
 
         {/* Layer 4: Lớp đồi trung cảnh phủ thông xanh (Midground Rolling Hills) */}

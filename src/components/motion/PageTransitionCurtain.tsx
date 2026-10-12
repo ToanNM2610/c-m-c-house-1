@@ -55,13 +55,13 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
           </span>
         </div>
 
-        {/* Tên trang chữ lớn điện ảnh */}
-        <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-widest text-[#FDFBF7] uppercase drop-shadow-lg">
+        {/* Tên trang chữ lớn điện ảnh >= 40px màu kem sáng */}
+        <h2 className="font-serif text-[40px] sm:text-5xl lg:text-6xl font-bold tracking-wider sm:tracking-widest text-[#F3EBD8] uppercase drop-shadow-lg leading-tight">
           {currentTitle}
         </h2>
 
-        <p className="text-[10px] sm:text-xs font-sans tracking-[0.3em] text-emerald-200/90 uppercase mt-2.5 font-medium">
-          Chốn Dừng Chân Bên Suối Đá • Gia Nghĩa
+        <p className="text-[13px] sm:text-[14px] font-sans tracking-[0.2em] text-[#F3EBD8]/95 uppercase mt-3 font-semibold">
+          Chốn Dừng Chân Bên Suối Đá, Gia Nghĩa
         </p>
 
         <div className="w-24 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent mt-4" />

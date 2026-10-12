@@ -136,22 +136,22 @@ export default function AboutPage() {
                 <span className="text-xs text-[#3E5C46] dark:text-[#88B795] uppercase tracking-widest font-bold">
                   {dict.about.badge}
                 </span>
-                <span className="text-stone-400 dark:text-stone-600">•</span>
-                <span className="text-xs text-stone-600 dark:text-stone-300 font-semibold">Gia Nghĩa • Đắk Nông</span>
+                <span className="text-stone-400 dark:text-stone-600">,</span>
+                <span className="text-xs text-stone-600 dark:text-stone-300 font-semibold">Gia Nghĩa, Đắk Nông</span>
               </div>
 
               <StaggerText
                 as="h1"
                 lines={[dict.about.title, dict.about.subtitle]}
                 stagger={0.1}
-                className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight max-w-3xl mb-4 leading-tight"
+                className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#3E5C46] dark:text-[#F3EBD8] font-bold tracking-tight max-w-[900px] mb-4 leading-tight text-balance"
                 lineClassName="leading-tight"
               />
 
               <div className="max-w-2xl mt-2">
                 <StaggerParagraph
                   text={dict.about.description}
-                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed"
+                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed font-medium"
                   delay={0.2}
                 />
               </div>
@@ -196,7 +196,7 @@ export default function AboutPage() {
                   : "Loài Hoa Bền Bỉ & Mối Duyên Lành Bên Dòng Suối"}
               </h2>
 
-              <div className="space-y-4 text-base text-stone-700 dark:text-stone-300 leading-relaxed">
+              <div className="space-y-4 text-base text-stone-700 dark:text-stone-300 leading-relaxed font-medium">
                 <p>
                   {isEn ? (
                     <>
@@ -213,11 +213,16 @@ export default function AboutPage() {
                     ? "Discovering this natural pebble stream in Gia Nghia felt like a destined promise. Instead of clearing or paving the terrain with harsh concrete, we embraced nature gently: moss-covered basalt boulders, shade-bearing forest trees, and the clear stream waters running through pebble crevices were all preserved intact."
                     : "Cơ duyên tìm thấy khu đất nép bên khe suối tự nhiên tại Gia Nghĩa như một lời hẹn ước định mệnh. Thay vì san phẳng mặt bằng hay bê tông hóa thô bạo, chúng tôi chọn cách nương tựa vào mẹ thiên nhiên: từng phiến đá bazan phủ rêu xanh cổ kính, từng tán lộc vừng rợp bóng hay dòng nước róc rách luồn qua khe đá đều được bảo bọc nguyên vẹn."}
                 </p>
-                <p className="italic text-[#7D5E4A] dark:text-[#D1A684] font-serif text-lg pt-2 border-l-2 border-[#7D5E4A]/40 pl-4">
-                  {isEn
-                    ? "&ldquo;To build is not to conquer, but to weave a sheltered terrace beneath the highland trees.&rdquo;"
-                    : "&ldquo;Xây dựng không phải là chiếm đoạt, mà là thêu dệt một mái hiên che mưa nắng giữa rừng cây.&rdquo;"}
-                </p>
+                <div className="pt-2 border-l-2 border-[#CC7755]/40 pl-4">
+                  <p className="italic text-[#7D5E4A] dark:text-[#D1A684] font-serif text-lg">
+                    {isEn
+                      ? "“To build is not to conquer, but to weave a sheltered terrace beneath the highland trees.”"
+                      : "“Xây dựng không phải là chiếm đoạt, mà là thêu dệt một mái hiên che mưa nắng giữa rừng cây.”"}
+                  </p>
+                  <span className="block text-[14px] font-medium text-stone-500 dark:text-[#F3EBD8]/70 mt-1 font-sans not-italic">
+                    — Ngọc, Cẩm Cù House
+                  </span>
+                </div>
               </div>
 
               {/* Story Fact Cards */}
@@ -227,10 +232,10 @@ export default function AboutPage() {
                     <Trees className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[#1B281D] dark:text-white">
+                    <h3 className="font-bold text-[16px] text-[#1B281D] dark:text-white">
                       {isEn ? "Pristine Basalt Terrain" : "Địa hình bazan nguyên vẹn"}
                     </h3>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+                    <p className="text-[15px] font-medium text-stone-600 dark:text-stone-400 mt-0.5">
                       {isEn ? "100% natural landscape preserved" : "Không can thiệp san lấp phá vỡ dòng chảy"}
                     </p>
                   </div>
@@ -241,10 +246,10 @@ export default function AboutPage() {
                     <Heart className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[#1B281D] dark:text-white">
+                    <h3 className="font-bold text-[16px] text-[#1B281D] dark:text-white">
                       {isEn ? "Living Eco Architecture" : "Kiến trúc xanh cộng sinh"}
                     </h3>
-                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5">
+                    <p className="text-[15px] font-medium text-stone-600 dark:text-stone-400 mt-0.5">
                       {isEn ? "Local wood, bamboo, and thatched roofing" : "Gỗ tái sinh, tre nứa và mái tranh mộc mạc"}
                     </p>
                   </div>
@@ -364,7 +369,7 @@ export default function AboutPage() {
                   ? "Cam Cu House Awaits Your Arrival Beside the Stream"
                   : "Cẩm Cù House Chờ Đón Bạn Bên Bờ Suối Mát"}
               </h2>
-              <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 max-w-xl mb-8 leading-relaxed">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 max-w-xl mb-8 leading-relaxed">
                 {dict.common.addressFull}
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4">

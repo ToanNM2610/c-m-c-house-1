@@ -214,20 +214,20 @@ export default function SpacePage() {
         {/* Top Narrative Intro */}
         <section className="relative w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 sm:pt-10 pb-8">
           <div className="animate-fade-up-1 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-            <div className="max-w-3xl">
+            <div className="max-w-[900px]">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs tracking-wider uppercase mb-3 shadow-sm border border-stone-200/70 dark:border-stone-700/60">
                 <Droplets className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
-                <span>{dict.space.badge} • Gia Nghĩa</span>
+                <span>{dict.space.badge}, Gia Nghĩa</span>
               </div>
               <StaggerText
                 as="h1"
                 lines={
                   isEn
-                    ? ["Eco Sanctuary • Serenity by the Rock Stream"]
-                    : ["Không Gian Sinh Thái • Bên Bờ Suối Đá"]
+                    ? ["Eco Sanctuary, Serenity by the Rock Stream"]
+                    : ["Không Gian Sinh Thái, Bên Bờ Suối Đá"]
                 }
                 stagger={0.1}
-                className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F5F4EE] font-bold tracking-tight leading-tight"
+                className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F3EBD8] font-bold tracking-tight leading-tight max-w-[900px] text-balance"
               />
               <div className="mt-3 max-w-2xl">
                 <StaggerParagraph
@@ -236,7 +236,7 @@ export default function SpacePage() {
                       ? "Every corner at Cam Cu House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
                       : "Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông."
                   }
-                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed"
+                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed font-medium"
                   delay={0.15}
                 />
               </div>
@@ -297,14 +297,14 @@ export default function SpacePage() {
           </div>
         </section>
 
-        {/* Gallery Grid Section: Card ảnh stagger khi lọc tab (FLIP), skeleton loading khi đổi tab, không hiện ô trống */}
+        {/* Gallery Grid Section: Card ảnh stagger khi lọc tab (FLIP), tự căn giữa hàng cuối */}
         <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16 min-h-[480px]">
           {isFiltering ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="flex flex-wrap justify-center gap-6 w-full">
               {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl aspect-[4/3] bg-stone-200/70 dark:bg-[#1E2B22] animate-pulse border border-stone-200 dark:border-stone-700/60 p-4 flex flex-col justify-end"
+                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] rounded-2xl aspect-[4/3] bg-stone-200/70 dark:bg-[#1E2B22] animate-pulse border border-stone-200 dark:border-stone-700/60 p-4 flex flex-col justify-end"
                 >
                   <div className="h-3 w-20 bg-stone-300 dark:bg-stone-700 rounded-full mb-2" />
                   <div className="h-4 w-36 bg-stone-300 dark:bg-stone-700 rounded-full" />
@@ -312,7 +312,7 @@ export default function SpacePage() {
               ))}
             </div>
           ) : (
-            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <motion.div layout className="flex flex-wrap justify-center gap-6 w-full">
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item, idx) => (
                 <motion.div
@@ -328,7 +328,7 @@ export default function SpacePage() {
                   }}
                   whileHover={{ y: -6, scale: 1.02 }}
                   onClick={() => handleOpenLightbox(idx)}
-                  className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-2xl border border-stone-200/70 dark:border-stone-700/60 transition-shadow duration-300 transform-gpu"
+                  className="group relative cursor-pointer rounded-2xl overflow-hidden aspect-[4/3] bg-stone-100 dark:bg-stone-800 shadow-sm hover:shadow-2xl border border-stone-200/70 dark:border-stone-700/60 transition-shadow duration-300 transform-gpu w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] shrink-0"
                 >
                   <MaskRevealImage
                     src={item.image}
@@ -336,14 +336,14 @@ export default function SpacePage() {
                     aspectRatio="aspect-[4/3]"
                     delay={0.05 * (idx % 6)}
                   />
-                  <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
+                  <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/95 via-stone-950/70 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-1.5">
                       {item.subtitle}
                     </span>
-                    <h3 className="font-serif text-base font-bold text-white line-clamp-1 group-hover:text-emerald-200 transition-colors transform group-hover:-translate-y-1 duration-300">
+                    <h3 className="font-serif text-base font-bold text-white line-clamp-2 group-hover:text-emerald-200 transition-colors transform group-hover:-translate-y-1 duration-300 leading-snug">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-stone-200/90 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-1">
+                    <p className="text-xs text-[#F3EBD8]/85 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-1 font-medium">
                       {item.description}
                     </p>
                   </div>
@@ -369,10 +369,10 @@ export default function SpacePage() {
                 <span className="font-serif font-bold text-lg text-[#F3EBD8]">
                   {isEn ? "Highland Stream Natural Audio" : "Thanh Âm Suối Nguồn Cao Nguyên"}
                 </span>
-                <span className="text-[14px] text-[#F3EBD8]/70">
+                <span className="text-[15px] font-medium text-[#F3EBD8]/70">
                   {isEn
-                    ? "Recorded live on location beside the basalt rock stream at Cam Cu House"
-                    : "Thu âm trực tiếp bên bờ suối đá Cẩm Cù House • Đắk Nông"}
+                    ? "Recorded live on location beside the basalt rock stream at Cam Cu House, Dak Nong"
+                    : "Thu âm trực tiếp bên bờ suối đá Cẩm Cù House, Đắk Nông"}
                 </span>
               </div>
             </div>
@@ -410,12 +410,12 @@ export default function SpacePage() {
                   <Trees className="w-3.5 h-3.5 text-[#88B795]" />
                   <span>{isEn ? "Eco Commitment from Cam Cu House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
                 </div>
-                <h2 className="font-serif text-[clamp(24px,3vw,36px)] text-[#F3EBD8] font-bold tracking-tight mb-4">
+                <h3 className="font-serif text-[20px] sm:text-[22px] text-[#F3EBD8] font-bold tracking-tight mb-4">
                   {isEn
                     ? "Preserving Natural Basalt Streams & Plastic-Free Living"
                     : "Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên & Giảm Thiểu Nhựa"}
-                </h2>
-                <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]">
+                </h3>
+                <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]">
                   {isEn
                     ? "We treasure every pebble and blade of grass along our stream bank. Cam Cu House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
                     : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
@@ -427,10 +427,10 @@ export default function SpacePage() {
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-[14px] font-semibold text-[#F3EBD8]">
+                      <p className="text-[15px] font-bold text-[#F3EBD8]">
                         {isEn ? "Single-Use Plastic Free" : "Không Nhựa 1 Lần"}
                       </p>
-                      <p className="text-[13px] text-[#F3EBD8]/70">
+                      <p className="text-[14px] font-medium text-[#F3EBD8]/70">
                         {isEn ? "100% natural materials" : "100% vật liệu tự nhiên"}
                       </p>
                     </div>
@@ -441,10 +441,10 @@ export default function SpacePage() {
                       <Droplets className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-[14px] font-semibold text-[#F3EBD8]">
+                      <p className="text-[15px] font-bold text-[#F3EBD8]">
                         {isEn ? "Water Source Protection" : "Bảo Vệ Nguồn Nước"}
                       </p>
-                      <p className="text-[13px] text-[#F3EBD8]/70">
+                      <p className="text-[14px] font-medium text-[#F3EBD8]/70">
                         {isEn ? "Safe closed-loop filtration" : "Lọc thải khép kín an toàn"}
                       </p>
                     </div>
@@ -455,10 +455,10 @@ export default function SpacePage() {
                       <Trees className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-[14px] font-semibold text-[#F3EBD8]">
+                      <p className="text-[15px] font-bold text-[#F3EBD8]">
                         {isEn ? "Forest Ecosystem" : "Hệ Sinh Thái Rừng"}
                       </p>
-                      <p className="text-[13px] text-[#F3EBD8]/70">
+                      <p className="text-[14px] font-medium text-[#F3EBD8]/70">
                         {isEn ? "Preserving native flora" : "Gìn giữ thảm thực vật bản địa"}
                       </p>
                     </div>

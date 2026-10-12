@@ -49,7 +49,7 @@ export default function ContactPage() {
         {/* Top Ambient Banner */}
         <section className="animate-fade-up-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-3xl flex flex-col gap-2">
+            <div className="max-w-[900px] flex flex-col gap-2">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-stone-100 dark:bg-[#1E2B22] w-fit text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold border border-stone-200 dark:border-stone-700/60">
                 <Trees className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
                 <span>{dict.contact.badge}</span>
@@ -58,12 +58,12 @@ export default function ContactPage() {
                 as="h1"
                 lines={[dict.contact.title]}
                 stagger={0.1}
-                className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3E5C46] dark:text-[#F5F4EE] tracking-tight"
+                className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3E5C46] dark:text-[#F3EBD8] tracking-tight max-w-[900px] text-balance"
               />
               <div className="mt-1">
                 <StaggerParagraph
                   text={dict.contact.subtitle}
-                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 max-w-2xl leading-relaxed"
+                  className="text-base sm:text-lg text-stone-700 dark:text-[#F3EBD8]/75 max-w-2xl leading-relaxed font-medium"
                   delay={0.15}
                 />
               </div>
@@ -108,15 +108,15 @@ export default function ContactPage() {
                       <span className="badge-unified mb-1">
                         {dict.contact.addressTitle}
                       </span>
-                      <h2 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] leading-snug">
+                      <h3 className="font-serif text-[18px] font-medium text-[#F3EBD8] leading-snug">
                         {dict.common.addressFull}
-                      </h2>
+                      </h3>
                     </div>
                   </div>
 
                   <div className="pt-3 border-t border-[#F3EBD8]/10 text-[#F3EBD8]/75 flex items-start gap-3">
                     <Car className="w-5 h-5 text-[#88B795] shrink-0 mt-0.5" />
-                    <p className="text-[15px] leading-relaxed">
+                    <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed">
                       <strong className="text-[#F3EBD8] font-semibold">
                         {isEn ? "Easy Vehicle Access:" : "Lối vào thuận tiện:"}
                       </strong>{" "}
@@ -141,11 +141,11 @@ export default function ContactPage() {
                       <span className="badge-unified mb-1">
                         {dict.contact.openingHoursTitle}
                       </span>
-                      <h2 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
+                      <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] leading-snug">
                         {isEn
                           ? "Breakfast, mountain lunch & specialty coffee"
                           : "Phục vụ điểm tâm, bữa chính & specialty coffee"}
-                      </h2>
+                      </h3>
                     </div>
                   </div>
 
@@ -157,7 +157,7 @@ export default function ContactPage() {
                       <span className="font-serif text-2xl text-[#F3EBD8] font-bold">
                         <AnimatedDigit to={7} />:00 – <AnimatedDigit to={18} />:00
                       </span>
-                      <span className="text-[13px] text-[#F3EBD8]/70">
+                      <span className="text-[15px] font-medium text-[#F3EBD8]/75">
                         {isEn ? "Daytime tranquil sanctuary" : "Không gian tĩnh dưỡng ban ngày"}
                       </span>
                     </div>
@@ -168,7 +168,7 @@ export default function ContactPage() {
                       <span className="font-serif text-2xl text-[#88B795] font-bold">
                         <AnimatedDigit to={7} />:00 – <AnimatedDigit to={22} />:00
                       </span>
-                      <span className="text-[13px] text-[#F3EBD8]/70">
+                      <span className="text-[15px] font-medium text-[#F3EBD8]/75">
                         {isEn ? "Evening tea & riverside music" : "Trà thơm, lửa trại & nhạc bên suối"}
                       </span>
                     </div>
@@ -191,9 +191,9 @@ export default function ContactPage() {
                       <span className="badge-unified mb-1">
                         {dict.contact.hotlineTitle}
                       </span>
-                      <h2 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
+                      <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] leading-snug">
                         {isEn ? "Dedicated support on every channel" : "Trực máy hỗ trợ chu đáo mọi khung giờ"}
-                      </h2>
+                      </h3>
                     </div>
                   </div>
 
@@ -221,8 +221,8 @@ export default function ContactPage() {
                     </a>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#F3EBD8]/10 text-[14px] text-[#F3EBD8]/75">
-                    <span>{isEn ? "International:" : "Quốc tế:"} <strong className="text-[#F3EBD8]">+84 38 285 1688</strong></span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-[#F3EBD8]/10 text-[15px] font-medium text-[#F3EBD8]/75">
+                    <span>{isEn ? "International:" : "Quốc tế:"} <strong className="text-[#F3EBD8] font-semibold">+84 38 285 1688</strong></span>
                     <a
                       href="mailto:thuynhu8788@gmail.com"
                       className="text-[#CC7755] hover:underline flex items-center gap-1.5 font-medium"
@@ -252,13 +252,13 @@ export default function ContactPage() {
                       <span className="badge-unified mb-1">
                         {isEn ? "Online Navigation" : "Dẫn Đường Trực Tuyến"}
                       </span>
-                      <h2 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
+                      <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] leading-snug">
                         {isEn ? "Directions & Map to Sanctuary" : "Chỉ Đường & Định Vị Tới Quán"}
-                      </h2>
+                      </h3>
                     </div>
                   </div>
 
-                  <p className="text-[15px] text-[#F3EBD8]/75 leading-relaxed">
+                  <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed">
                     {isEn
                       ? "Located at Alley 437 Hung Vuong, Nghia Trung Ward, Gia Nghia City. Wide concrete paved road, safe for all vehicles directly to our spacious yard."
                       : "Quán tọa lạc tại Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa. Tuyến đường bê tông sạch sẽ, bằng phẳng, ô tô vào tận bãi đỗ xe trong khuôn viên quán."}
@@ -370,7 +370,7 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-3 pt-2 text-[14px] sm:text-[15px] text-[#F3EBD8]/75 leading-relaxed">
+                  <div className="space-y-3 pt-2 text-[15px] font-medium text-[#F3EBD8]/75 leading-relaxed">
                     <div className="flex items-start gap-2.5">
                       <ShieldCheck className="w-4 h-4 text-[#88B795] shrink-0 mt-1" />
                       <p>
@@ -396,7 +396,7 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="pt-2 flex items-center justify-between text-[13px] text-[#F3EBD8]/60 border-t border-[#F3EBD8]/10">
+                  <div className="pt-2 flex items-center justify-between text-[15px] font-medium text-[#F3EBD8]/70 border-t border-[#F3EBD8]/10">
                     <span className="flex items-center gap-1.5">
                       <Trees className="w-3.5 h-3.5 text-[#88B795]" />
                       {isEn ? "Highland eco-stream sanctuary" : "Không gian sinh thái mộc mạc"}

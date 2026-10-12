@@ -130,12 +130,12 @@ export default function MenuPage() {
               as="h1"
               lines={[dict.menu.title]}
               stagger={0.1}
-              className="font-serif text-[clamp(36px,5vw,60px)] text-[#F3EBD8] font-bold max-w-3xl mb-3 tracking-tight leading-tight"
+              className="font-serif text-[clamp(36px,5vw,60px)] text-[#F3EBD8] font-bold max-w-[900px] mb-3 tracking-tight leading-tight text-balance"
             />
             <div className="max-w-2xl mb-6">
               <StaggerParagraph
                 text={dict.menu.subtitle}
-                className="text-[16px] sm:text-[17px] text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]"
+                className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]"
                 delay={0.15}
               />
             </div>
@@ -219,7 +219,7 @@ export default function MenuPage() {
 
         {/* Main Menu Layout */}
         <div className="container-unified py-10 flex flex-col gap-8">
-          {/* Spotlight Story Card: Món được yêu thích nhất - Chiếm trọn chiều ngang, CHỈ CÒN CHỮ, không còn ảnh */}
+          {/* Spotlight Story Card: Món được yêu thích nhất */}
           {signatureItem && (
             <div className="w-full card-unified flex flex-col gap-3">
               <div className="flex items-center gap-2 flex-wrap">
@@ -233,14 +233,14 @@ export default function MenuPage() {
                 )}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#F3EBD8]">
+                <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
                   {signatureItem.name}
-                </h2>
-                <span className="text-[20px] font-bold text-[#CC7755] tabular-nums">
+                </h3>
+                <span className="text-[18px] sm:text-[20px] font-bold text-[#CC7755] tabular-nums font-sans">
                   {signatureItem.price.toLocaleString("vi-VN")}đ
                 </span>
               </div>
-              <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 leading-relaxed max-w-3xl">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed max-w-3xl">
                 {signatureItem.description || dict.menu.signatureDesc}
               </p>
               <div className="pt-2 flex items-center gap-3">
@@ -257,21 +257,22 @@ export default function MenuPage() {
             </div>
           )}
 
-          {/* Menu Items List - 2 cột desktop, 1 cột mobile. Leader dots nối tên và giá. Bỏ lặp nút Gọi món. */}
+          {/* Menu Items List - Đường chấm dẫn tên và giá, nền xen kẽ nhẹ các hàng */}
           <div className="card-unified">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-[#F3EBD8]/10 gap-2">
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#F3EBD8]">
+              <h3 className="font-serif text-[20px] sm:text-[22px] font-bold text-[#F3EBD8]">
                 {dict.menu.menuListHeading} ({filteredItems.length} {isEn ? "items" : "món"})
               </h3>
-              <span className="text-[13px] text-[#F3EBD8]/60">
+              <span className="text-[14px] font-medium text-[#F3EBD8]/60">
                 {dict.menu.menuListSubheading}
               </span>
             </div>
 
-            <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-4">
+            <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2">
               <AnimatePresence mode="popLayout">
-                {filteredItems.map((item) => {
+                {filteredItems.map((item, idx) => {
                   const isOutOfStock = item.inStock === false;
+                  const isAlternate = idx % 2 === 1;
                   return (
                     <motion.div
                       layout
@@ -280,14 +281,14 @@ export default function MenuPage() {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className={`flex flex-col py-3 border-b border-[#F3EBD8]/10 group transition-colors ${
-                        isOutOfStock ? "opacity-50" : ""
-                      }`}
+                      className={`flex flex-col px-3.5 py-2.5 rounded-xl transition-colors border border-transparent ${
+                        isAlternate ? "bg-[#1B281D]/45 hover:bg-[#1B281D]/70" : "bg-transparent hover:bg-[#1B281D]/30"
+                      } ${isOutOfStock ? "opacity-50" : ""}`}
                     >
                       <div className="flex items-baseline justify-between gap-2 w-full">
                         <div className="flex items-center gap-2 shrink-0">
                           <span
-                            className={`text-[17px] sm:text-[18px] font-semibold transition-colors leading-snug ${
+                            className={`text-[16px] sm:text-[17px] font-semibold transition-colors leading-snug ${
                               isOutOfStock
                                 ? "text-[#F3EBD8]/50 line-through"
                                 : "text-[#F3EBD8] group-hover:text-[#CC7755]"
@@ -309,16 +310,16 @@ export default function MenuPage() {
                         </div>
 
                         {/* Leader dots nối tên và giá */}
-                        <div className="flex-1 border-b border-dotted border-[#F3EBD8]/25 mx-2 self-center min-w-[20px]" />
+                        <div className="flex-1 border-b-2 border-dotted border-[#F3EBD8]/30 mx-2.5 self-center min-w-[20px]" />
 
                         {/* Giá bên phải 17px màu cam #CC7755 */}
-                        <span className="text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
+                        <span className="text-[16px] sm:text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
                           {item.price.toLocaleString("vi-VN")}đ
                         </span>
                       </div>
 
                       {item.description && (
-                        <p className="text-[14px] sm:text-[15px] text-[#F3EBD8]/70 leading-relaxed mt-1 pr-8">
+                        <p className="text-[15px] font-medium text-[#F3EBD8]/70 leading-relaxed mt-1 pr-6">
                           {item.description}
                         </p>
                       )}
@@ -332,13 +333,13 @@ export default function MenuPage() {
           {/* Bottom Commitment & Hotline Banner */}
           <section className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col gap-2 max-w-xl text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-[#F3EBD8] font-bold font-serif text-xl">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-[#F3EBD8] font-bold font-serif text-[20px] sm:text-[22px]">
                 <span>🌿</span>
                 <span>
                   {isEn ? "Commitment from Cam Cu Kitchen & Bar" : "Cam Kết Từ Bếp & Quầy Bar Cẩm Cù"}
                 </span>
               </div>
-              <p className="text-[15px] text-[#F3EBD8]/75 leading-relaxed">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed">
                 {isEn
                   ? "Fresh daily local produce • Customizable sweetness and ice levels for your perfect beverage experience."
                   : "Nguyên liệu tươi sạch mỗi ngày • Hỗ trợ điều chỉnh độ ngọt và đá theo khẩu vị riêng của quý khách để có trải nghiệm vừa ý nhất."}

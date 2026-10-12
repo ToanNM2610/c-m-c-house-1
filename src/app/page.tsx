@@ -293,22 +293,22 @@ export default function HomePage() {
               <span>{dict.common.coordinates}</span>
             </div>
 
-            {/* Hero Headlines (Fade-up từng dòng stagger 0.1s) */}
-            <div className="mb-2 sm:mb-4">
+            {/* Hero Headlines */}
+            <div className="mb-2 sm:mb-4 max-w-[900px] mx-auto text-balance">
               <StaggerText
                 as="h1"
                 lines={[dict.home.heroTitleLine1, dict.home.heroTitleLine2]}
                 stagger={0.1}
-                className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight leading-snug sm:leading-tight max-w-4xl mx-auto"
+                className="text-2xl sm:text-5xl lg:text-6xl font-serif font-bold text-[#F3EBD8] tracking-tight leading-snug sm:leading-tight max-w-[900px] mx-auto text-balance"
                 lineClassName="leading-tight"
               />
             </div>
 
-            {/* Subtitle Description (Fade-up dòng giới thiệu) */}
+            {/* Subtitle Description */}
             <div className="max-w-2xl mx-auto mb-3 sm:mb-6 px-2">
               <StaggerParagraph
                 text={dict.home.heroDescription}
-                className="text-stone-600 dark:text-stone-300 text-xs sm:text-base leading-relaxed line-clamp-3 sm:line-clamp-none"
+                className="text-[#F3EBD8]/75 text-xs sm:text-base leading-relaxed line-clamp-3 sm:line-clamp-none"
                 delay={0.2}
               />
             </div>
@@ -423,8 +423,8 @@ export default function HomePage() {
                 <Waves className="w-3.5 h-3.5 text-[#396663] dark:text-teal-400" />
                 <span>{isEn ? "Crystal Stream Echo" : "Suối Reo Trong Lành"}</span>
               </div>
-              <span className="hidden sm:inline">•</span>
-              <div className="hidden sm:flex items-center gap-1 font-semibold text-[#2D4233] dark:text-[#88B795]">
+              <span>•</span>
+              <div className="flex items-center gap-1 font-semibold text-[#88B795]">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{isEn ? `07:00 – ${storeStatus.closingTime || "18:00"} Today` : `07:00 – ${storeStatus.closingTime || "18:00"} Hôm Nay`}</span>
               </div>
@@ -590,7 +590,7 @@ export default function HomePage() {
                 <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {dict.home.pillar2Title}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {dict.home.pillar2Desc}
                 </p>
               </div>
@@ -608,7 +608,7 @@ export default function HomePage() {
                 <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {dict.home.pillar1Title}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {dict.home.pillar1Desc}
                 </p>
               </div>
@@ -626,7 +626,7 @@ export default function HomePage() {
                 <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {isEn
                     ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
                     : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
@@ -646,7 +646,7 @@ export default function HomePage() {
                 <h3 className="text-[20px] sm:text-[22px] font-bold text-[#F3EBD8] mb-2 group-hover:text-[#CC7755] transition-colors">
                   {dict.home.pillar4Title}
                 </h3>
-                <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
+                <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mb-5">
                   {dict.home.pillar4Desc}
                 </p>
               </div>
@@ -701,7 +701,7 @@ export default function HomePage() {
                   <h3 className="font-serif text-[17px] font-bold text-[#F3EBD8] line-clamp-1 group-hover:text-[#CC7755] transition-colors">
                     {photo.title}
                   </h3>
-                  <p className="text-[14px] text-[rgba(243,235,216,0.72)] line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
+                  <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
                     {photo.caption}
                   </p>
                 </div>
@@ -719,18 +719,18 @@ export default function HomePage() {
 
         {/* SECTION 4: INVITATION & DIRECTIONS CTA */}
         <section className="container-unified section-unified">
-          <div className="card-unified flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="max-w-2xl">
+          <div className="card-unified grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 xl:col-span-8">
               <span className="text-[#88B795] text-[12px] uppercase tracking-[0.12em] font-semibold">
                 {isEn ? "Warmest Hospitality" : "Chào Đón Bạn Ghé Thăm"}
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-2 mb-4 leading-tight text-[#F3EBD8]">
+              <h2 className="font-serif text-[clamp(26px,3vw,36px)] font-bold mt-2 mb-4 leading-tight text-[#F3EBD8]">
                 {isEn ? "Visit Cam Cu House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
               </h2>
-              <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed mb-6">
+              <p className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed mb-6">
                 {dict.common.addressFull}. {i18nStatus.scheduleText}.
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-emerald-100">
+              <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-emerald-100">
                 <span className="flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-300" />
                   {isEn ? "Direct car access" : "Đường ô tô vào tận nơi"}
@@ -746,23 +746,23 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full lg:w-auto">
+            <div className="lg:col-span-5 xl:col-span-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-start lg:justify-end gap-3.5 shrink-0 w-full">
               <a
                 href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[#1B281D] hover:bg-[#121A15] text-white border border-emerald-400/40 font-bold text-sm transition-all shadow-lg hover:-translate-y-0.5"
+                className="btn-press inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-[#1B281D] hover:bg-[#121A15] text-white border border-emerald-400/40 font-bold text-sm transition-all shadow-lg hover:-translate-y-0.5 whitespace-nowrap text-center"
               >
-                <PhoneCall className="w-5 h-5 text-emerald-300" />
+                <PhoneCall className="w-4 h-4 text-emerald-300 shrink-0" />
                 <span>
-                  {isEn ? "Call Hotline:" : "Gọi Hotline:"} {settings.hotline1}
+                  {isEn ? "Hotline:" : "Hotline:"} {settings.hotline1}
                 </span>
               </a>
               <a
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-press inline-flex items-center justify-center gap-2 min-h-[44px] px-8 py-4 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5"
+                className="btn-press inline-flex items-center justify-center gap-2 min-h-[48px] px-6 py-3.5 rounded-full bg-[#2D4233] text-white font-semibold text-sm hover:bg-[#1f2e23] border border-white/20 transition-all shadow-md hover:-translate-y-0.5 whitespace-nowrap text-center"
               >
-                <MapPin className="w-5 h-5 text-emerald-300" />
+                <MapPin className="w-4 h-4 text-emerald-300 shrink-0" />
                 <span>{dict.common.getDirections}</span>
               </a>
             </div>
