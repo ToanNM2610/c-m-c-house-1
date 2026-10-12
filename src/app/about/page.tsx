@@ -125,7 +125,7 @@ export default function AboutPage() {
   const isEn = locale === "en";
 
   return (
-    <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
+    <div className="bg-[var(--bg)] min-h-screen text-[var(--text)] font-sans selection:bg-[var(--surface-2)] selection:text-[var(--text)] transition-colors duration-200">
       <main className="pt-20">
         {/* Top Narrative Intro */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 pb-12 w-full text-center">
@@ -211,8 +211,8 @@ export default function AboutPage() {
                     ? "Discovering this natural pebble stream in Gia Nghia felt like a destined promise. Instead of clearing or paving the terrain with harsh concrete, we embraced nature gently: moss-covered basalt boulders, shade-bearing forest trees, and the clear stream waters running through pebble crevices were all preserved intact."
                     : "Cơ duyên tìm thấy khu đất nép bên khe suối tự nhiên tại Gia Nghĩa như một lời hẹn ước định mệnh. Thay vì san phẳng mặt bằng hay bê tông hóa thô bạo, chúng tôi chọn cách nương tựa vào mẹ thiên nhiên: từng phiến đá bazan phủ rêu xanh cổ kính, từng tán lộc vừng rợp bóng hay dòng nước róc rách luồn qua khe đá đều được bảo bọc nguyên vẹn."}
                 </p>
-                <div className="pt-2 border-l-4 border-[#CC7755] pl-4">
-                  <p className="italic text-[#F3EBD8] font-serif text-[20px] leading-relaxed">
+                <div className="pt-2 border-l-4 border-[var(--accent-clay)] pl-4">
+                  <p className="italic text-[var(--text)] font-serif text-[20px] leading-relaxed">
                     {isEn
                       ? "“To build is not to conquer, but to weave a sheltered terrace beneath the highland trees.”"
                       : "“Xây dựng không phải là chiếm đoạt, mà là thêu dệt một mái hiên che mưa nắng giữa rừng cây.”"}
@@ -265,7 +265,7 @@ export default function AboutPage() {
                 />
                 <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/85 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
                   <span className="text-[12px] uppercase tracking-[0.12em] text-[var(--accent-green)] font-semibold">
-                    {isEn ? "The Story of Cam Cu" : "Chuyện Cẩm Cù"}
+                    {isEn ? "The Story of Cẩm Cù" : "Chuyện Cẩm Cù"}
                   </span>
                   <p className="font-serif text-lg font-bold mt-1 text-[#F3EBD8]">
                     {isEn
@@ -326,7 +326,7 @@ export default function AboutPage() {
               <div className="space-y-4 text-[15px] sm:text-[17px] text-[var(--text-muted)] leading-[1.7]">
                 <p>
                   {isEn
-                    ? "Dak Nong is globally renowned as the capital of specialty Robusta. At Cam Cu House, we say no to chemical additives, butter coatings, or artificial flavorings. Each coffee cherry is harvested at peak 100% ripeness, honey-processed, and hand-roasted over seasoned coffee wood."
+                    ? "Dak Nong is globally renowned as the capital of specialty Robusta. At Cẩm Cù House, we say no to chemical additives, butter coatings, or artificial flavorings. Each coffee cherry is harvested at peak 100% ripeness, honey-processed, and hand-roasted over seasoned coffee wood."
                     : "Đắk Nông vốn là thủ phủ của những hạt Robusta phẩm chất cao nhất. Tại Cẩm Cù House, chúng tôi nói không với phụ gia, hương liệu bắp cau hay hóa chất. Từng quả cà phê chín mọng 100% được lên men tự nhiên và rang củi thủ công bằng than củi cà phê già."}
                 </p>
                 <p>
@@ -365,7 +365,7 @@ export default function AboutPage() {
               </span>
               <h2 className="font-serif text-[clamp(26px,3.5vw,36px)] font-bold text-[var(--text)] max-w-2xl mb-4 leading-tight">
                 {isEn
-                  ? "Cam Cu House Awaits Your Arrival Beside the Stream"
+                  ? "Cẩm Cù House Awaits Your Arrival Beside the Stream"
                   : "Cẩm Cù House Chờ Đón Bạn Bên Bờ Suối Mát"}
               </h2>
               <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] max-w-xl mb-8 leading-relaxed">

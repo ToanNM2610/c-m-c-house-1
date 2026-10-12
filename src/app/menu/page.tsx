@@ -115,14 +115,14 @@ export default function MenuPage() {
   const isSignatureOutOfStock = signatureItem?.inStock === false;
 
   return (
-    <div className="bg-[#121A15] min-h-screen text-[#F3EBD8] font-sans selection:bg-[#CC7755] selection:text-white transition-colors duration-200">
-      <main className="pt-20">
+    <div className="bg-[var(--bg)] min-h-screen text-[var(--text)] font-sans selection:bg-[var(--surface-2)] selection:text-[var(--text)] transition-colors duration-200">
+      <main className="pt-24 sm:pt-28">
         {/* Top Atmospheric Intro Header */}
-        <section className="relative w-full overflow-hidden pt-8 pb-10">
+        <section className="relative w-full overflow-hidden pt-6 sm:pt-8 pb-10">
           <div className="container-unified flex flex-col items-center text-center">
             {/* Botanical badge */}
             <div className="badge-unified inline-flex items-center gap-2 mb-4">
-              <Sprout className="w-3.5 h-3.5 text-[#88B795]" />
+              <Sprout className="w-3.5 h-3.5 text-[var(--accent-green)]" />
               <span>{dict.menu.badge}</span>
             </div>
 
@@ -130,28 +130,28 @@ export default function MenuPage() {
               as="h1"
               lines={[dict.menu.title]}
               stagger={0.1}
-              className="font-serif text-[clamp(36px,5vw,60px)] text-[#F3EBD8] font-bold max-w-[900px] mb-3 tracking-tight leading-tight text-balance"
+              className="font-serif text-[clamp(36px,5vw,60px)] text-[var(--text)] font-bold max-w-[900px] mb-3 tracking-tight leading-tight text-balance"
             />
             <div className="max-w-2xl mb-6">
               <StaggerParagraph
                 text={dict.menu.subtitle}
-                className="text-[15px] sm:text-[16px] font-medium text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]"
+                className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed max-w-[65ch]"
                 delay={0.15}
               />
             </div>
 
-            {/* Quick Trust Indicators Bento Snippet */}
+            {/* Quick Trust Indicators 3 Badges */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-2xl">
-              <div className="card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#88B795]">
-                <Droplets className="w-4 h-4 text-[#88B795]" />
+              <div className="card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[var(--accent-green)]">
+                <Droplets className="w-4 h-4 text-[var(--accent-green)]" />
                 <span>{dict.menu.pureSpring}</span>
               </div>
-              <div className="card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#CC7755]">
-                <Sprout className="w-4 h-4 text-[#CC7755]" />
+              <div className="card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[var(--accent-clay)]">
+                <Sprout className="w-4 h-4 text-[var(--accent-clay)]" />
                 <span>{dict.menu.dailyFresh}</span>
               </div>
-              <div className="col-span-2 sm:col-span-1 card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#88B795]">
-                <CheckCircle2 className="w-4 h-4 text-[#88B795]" />
+              <div className="col-span-2 sm:col-span-1 card-unified !p-3 flex items-center justify-center gap-2 text-[13px] font-semibold text-[var(--accent-green)]">
+                <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
                 <span>{dict.menu.noAdditives}</span>
               </div>
             </div>
@@ -159,9 +159,9 @@ export default function MenuPage() {
         </section>
 
         {/* Sticky Dynamic Filter Navigation */}
-        <div className="sticky top-20 z-40 w-full bg-[#121A15]/95 backdrop-blur-md py-3.5 border-y border-[#F3EBD8]/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+        <div className="sticky top-16 sm:top-20 z-40 w-full bg-[var(--bg)]/95 backdrop-blur-md py-3.5 border-y border-[var(--border)] shadow-sm">
           <div className="container-unified flex flex-col gap-3">
-            {/* Row 1: Search Bar */}
+            {/* Row 1: Search Bar (44px min-h) */}
             <div className="w-full flex items-center justify-between gap-3">
               <div className="relative w-full max-w-md">
                 <input
@@ -169,27 +169,27 @@ export default function MenuPage() {
                   placeholder={dict.menu.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2.5 bg-[#16231A] text-[#F3EBD8] placeholder-[#F3EBD8]/40 rounded-full text-sm border border-[#F3EBD8]/10 focus:outline-none focus:border-[#CC7755] transition-colors"
+                  className="w-full min-h-[44px] pl-10 pr-10 py-2.5 bg-[var(--surface-2)] text-[var(--text)] placeholder-[var(--text-muted)]/60 rounded-full text-sm border border-[var(--border)] focus:outline-none focus:border-[var(--accent-clay)] transition-colors"
                 />
-                <Search className="w-4 h-4 text-[#F3EBD8]/50 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 {searchQuery && (
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#F3EBD8]/50 hover:text-[#F3EBD8] p-0.5"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)] p-0.5"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <X className="w-4 h-4" />
                   </button>
                 )}
               </div>
 
-              <span className="hidden sm:inline-block text-[13px] text-[#F3EBD8]/60 font-medium whitespace-nowrap">
+              <span className="hidden sm:inline-block text-[13px] text-[var(--text-muted)] font-medium whitespace-nowrap">
                 {filteredItems.length} {isEn ? "items found" : "món phù hợp"}
               </span>
             </div>
 
             {/* Row 2: Category Tabs with Smooth Edge Fading */}
-            <div className="relative w-full overflow-hidden">
+            <div className="relative w-full overflow-hidden mask-gradient-x">
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1">
                 {MENU_CATEGORIES.map((cat) => {
                   const isActive = activeCategory === cat.id;
@@ -200,10 +200,10 @@ export default function MenuPage() {
                       key={cat.id}
                       onClick={() => setActiveCategory(cat.id)}
                       type="button"
-                      className={`btn-press-sm shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                      className={`btn-press-sm shrink-0 min-h-[44px] px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                         isActive
-                          ? "bg-[#CC7755] text-white shadow-sm font-bold"
-                          : "bg-[#16231A] text-[#F3EBD8]/75 hover:text-[#F3EBD8] hover:bg-[#1E2B22] border border-[#F3EBD8]/10"
+                          ? "bg-[var(--accent-clay)] text-[#1B120E] shadow-sm font-bold"
+                          : "bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface)] border border-[var(--border)]"
                       }`}
                     >
                       <span>
@@ -233,10 +233,10 @@ export default function MenuPage() {
                 )}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-                <h3 className="font-serif text-[clamp(24px,3vw,32px)] font-bold text-[#F3EBD8]">
+                <h3 className="font-serif text-[clamp(24px,3vw,32px)] font-bold text-[var(--text)]">
                   {signatureItem.name}
                 </h3>
-                <span className="text-[20px] font-bold text-[#CC7755] tabular-nums font-sans">
+                <span className="text-[20px] font-bold text-[var(--accent-clay)] tabular-nums font-sans">
                   {signatureItem.price.toLocaleString("vi-VN")}đ
                 </span>
               </div>
@@ -271,7 +271,7 @@ export default function MenuPage() {
                     <div key={cat.id} className="flex flex-col gap-4">
                       {/* Tiêu đề nhóm Playfair 28px */}
                       <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-                        <h3 className="font-serif text-[28px] font-bold text-[#F3EBD8]">
+                        <h3 className="font-serif text-[28px] font-bold text-[var(--text)]">
                           {catLabel}
                         </h3>
                         <span className="text-[13px] font-semibold text-[var(--accent-green)]">
@@ -287,7 +287,7 @@ export default function MenuPage() {
                             <div
                               key={item.id}
                               className={`flex flex-col px-3.5 py-2.5 rounded-xl transition-colors border border-transparent ${
-                                isAlternate ? "bg-[#1B281D]/45 hover:bg-[#1B281D]/70" : "bg-transparent hover:bg-[#1B281D]/30"
+                                isAlternate ? "bg-[var(--surface-2)]/40 hover:bg-[var(--surface-2)]/70" : "bg-transparent hover:bg-[var(--surface-2)]/30"
                               } ${isOutOfStock ? "opacity-50" : ""}`}
                             >
                               <div className="flex items-baseline justify-between gap-2 w-full">
@@ -295,8 +295,8 @@ export default function MenuPage() {
                                   <span
                                     className={`text-[17px] sm:text-[18px] font-semibold transition-colors leading-snug ${
                                       isOutOfStock
-                                        ? "text-[#F3EBD8]/50 line-through"
-                                        : "text-[#F3EBD8] group-hover:text-[#CC7755]"
+                                        ? "text-[var(--text-muted)] line-through"
+                                        : "text-[var(--text)] group-hover:text-[var(--accent-clay)]"
                                     }`}
                                   >
                                     {item.name}
@@ -307,7 +307,7 @@ export default function MenuPage() {
                                     </span>
                                   ) : (
                                     item.tag && (
-                                      <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 text-[#CC7755] border border-[#CC7755]/30 text-[10px] font-bold">
+                                      <span className="px-2 py-0.5 rounded-full bg-[var(--accent-clay)]/15 text-[var(--accent-clay)] border border-[var(--accent-clay)]/30 text-[10px] font-bold">
                                         {item.tag}
                                       </span>
                                     )
@@ -315,16 +315,16 @@ export default function MenuPage() {
                                 </div>
 
                                 {/* Đường chấm dẫn nối tên và giá */}
-                                <div className="flex-1 border-b-2 border-dotted border-[rgba(243,235,216,0.25)] mx-2.5 self-center min-w-[20px]" />
+                                <div className="flex-1 border-b-2 border-dotted border-[var(--border)] mx-2.5 self-center min-w-[20px]" />
 
                                 {/* Giá bên phải cam 17px */}
-                                <span className="text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
+                                <span className="text-[17px] font-bold text-[var(--accent-clay)] shrink-0 font-sans tabular-nums">
                                   {item.price.toLocaleString("vi-VN")}đ
                                 </span>
                               </div>
 
                               {item.description && (
-                                <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mt-1 pr-6">
+                                <p className="text-[14px] sm:text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mt-1 pr-6">
                                   {item.description}
                                 </p>
                               )}
@@ -340,7 +340,7 @@ export default function MenuPage() {
               // Single category view with Playfair 28px heading
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
-                  <h3 className="font-serif text-[28px] font-bold text-[#F3EBD8]">
+                  <h3 className="font-serif text-[28px] font-bold text-[var(--text)]">
                     {dict.menu.categories[activeCategory] || activeCategory}
                   </h3>
                   <span className="text-[13px] font-semibold text-[var(--accent-green)]">
@@ -356,7 +356,7 @@ export default function MenuPage() {
                       <div
                         key={item.id}
                         className={`flex flex-col px-3.5 py-2.5 rounded-xl transition-colors border border-transparent ${
-                          isAlternate ? "bg-[#1B281D]/45 hover:bg-[#1B281D]/70" : "bg-transparent hover:bg-[#1B281D]/30"
+                          isAlternate ? "bg-[var(--surface-2)]/40 hover:bg-[var(--surface-2)]/70" : "bg-transparent hover:bg-[var(--surface-2)]/30"
                         } ${isOutOfStock ? "opacity-50" : ""}`}
                       >
                         <div className="flex items-baseline justify-between gap-2 w-full">
@@ -364,8 +364,8 @@ export default function MenuPage() {
                             <span
                               className={`text-[17px] sm:text-[18px] font-semibold transition-colors leading-snug ${
                                 isOutOfStock
-                                  ? "text-[#F3EBD8]/50 line-through"
-                                  : "text-[#F3EBD8] group-hover:text-[#CC7755]"
+                                  ? "text-[var(--text-muted)] line-through"
+                                  : "text-[var(--text)] group-hover:text-[var(--accent-clay)]"
                               }`}
                             >
                               {item.name}
@@ -376,7 +376,7 @@ export default function MenuPage() {
                               </span>
                             ) : (
                               item.tag && (
-                                <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 text-[#CC7755] border border-[#CC7755]/30 text-[10px] font-bold">
+                                <span className="px-2 py-0.5 rounded-full bg-[var(--accent-clay)]/15 text-[var(--accent-clay)] border border-[var(--accent-clay)]/30 text-[10px] font-bold">
                                   {item.tag}
                                 </span>
                               )
@@ -384,16 +384,16 @@ export default function MenuPage() {
                           </div>
 
                           {/* Đường chấm dẫn nối tên và giá */}
-                          <div className="flex-1 border-b-2 border-dotted border-[rgba(243,235,216,0.25)] mx-2.5 self-center min-w-[20px]" />
+                          <div className="flex-1 border-b-2 border-dotted border-[var(--border)] mx-2.5 self-center min-w-[20px]" />
 
                           {/* Giá bên phải cam 17px */}
-                          <span className="text-[17px] font-bold text-[#CC7755] shrink-0 font-sans tabular-nums">
+                          <span className="text-[17px] font-bold text-[var(--accent-clay)] shrink-0 font-sans tabular-nums">
                             {item.price.toLocaleString("vi-VN")}đ
                           </span>
                         </div>
 
                         {item.description && (
-                          <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] leading-relaxed mt-1 pr-6">
+                          <p className="text-[14px] sm:text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mt-1 pr-6">
                             {item.description}
                           </p>
                         )}
@@ -408,10 +408,10 @@ export default function MenuPage() {
           {/* Bottom Commitment & Hotline Banner: khung ngang có 2 nút (Gọi Hotline cam, Ghé Thăm Trực Tiếp viền) */}
           <section className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-col gap-2 max-w-xl text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-[#F3EBD8] font-bold font-serif text-[20px] sm:text-[22px]">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-[var(--text)] font-bold font-serif text-[20px] sm:text-[22px]">
                 <span>🌿</span>
                 <span>
-                  {isEn ? "Commitment from Cam Cu Kitchen & Bar" : "Cam Kết Từ Bếp & Quầy Bar Cẩm Cù"}
+                  {isEn ? "Commitment from Cẩm Cù Kitchen & Bar" : "Cam Kết Từ Bếp & Quầy Bar Cẩm Cù"}
                 </span>
               </div>
               <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed">

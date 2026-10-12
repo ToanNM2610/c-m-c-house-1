@@ -301,8 +301,8 @@ export default function HomePage() {
                 stagger={0.1}
                 className="font-serif font-bold tracking-tight text-balance max-w-[900px] mx-auto"
                 lineClassNames={[
-                  "text-[clamp(40px,6vw,76px)] leading-[1.15] text-[#F3EBD8]",
-                  "text-[clamp(24px,3.8vw,44px)] leading-[1.25] text-[#CC7755] font-semibold mt-2",
+                  "text-[clamp(40px,6vw,76px)] leading-[1.15] text-[var(--text)]",
+                  "text-[clamp(24px,3.8vw,44px)] leading-[1.25] text-[var(--accent-clay)] font-semibold mt-2",
                 ]}
               />
             </div>
@@ -429,23 +429,23 @@ export default function HomePage() {
         </section>
 
         {/* INTRO SECTION: ARTISTIC STORY & BENTO VISUAL COLLAGE */}
-        <section id="story-intro" className="container-unified section-unified border-b border-[#F3EBD8]/10">
+        <section id="story-intro" className="container-unified section-unified border-b border-[var(--border)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             {/* Left Column: Artistic Narrative & Highlight Metrics (7 cols on lg) */}
             <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
               {/* Badge */}
               <div className="badge-unified w-fit">
-                <Leaf className="w-3.5 h-3.5 text-[#88B795]" />
+                <Leaf className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                 <span>{dict.home.introBadge}</span>
               </div>
 
               {/* Title */}
-              <h2 className="font-serif text-[clamp(28px,3.8vw,48px)] font-bold text-[#F3EBD8] tracking-tight leading-[1.2]">
+              <h2 className="font-serif text-[clamp(28px,3.8vw,48px)] font-bold text-[var(--text)] tracking-tight leading-[1.2]">
                 {dict.home.introTitle}
               </h2>
 
               {/* Story Paragraph */}
-              <p className="text-[15px] sm:text-[16px] text-[#F3EBD8]/75 leading-relaxed max-w-[65ch]">
+              <p className="text-[15px] sm:text-[16px] text-[var(--text-muted)] leading-relaxed max-w-[65ch]">
                 {dict.home.introDesc}
               </p>
 
@@ -456,7 +456,7 @@ export default function HomePage() {
                     <Compass className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                     <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
                   </div>
-                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[#CC7755] tracking-tight leading-none">
+                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[var(--accent-clay)] tracking-tight leading-none">
                     <MetricCounter target={800} suffix="m+" />
                   </span>
                   <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
@@ -466,10 +466,10 @@ export default function HomePage() {
 
                 <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
                   <div className="flex items-center gap-1.5 mb-1.5">
-                    <Flame className="w-3.5 h-3.5 text-[#CC7755]" />
+                    <Flame className="w-3.5 h-3.5 text-[var(--accent-clay)]" />
                     <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
                   </div>
-                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[#CC7755] tracking-tight leading-none">
+                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[var(--accent-clay)] tracking-tight leading-none">
                     <MetricCounter target={100} suffix="%" />
                   </span>
                   <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
@@ -482,7 +482,7 @@ export default function HomePage() {
                     <Wind className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                     <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
                   </div>
-                  <div className="font-serif text-[28px] sm:text-[40px] font-bold text-[#CC7755] tracking-tight leading-none flex items-baseline gap-1">
+                  <div className="font-serif text-[28px] sm:text-[40px] font-bold text-[var(--accent-clay)] tracking-tight leading-none flex items-baseline gap-1">
                     <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-sans font-normal text-[var(--text-muted)]">{isEn ? "dust" : "khói bụi"}</span>
                   </div>
                   <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
@@ -495,10 +495,10 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link
                   href="/about"
-                  className="btn-press inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#16231A] text-[#F3EBD8] text-xs sm:text-sm font-bold hover:bg-[#CC7755] hover:text-white border border-[#F3EBD8]/10 transition-all group"
+                  className="btn-secondary min-h-[44px] px-6 text-sm font-semibold inline-flex items-center gap-2 group"
                 >
                   <span>{dict.home.introCta}</span>
-                  <ArrowRight className="w-4 h-4 text-[#CC7755] group-hover:text-white group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 text-[var(--accent-clay)] group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
             </div>
@@ -511,7 +511,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] shadow-2xl border-2 sm:border-4 border-white dark:border-[#1E2B22] bg-stone-100 dark:bg-stone-800 group"
+                className="relative rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] shadow-2xl border-2 sm:border-4 border-[var(--border)] bg-[var(--surface-2)] group"
               >
                 <img
                   src="/uploads/gallery/1788250253562-580915883.jpg"
@@ -534,7 +534,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                 whileHover={{ y: -8, scale: 1.03 }}
-                className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-1/2 sm:w-5/12 rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_16px_36px_rgba(0,0,0,0.35)] border-2 sm:border-4 border-white dark:border-[#1E2B22] bg-stone-100 dark:bg-stone-800 group transform-gpu transition-all duration-300"
+                className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-1/2 sm:w-5/12 rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_16px_36px_rgba(0,0,0,0.35)] border-2 sm:border-4 border-[var(--border)] bg-[var(--surface-2)] group transform-gpu transition-all duration-300"
               >
                 <img
                   src="/uploads/gallery/1788250253554-875120458.jpg"
@@ -551,7 +551,7 @@ export default function HomePage() {
               </motion.div>
 
               {/* Nature Badge Floating Indicator */}
-              <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 dark:bg-[#1E2B22]/95 backdrop-blur-md border border-stone-200/80 dark:border-stone-700/60 shadow-lg text-[10px] sm:text-xs font-bold text-[#2D4233] dark:text-[#88B795]">
+              <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] shadow-lg text-[10px] sm:text-xs font-bold text-[var(--accent-green)]">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>100% Pure Highland Air</span>
               </div>
@@ -563,15 +563,15 @@ export default function HomePage() {
         <section className="container-unified section-unified">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#16231A] border border-[#F3EBD8]/10 text-[#88B795] text-[12px] font-semibold uppercase tracking-[0.12em] mb-3">
-                <Flower2 className="w-3.5 h-3.5" />
+              <div className="badge-unified mb-3">
+                <Flower2 className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                 <span>{isEn ? "Highland Authenticity" : "Nét Đẹp Bản Địa"}</span>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight">
+              <h2 className="font-serif text-3xl sm:text-4xl text-[var(--text)] font-bold tracking-tight">
                 {dict.home.pillarsHeading}
               </h2>
             </div>
-            <p className="text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.72)] max-w-md leading-relaxed">
+            <p className="text-[15px] sm:text-[16px] text-[var(--text-muted)] max-w-md leading-relaxed">
               {dict.home.pillarsSubheading}
             </p>
           </div>
@@ -721,7 +721,7 @@ export default function HomePage() {
                 {isEn ? "Warmest Hospitality" : "Chào Đón Bạn Ghé Thăm"}
               </span>
               <h2 className="font-serif text-[clamp(26px,3.5vw,36px)] font-bold mt-2 mb-4 leading-tight text-[var(--text)]">
-                {isEn ? "Visit Cam Cu House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
+                {isEn ? "Visit Cẩm Cù House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
               </h2>
               <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed mb-6">
                 {dict.common.addressFull}. {i18nStatus.scheduleText}.

@@ -90,6 +90,7 @@ interface StoreSettingsData {
   hotline2: string;
   address: string;
   topBanner: string;
+  topBannerEnabled?: boolean;
 }
 
 export default function AdminPage() {
@@ -102,9 +103,10 @@ export default function AdminPage() {
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<"overview" | "menu" | "gallery" | "settings">("overview");
 
-  // Store opening hours & override state
+  // Store opening hours & override state (Single source of truth)
   const storeStatus = useStoreStatus();
   const [storeOverride, setStoreOverrideState] = useState<StoreOverrideMode>("auto");
+  const [lastToggledItem, setLastToggledItem] = useState<{ id: string; name: string; prevStatus: boolean } | null>(null);
   const [adminLightboxOpen, setAdminLightboxOpen] = useState<boolean>(false);
   const [adminLightboxIndex, setAdminLightboxIndex] = useState<number>(0);
 
@@ -129,7 +131,14 @@ export default function AdminPage() {
     hotline2: "077 465 9000",
     address: "Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Tỉnh Đắk Nông",
     topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
+    topBannerEnabled: true,
   });
+
+  // Real operational counters (No fake metrics)
+  const totalMenuItems = MENU_ITEMS.length;
+  const outOfStockCount = Object.values(menuOverrides).filter((o) => o.inStock === false).length;
+  const inStockCount = totalMenuItems - outOfStockCount;
+  const totalGalleryPhotos = gallery.length;
 
   // UI state
   const [noticeModalOpen, setNoticeModalOpen] = useState(false);
@@ -372,9 +381,12 @@ export default function AdminPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isAuthenticated, pinInput]);
 
-  // Toggle item in stock
-  const handleToggleStock = async (id: string, currentStatus: boolean) => {
+  // Toggle item in stock with Undo support
+  const handleToggleStock = async (id: string, currentStatus: boolean, isUndo = false) => {
     const newStatus = !currentStatus;
+    const item = MENU_ITEMS.find((m) => m.id === id);
+    const itemName = item?.name || "Món";
+
     const updated = {
       ...menuOverrides,
       [id]: {
@@ -395,7 +407,13 @@ export default function AdminPage() {
     }
     setSharedData(KEYS.DISABLED_MENU_IDS, updatedDisabled);
 
-    showToast(`Đã ${newStatus ? "bật còn hàng" : "tắt (báo hết hàng)"} món`);
+    if (!isUndo) {
+      setLastToggledItem({ id, name: itemName, prevStatus: currentStatus });
+      showToast(`Đã ${newStatus ? "bật còn hàng" : "báo tạm hết"} cho "${itemName}"`);
+    } else {
+      setLastToggledItem(null);
+      showToast(`Đã hoàn tác trạng thái cho "${itemName}"`);
+    }
 
     try {
       await fetch("/api/admin/menu", {
@@ -893,12 +911,12 @@ export default function AdminPage() {
             <span>Mã PIN mặc định: <strong>2610</strong></span>
           </div>
 
-          <Link
-            href="/"
+          <a
+            href="https://camcuhouse.online"
             className="mt-6 text-xs text-stone-500 hover:text-[#3E5C46] underline transition-colors"
           >
             ← Quay lại trang chủ Cẩm Cù House
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -909,16 +927,32 @@ export default function AdminPage() {
   // ==========================================
   return (
     <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] flex font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
-      {/* Toast Alert Notification */}
+      {/* Toast Alert Notification with Undo support */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-[999] bg-[#2D4233] text-white px-5 py-3 rounded-2xl shadow-2xl border border-emerald-500/30 flex items-center gap-3 text-sm font-semibold animate-fade-in">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-[999] bg-[#16261D] text-[#F3EBD8] px-5 py-3.5 rounded-2xl shadow-2xl border border-[rgba(243,235,216,0.2)] flex items-center gap-3 text-xs sm:text-sm font-semibold animate-fade-in max-w-[90vw]">
+          <CheckCircle2 className="w-5 h-5 text-[#9DC183] shrink-0" />
+          <span className="truncate max-w-[260px] sm:max-w-md">{toastMessage}</span>
+          {lastToggledItem && (
+            <button
+              type="button"
+              onClick={() => handleToggleStock(lastToggledItem.id, !lastToggledItem.prevStatus, true)}
+              className="ml-auto shrink-0 px-3 py-1.5 bg-[#CC7755] hover:bg-[#b8643f] text-white rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+            >
+              Hoàn tác
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setToastMessage(null)}
+            className="p-1 text-[#F3EBD8]/60 hover:text-[#F3EBD8] transition-colors ml-1"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
-      {/* Sidebar - FIXED & FULLY INTERACTIVE */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-stone-100 dark:bg-[#16231A] z-50 flex flex-col justify-between py-6 px-4 border-r border-stone-200 dark:border-stone-800 shadow-sm transition-colors duration-200">
+      {/* Sidebar - HIDDEN ON MOBILE, FIXED & FULLY INTERACTIVE ON DESKTOP */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-stone-100 dark:bg-[#16231A] z-50 flex-col justify-between py-6 px-4 border-r border-stone-200 dark:border-stone-800 shadow-sm transition-colors duration-200">
         <div className="flex flex-col gap-6">
           {/* Brand */}
           <div className="flex items-center gap-3 px-2">
@@ -1016,7 +1050,7 @@ export default function AdminPage() {
       </aside>
 
       {/* Main Content Body */}
-      <div className="pl-64 w-full min-h-screen flex flex-col bg-[#F9F8F3] dark:bg-[#121A15] text-[#1B281D] dark:text-[#F5F4EE] transition-colors duration-300">
+      <div className="pl-0 md:pl-64 pb-20 md:pb-8 w-full min-h-screen flex flex-col bg-[#F9F8F3] dark:bg-[#121A15] text-[#1B281D] dark:text-[#F5F4EE] transition-colors duration-300">
         {/* Top Header */}
         <header className="h-16 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8">
           <div className="flex items-center gap-3">
@@ -1116,97 +1150,113 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* 4 KPI Metrics Cards */}
+              {/* 4 Operational KPI Real Metrics Cards (No Fake Metrics) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                {/* 1. Menu Items */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Khách ghé hôm nay
+                        Thực Đơn Niêm Yết
                       </span>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-serif text-3xl font-bold text-[#3E5C46]">128+</span>
-                        <span className="text-xs text-stone-500 font-medium">khách ghé</span>
+                        <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">{totalMenuItems}</span>
+                        <span className="text-xs text-stone-500 font-medium">món phục vụ</span>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center text-[#3E5C46]">
-                      <Users className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-[#3E5C46] dark:text-[#9DC183]">
+                      <UtensilsCrossed className="w-5 h-5" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/60">
-                    <span className="inline-flex items-center gap-1 text-[#3E5C46] font-semibold">
-                      <TrendingUp className="w-3.5 h-3.5" /> +18% so với hôm qua
+                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
+                    <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> {inStockCount} món còn hàng
                     </span>
-                    <span className="text-[11px] text-stone-400">Ước tính theo ca</span>
+                    <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
+                      {outOfStockCount > 0 ? `${outOfStockCount} món tạm hết` : "100% sẵn sàng"}
+                    </span>
                   </div>
                 </div>
 
+                {/* 2. Gallery Photos */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Trạng thái không gian
+                        Thư Viện Không Gian
                       </span>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-serif text-3xl font-bold text-[#396663]">
-                          Thoáng mát
+                        <span className="font-serif text-3xl font-bold text-[#396663] dark:text-[#88B795]">
+                          {totalGalleryPhotos}
+                        </span>
+                        <span className="text-xs text-stone-500 font-medium">khoảnh khắc</span>
+                      </div>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-[#396663] dark:text-[#88B795]">
+                      <ImageIcon className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
+                    <span className="inline-flex items-center gap-1 text-[#396663] dark:text-[#88B795] font-semibold">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Suối đá &amp; Hiên gỗ
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold">
+                      WebP Tối Ưu
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Store Live Status */}
+                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
+                        Trạng Thái Hoạt Động
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className={`font-serif text-2xl font-bold ${
+                          storeStatus.isOpen ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"
+                        }`}>
+                          {storeStatus.isOpen ? "Đang Mở Cửa" : "Đang Đóng Cửa"}
                         </span>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-[#396663]">
-                      <Trees className="w-5 h-5" />
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      storeStatus.isOpen ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400" : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
+                    }`}>
+                      <Clock className="w-5 h-5" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/60">
-                    <span className="inline-flex items-center gap-1 text-[#396663] font-semibold">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> 100% bàn sẵn sàng
+                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
+                    <span className="font-semibold text-stone-700 dark:text-stone-200 truncate">
+                      {storeOverride === "auto" ? "⏱ Tự động theo giờ" : storeOverride === "force_open" ? "🟢 Mở đột xuất" : "🔴 Nghỉ đột xuất"}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-stone-100 text-[#3E5C46] text-[10px] font-bold">
-                      Thời tiết đẹp
+                    <span className="text-emerald-700 dark:text-emerald-400 text-xs font-bold shrink-0">
+                      {storeStatus.shortBadge}
                     </span>
                   </div>
                 </div>
 
+                {/* 4. Operating Hours Schedule */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
                       <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Món bán chạy nhất
+                        Lịch Đón Khách Hôm Nay
                       </span>
-                      <h3 className="font-serif text-lg font-bold text-[#3E5C46] mt-1 truncate max-w-[170px]">
-                        Cà phê muối Đắk Nông
-                      </h3>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="font-serif text-2xl font-bold text-[#CC7755] dark:text-[#E0B872]">
+                          {storeStatus.todayHoursText}
+                        </span>
+                      </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-[#7D5E4A]">
+                    <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-[#CC7755] dark:text-[#E0B872]">
                       <Coffee className="w-5 h-5" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/60">
-                    <span className="font-serif text-xs font-bold text-[#7D5E4A]">
-                      28.000đ • Đậm vị béo
-                    </span>
-                    <span className="text-emerald-600 text-xs font-bold">Đang còn hàng</span>
-                  </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Đánh giá hài lòng
-                      </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-serif text-3xl font-bold text-[#3E5C46]">4.9</span>
-                        <span className="text-xs text-stone-400">/ 5.0 sao</span>
-                      </div>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500">
-                      <Star className="w-5 h-5 fill-current" />
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 border-t border-stone-200/60">
-                    <span className="text-xs text-stone-500">Dựa trên 240+ lượt bình luận</span>
-                    <span className="text-[#3E5C46] font-bold text-[10px]">100% Đề xuất</span>
+                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
+                    <span className="text-xs text-stone-500 dark:text-stone-400 truncate">T2–T5: 18h | T6–CN: 22h</span>
+                    <span className="text-[#3E5C46] dark:text-[#9DC183] font-bold text-[10px] shrink-0">Gia Nghĩa GMT+7</span>
                   </div>
                 </div>
               </div>
@@ -1305,7 +1355,7 @@ export default function AdminPage() {
                         onClick={() => setActiveTab("menu")}
                         className="text-xs font-semibold text-[#3E5C46] hover:underline"
                       >
-                        Xem tất cả (50+)
+                        Xem tất cả ({totalMenuItems} món)
                       </button>
                     </div>
 
@@ -1317,23 +1367,24 @@ export default function AdminPage() {
                         return (
                           <div key={item.id} className="py-3 flex items-center justify-between gap-3">
                             <div className="flex flex-col">
-                              <span className="text-xs font-bold text-[#1B281D]">{item.name}</span>
-                              <span className="text-[11px] text-[#7D5E4A] font-serif font-bold">
+                              <span className="text-xs font-bold text-[#1B281D] dark:text-[#F3EBD8]">{item.name}</span>
+                              <span className="text-[11px] text-[#CC7755] dark:text-[#E0B872] font-serif font-bold">
                                 {price.toLocaleString("vi-VN")}đ
                               </span>
                             </div>
 
-                            {/* Toggle Switch */}
+                            {/* Stock Toggle Switch (Green/Gray with Undo) */}
                             <button
                               type="button"
                               onClick={() => handleToggleStock(item.id, inStock)}
-                              className={`btn-press relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                                inStock ? "bg-[#3E5C46]" : "bg-stone-300"
+                              className={`btn-press relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none min-h-[44px] items-center ${
+                                inStock ? "bg-emerald-600" : "bg-stone-400"
                               }`}
+                              aria-label={inStock ? `Đang còn ${item.name}, bấm để báo hết` : `Đang hết ${item.name}, bấm để bật còn`}
                             >
                               <span
                                 className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-out transform-gpu ${
-                                  inStock ? "translate-x-5" : "translate-x-0"
+                                  inStock ? "translate-x-6" : "translate-x-1"
                                 }`}
                               />
                             </button>
@@ -1477,23 +1528,23 @@ export default function AdminPage() {
                             </td>
                             <td className="py-3.5 px-4 text-center">
                               <span
-                                className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${
                                   inStock
-                                    ? "bg-emerald-100 text-[#3E5C46]"
-                                    : "bg-red-100 text-red-700"
+                                    ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+                                    : "bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700"
                                 }`}
                               >
-                                {inStock ? "🟢 Còn hàng" : "🔴 Tạm hết"}
+                                {inStock ? "🟢 Còn hàng" : "⚪ Tạm hết"}
                               </span>
                             </td>
                             <td className="py-3.5 px-6 text-right">
                               <button
                                 type="button"
                                 onClick={() => handleToggleStock(item.id, inStock)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                                className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-all inline-flex items-center justify-center gap-1.5 ${
                                   inStock
-                                    ? "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                                    : "bg-emerald-50 text-[#3E5C46] hover:bg-emerald-100 border border-emerald-200"
+                                    ? "bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 dark:bg-stone-800 dark:text-stone-200 dark:border-stone-700"
+                                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
                                 }`}
                               >
                                 {inStock ? "Báo Tạm Hết" : "Bật Còn Hàng"}
@@ -1950,39 +2001,98 @@ export default function AdminPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Status Toggle */}
-                  <div className="flex flex-col gap-2 p-4 bg-stone-50 rounded-2xl border border-stone-200">
-                    <span className="text-xs font-bold text-[#1B281D]">Trạng Thái Mở Cửa</span>
-                    <div className="flex items-center gap-3">
+                  {/* Store Status Override: Single source of truth */}
+                  <div className="md:col-span-2 p-5 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <span className="text-xs font-bold text-[#1B281D] dark:text-[#F3EBD8]">
+                          Trạng Thái Hoạt Động &amp; Ngày Nghỉ Đột Xuất (1 Nguồn Duy Nhất)
+                        </span>
+                        <p className="text-[11px] text-stone-500 mt-0.5">
+                          Kiểm soát toàn bộ website khách hàng: đồng bộ thanh đầu trang, thẻ giờ mở cửa và hero chip.
+                        </p>
+                      </div>
+                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-[#9DC183] self-start sm:self-auto">
+                        Hiện tại: {storeStatus.shortBadge}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                       <button
                         type="button"
-                        onClick={() => setSettings({ ...settings, isOpen: !settings.isOpen })}
-                        className={`btn-press relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          settings.isOpen ? "bg-[#3E5C46]" : "bg-red-400"
+                        onClick={() => handleStoreOverrideChange("auto")}
+                        className={`min-h-[44px] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 cursor-pointer ${
+                          storeOverride === "auto"
+                            ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 text-emerald-900 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/20"
+                            : "bg-white dark:bg-[#1E2B22] border-stone-200 dark:border-stone-700/60 text-stone-600 dark:text-stone-300 hover:bg-stone-100"
                         }`}
                       >
-                        <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200 ease-out transform-gpu ${
-                            settings.isOpen ? "translate-x-5" : "translate-x-0"
-                          }`}
-                        />
+                        <span className="text-xs font-bold">⏱ Tự động theo lịch</span>
+                        <span className="text-[10px] text-stone-500 font-normal">T2–T5: 18h | T6–CN: 22h</span>
                       </button>
-                      <span className="text-xs font-semibold text-stone-700">
-                        {settings.isOpen ? "Đang mở cửa đón khách" : "Tạm đóng cửa / Nghỉ lễ"}
-                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => handleStoreOverrideChange("force_open")}
+                        className={`min-h-[44px] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 cursor-pointer ${
+                          storeOverride === "force_open"
+                            ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-400 text-emerald-900 dark:text-emerald-200 font-bold ring-2 ring-emerald-500/20"
+                            : "bg-white dark:bg-[#1E2B22] border-stone-200 dark:border-stone-700/60 text-stone-600 dark:text-stone-300 hover:bg-stone-100"
+                        }`}
+                      >
+                        <span className="text-xs font-bold">🟢 Mở cửa đột xuất</span>
+                        <span className="text-[10px] text-stone-500 font-normal">Đón khách ngoài giờ</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleStoreOverrideChange("force_closed")}
+                        className={`min-h-[44px] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 cursor-pointer ${
+                          storeOverride === "force_closed"
+                            ? "bg-rose-50 dark:bg-rose-950/40 border-rose-400 text-rose-900 dark:text-rose-200 font-bold ring-2 ring-rose-500/20"
+                            : "bg-white dark:bg-[#1E2B22] border-stone-200 dark:border-stone-700/60 text-stone-600 dark:text-stone-300 hover:bg-stone-100"
+                        }`}
+                      >
+                        <span className="text-xs font-bold">🔴 Nghỉ đột xuất / Đóng cửa</span>
+                        <span className="text-[10px] text-stone-500 font-normal">Nghỉ lễ, thời tiết xấu</span>
+                      </button>
                     </div>
                   </div>
 
-                  {/* Top Banner Notice Text */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-stone-700">
-                      Thông báo thanh đầu trang (Top Banner)
-                    </label>
+                  {/* Top Banner Notice Switch & Text */}
+                  <div className="md:col-span-2 p-5 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-3">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-col">
+                        <label htmlFor="topBannerToggle" className="text-xs font-bold text-stone-800 dark:text-stone-200">
+                          Thông Báo Thanh Đầu Trang (Top Announcement Banner)
+                        </label>
+                        <span className="text-[11px] text-stone-500">
+                          Bật/Tắt hiển thị thông báo ngắn chạy trên thanh thông tin đầu website khách
+                        </span>
+                      </div>
+                      <button
+                        id="topBannerToggle"
+                        type="button"
+                        onClick={() => setSettings({ ...settings, topBannerEnabled: !settings.topBannerEnabled })}
+                        className={`btn-press relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none min-h-[44px] items-center ${
+                          settings.topBannerEnabled ? "bg-emerald-600" : "bg-stone-400"
+                        }`}
+                        aria-label="Bật hoặc tắt thông báo thanh đầu trang"
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-out transform-gpu ${
+                            settings.topBannerEnabled ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+
                     <input
                       type="text"
                       value={settings.topBanner}
                       onChange={(e) => setSettings({ ...settings, topBanner: e.target.value })}
-                      className="px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      placeholder="VD: 🌿 Chào mừng bạn ghé chơi bên bờ suối Cẩm Cù..."
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-[#1E2B22] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
 
@@ -2248,6 +2358,58 @@ export default function AdminPage() {
         initialIndex={adminLightboxIndex}
         onClose={() => setAdminLightboxOpen(false)}
       />
+
+      {/* Mobile Bottom Navigation Bar (Mobile-first, touch targets >= 44px) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#16231A]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 z-50 flex items-center justify-around px-2 shadow-lg">
+        <button
+          type="button"
+          onClick={() => setActiveTab("overview")}
+          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+            activeTab === "overview"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <LayoutDashboard className="w-5 h-5 mb-0.5" />
+          <span>Tổng quan</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("menu")}
+          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+            activeTab === "menu"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <UtensilsCrossed className="w-5 h-5 mb-0.5" />
+          <span>Thực đơn</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("gallery")}
+          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+            activeTab === "gallery"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <ImageIcon className="w-5 h-5 mb-0.5" />
+          <span>Thư viện</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("settings")}
+          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+            activeTab === "settings"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <Settings className="w-5 h-5 mb-0.5" />
+          <span>Cài đặt</span>
+        </button>
+      </nav>
     </div>
   );
 }

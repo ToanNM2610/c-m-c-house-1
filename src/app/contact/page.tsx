@@ -394,7 +394,7 @@ export default function ContactPage() {
                         {isEn ? "Community Channels" : "Kênh Truyền Thông Quán"}
                       </span>
                       <h2 className="font-serif text-[20px] font-bold text-[var(--text)] leading-snug">
-                        {isEn ? "Connect & Follow Cam Cu House" : "Kết Nối Cùng Cẩm Cù House"}
+                        {isEn ? "Connect & Follow Cẩm Cù House" : "Kết Nối Cùng Cẩm Cù House"}
                       </h2>
                     </div>
                   </div>
@@ -494,7 +494,7 @@ export default function ContactPage() {
                   {isEn ? "Warm Highland Welcome" : "Hẹn Gặp Bạn Bên Bờ Suối"}
                 </span>
                 <h2 className="font-serif text-[clamp(26px,3vw,36px)] font-bold text-[var(--text)] leading-tight mb-2">
-                  {isEn ? "Visit Cam Cu House in Gia Nghia" : "Ghé Cẩm Cù House, Lắng Nghe Suối Reo"}
+                  {isEn ? "Visit Cẩm Cù House in Gia Nghia" : "Ghé Cẩm Cù House, Lắng Nghe Suối Reo"}
                 </h2>
                 <p className="text-[15px] sm:text-[16px] text-[var(--text-muted)] font-medium">
                   {dict.common.addressFull}

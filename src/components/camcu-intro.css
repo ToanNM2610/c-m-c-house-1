@@ -137,12 +137,14 @@ html.intro-seen #camcu-intro-pro {
 
 #camcu-intro-pro .brand-title {
   margin: 0;
+  display: inline-block;
+  box-sizing: content-box;
   font-family: var(--font-playfair), "Playfair Display", Georgia, serif;
   font-weight: 700;
   font-size: clamp(38px, 8.8vw, 96px);
-  line-height: 1.35;
-  padding-top: 0.55em;
-  padding-bottom: 0.15em;
+  line-height: 1.45;
+  padding-top: 0.65em;
+  padding-bottom: 0.2em;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   background: linear-gradient(180deg, #ffffff 0%, #fbedd8 55%, #dfb589 100%);

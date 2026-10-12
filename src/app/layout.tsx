@@ -4,10 +4,7 @@ import { Playfair_Display, Quicksand } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
-import SmoothScroll from "@/components/motion/SmoothScroll";
-import MobileBottomBar from "@/components/MobileBottomBar";
-import Navbar from "@/components/Navbar";
-import CamcuIntro from "@/components/CamcuIntro";
+import PublicShell from "@/components/PublicShell";
 import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
@@ -108,16 +105,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className="bg-[#121A15] text-[#F3EBD8] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
-        <CamcuIntro />
+      <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--accent-green)] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>
-              <Navbar />
-              <SmoothScroll>
-                {children}
-              </SmoothScroll>
-              <MobileBottomBar />
+              <PublicShell>{children}</PublicShell>
             </TransitionProvider>
           </LanguageProvider>
         </ThemeProvider>

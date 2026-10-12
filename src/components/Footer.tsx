@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { 
   MapPin, 
   Clock, 
@@ -17,9 +18,24 @@ export default function Footer() {
   const { locale, dict } = useLanguage();
   const isEn = locale === "en";
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Chỉ hiện nút Lên đầu trang sau khi cuộn qua 1 màn hình (~600px)
+      setShowScrollTop(window.scrollY > 500);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <footer className="w-full bg-[#0F1A14] text-[#F3EBD8] pt-[72px] pb-6 border-t border-[rgba(243,235,216,0.10)] relative overflow-hidden">
-      <div className="container-unified mb-12">
+    <footer className="w-full bg-[#0F1A14] text-[#FDFBF7] pt-[72px] pb-6 border-t border-[rgba(243,235,216,0.12)] relative overflow-hidden transition-colors duration-200">
+      <div className="container-unified mb-12 relative z-10">
         {/* 4-Column Grid: 1.4fr 1fr 1fr 1.2fr, gap 48px on desktop, 1 col gap 32px on mobile */}
         <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-8 lg:gap-[48px]">
           {/* Col 1: Logo + Description (16px, max 38ch) + Coordinates */}
@@ -28,16 +44,16 @@ export default function Footer() {
               <div className="w-9 h-9 rounded-full bg-[#1D3226] text-[#9DC183] flex items-center justify-center shrink-0 shadow-sm">
                 <Sparkles className="w-4 h-4" />
               </div>
-              <span className="font-serif text-[24px] font-bold text-[#F3EBD8] tracking-tight">
+              <span className="font-serif text-[24px] font-bold text-[#FDFBF7] tracking-tight">
                 Cẩm Cù House
               </span>
             </div>
-            <p className="text-[16px] text-[rgba(243,235,216,0.72)] leading-relaxed max-w-[38ch]">
+            <p className="text-[16px] text-[#FDFBF7]/90 leading-relaxed max-w-[38ch] font-medium">
               {isEn
                 ? "An eco-friendly coffee & dining sanctuary nestled beside a cool natural stream in the Dak Nong highlands."
                 : "Khu ẩm thực & cà phê sinh thái bên dòng suối mát lành miền cao nguyên Đắk Nông. Chốn dừng chân mộc mạc."}
             </p>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#16261D] rounded-full text-[#9DC183] text-[13px] font-medium w-fit border border-[rgba(243,235,216,0.10)]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#16261D] rounded-full text-[#9DC183] text-[13px] font-semibold w-fit border border-[rgba(243,235,216,0.15)]">
               <MapPin className="w-3.5 h-3.5 text-[#9DC183]" />
               <span>11.99° N, 107.69° E • Gia Nghĩa</span>
             </div>
@@ -48,7 +64,7 @@ export default function Footer() {
             <span className="text-[12px] font-bold text-[#9DC183] tracking-[0.12em] uppercase">
               {dict.contact.quickLinksTitle}
             </span>
-            <nav className="flex flex-col gap-3 text-[16px] text-[rgba(243,235,216,0.75)]">
+            <nav className="flex flex-col gap-3 text-[16px] text-[#FDFBF7]/90 font-medium">
               <Link href="/" className="hover:text-[#CC7755] hover:underline transition-colors w-fit">
                 {dict.nav.home}
               </Link>
@@ -67,22 +83,22 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Col 3: Opening Hours */}
+          {/* Col 3: Opening Hours & Hotline */}
           <div className="flex flex-col gap-3.5">
             <span className="text-[12px] font-bold text-[#9DC183] tracking-[0.12em] uppercase">
               {dict.contact.openingHoursTitle}
             </span>
-            <div className="flex flex-col gap-2.5 text-[15px] sm:text-[16px] text-[rgba(243,235,216,0.75)]">
-              <div className="flex items-center gap-2 font-semibold text-[#F3EBD8]">
+            <div className="flex flex-col gap-2.5 text-[15px] sm:text-[16px] text-[#FDFBF7]/90">
+              <div className="flex items-center gap-2 font-semibold text-[#FDFBF7]">
                 <Clock className="w-4 h-4 text-[#9DC183]" />
                 <span>{isEn ? "Service Hours" : "Thời gian phục vụ"}</span>
               </div>
-              <p className="text-[15px] text-[rgba(243,235,216,0.72)] leading-snug">
-                <strong className="text-[#F3EBD8] font-medium">{isEn ? "Mon - Thu:" : "Thứ 2 - Thứ 5:"}</strong><br />
+              <p className="text-[15px] text-[#FDFBF7]/90 leading-snug font-medium">
+                <strong className="text-[#FDFBF7] font-semibold">{isEn ? "Mon - Thu:" : "Thứ 2 - Thứ 5:"}</strong><br />
                 07:00 – 18:00
               </p>
-              <p className="text-[15px] text-[rgba(243,235,216,0.72)] leading-snug">
-                <strong className="text-[#9DC183] font-medium">{isEn ? "Fri - Sun:" : "Thứ 6 - Chủ Nhật:"}</strong><br />
+              <p className="text-[15px] text-[#FDFBF7]/90 leading-snug font-medium">
+                <strong className="text-[#9DC183] font-semibold">{isEn ? "Fri - Sun:" : "Thứ 6 - Chủ Nhật:"}</strong><br />
                 07:00 – 22:00
               </p>
             </div>
@@ -93,16 +109,16 @@ export default function Footer() {
             <span className="text-[12px] font-bold text-[#9DC183] tracking-[0.12em] uppercase">
               {dict.contact.addressTitle}
             </span>
-            <p className="text-[15px] text-[rgba(243,235,216,0.75)] leading-relaxed">
+            <p className="text-[15px] text-[#FDFBF7]/90 leading-relaxed font-medium">
               {dict.common.addressFull}
             </p>
 
             <div className="flex flex-col gap-1 text-[15px] sm:text-[16px]">
-              <a href="tel:0382851688" className="hover:text-[#CC7755] hover:underline transition-colors flex items-center gap-2 text-[#F3EBD8]">
+              <a href="tel:0382851688" className="hover:text-[#CC7755] hover:underline transition-colors flex items-center gap-2 text-[#FDFBF7] font-semibold">
                 <PhoneCall className="w-4 h-4 text-[#CC7755]" />
                 <span>038 285 1688 (Zalo)</span>
               </a>
-              <a href="tel:0774659000" className="hover:text-[#CC7755] hover:underline transition-colors flex items-center gap-2 text-[#F3EBD8]">
+              <a href="tel:0774659000" className="hover:text-[#CC7755] hover:underline transition-colors flex items-center gap-2 text-[#FDFBF7] font-semibold">
                 <PhoneCall className="w-4 h-4 text-[#CC7755]" />
                 <span>077 465 9000</span>
               </a>
@@ -110,7 +126,7 @@ export default function Footer() {
 
             <a 
               href="mailto:thuynhu8788@gmail.com" 
-              className="text-[15px] text-[rgba(243,235,216,0.75)] hover:text-[#CC7755] hover:underline flex items-center gap-2"
+              className="text-[15px] text-[#FDFBF7]/90 hover:text-[#CC7755] hover:underline flex items-center gap-2 font-medium"
             >
               <Mail className="w-4 h-4 text-[#9DC183]" />
               <span>thuynhu8788@gmail.com</span>
@@ -123,7 +139,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="YouTube"
-                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.10)] flex items-center justify-center text-red-400 hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
+                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.15)] flex items-center justify-center text-red-400 hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -134,7 +150,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="TikTok"
-                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.10)] flex items-center justify-center text-[#F3EBD8] hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
+                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.15)] flex items-center justify-center text-[#FDFBF7] hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
               >
                 <span className="font-bold text-xs">TT</span>
               </a>
@@ -143,7 +159,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Facebook"
-                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.10)] flex items-center justify-center text-[#F3EBD8] hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
+                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.15)] flex items-center justify-center text-[#FDFBF7] hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
               >
                 <Share2 className="w-4 h-4" />
               </a>
@@ -152,7 +168,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={dict.common.openGoogleMaps}
-                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.10)] flex items-center justify-center text-[#9DC183] hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
+                className="w-11 h-11 rounded-full bg-[#16261D] border border-[rgba(243,235,216,0.15)] flex items-center justify-center text-[#9DC183] hover:bg-[#CC7755] hover:text-white transition-all shadow-sm"
               >
                 <Navigation className="w-4 h-4" />
               </a>
@@ -161,27 +177,29 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="container-unified pt-6 border-t border-[rgba(243,235,216,0.10)] flex flex-col sm:flex-row items-center justify-between gap-4 text-[14px] text-[rgba(243,235,216,0.60)] relative z-10">
+      {/* Bottom Bar: Bản quyền, Lên đầu trang, Dòng thiết kế */}
+      <div className="container-unified pt-6 border-t border-[rgba(243,235,216,0.12)] flex flex-col sm:flex-row items-center justify-between gap-4 text-[14px] text-[#FDFBF7]/85 relative z-10 font-medium">
         <p className="text-left">{dict.common.allRightsReserved}</p>
 
-        <button
-          type="button"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="btn-press inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#16261D] hover:bg-[#1D3226] text-[#F3EBD8] hover:text-white transition-all text-[13px] font-semibold border border-[rgba(243,235,216,0.10)] shadow-sm"
-        >
-          <ArrowUp className="w-3.5 h-3.5 text-[#9DC183]" />
-          <span>{isEn ? "Back to top" : "Lên đầu trang"}</span>
-        </button>
+        {showScrollTop && (
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="btn-press inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#16261D] hover:bg-[#1D3226] text-[#FDFBF7] hover:text-white transition-all text-[13px] font-semibold border border-[rgba(243,235,216,0.15)] shadow-sm"
+          >
+            <ArrowUp className="w-3.5 h-3.5 text-[#9DC183]" />
+            <span>{isEn ? "Back to top" : "Lên đầu trang"}</span>
+          </button>
+        )}
 
-        <p className="text-right text-[#9DC183]/90 font-medium">
+        <p className="text-right text-[#9DC183] font-medium">
           {dict.common.curatedByNature}
         </p>
       </div>
 
-      {/* Giant Architectural Cropped Typography at Footer Bottom: Opacity .10-.14, bottom half clipped */}
+      {/* Giant Architectural Cropped Typography at Footer Bottom: Opacity .12, bottom half clipped */}
       <div className="w-full overflow-hidden select-none pointer-events-none mt-8 h-[8vw] min-h-[50px] max-h-[110px] relative flex justify-center items-start opacity-[0.12]">
-        <p className="font-serif text-center font-bold text-[12vw] leading-none tracking-[0.06em] whitespace-nowrap text-[#F3EBD8] -translate-y-[15%]">
+        <p className="font-serif text-center font-bold text-[12vw] leading-none tracking-[0.06em] whitespace-nowrap text-[#FDFBF7] -translate-y-[15%]">
           CẨM CÙ HOUSE
         </p>
       </div>

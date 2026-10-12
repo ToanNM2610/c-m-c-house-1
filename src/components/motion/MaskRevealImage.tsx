@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 
 interface MaskRevealImageProps {
   src: string;
   alt: string;
   className?: string;
   aspectRatio?: string;
-  curtainColor?: string;
   delay?: number;
   onClick?: () => void;
 }
@@ -18,49 +18,46 @@ export default function MaskRevealImage({
   alt,
   className = "",
   aspectRatio = "aspect-[16/10]",
-  curtainColor = "bg-[#3E2723] dark:bg-[#1E2B22]",
-  delay = 0.1,
+  delay = 0.05,
   onClick,
 }: MaskRevealImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div
       onClick={onClick}
-      className={`relative overflow-hidden group ${aspectRatio} ${className} ${
+      className={`relative overflow-hidden group bg-[var(--surface-2)] ${aspectRatio} ${className} ${
         onClick ? "cursor-pointer" : ""
       }`}
     >
-      {/* Màn che Mask Reveal: Kéo từ trái sang phải (transformOrigin: right) */}
-      <motion.div
-        initial={{ scaleX: 1 }}
-        whileInView={{ scaleX: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{
-          duration: 0.85,
-          ease: [0.77, 0, 0.175, 1] as const, // Cinematic curtain ease
-          delay,
-        }}
-        style={{ transformOrigin: "right" }}
-        className={`absolute inset-0 z-20 pointer-events-none ${curtainColor}`}
-      />
+      {/* 1. Skeleton Placeholder: Nền --surface-2 với hiệu ứng pulse nhẹ khi đang tải ảnh */}
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 z-0 bg-[var(--surface-2)] animate-pulse flex items-center justify-center">
+          <Sparkles className="w-5 h-5 text-[var(--accent-green)]/40 animate-spin" />
+        </div>
+      )}
 
-      {/* Ảnh bên trong với hiệu ứng scale nhẹ và lazy-load mờ sang nét */}
+      {/* 2. Ảnh với blur-up: Mờ dần sang rõ nét mượt mà, không giật màn đen */}
       <motion.img
-        src={src}
+        src={hasError ? "/images/og-home.jpg" : src}
         alt={alt}
         loading="lazy"
         onLoad={() => setIsLoaded(true)}
-        initial={{ scale: 1.15 }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true, margin: "-50px" }}
+        onError={() => {
+          setHasError(true);
+          setIsLoaded(true);
+        }}
+        initial={{ scale: 1.08, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true, margin: "-20px" }}
         transition={{
-          duration: 1.1,
-          ease: [0.215, 0.61, 0.355, 1] as const,
-          delay,
+          duration: 0.8,
+          ease: [0.2, 0.7, 0.2, 1] as const,
+          delay: Math.min(delay, 0.2),
         }}
         className={`w-full h-full object-cover transition-all duration-700 ease-out transform-gpu group-hover:scale-105 ${
-          isLoaded ? "blur-0 opacity-100" : "blur-md opacity-75"
+          isLoaded ? "blur-0 opacity-100" : "blur-sm opacity-60"
         }`}
       />
     </div>

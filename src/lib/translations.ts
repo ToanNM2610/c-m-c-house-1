@@ -269,7 +269,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
   },
   en: {
     common: {
-      brandName: "Cam Cu House",
+      brandName: "Cẩm Cù House",
       brandTagline: "A Rustic Sanctuary by the Rock Stream",
       brandSubtitle: "Coffee & Food, Gia Nghia",
       coordinates: "Coordinates 11.99° N, 107.69° E, Gia Nghia, Dak Nong",
@@ -284,7 +284,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       openingHoursGMT: "Opening Hours (GMT+7)",
       themeLabel: "Theme:",
       admin: "Admin Portal",
-      allRightsReserved: "© 2026 Cam Cu House coffee & Food. All rights reserved.",
+      allRightsReserved: "© 2026 Cẩm Cù House coffee & Food. All rights reserved.",
       curatedByNature: "Crafted following the natural flow of Gia Nghia, Dak Nong",
       addressFull: "Alley 437 Hung Vuong, Nghia Trung Ward, Gia Nghia City, Dak Nong Province",
       carParkingNote: "Wide paved access road; 4 to 16-seater cars can park and turn around directly in our courtyard.",
@@ -308,10 +308,10 @@ export const translations: Record<Locale, TranslationDictionary> = {
       slogan: "A Rustic Sanctuary by the Stream, Dak Nong",
     },
     home: {
-      introBadge: "🌿 ABOUT CAM CU HOUSE",
+      introBadge: "🌿 ABOUT CẨM CÙ HOUSE",
       introTitle: "Where time slows down by the whispering stream",
       introDesc:
-        "Nestled beside the cool rock stream of Gia Nghia highlands, Cam Cu House preserves pristine rustic tranquility. Ripe Robusta cherries hand-picked from fertile volcanic soils are artisanal firewood-roasted with a warm smoky aroma, harmonizing with the mountain breeze and the pure melody of flowing water.",
+        "Nestled beside the cool rock stream of Gia Nghia highlands, Cẩm Cù House preserves pristine rustic tranquility. Ripe Robusta cherries hand-picked from fertile volcanic soils are artisanal firewood-roasted with a warm smoky aroma, harmonizing with the mountain breeze and the pure melody of flowing water.",
       introMetric1Val: "800m+",
       introMetric1Label: "Highland Elevation",
       introMetric2Val: "100%",
@@ -321,7 +321,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       introCta: "Read Our Full Story →",
       introPhotoMainCaption: "Natural pebble stream flowing year-round",
       introPhotoSubCaption: "Wooden deck & Steaming salt coffee",
-      heroTitleLine1: "CAM CU HOUSE",
+      heroTitleLine1: "CẨM CÙ HOUSE",
       heroTitleLine2: "A Rustic Retreat by the Rock Stream",
       heroDescription:
         "Savor authentic firewood-roasted Robusta coffee while listening to the tranquil stream murmur through the lush valleys of the Đắk Nông highlands.",
@@ -334,7 +334,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       streamEcoSpace: "Murmuring Stream Eco Sanctuary",
       heroCardTitle: "Rustic Wooden Deck with Hillside View & Serene Stream",
       heroCardDesc: "An airy thatched wooden terrace overlooking the breezy Dak Nong valley in the morning mist.",
-      pillarsHeading: "Why Cam Cu House?",
+      pillarsHeading: "Why Cẩm Cù House?",
       pillarsSubheading: "Four authentic qualities creating our serene riverside retreat",
       pillar1Title: "Natural Cool Pebble Stream",
       pillar1Desc: "Year-round natural crystal-clear spring water originating from Gia Nghia mountains, refreshing at 20-22°C.",
@@ -398,7 +398,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
     },
     contact: {
       badge: "Eco Coffee & Food Sanctuary Beside Stream, Gia Nghia",
-      title: "From Gia Nghia, Cam Cu House Welcomes You",
+      title: "From Gia Nghia, Cẩm Cù House Welcomes You",
       subtitle:
         "A peaceful retreat hidden beside the crystal stream, easily accessible by car right to our courtyard. Open Google Maps or call our hotline for the warmest welcome!",
       coordinatesTitle: "Highland Coordinates",

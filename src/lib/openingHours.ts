@@ -17,6 +17,7 @@ export interface StoreRealtimeStatus {
   badgeText: string;
   shortBadge: string;
   closingTime: string;
+  todayHoursText: string;
   scheduleText: string;
   currentTimeVN: string;
   overrideMode: StoreOverrideMode;
@@ -92,6 +93,7 @@ export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatu
       badgeText: "🟢 Đang mở cửa đón khách • Mở cửa linh hoạt theo quản lý",
       shortBadge: "Đang mở cửa",
       closingTime: "22:00",
+      todayHoursText: "07:00 – 22:00",
       scheduleText,
       currentTimeVN,
       overrideMode: "force_open",
@@ -106,6 +108,7 @@ export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatu
       badgeText: "🔴 Quán tạm đóng cửa • Tạm nghỉ đột xuất hoặc chuẩn bị đón khách",
       shortBadge: "Tạm nghỉ",
       closingTime: closingTime,
+      todayHoursText: `07:00 – ${closingTime}`,
       scheduleText,
       currentTimeVN,
       overrideMode: "force_closed",
@@ -125,6 +128,7 @@ export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatu
         badgeText: `🟡 Sắp đến giờ đóng cửa (còn ${diffMinutes} phút) • Đóng lúc ${closingTime}`,
         shortBadge: `Sắp đóng (${diffMinutes}p)`,
         closingTime,
+        todayHoursText: `07:00 – ${closingTime}`,
         scheduleText,
         currentTimeVN,
         overrideMode: "auto",
@@ -139,6 +143,7 @@ export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatu
       badgeText: `🟢 Đang mở cửa đón khách • Đóng cửa lúc ${closingTime}`,
       shortBadge: "Đang mở cửa",
       closingTime,
+      todayHoursText: `07:00 – ${closingTime}`,
       scheduleText,
       currentTimeVN,
       overrideMode: "auto",
@@ -153,6 +158,7 @@ export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatu
     badgeText: "🔴 Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ngày mai",
     shortBadge: "Đã đóng cửa",
     closingTime,
+    todayHoursText: `07:00 – ${closingTime}`,
     scheduleText,
     currentTimeVN,
     overrideMode: "auto",

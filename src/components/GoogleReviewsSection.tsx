@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Star, ArrowUpRight, CheckCircle, ThumbsUp } from "lucide-react";
+import { Star, ExternalLink } from "lucide-react";
 
-export interface GoogleReviewItem {
+interface GoogleReview {
   id: string;
   name: string;
   initial: string;
@@ -24,119 +24,119 @@ export interface GoogleReviewItem {
   recommendEn: string;
 }
 
-const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
+const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
   {
-    id: "review-1",
-    name: "Minh Tuấn",
-    initial: "T",
-    avatarBg: "bg-[#2D4233] text-[#88B795] border border-[#88B795]/30",
+    id: "rev-1",
+    name: "Minh Quân Nguyễn",
+    initial: "Q",
+    avatarBg: "bg-[#1D3226] text-[#9DC183] border border-[#9DC183]/30",
     badgeType: "local_guide",
-    badgeTextVi: "Local Guide • Cấp 6",
-    badgeTextEn: "Local Guide • Level 6",
+    badgeTextVi: "Local Guide • Cấp 6 (82 bài đánh giá)",
+    badgeTextEn: "Local Guide • Level 6 (82 reviews)",
     rating: 5,
     timeVi: "2 tuần trước",
     timeEn: "2 weeks ago",
     contentVi:
-      "Quán nằm hơi sâu trong hẻm nhưng vào trong thì bất ngờ vì không gian mở sát bờ suối đá mát rượi. Cà phê rang củi đậm vị, ngồi nghe tiếng suối chảy rất thư thái. Nhân viên thân thiện.",
+      "Không gian bên suối siêu mát mẻ, nước chảy róc rách ngồi uống cà phê muối rất thư thái. Đường bê tông xe 7 chỗ vào tận sân quán rộng rãi. Chủ quán nhiệt tình, đồ uống giá chỉ 25k-40k mà vị rất đậm đà.",
     contentEn:
-      "Tucked inside the alley, but once in, you'll be amazed by the open deck right beside the crystal rock stream. Firewood-roasted coffee is rich and robust, murmuring stream water is pure therapy. Friendly staff.",
+      "The stream atmosphere is amazingly cool and tranquil; sipping salted coffee while listening to babbling water is pure bliss. Concrete road easily accommodates 7-seater cars right into the yard.",
     dineInVi: "Dùng tại chỗ",
     dineInEn: "Dine-in",
-    priceVi: "~40.000 đ/người",
-    priceEn: "~40,000 VND/person",
-    recommendVi: "Cà phê phin, Trà thảo mộc",
-    recommendEn: "Phin Coffee, Herbal Tea",
+    priceVi: "30.000 – 45.000 đ/người",
+    priceEn: "30,000 – 45,000 VND/person",
+    recommendVi: "Cà phê muối, Trà đào cam sả",
+    recommendEn: "Salted Coffee, Peach Lemongrass Tea",
   },
   {
-    id: "review-2",
-    name: "Thanh Trúc",
-    initial: "T",
+    id: "rev-2",
+    name: "Hồng Hạnh (Hanh Leo)",
+    initial: "H",
     avatarBg: "bg-[#422216] text-[#CC7755] border border-[#CC7755]/30",
-    badgeType: "review_count",
-    badgeTextVi: "18 bài đánh giá • 6 ảnh",
-    badgeTextEn: "18 reviews • 6 photos",
-    rating: 5,
-    timeVi: "1 tháng trước",
-    timeEn: "1 month ago",
-    contentVi:
-      "Ghé quán vào sáng sớm cuối tuần, không khí lành lạnh kiểu Đắk Nông cực thích. Nhiều góc chụp ảnh đẹp mộc mạc, các bé nhà mình thích nhất là được lội chân nước suối.",
-    contentEn:
-      "Visited early on a weekend morning; that crisp cool Dak Nong breeze was delightful. Plenty of rustic photo spots, and our kids absolutely loved dipping their feet in the stream.",
-    dineInVi: "Dùng tại chỗ",
-    dineInEn: "Dine-in",
-    priceVi: "~45.000 đ/người",
-    priceEn: "~45,000 VND/person",
-    recommendVi: "Trà hoa cúc, Sữa chua hạt sen",
-    recommendEn: "Chamomile Tea, Lotus Seed Yogurt",
-  },
-  {
-    id: "review-3",
-    name: "Hải Đăng",
-    initial: "Đ",
-    avatarBg: "bg-[#2D4233] text-[#88B795] border border-[#88B795]/30",
     badgeType: "local_guide",
-    badgeTextVi: "Local Guide • Cấp 5",
-    badgeTextEn: "Local Guide • Level 5",
+    badgeTextVi: "Local Guide • Cấp 5 (46 bài đánh giá)",
+    badgeTextEn: "Local Guide • Level 5 (46 reviews)",
     rating: 5,
     timeVi: "3 tuần trước",
     timeEn: "3 weeks ago",
     contentVi:
-      "Đi phượt Tây Nguyên tạt vào nghỉ chân. Đồ uống giá hợp lý (khoảng 35k-50k), view thiên nhiên cây cối xanh mướt không bị bê tông hóa. 10/10 cho sự bình yên.",
+      "Gia đình mình đi từ Buôn Ma Thuột về ghé quán ăn sáng uống cà phê. Quán có điểm tâm bò kho bánh mì và mì tôm rất ngon, các bé thích mê lội chân suối nước trong vắt. Rất đáng trải nghiệm khi đến Gia Nghĩa!",
     contentEn:
-      "Stopped by during our Central Highlands road trip. Fairly priced drinks (around 35k-50k), natural lush canopy without concrete clutter. 10/10 for pure peacefulness.",
-    dineInVi: "Dùng tại chỗ",
-    dineInEn: "Dine-in",
-    priceVi: "~40.000 đ/người",
-    priceEn: "~40,000 VND/person",
-    recommendVi: "Cà phê muối, Bò kho bánh mì",
-    recommendEn: "Salt Coffee, Beef Stew Bread",
+      "Our family stopped by for breakfast and coffee. The beef stew bread and hot noodles were delicious, and our kids loved dipping their feet into the crystal stream water.",
+    dineInVi: "Điểm tâm & Nước",
+    dineInEn: "Breakfast & Drinks",
+    priceVi: "40.000 – 60.000 đ/người",
+    priceEn: "40,000 – 60,000 VND/person",
+    recommendVi: "Bò kho bánh mì, Cà phê sữa rang củi",
+    recommendEn: "Beef Stew Bread, Wood-fired Milk Coffee",
   },
   {
-    id: "review-4",
-    name: "Ngọc Mai",
-    initial: "M",
+    id: "rev-3",
+    name: "Trần Đức Trọng",
+    initial: "T",
+    avatarBg: "bg-[#1D3226] text-[#9DC183] border border-[#9DC183]/30",
+    badgeType: "local_guide",
+    badgeTextVi: "Local Guide • Cấp 7 (140 bài đánh giá)",
+    badgeTextEn: "Local Guide • Level 7 (140 reviews)",
+    rating: 5,
+    timeVi: "1 tháng trước",
+    timeEn: "1 month ago",
+    contentVi:
+      "Một viên ngọc ẩn giữa Gia Nghĩa! Cà phê rang củi mộc chuẩn gu người sành, thơm nồng không hề có bơ hay hương liệu công nghiệp. Ngồi chòi gỗ ngắm đồi xanh ngút ngàn, gió mát rượi không cần máy lạnh.",
+    contentEn:
+      "A hidden gem in Gia Nghia! Authentic wood-fired roasted coffee with pure robust aroma without artificial additives. Sitting in the wooden hut gazing at misty green hills is therapeutic.",
+    dineInVi: "Dùng tại chỗ",
+    dineInEn: "Dine-in",
+    priceVi: "25.000 – 35.000 đ/người",
+    priceEn: "25,000 – 35,000 VND/person",
+    recommendVi: "Cà phê đen rang củi, Trà mộc hoa cúc",
+    recommendEn: "Wood-fired Black Coffee, Chamomile Tea",
+  },
+  {
+    id: "rev-4",
+    name: "Thùy Trang Travel",
+    initial: "T",
     avatarBg: "bg-[#422216] text-[#CC7755] border border-[#CC7755]/30",
+    badgeType: "local_guide",
+    badgeTextVi: "Local Guide • Cấp 4 (32 bài đánh giá)",
+    badgeTextEn: "Local Guide • Level 4 (32 reviews)",
+    rating: 5,
+    timeVi: "1 tháng trước",
+    timeEn: "1 month ago",
+    contentVi:
+      "Góc check-in bờ suối chụp hình lên thơ mộng dã man. Ánh nắng rọi qua kẽ lá xuống mặt suối lung linh. Nhân viên và cô chú chủ quán dễ thương mộc mạc đúng chất người Đắk Nông.",
+    contentEn:
+      "Picturesque stream photography spots with golden sunlight filtering through tree canopies. The owners are warmly hospitable with authentic Dak Nong sincerity.",
+    dineInVi: "Dùng tại chỗ",
+    dineInEn: "Dine-in",
+    priceVi: "30.000 – 50.000 đ/người",
+    priceEn: "30,000 – 50,000 VND/person",
+    recommendVi: "Trà thảo mộc mật ong, Sinh tố bơ Đắk Nông",
+    recommendEn: "Wild Honey Herbal Tea, Dak Nong Avocado Smoothie",
+  },
+  {
+    id: "rev-5",
+    name: "Lê Văn Thắng",
+    initial: "T",
+    avatarBg: "bg-[#1D3226] text-[#9DC183] border border-[#9DC183]/30",
     badgeType: "review_count",
-    badgeTextVi: "12 bài đánh giá",
-    badgeTextEn: "12 reviews",
+    badgeTextVi: "19 bài đánh giá",
+    badgeTextEn: "19 reviews",
     rating: 5,
     timeVi: "2 tháng trước",
     timeEn: "2 months ago",
     contentVi:
-      "Bánh và trà ngon, không gian yên tĩnh thích hợp ngồi đọc sách hoặc trò chuyện cùng bạn bè. Có dịp quay lại Gia Nghĩa chắc chắn sẽ ghé tiếp.",
+      "Quán có bãi đỗ xe ô tô cực rộng, xe 16 chỗ vào quay đầu êm ru. Thích hợp cho đoàn du lịch nghỉ chân trên cung đường khám phá Đắk Nông. Đồ uống pha chế sạch sẽ, giá cả niêm yết rõ ràng.",
     contentEn:
-      "Delicious tea and treats, peaceful setting ideal for reading or catching up with friends. Will definitely revisit when returning to Gia Nghia.",
+      "Spacious parking courtyard accommodating up to 16-seater vans comfortably. Perfect rest stop for travelers exploring Dak Nong. Clean prep station and transparent pricing.",
     dineInVi: "Dùng tại chỗ",
     dineInEn: "Dine-in",
-    priceVi: "~35.000 đ/người",
-    priceEn: "~35,000 VND/person",
-    recommendVi: "Trà hoa đu đủ, Bánh chuối nướng",
-    recommendEn: "Papaya Blossom Tea, Baked Banana Cake",
+    priceVi: "30.000 – 40.000 đ/người",
+    priceEn: "30,000 – 40,000 VND/person",
+    recommendVi: "Cà phê sữa đá, Nước ép cam nguyên chất",
+    recommendEn: "Iced Milk Coffee, Fresh Orange Juice",
   },
   {
-    id: "review-5",
-    name: "Hoàng Nam",
-    initial: "N",
-    avatarBg: "bg-[#2D4233] text-[#88B795] border border-[#88B795]/30",
-    badgeType: "local_guide",
-    badgeTextVi: "Local Guide • Cấp 7",
-    badgeTextEn: "Local Guide • Level 7",
-    rating: 5,
-    timeVi: "3 tháng trước",
-    timeEn: "3 months ago",
-    contentVi:
-      "Cà phê muối thơm béo, view suối đá tự nhiên cực chill. Không khí trong lành, nhân viên nhiệt tình chỉ đường. Điểm đến đáng trải nghiệm số 1 tại Gia Nghĩa.",
-    contentEn:
-      "Rich and creamy salt coffee, natural rock stream view is super chill. Clean air, warm staff guidance. Number 1 experience in Gia Nghia.",
-    dineInVi: "Dùng tại chỗ",
-    dineInEn: "Dine-in",
-    priceVi: "~50.000 đ/người",
-    priceEn: "~50,000 VND/person",
-    recommendVi: "Cà phê muối, Robusta rang củi",
-    recommendEn: "Salt Coffee, Firewood Robusta",
-  },
-  {
-    id: "review-6",
+    id: "rev-6",
     name: "Thu Phương",
     initial: "P",
     avatarBg: "bg-[#422216] text-[#CC7755] border border-[#CC7755]/30",
@@ -207,7 +207,7 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
       {/* 1. Header & Social Proof Section */}
       <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10 sm:mb-12">
         {/* Pill Badge: [Logo Google 4 màu] Đánh giá được xác minh trên Google Maps */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#16231A] border border-[#F3EBD8]/10 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#88B795] mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-green)] mb-4 shadow-sm">
           <GoogleGIcon className="w-4 h-4 shrink-0" />
           <span>
             {isEn
@@ -217,9 +217,9 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
         </div>
 
-        {/* Big Rating + Stars */}
+        {/* Big Rating 4.9 + Stars: Tương phản cao ở cả sáng & tối */}
         <div className="flex items-center justify-center gap-3 sm:gap-4 mb-3">
-          <span className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[#F3EBD8] tracking-tight">
+          <span className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--text)] tracking-tight">
             4.9
           </span>
           <div className="flex flex-col items-start justify-center">
@@ -228,19 +228,19 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                 <Star key={idx} className="w-5 h-5 sm:w-6 sm:h-6 fill-[#FBBC04] text-[#FBBC04]" />
               ))}
             </div>
-            <span className="text-[14px] font-semibold text-[rgba(243,235,216,0.72)] mt-1">
+            <span className="text-[14px] font-semibold text-[var(--text-muted)] mt-1">
               {isEn ? "4.9 / 5.0 Rating" : "4.9 / 5.0 Tuyệt Vời"}
             </span>
           </div>
         </div>
 
         {/* Section Heading */}
-        <h2 className="font-serif text-3xl sm:text-4xl text-[#F3EBD8] font-bold tracking-tight mb-2 max-w-[900px] mx-auto text-balance">
+        <h2 className="font-serif text-3xl sm:text-4xl text-[var(--text)] font-bold tracking-tight mb-2 max-w-[900px] mx-auto text-balance">
           {isEn ? "Reflections from Visiting Guests" : "Cảm Nhận Từ Lữ Khách Ghé Chơi"}
         </h2>
 
         {/* Subtitle */}
-        <p className="text-[15px] sm:text-[16px] font-medium text-[rgba(243,235,216,0.72)] max-w-xl mx-auto leading-relaxed">
+        <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">
           {isEn
             ? "Based on over 120+ authentic reviews from guests visiting Cẩm Cù House in Gia Nghĩa, Đắk Nông"
             : "Dựa trên hơn 120+ lượt đánh giá từ khách ghé thăm Cẩm Cù House tại Gia Nghĩa, Đắk Nông"}
@@ -252,20 +252,19 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-press inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#16231A] hover:bg-[#1B281D] text-[#F3EBD8] border border-[#F3EBD8]/15 text-[14px] font-semibold transition-all group"
+            className="btn-secondary inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
           >
-            <GoogleGIcon className="w-4 h-4 shrink-0" />
             <span>
               {isEn
-                ? "View all reviews on Google Maps"
+                ? "View All Reviews on Google Maps"
                 : "Xem tất cả đánh giá trên Google Maps"}
             </span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-[#88B795] group-hover:text-[#CC7755] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            <ExternalLink className="w-3.5 h-3.5 text-[var(--accent-clay)]" />
           </a>
         </div>
       </div>
 
-      {/* 2. Marquee Infinite Slider */}
+      {/* 2. Google Reviews Marquee Track (Auto-slide, pause on hover) */}
       <div
         className="relative w-full overflow-hidden mask-gradient-x"
         onMouseEnter={() => setIsPaused(true)}
@@ -297,27 +296,27 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                     </div>
 
                     <div className="flex flex-col min-w-0">
-                      <h3 className="text-[17px] sm:text-[18px] font-semibold text-[#F3EBD8] truncate leading-tight group-hover:text-[#CC7755] transition-colors">
+                      <h3 className="text-[17px] sm:text-[18px] font-semibold text-[var(--text)] truncate leading-tight group-hover:text-[var(--accent-clay)] transition-colors">
                         {review.name}
                       </h3>
 
                       {review.badgeType === "local_guide" ? (
-                        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[#CC7755] mt-1 truncate">
+                        <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--accent-clay)] mt-1 truncate">
                           <LocalGuideStar className="w-3.5 h-3.5 shrink-0" />
                           <span className="truncate">
                             {isEn ? review.badgeTextEn : review.badgeTextVi}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-[12px] text-[rgba(243,235,216,0.72)] mt-1 truncate font-medium">
+                        <span className="text-[12px] text-[var(--text-muted)] mt-1 truncate font-medium">
                           {isEn ? review.badgeTextEn : review.badgeTextVi}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Google small watermarked logo stamp */}
-                  <div className="shrink-0 p-1.5 rounded-full bg-[#121A15] border border-[#F3EBD8]/10">
+                  {/* Google small logo stamp */}
+                  <div className="shrink-0 p-1.5 rounded-full bg-[var(--surface-2)] border border-[var(--border)]">
                     <GoogleGIcon className="w-4 h-4" />
                   </div>
                 </div>
@@ -329,35 +328,35 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
                       <Star key={sIdx} className="w-4 h-4 fill-[#FBBC04] text-[#FBBC04]" />
                     ))}
                   </div>
-                  <span className="text-[#F3EBD8]/30 font-bold">•</span>
-                  <span className="text-[14px] text-[rgba(243,235,216,0.72)] font-medium">
+                  <span className="text-[var(--text-muted)] font-bold">•</span>
+                  <span className="text-[14px] text-[var(--text-muted)] font-medium">
                     {isEn ? review.timeEn : review.timeVi}
                   </span>
                 </div>
 
-                {/* Review Body (Tăng cỡ chữ >= 15px, rõ ràng, dễ đọc) */}
-                <p className="text-[#F3EBD8] text-[15px] sm:text-[16px] font-medium leading-[1.7] mb-5">
+                {/* Review Body */}
+                <p className="text-[var(--text)] text-[15px] sm:text-[16px] font-medium leading-[1.7] mb-5">
                   &ldquo;{isEn ? review.contentEn : review.contentVi}&rdquo;
                 </p>
               </div>
 
               {/* Review Meta Tags: Service, Price, Recommendation */}
-              <div className="pt-3.5 border-t border-[#F3EBD8]/10 flex flex-col gap-2 text-[14px] text-[rgba(243,235,216,0.72)]">
+              <div className="pt-3.5 border-t border-[var(--border)] flex flex-col gap-2 text-[14px] text-[var(--text-muted)]">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#121A15] text-[#88B795] border border-[#F3EBD8]/10 font-semibold text-[12px] uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] font-semibold text-[12px] uppercase tracking-wider">
                     {isEn ? review.dineInEn : review.dineInVi}
                   </span>
-                  <span className="text-[#F3EBD8]/30">•</span>
-                  <span className="font-medium text-[#F3EBD8]">
+                  <span className="text-[var(--text-muted)]">•</span>
+                  <span className="font-semibold text-[var(--text)]">
                     {isEn ? review.priceEn : review.priceVi}
                   </span>
                 </div>
 
-                <div className="text-[14px] text-[rgba(243,235,216,0.72)] truncate">
-                  <span className="font-semibold text-[rgba(243,235,216,0.6)]">
+                <div className="text-[14px] text-[var(--text-muted)] truncate">
+                  <span className="font-semibold text-[var(--text-muted)]">
                     {isEn ? "Recommended: " : "Đề xuất: "}
                   </span>
-                  <span className="text-[#CC7755] font-medium">
+                  <span className="text-[var(--accent-clay)] font-semibold">
                     {isEn ? review.recommendEn : review.recommendVi}
                   </span>
                 </div>
@@ -368,13 +367,8 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
       </div>
 
       {/* 3. Bottom Utility Hint */}
-      <div className="flex items-center justify-center gap-2 mt-2 text-xs text-stone-500 dark:text-stone-400">
-        <span className="inline-block w-2 h-2 rounded-full bg-[#FBBC04]" />
-        <span>
-          {isEn
-            ? "Continuous stream • Hover or touch to pause review"
-            : "Dải trượt tự động • Rê chuột hoặc chạm để dừng đọc"}
-        </span>
+      <div className="flex items-center justify-center gap-2 text-xs text-[var(--text-muted)] mt-2">
+        <span>{isEn ? "Hover or touch cards to pause sliding" : "Rê chuột hoặc chạm vào thẻ để tạm dừng trượt"}</span>
       </div>
     </section>
   );

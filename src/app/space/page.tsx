@@ -209,14 +209,14 @@ export default function SpacePage() {
   };
 
   return (
-    <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] transition-colors duration-300">
+    <div className="bg-[var(--bg)] min-h-screen text-[var(--text)] transition-colors duration-300">
       <main className="pt-24 sm:pt-28">
         {/* Top Narrative Intro */}
         <section className="relative w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 sm:pt-10 pb-8">
           <div className="animate-fade-up-1 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
             <div className="max-w-[900px]">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 dark:bg-[#1E2B22] text-[#3E5C46] dark:text-[#88B795] text-xs tracking-wider uppercase mb-3 shadow-sm border border-stone-200/70 dark:border-stone-700/60">
-                <Droplets className="w-3.5 h-3.5 text-[#396663] dark:text-[#88B795]" />
+              <div className="badge-unified mb-3">
+                <Droplets className="w-3.5 h-3.5 text-[var(--accent-green)]" />
                 <span>{dict.space.badge}, Gia Nghĩa</span>
               </div>
               <StaggerText
@@ -227,37 +227,37 @@ export default function SpacePage() {
                     : ["Không Gian Sinh Thái, Bên Bờ Suối Đá"]
                 }
                 stagger={0.1}
-                className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#3E5C46] dark:text-[#F3EBD8] font-bold tracking-tight leading-tight max-w-[900px] text-balance"
+                className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[var(--text)] font-bold tracking-tight leading-tight max-w-[900px] text-balance"
               />
               <div className="mt-3 max-w-2xl">
                 <StaggerParagraph
                   text={
                     isEn
-                      ? "Every corner at Cam Cu House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
+                      ? "Every corner at Cẩm Cù House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
                       : "Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông."
                   }
-                  className="text-base sm:text-lg text-stone-700 dark:text-stone-300 leading-relaxed font-medium"
+                  className="text-base sm:text-lg text-[var(--text-muted)] leading-relaxed font-medium"
                   delay={0.15}
                 />
               </div>
             </div>
 
             {/* Quick Atmosphere Metrics */}
-            <div className="flex items-center gap-4 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/70 dark:border-stone-700/60 px-5 py-3 rounded-2xl shadow-sm self-start lg:self-end">
+            <div className="flex items-center gap-4 bg-[var(--surface)] backdrop-blur-sm border border-[var(--border)] px-5 py-3 rounded-2xl shadow-sm self-start lg:self-end">
               <div className="flex flex-col">
-                <span className="text-[11px] text-stone-500 dark:text-stone-400 uppercase tracking-wider font-semibold">
+                <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">
                   {isEn ? "Valley Temp" : "Nhiệt Độ Thung Lũng"}
                 </span>
-                <span className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#88B795]">
+                <span className="font-serif text-xl font-bold text-[var(--text)]">
                   22°C - 26°C
                 </span>
               </div>
-              <div className="w-px h-8 bg-stone-200 dark:bg-stone-700" />
+              <div className="w-px h-8 bg-[var(--border)]" />
               <div className="flex flex-col">
-                <span className="text-[11px] text-stone-500 dark:text-stone-400 uppercase tracking-wider font-semibold">
+                <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">
                   {isEn ? "Natural Stream" : "Bờ Suối Tự Nhiên"}
                 </span>
-                <span className="font-serif text-xl font-bold text-[#396663] dark:text-[#E8A87C]">
+                <span className="font-serif text-xl font-bold text-[var(--accent-clay)]">
                   {isEn ? "Basalt Pebbles" : "Đá Bazan Cổ"}
                 </span>
               </div>
@@ -265,7 +265,7 @@ export default function SpacePage() {
           </div>
 
           {/* Filter Tabs - Sticky top-16 sm:top-20 */}
-          <div className="sticky top-16 sm:top-20 z-30 w-full bg-[#0F1A14]/95 backdrop-blur-md py-3 border-y border-[var(--border)] shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
+          <div className="sticky top-16 sm:top-20 z-30 w-full bg-[var(--bg)]/95 backdrop-blur-md py-3 border-y border-[var(--border)] shadow-sm">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth w-full sm:w-auto py-1">
                 {SPACE_CATEGORIES.map((cat) => {
@@ -342,10 +342,10 @@ export default function SpacePage() {
                     <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--accent-green)] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-1">
                       {item.subtitle}
                     </span>
-                    <h3 className="font-serif text-base font-bold text-[#F3EBD8] line-clamp-2 group-hover:text-[var(--accent-clay)] transition-colors transform group-hover:-translate-y-0.5 duration-300 leading-snug">
+                    <h3 className="font-serif text-[15px] sm:text-[16px] font-bold text-white line-clamp-2 group-hover:text-[var(--accent-clay)] transition-colors transform group-hover:-translate-y-0.5 duration-300 leading-snug drop-shadow-sm">
                       {item.title}
                     </h3>
-                    <p className="text-[13px] text-[rgba(243,235,216,0.80)] line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5 font-medium">
+                    <p className="text-[13px] text-white/90 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5 font-medium drop-shadow-sm">
                       {item.description}
                     </p>
                   </div>
@@ -415,7 +415,7 @@ export default function SpacePage() {
               <div className="relative z-10 max-w-4xl">
                 <div className="badge-unified inline-flex items-center gap-2 mb-4">
                   <Trees className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                  <span>{isEn ? "Eco Commitment from Cam Cu House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
+                  <span>{isEn ? "Eco Commitment from Cẩm Cù House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
                 </div>
                 <h3 className="font-serif text-[clamp(24px,3.2vw,32px)] text-[var(--text)] font-bold tracking-tight mb-4 leading-tight">
                   {isEn
@@ -424,7 +424,7 @@ export default function SpacePage() {
                 </h3>
                 <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed max-w-[65ch]">
                   {isEn
-                    ? "We treasure every pebble and blade of grass along our stream bank. Cam Cu House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
+                    ? "We treasure every pebble and blade of grass along our stream bank. Cẩm Cù House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
                     : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
                 </p>
 
