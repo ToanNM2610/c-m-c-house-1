@@ -7,7 +7,7 @@ import { TransitionProvider } from "@/context/TransitionContext";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import MobileBottomBar from "@/components/MobileBottomBar";
 import Navbar from "@/components/Navbar";
-import IntroSplashScreen from "@/components/IntroSplashScreen";
+import CamcuIntro from "@/components/CamcuIntro";
 import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
@@ -70,7 +70,7 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
-                  var seenIntro = sessionStorage.getItem('cc_intro_v2') === '1';
+                  var seenIntro = sessionStorage.getItem('cc_intro') === '1';
                   var params = new URLSearchParams(location.search);
                   var hasForce = params.has('intro') || params.has('replay');
                   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -84,7 +84,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning className="bg-[#F9F8F3] text-[#2D4233] dark:bg-[#121A15] dark:text-[#F5F4EE] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[#4A6B53] selection:text-white transition-colors duration-200">
-        <IntroSplashScreen />
+        <CamcuIntro />
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>

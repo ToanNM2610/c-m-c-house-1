@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../components/intro.css";
+@import "../components/camcu-intro.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

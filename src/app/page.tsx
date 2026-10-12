@@ -157,6 +157,21 @@ export default function HomePage() {
   // Soft Parallax offset: di chuyển chậm hơn chữ phía trước 1 nhịp nhẹ (tối đa translateY 12-14px)
   const heroParallaxOffset = Math.min(Math.round(scrollY * 0.04), 14);
 
+  const [introDone, setIntroDone] = useState(false);
+
+  useEffect(() => {
+    const handleIntroDone = () => setIntroDone(true);
+    document.addEventListener("camcu:intro-done", handleIntroDone);
+    if (
+      typeof window !== "undefined" &&
+      (sessionStorage.getItem("cc_intro") === "1" ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    ) {
+      setIntroDone(true);
+    }
+    return () => document.removeEventListener("camcu:intro-done", handleIntroDone);
+  }, []);
+
   useEffect(() => {
     // 1. Immediately hydrate from Shared Storage & Cookie (survives F5)
     const storedSettings = getStoredData<typeof settings | null>(CAMCU_SETTINGS_KEY, null);
