@@ -1,9 +1,11 @@
-/* ===== CẨM CÙ HOUSE - INTRO PREMIUM STYLES ===== */
+/* ===== CẨM CÙ HOUSE - INTRO PREMIUM CINEMATIC STYLES ===== */
 :root {
-  --intro-bg: #0d1912;
-  --intro-bg2: #17301f;
-  --intro-cream: #f3ebd8;
-  --intro-sage: #9dc183;
+  --intro-bg: #070e0a;
+  --intro-bg2: #142e1f;
+  --intro-bg3: #1f422d;
+  --intro-cream: #fbf7ee;
+  --intro-gold: #f5e8d2;
+  --intro-sage: #a8d5ba;
   --intro-moss: #4a5d23;
   --intro-clay: #cc7755;
   --intro-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
@@ -23,7 +25,10 @@ html.intro-lock body {
   overflow: hidden;
   color: var(--intro-cream);
   touch-action: none;
-  background: radial-gradient(120% 90% at 50% 40%, var(--intro-bg2), var(--intro-bg) 70%);
+  background: 
+    radial-gradient(ellipse 95% 70% at 50% 38%, rgba(26, 58, 39, 0.95) 0%, rgba(13, 28, 19, 0.98) 55%, var(--intro-bg) 100%),
+    radial-gradient(circle at 50% 45%, rgba(204, 119, 85, 0.18), transparent 50%),
+    var(--intro-bg);
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   user-select: none;
@@ -36,6 +41,8 @@ html.intro-lock body {
 
 #fx,
 #camcu-intro-splash .glow,
+#camcu-intro-splash .cinematic-rays,
+#camcu-intro-splash .flare-horizontal,
 #camcu-intro-splash .grain,
 #camcu-intro-splash .vig {
   inset: 0;
@@ -44,19 +51,52 @@ html.intro-lock body {
   pointer-events: none;
 }
 
+/* Tia sáng quang học chiếu từ cao nguyên */
+#camcu-intro-splash .cinematic-rays {
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(168, 213, 186, 0.18) 0%, rgba(168, 213, 186, 0.04) 45%, transparent 75%);
+}
+
 #camcu-intro-splash .glow {
-  background: radial-gradient(circle at 50% 46%, rgba(204, 119, 85, 0.24), transparent 52%);
+  background: radial-gradient(circle at 50% 46%, rgba(204, 119, 85, 0.32), rgba(74, 93, 35, 0.15) 35%, transparent 58%);
+  filter: blur(20px);
 }
 
 #camcu-intro-splash .vig {
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55));
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(4, 9, 6, 0.72) 80%, rgba(0, 0, 0, 0.9) 100%);
+}
+
+/* Tia lóe ngang anamorphic kiểu phim điện ảnh khi giọt nước chạm đáy */
+#camcu-intro-splash .flare-horizontal {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(204, 119, 85, 0.2) 20%, rgba(255, 255, 255, 0.95) 50%, rgba(168, 213, 186, 0.4) 80%, transparent 100%);
+  box-shadow: 0 0 24px 6px rgba(255, 255, 255, 0.7), 0 0 50px 14px rgba(204, 119, 85, 0.4);
+  transform: scaleX(0);
+  opacity: 0;
 }
 
 #camcu-intro-splash .grain {
-  opacity: 0.08;
+  opacity: 0.1;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* Dải Letterbox điện ảnh tinh tế trên và dưới */
+#camcu-intro-splash .letterbox-top,
+#camcu-intro-splash .letterbox-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(12px, 2.5vh, 28px);
+  background: #000;
+  z-index: 2;
+  opacity: 0.65;
+  pointer-events: none;
+}
+#camcu-intro-splash .letterbox-top { top: 0; }
+#camcu-intro-splash .letterbox-bottom { bottom: 0; }
 
 #camcu-intro-splash .stage {
   inset: 0;
@@ -64,40 +104,41 @@ html.intro-lock body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
   padding: 0 6vw;
   pointer-events: none;
   text-align: center;
+  z-index: 3;
 }
 
 #camcu-intro-splash .mark {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
 }
 
 #camcu-intro-splash .stream {
   position: absolute;
   left: 50%;
   bottom: 100%;
-  width: 2px;
+  width: 2.5px;
   height: var(--L, 30vh);
-  margin-left: -1px;
+  margin-left: -1.25px;
   transform-origin: top;
-  background: linear-gradient(to bottom, transparent, rgba(157, 193, 131, 0.95));
-  box-shadow: 0 0 12px rgba(157, 193, 131, 0.5);
+  background: linear-gradient(to bottom, transparent, rgba(168, 213, 186, 0.8) 35%, #ffffff 90%, #dff0c8 100%);
+  box-shadow: 0 0 14px 2px rgba(168, 213, 186, 0.75), 0 0 28px 4px rgba(74, 93, 35, 0.4);
 }
 
 #camcu-intro-splash .drop {
   position: absolute;
   left: 50%;
   top: -8px;
-  width: 9px;
-  height: 9px;
-  margin-left: -4.5px;
+  width: 11px;
+  height: 11px;
+  margin-left: -5.5px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  background: #dff0c8;
-  box-shadow: 0 0 14px 3px rgba(157, 193, 131, 0.7);
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #dff0c8 60%, #9dc183 100%);
+  box-shadow: 0 0 18px 4px rgba(223, 240, 200, 0.9), 0 0 32px 6px rgba(157, 193, 131, 0.6);
 }
 
 #camcu-intro-splash .ring {
@@ -126,8 +167,12 @@ html.intro-lock body {
   white-space: nowrap;
   font-family: var(--intro-serif);
   font-weight: 700;
-  font-size: clamp(26px, 6.4vw, 62px);
+  font-size: clamp(28px, 6.8vw, 64px);
   line-height: 1.2;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5E8D2 65%, #DFBD9B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 28px rgba(204, 119, 85, 0.4));
 }
 
 #camcu-intro-splash .m {
@@ -150,12 +195,13 @@ html.intro-lock body {
   margin: 0;
   max-width: 88vw;
   font-family: var(--intro-sans);
-  font-weight: 500;
-  font-size: clamp(11px, 1.8vw, 15px);
+  font-weight: 600;
+  font-size: clamp(12px, 1.8vw, 16px);
   line-height: 1.7;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--intro-sage);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 #camcu-intro-splash .loc {
@@ -163,9 +209,12 @@ html.intro-lock body {
   font-family: var(--intro-sans);
   font-weight: 600;
   font-size: 11px;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: rgba(243, 235, 216, 0.55);
+  color: rgba(243, 235, 216, 0.7);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #camcu-intro-splash .meter {
@@ -178,6 +227,7 @@ html.intro-lock body {
   font-size: clamp(28px, 4vw, 44px);
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  z-index: 4;
 }
 
 #camcu-intro-splash .meter small {
@@ -187,6 +237,22 @@ html.intro-lock body {
   font-size: 12px;
   letter-spacing: 0.2em;
   color: var(--intro-sage);
+}
+
+#camcu-intro-splash .coords {
+  margin-left: 16px;
+  font-family: var(--intro-sans);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(243, 235, 216, 0.45);
+  text-transform: uppercase;
+  display: none;
+}
+@media (min-width: 640px) {
+  #camcu-intro-splash .coords {
+    display: inline-block;
+  }
 }
 
 #camcu-intro-splash .bar {

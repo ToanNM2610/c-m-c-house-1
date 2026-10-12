@@ -67,12 +67,21 @@ export default function IntroSplashScreen() {
       return;
     }
 
-    // ── FIREFLIES (đom đóm canvas) ──────────────────────────────────────────
+    // ── FIREFLIES (đom đóm & bụi sương điện ảnh đa tầng) ──────────────────────────
     function fireflies(cv: HTMLCanvasElement) {
       const c = cv.getContext('2d');
       if (!c) return { stop() {} };
       let w = 0, h = 0, d = 1;
-      type Fly = { x: number; y: number; r: number; v: number; a: number; s: number };
+      type Fly = {
+        x: number;
+        y: number;
+        r: number;
+        v: number;
+        a: number;
+        s: number;
+        type: 'bokeh' | 'fly' | 'mote';
+        color: string;
+      };
       let p: Fly[] = [];
       let frameId: number;
       let on = true;
@@ -81,14 +90,26 @@ export default function IntroSplashScreen() {
         d = Math.min(window.devicePixelRatio || 1, 2);
         w = cv.width = window.innerWidth * d;
         h = cv.height = window.innerHeight * d;
-        p = Array.from({ length: Math.min(48, Math.round(window.innerWidth / 26)) }, () => ({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: (0.7 + Math.random() * 1.6) * d,
-          v: (0.08 + Math.random() * 0.22) * d,
-          a: Math.random() * 6.28,
-          s: 0.4 + Math.random() * 1.2,
-        }));
+        const total = Math.min(64, Math.round(window.innerWidth / 20));
+        p = Array.from({ length: total }, (_, i) => {
+          const type: 'bokeh' | 'fly' | 'mote' = i % 8 === 0 ? 'bokeh' : i % 3 === 0 ? 'mote' : 'fly';
+          const isAmber = Math.random() > 0.45;
+          const color = isAmber ? '245,190,120' : '170,225,190'; // Hổ phách & Lục bảo Đắk Nông
+          return {
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: type === 'bokeh'
+              ? (3.5 + Math.random() * 4.5) * d
+              : type === 'mote'
+              ? (0.5 + Math.random() * 0.8) * d
+              : (1.2 + Math.random() * 1.8) * d,
+            v: (type === 'bokeh' ? 0.05 + Math.random() * 0.08 : 0.09 + Math.random() * 0.22) * d,
+            a: Math.random() * 6.28,
+            s: 0.35 + Math.random() * 1.1,
+            type,
+            color,
+          };
+        });
       };
 
       resize();
@@ -100,15 +121,22 @@ export default function IntroSplashScreen() {
         c.globalCompositeOperation = 'lighter';
         for (const q of p) {
           q.y -= q.v;
-          q.x += Math.sin((t / 1800) * q.s + q.a) * 0.25 * d;
-          if (q.y < -10) q.y = h + 10;
-          const k = 0.35 + 0.65 * Math.abs(Math.sin((t / 900) * q.s + q.a));
-          const g = c.createRadialGradient(q.x, q.y, 0, q.x, q.y, q.r * 7);
-          g.addColorStop(0, `rgba(226,240,170,${0.5 * k})`);
-          g.addColorStop(1, 'rgba(226,240,170,0)');
+          q.x += Math.sin((t / 2000) * q.s + q.a) * (q.type === 'bokeh' ? 0.4 : 0.25) * d;
+          if (q.y < -20) q.y = h + 20;
+
+          const pulse = q.type === 'bokeh'
+            ? 0.18 + 0.12 * Math.sin((t / 1400) * q.s + q.a)
+            : 0.25 + 0.75 * Math.abs(Math.sin((t / 850) * q.s + q.a));
+
+          const gradRadius = q.type === 'bokeh' ? q.r * 3.5 : q.r * 6.5;
+          const g = c.createRadialGradient(q.x, q.y, 0, q.x, q.y, gradRadius);
+          g.addColorStop(0, `rgba(${q.color},${pulse * (q.type === 'bokeh' ? 0.3 : 0.6)})`);
+          g.addColorStop(0.4, `rgba(${q.color},${pulse * (q.type === 'bokeh' ? 0.12 : 0.2)})`);
+          g.addColorStop(1, `rgba(${q.color},0)`);
+
           c.fillStyle = g;
           c.beginPath();
-          c.arc(q.x, q.y, q.r * 7, 0, 6.283);
+          c.arc(q.x, q.y, gradRadius, 0, 6.283);
           c.fill();
         }
         frameId = requestAnimationFrame(loop);
@@ -206,6 +234,7 @@ export default function IntroSplashScreen() {
       gsap.set('.cor',  { scale: 0, svgOrigin: '0 0' });
       gsap.set(rings,   { opacity: 0 });
       gsap.set('.glow', { opacity: 0 });
+      gsap.set('.flare-horizontal', { scaleX: 0, opacity: 0 });
       gsap.set('.meter', { opacity: 0 });
       gsap.set('.tag', { opacity: 0, y: 12 });
       gsap.set('.loc', { opacity: 0 });
@@ -243,7 +272,9 @@ export default function IntroSplashScreen() {
         .add('hit', 1.15)
         .set('.drop', { opacity: 0 }, 'hit')
         .to('.stream', { opacity: 0, duration: 0.4 }, 'hit')
-        .fromTo(rings, { scale: 0.2, opacity: 0.9 }, { scale: 8, opacity: 0, duration: 1.5, stagger: 0.2 }, 'hit')
+        .fromTo('.flare-horizontal', { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 0.95, duration: 0.25, ease: 'power2.out' }, 'hit')
+        .to('.flare-horizontal', { opacity: 0, scaleX: 1.25, duration: 0.45, ease: 'power2.in' }, 'hit+=0.25')
+        .fromTo(rings, { scale: 0.2, opacity: 0.95 }, { scale: 8, opacity: 0, duration: 1.6, stagger: 0.18 }, 'hit')
         .to('.glow', { opacity: 1, duration: 1.2 }, 'hit')
         .to(petals, { scale: 1, rotation: 0, duration: 1, ease: 'back.out(1.6)', stagger: 0.08 }, 'hit+=.05')
         .to('.cor', { scale: 1, duration: 0.7, ease: 'back.out(2.2)' }, 'hit+=.45')
@@ -278,10 +309,14 @@ export default function IntroSplashScreen() {
 
   return (
     <div id="camcu-intro-splash" ref={containerRef} role="dialog" aria-label="Đang tải Cẩm Cù House">
+      <div className="letterbox-top" aria-hidden="true" />
+      <div className="letterbox-bottom" aria-hidden="true" />
       <canvas id="fx" />
-      <div className="glow" />
-      <div className="vig" />
-      <div className="grain" />
+      <div className="cinematic-rays" aria-hidden="true" />
+      <div className="glow" aria-hidden="true" />
+      <div className="flare-horizontal" aria-hidden="true" />
+      <div className="vig" aria-hidden="true" />
+      <div className="grain" aria-hidden="true" />
 
       {/* Nút Bỏ qua */}
       <button id="skip" type="button" aria-label="Bỏ qua phần giới thiệu">
@@ -334,13 +369,16 @@ export default function IntroSplashScreen() {
         </h1>
 
         <p className="tag">Chốn dừng chân mộc mạc bên suối đá</p>
-        <p className="loc">Gia Nghĩa • Đắk Nông</p>
+        <p className="loc">
+          <span>Gia Nghĩa • Đắk Nông</span>
+        </p>
       </div>
 
       {/* Bộ đếm phần trăm */}
       <div className="meter" aria-hidden="true">
         <span id="pct">0</span>
         <small>%</small>
+        <span className="coords">11.99° N • 107.69° E • 800m+</span>
       </div>
 
       {/* Thanh tiến trình dưới cùng */}

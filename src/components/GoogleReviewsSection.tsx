@@ -29,7 +29,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-1",
     name: "Minh Tuấn",
     initial: "T",
-    avatarBg: "bg-[#1A73E8]",
+    avatarBg: "bg-[#2D4233] text-[#FDFBF7]", // Xanh rêu trầm thương hiệu
     badgeType: "local_guide",
     badgeTextVi: "Local Guide • Cấp 6",
     badgeTextEn: "Local Guide • Level 6",
@@ -51,7 +51,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-2",
     name: "Thanh Trúc",
     initial: "T",
-    avatarBg: "bg-[#EA4335]",
+    avatarBg: "bg-[#CC7755] text-white", // Cam đất ấm áp
     badgeType: "review_count",
     badgeTextVi: "18 bài đánh giá • 6 ảnh",
     badgeTextEn: "18 reviews • 6 photos",
@@ -73,7 +73,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-3",
     name: "Hải Đăng",
     initial: "Đ",
-    avatarBg: "bg-[#1E8E3E]",
+    avatarBg: "bg-[#4A5D23] text-white", // Rêu lá mộc mạc
     badgeType: "local_guide",
     badgeTextVi: "Local Guide • Cấp 5",
     badgeTextEn: "Local Guide • Level 5",
@@ -95,7 +95,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-4",
     name: "Ngọc Mai",
     initial: "M",
-    avatarBg: "bg-[#E37400]",
+    avatarBg: "bg-[#7D5E4A] text-white", // Nâu đất bazan
     badgeType: "review_count",
     badgeTextVi: "12 bài đánh giá",
     badgeTextEn: "12 reviews",
@@ -117,7 +117,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-5",
     name: "Hoàng Nam",
     initial: "N",
-    avatarBg: "bg-[#1A73E8]",
+    avatarBg: "bg-[#396663] text-white", // Xanh suối biếc
     badgeType: "local_guide",
     badgeTextVi: "Local Guide • Cấp 7",
     badgeTextEn: "Local Guide • Level 7",
@@ -139,7 +139,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReviewItem[] = [
     id: "review-6",
     name: "Thu Phương",
     initial: "P",
-    avatarBg: "bg-[#8E24AA]",
+    avatarBg: "bg-[#9E5A3F] text-white", // Đất nung cao nguyên
     badgeType: "review_count",
     badgeTextVi: "27 bài đánh giá • 14 ảnh",
     badgeTextEn: "27 reviews • 14 photos",
@@ -283,79 +283,83 @@ export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSect
           {[...GOOGLE_REVIEWS_DATA, ...GOOGLE_REVIEWS_DATA].map((review, i) => (
             <div
               key={`${review.id}-${i}`}
-              className="w-[320px] sm:w-[380px] shrink-0 bg-white/95 dark:bg-[#18261D]/90 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-stone-200/80 dark:border-stone-700/70 shadow-sm hover:shadow-xl hover:border-[#3E5C46]/40 dark:hover:border-[#88B795]/50 transition-all duration-300 flex flex-col justify-between group"
+              className="w-[340px] sm:w-[420px] shrink-0 bg-white dark:bg-[#18261D]/95 backdrop-blur-md rounded-2xl p-6 sm:p-7 border border-stone-200/90 dark:border-stone-700/80 shadow-md hover:shadow-2xl hover:border-[#3E5C46]/50 dark:hover:border-[#88B795]/60 transition-all duration-300 flex flex-col justify-between group"
             >
               {/* Card Header: Avatar, Name, Google Badge */}
               <div>
-                <div className="flex items-center justify-between gap-3 mb-3.5">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {/* Google Initial Avatar */}
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    {/* Brand Synchronized Initial Avatar */}
                     <div
-                      className={`w-10 h-10 rounded-full ${review.avatarBg} text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-xs select-none`}
+                      className={`w-11 h-11 rounded-full ${review.avatarBg} font-bold text-base flex items-center justify-center shrink-0 shadow-sm ring-2 ring-stone-200/50 dark:ring-emerald-500/30 select-none`}
                     >
                       {review.initial}
                     </div>
 
                     <div className="flex flex-col min-w-0">
-                      <h3 className="text-sm font-bold text-[#1B281D] dark:text-[#F5F4EE] truncate leading-tight group-hover:text-[#3E5C46] dark:group-hover:text-[#88B795] transition-colors">
+                      <h3 className="text-base font-bold text-[#1B281D] dark:text-[#F5F4EE] truncate leading-tight group-hover:text-[#3E5C46] dark:group-hover:text-[#88B795] transition-colors">
                         {review.name}
                       </h3>
 
                       {review.badgeType === "local_guide" ? (
-                        <div className="flex items-center gap-1 text-[11px] font-semibold text-[#E37400] dark:text-[#FFA040] mt-0.5 truncate">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#E37400] dark:text-[#FFA040] mt-1 truncate">
                           <LocalGuideStar className="w-3.5 h-3.5 shrink-0" />
                           <span className="truncate">
                             {isEn ? review.badgeTextEn : review.badgeTextVi}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 truncate font-medium">
+                        <span className="text-xs text-stone-500 dark:text-stone-400 mt-1 truncate font-medium">
                           {isEn ? review.badgeTextEn : review.badgeTextVi}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Google small watermarked logo */}
-                  <div className="shrink-0 p-1 rounded-full bg-stone-100 dark:bg-stone-800/60">
-                    <GoogleGIcon className="w-3.5 h-3.5 opacity-80" />
+                  {/* Google small watermarked logo stamp */}
+                  <div className="shrink-0 p-1.5 rounded-full bg-stone-100 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60">
+                    <GoogleGIcon className="w-4 h-4" />
                   </div>
                 </div>
 
                 {/* Rating Stars & Relative Time */}
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-3.5">
                   <div className="flex items-center gap-0.5 text-[#FBBC04]">
                     {[...Array(review.rating)].map((_, sIdx) => (
-                      <Star key={sIdx} className="w-3.5 h-3.5 fill-[#FBBC04] text-[#FBBC04]" />
+                      <Star key={sIdx} className="w-4 h-4 fill-[#FBBC04] text-[#FBBC04]" />
                     ))}
                   </div>
-                  <span className="text-stone-300 dark:text-stone-600">•</span>
-                  <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                  <span className="text-stone-300 dark:text-stone-600 font-bold">•</span>
+                  <span className="text-xs text-stone-500 dark:text-stone-400 font-medium">
                     {isEn ? review.timeEn : review.timeVi}
                   </span>
                 </div>
 
-                {/* Review Body */}
-                <p className="text-stone-700 dark:text-stone-200 text-xs sm:text-[13px] leading-relaxed mb-4 font-sans line-clamp-4">
+                {/* Review Body (Tăng cỡ chữ, rõ ràng, dễ đọc) */}
+                <p className="text-stone-800 dark:text-stone-100 text-[14px] sm:text-[15px] leading-relaxed mb-5 font-sans">
                   &ldquo;{isEn ? review.contentEn : review.contentVi}&rdquo;
                 </p>
               </div>
 
               {/* Review Meta Tags: Service, Price, Recommendation */}
-              <div className="pt-3 border-t border-stone-100 dark:border-stone-800/80 flex flex-col gap-1.5 text-[11px] text-stone-500 dark:text-stone-400">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#88B795] font-semibold">
+              <div className="pt-3.5 border-t border-stone-100 dark:border-stone-800 flex flex-col gap-2 text-xs text-stone-500 dark:text-stone-400">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-md bg-stone-100 dark:bg-[#1E2B22] text-[#2D4233] dark:text-[#88B795] font-semibold text-[11px] sm:text-xs">
                     {isEn ? review.dineInEn : review.dineInVi}
                   </span>
                   <span className="text-stone-300 dark:text-stone-600">•</span>
-                  <span>{isEn ? review.priceEn : review.priceVi}</span>
+                  <span className="font-medium text-stone-600 dark:text-stone-300">
+                    {isEn ? review.priceEn : review.priceVi}
+                  </span>
                 </div>
 
-                <div className="text-[11px] text-stone-600 dark:text-stone-300 truncate">
+                <div className="text-xs text-stone-600 dark:text-stone-300 truncate">
                   <span className="font-semibold text-stone-500 dark:text-stone-400">
                     {isEn ? "Recommended: " : "Đề xuất: "}
                   </span>
-                  <span>{isEn ? review.recommendEn : review.recommendVi}</span>
+                  <span className="text-[#3E5C46] dark:text-[#88B795] font-medium">
+                    {isEn ? review.recommendEn : review.recommendVi}
+                  </span>
                 </div>
               </div>
             </div>

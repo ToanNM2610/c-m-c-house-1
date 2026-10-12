@@ -263,8 +263,8 @@ export default function ContactPage() {
                     : "Quán tọa lạc tại Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa. Tuyến đường bê tông sạch sẽ, bằng phẳng, ô tô vào tận bãi đỗ xe trong khuôn viên quán."}
                 </p>
 
-                {/* Embedded Interactive Google Map */}
-                <div className="w-full aspect-[16/10] sm:aspect-[16/8] rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700/60 shadow-inner bg-stone-100 dark:bg-stone-800">
+                {/* Embedded Interactive Google Map with dark mode filter */}
+                <div className="w-full aspect-[16/10] sm:aspect-[16/8] rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700/60 shadow-inner bg-stone-100 dark:bg-[#121A15] relative group">
                   <iframe
                     title="Bản đồ Google Maps Cẩm Cù House"
                     src="https://www.google.com/maps?q=11.9912,107.6888&hl=vi&z=15&output=embed"
@@ -274,8 +274,10 @@ export default function ContactPage() {
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full"
+                    className="w-full h-full dark:invert-[0.92] dark:hue-rotate-180 dark:contrast-[0.9] dark:brightness-[0.85] dark:grayscale-[0.15] transition-all duration-300"
                   />
+                  {/* Subtle dark mode ambient tint overlay */}
+                  <div className="absolute inset-0 pointer-events-none rounded-xl dark:bg-emerald-950/10 border border-transparent dark:border-emerald-500/10" />
                 </div>
 
                 <div className="pt-2">

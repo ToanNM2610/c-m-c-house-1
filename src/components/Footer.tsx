@@ -183,9 +183,9 @@ export default function Footer() {
         </p>
       </div>
 
-      {/* Giant Watermark Typography at Footer Bottom */}
-      <div className="w-full overflow-hidden select-none pointer-events-none pt-10 pb-0">
-        <p className="font-serif text-center font-extrabold text-[12vw] leading-none tracking-tight text-white/[0.04] whitespace-nowrap">
+      {/* Giant Architectural Cropped Typography at Footer Bottom */}
+      <div className="w-full overflow-hidden select-none pointer-events-none mt-10 h-[9vw] sm:h-[8vw] md:h-[7vw] relative flex justify-center items-start">
+        <p className="font-serif text-center font-black text-[13vw] leading-none tracking-[0.08em] whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-b from-stone-400/50 via-stone-500/25 to-transparent dark:from-[#88B795]/40 dark:via-emerald-400/20 dark:to-transparent -translate-y-[8%] sm:-translate-y-[6%]">
           CẨM CÙ HOUSE
         </p>
       </div>

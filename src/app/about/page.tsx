@@ -30,11 +30,12 @@ function ScrollWord({
   range: [number, number];
   progress: MotionValue<number>;
 }) {
-  const opacity = useTransform(progress, range, [0.18, 1]);
+  // Bắt đầu từ 0.45 để đảm bảo độ tương phản tối thiểu >= 3:1 theo chuẩn WCAG
+  const opacity = useTransform(progress, range, [0.45, 1]);
   return (
     <motion.span
       style={{ opacity }}
-      className="inline-block transition-opacity font-serif font-bold text-2xl sm:text-3xl lg:text-4xl text-[#3E5C46] dark:text-[#F5F4EE] mr-2 mb-2 leading-relaxed"
+      className="inline-block transition-opacity font-serif font-bold text-2xl sm:text-3xl lg:text-4xl text-[#2D4233] dark:text-[#F5F4EE] mr-2 mb-2 leading-relaxed"
     >
       {word}
     </motion.span>

@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DishDetailModal from "@/components/motion/DishDetailModal";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
-import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
+import { MENU_ITEMS, MENU_CATEGORIES, MenuItem, getMenuItemImage } from "@/data/menu";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -303,10 +303,11 @@ export default function MenuPage() {
               </span>
             </div>
 
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <AnimatePresence mode="popLayout">
                 {filteredItems.map((item, _idx) => {
                   const isOutOfStock = item.inStock === false;
+                  const itemImg = getMenuItemImage(item);
                   return (
                     <motion.div
                       layout
@@ -314,26 +315,46 @@ export default function MenuPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      whileHover={{ y: -3.5, scale: 1.015 }}
+                      whileHover={{ y: -3, scale: 1.01 }}
                       transition={{
                         layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
-                        y: { type: "spring", stiffness: 450, damping: 25 },
-                        scale: { type: "spring", stiffness: 450, damping: 25 },
+                        y: { type: "spring", stiffness: 400, damping: 25 },
+                        scale: { type: "spring", stiffness: 400, damping: 25 },
                       }}
                       onClick={() => handleOpenDish(item)}
-                      className={`flex items-start justify-between py-3 border-b border-dotted border-stone-200 dark:border-stone-700/50 group px-3 rounded-xl transition-all duration-200 dish-card-hover cursor-pointer ${
+                      className={`flex items-center gap-3.5 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all duration-200 cursor-pointer group ${
                         isOutOfStock
-                          ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 grayscale-[30%]"
-                          : "hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
+                          ? "opacity-60 bg-stone-100/60 dark:bg-stone-900/40 border-stone-200 dark:border-stone-800 grayscale-[30%]"
+                          : "bg-white/70 dark:bg-[#16231A]/70 hover:bg-white dark:hover:bg-[#16231A] border-stone-200/80 dark:border-stone-700/60 hover:border-[#CC7755]/40 dark:hover:border-[#CC7755]/50 hover:shadow-md"
                       }`}
                     >
-                      <div className="flex flex-col min-w-0 pr-3">
+                      {/* Dish Thumbnail Image */}
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-stone-200/60 dark:border-white/10 shadow-sm bg-stone-200 dark:bg-stone-800">
+                        <img
+                          src={itemImg}
+                          alt={item.name}
+                          loading="lazy"
+                          className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                            isOutOfStock ? "grayscale contrast-75" : ""
+                          }`}
+                        />
+                        {isOutOfStock && (
+                          <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
+                            <span className="text-[10px] uppercase font-bold text-white bg-rose-600 px-1.5 py-0.5 rounded">
+                              Hết
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Dish Details */}
+                      <div className="flex flex-col min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <span
-                            className={`text-sm font-bold transition-colors ${
+                            className={`text-[15px] sm:text-base font-bold transition-colors leading-snug ${
                               isOutOfStock
                                 ? "text-stone-500 line-through"
-                                : "text-[#1B281D] dark:text-[#F5F4EE] group-hover:text-[#3E5C46] dark:group-hover:text-[#88B795]"
+                                : "text-[#1B281D] dark:text-[#F5F4EE] group-hover:text-[#CC7755] dark:group-hover:text-[#E28B6A]"
                             }`}
                           >
                             {item.name}
@@ -344,40 +365,47 @@ export default function MenuPage() {
                             </span>
                           ) : (
                             item.tag && (
-                              <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-emerald-300 text-[10px] font-bold">
+                              <span className="px-2 py-0.5 rounded-full bg-[#CC7755]/15 dark:bg-[#CC7755]/25 text-[#CC7755] dark:text-[#E28B6A] border border-[#CC7755]/30 text-[10px] font-bold">
                                 {item.tag}
                               </span>
                             )
                           )}
                         </div>
+
                         {item.description && (
-                          <span className="text-xs text-stone-600 dark:text-stone-400 line-clamp-1 mt-0.5">
+                          <span className="text-xs sm:text-[13px] text-stone-600 dark:text-stone-300 line-clamp-2 mt-1 leading-relaxed">
                             {item.description}
                           </span>
                         )}
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                        <span className="font-serif text-sm font-bold text-[#614633] dark:text-[#D1A684]">
-                          {item.price.toLocaleString("vi-VN")}đ
-                        </span>
-                        {isOutOfStock ? (
-                          <button
-                            type="button"
-                            disabled
-                            title={dict.common.soldOut}
-                            className="w-7 h-7 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 flex items-center justify-center cursor-not-allowed"
-                          >
-                            <span className="text-xs font-bold">✕</span>
-                          </button>
-                        ) : (
-                          <a
-                            href="tel:0382851688"
-                            title={isEn ? "Call to order" : "Gọi đặt món"}
-                            className="btn-press-sm w-7 h-7 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] flex items-center justify-center hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors shadow-sm"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                          </a>
-                        )}
+
+                        <div className="flex items-center justify-between mt-2 pt-1">
+                          <span className="font-serif text-base sm:text-lg font-bold text-[#614633] dark:text-[#D1A684]">
+                            {item.price.toLocaleString("vi-VN")}đ
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            {isOutOfStock ? (
+                              <button
+                                type="button"
+                                disabled
+                                title={dict.common.soldOut}
+                                className="w-7 h-7 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-400 dark:text-stone-600 flex items-center justify-center cursor-not-allowed"
+                              >
+                                <span className="text-xs font-bold">✕</span>
+                              </button>
+                            ) : (
+                              <a
+                                href="tel:0382851688"
+                                onClick={(e) => e.stopPropagation()}
+                                title={isEn ? "Call to order" : "Gọi đặt món"}
+                                className="btn-press-sm inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-[#16231A] text-[#3E5C46] dark:text-[#88B795] text-xs font-semibold hover:bg-[#3E5C46] hover:text-white dark:hover:bg-[#88B795] dark:hover:text-[#121A15] transition-colors border border-stone-200 dark:border-stone-700/60 shadow-sm"
+                              >
+                                <PhoneCall className="w-3 h-3" />
+                                <span className="hidden sm:inline text-[11px]">Gọi món</span>
+                              </a>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -439,6 +467,7 @@ export default function MenuPage() {
       {/* Shared Element Modal hiển thị chi tiết món ăn */}
       <DishDetailModal
         dish={selectedDish}
+        dishImage={selectedDish ? getMenuItemImage(selectedDish) : undefined}
         isOpen={dishModalOpen}
         onClose={() => setDishModalOpen(false)}
       />
