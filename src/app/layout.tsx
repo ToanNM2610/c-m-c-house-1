@@ -76,6 +76,8 @@ export default function RootLayout({
                   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                   if ((!seenIntro || hasForce) && !prefersReduced) {
                     document.documentElement.classList.add('intro-lock');
+                  } else {
+                    document.documentElement.classList.add('intro-seen');
                   }
                 } catch(e) {}
               })();

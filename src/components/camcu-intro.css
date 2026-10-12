@@ -15,6 +15,10 @@ html.intro-lock body {
   touch-action: none;
 }
 
+html.intro-seen #camcu-intro-pro {
+  display: none !important;
+}
+
 #camcu-intro-pro {
   position: fixed;
   inset: 0;
