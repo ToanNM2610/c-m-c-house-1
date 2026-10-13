@@ -104,6 +104,55 @@ export default function RootLayout({
             `,
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "CafeOrCoffeeShop",
+              "name": "Cẩm Cù House",
+              "image": "https://camcuhouse.online/images/og-home.jpg",
+              "@id": "https://camcuhouse.online/#cafe",
+              "url": "https://camcuhouse.online",
+              "telephone": "+84382851688",
+              "priceRange": "25.000 - 55.000 VNĐ",
+              "servesCuisine": "Vietnamese Coffee, Breakfast & Local Snacks",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Hẻm 437 Hùng Vương",
+                "addressLocality": "Phường Nghĩa Trung, TP. Gia Nghĩa",
+                "addressRegion": "Đắk Nông",
+                "postalCode": "64000",
+                "addressCountry": "VN",
+              },
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 11.99,
+                "longitude": 107.69,
+              },
+              "openingHoursSpecification": [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday"],
+                  "opens": "07:00",
+                  "closes": "18:00",
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  "dayOfWeek": ["Friday", "Saturday", "Sunday"],
+                  "opens": "07:00",
+                  "closes": "22:00",
+                },
+              ],
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "reviewCount": "6",
+              },
+              "hasMenu": "https://camcuhouse.online/menu",
+            }),
+          }}
+        />
       </head>
       <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--accent-green)] selection:text-white transition-colors duration-200">
         <ThemeProvider>
