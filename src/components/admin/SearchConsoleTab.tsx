@@ -10,12 +10,7 @@ import {
   RefreshCw,
   Send,
   CheckCircle2,
-  AlertCircle,
-  ExternalLink,
   ArrowUpRight,
-  Globe,
-  Smartphone,
-  Check,
 } from "lucide-react";
 import { SearchConsoleReportData } from "@/lib/google-apis";
 
@@ -50,6 +45,7 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
 
   useEffect(() => {
     fetchSearchConsole(days);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [days]);
 
   const handleSubmitSitemap = async () => {
@@ -73,24 +69,24 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
     }
   };
 
-  // If not connected, show clean Empty State as requested
+  // If not connected, show clean Empty State with icon + text and >=44px button
   if (!loading && data && !data.connected) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 sm:p-14 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-3xl shadow-sm text-center max-w-2xl mx-auto my-8">
-        <div className="w-16 h-16 rounded-3xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-5 shadow-sm border border-blue-200 dark:border-blue-800">
-          <Search className="w-8 h-8" />
+      <div className="admin-card flex flex-col items-center justify-center p-8 sm:p-14 text-center max-w-2xl mx-auto my-8">
+        <div className="w-16 h-16 rounded-2xl admin-icon-circle flex items-center justify-center mb-5">
+          <Search className="w-8 h-8 text-[var(--accent)]" />
         </div>
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 mb-3">
+        <h1 className="admin-h1 font-serif text-[var(--text)] mb-3">
           Chưa Kết Nối Google Search Console
         </h1>
-        <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed mb-6 max-w-md">
+        <p className="admin-body text-[var(--text-muted)] leading-relaxed mb-6 max-w-md">
           {data.error ||
             "Để theo dõi từ khóa tìm kiếm, lượt nhấp tự nhiên từ Google và trạng thái lập chỉ mục sitemap, vui lòng kết nối Service Account và cấu hình Property."}
         </p>
         <button
           type="button"
           onClick={onSwitchToIntegrations}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-sm font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+          className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--btn-primary)] text-[var(--btn-primary-text)] text-[15px] font-bold transition-all shadow-sm hover:opacity-95 active:scale-95 cursor-pointer"
         >
           <span>Kết nối ở Tích hợp &amp; Khóa</span>
           <ArrowUpRight className="w-4 h-4" />
@@ -114,34 +110,34 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
   const svgPolyline = points.map((p) => `${p.x},${p.y}`).join(" ");
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-6 w-full max-w-[1200px] mx-auto">
       {/* Top Header & Range Filters */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] uppercase tracking-wider">
-            <Search className="w-4 h-4" />
-            <span>Google Search Console (GSC) API</span>
+      <div className="admin-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider">
+            <Search className="w-4 h-4 shrink-0" />
+            <span className="truncate">Google Search Console (GSC) API</span>
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">
+          <h1 className="admin-h1 font-serif text-[var(--text)]">
             Hiệu Suất Tìm Kiếm Tự Nhiên
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300">
-            Property: <code className="px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 font-mono text-[#3E5C46] dark:text-[#9DC183]">{data?.property || "sc-domain:camcuhouse.online"}</code>
+          <p className="admin-subtle">
+            Property: <code className="px-1.5 py-0.5 rounded bg-[var(--surface-2)] border border-[var(--border)] font-mono text-[var(--accent)] font-bold">{data?.property || "sc-domain:camcuhouse.online"}</code>
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap self-start md:self-auto">
-          {/* Days selector */}
-          <div className="inline-flex p-1 bg-stone-100 dark:bg-stone-800 rounded-xl text-xs font-semibold">
+        <div className="flex items-center gap-2.5 flex-wrap self-start md:self-auto shrink-0">
+          {/* Days selector with >=44px touch targets */}
+          <div className="inline-flex p-1 bg-[var(--surface-2)] border border-[var(--border)] rounded-xl text-[13px] font-semibold">
             {([7, 28, 90] as const).map((d) => (
               <button
                 key={d}
                 type="button"
                 onClick={() => setDays(d)}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center ${
                   days === d
-                    ? "bg-[#3E5C46] text-white shadow-sm font-bold"
-                    : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white"
+                    ? "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] font-bold shadow-sm"
+                    : "text-[var(--text-muted)] hover:text-[var(--text)]"
                 }`}
               >
                 {d} ngày
@@ -153,9 +149,9 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
             type="button"
             onClick={handleSubmitSitemap}
             disabled={submittingSitemap}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-semibold transition-all cursor-pointer border border-blue-200 dark:border-blue-800"
+            className="min-h-[44px] inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--border)] border border-[var(--border)] text-[var(--text)] text-[13px] font-semibold transition-all cursor-pointer"
           >
-            <Send className={`w-3.5 h-3.5 ${submittingSitemap ? "animate-pulse" : ""}`} />
+            <Send className={`w-3.5 h-3.5 text-[var(--accent)] ${submittingSitemap ? "animate-pulse" : ""}`} />
             <span>{submittingSitemap ? "Đang gửi..." : "Gửi sitemap.xml"}</span>
           </button>
 
@@ -163,108 +159,109 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
             type="button"
             onClick={() => fetchSearchConsole(days, true)}
             disabled={loading}
-            className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
+            className="w-11 h-11 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:bg-[var(--border)] text-[var(--text)] transition-colors cursor-pointer flex items-center justify-center shrink-0"
             title="Làm mới dữ liệu từ Google"
+            aria-label="Làm mới dữ liệu từ Google"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-[#3E5C46]" : ""}`} />
+            <RefreshCw className={`w-4 h-4 text-[var(--accent)] ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
 
-      {/* 4 Performance Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      {/* 4 Performance Metric Cards - Equal height, single accent icon circle, lining numbers */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* 1. Total Clicks */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
                 Tổng Lượt Nhấp
               </span>
-              <div className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183] mt-1">
+              <div className="kpi-stat-value text-[var(--accent)] mt-1">
                 {loading ? "..." : (data?.overview.totalClicks ?? 0).toLocaleString("vi-VN")}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#3E5C46] flex items-center justify-center">
-              <MousePointerClick className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <MousePointerClick className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Khách nhấp vào kết quả Google
           </div>
         </div>
 
         {/* 2. Total Impressions */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
                 Lượt Hiển Thị
               </span>
-              <div className="font-serif text-3xl font-bold text-stone-800 dark:text-stone-100 mt-1">
+              <div className="kpi-stat-value text-[var(--text)] mt-1">
                 {loading ? "..." : (data?.overview.totalImpressions ?? 0).toLocaleString("vi-VN")}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
-              <Eye className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <Eye className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Số lần quán xuất hiện trên tìm kiếm
           </div>
         </div>
 
         {/* 3. Average CTR */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
                 CTR Trung Bình
               </span>
-              <div className="font-serif text-3xl font-bold text-[#CC7755] dark:text-[#E0B872] mt-1">
+              <div className="kpi-stat-value text-[var(--clay)] mt-1">
                 {loading ? "..." : `${data?.overview.averageCtr ?? 0}%`}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/40 text-[#CC7755] flex items-center justify-center">
-              <Percent className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <Percent className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Tỷ lệ nhấp trên hiển thị
           </div>
         </div>
 
         {/* 4. Average Position */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
                 Vị Trí Trung Bình
               </span>
-              <div className="font-serif text-3xl font-bold text-blue-600 dark:text-blue-400 mt-1">
-                {loading ? "..." : (data?.overview.averagePosition ?? 0)}
+              <div className="kpi-stat-value text-[var(--text)] mt-1">
+                {loading ? "..." : `#${data?.overview.averagePosition ?? 0}`}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center">
-              <Hash className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <Hash className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Thứ hạng trên trang kết quả Google
           </div>
         </div>
       </div>
 
       {/* SVG Performance Chart */}
-      <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+      <div className="admin-card p-6 flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+            <h2 className="admin-h2 font-serif text-[var(--text)]">
               Lượt Nhấp Từ Google Tìm Kiếm
             </h2>
-            <p className="text-xs text-stone-500">Biểu đồ thể hiện lượt click theo ngày</p>
+            <p className="admin-subtle mt-0.5">Biểu đồ thể hiện lượt click theo ngày</p>
           </div>
-          <span className="flex items-center gap-1.5 text-xs font-semibold text-[#3E5C46] dark:text-[#9DC183]">
-            <span className="w-3 h-3 rounded-full bg-[#3E5C46]" />
+          <span className="flex items-center gap-2 text-[13px] font-semibold text-[var(--accent)]">
+            <span className="w-3 h-3 rounded-full bg-[var(--accent)]" />
             <span>Lượt nhấp tự nhiên (Organic Clicks)</span>
           </span>
         </div>
@@ -273,13 +270,13 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
           <div className="w-full overflow-x-auto py-2">
             <div className="min-w-[600px] h-[190px] relative">
               <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-full overflow-visible">
-                <line x1="0" y1="20" x2={chartWidth} y2="20" stroke="currentColor" strokeOpacity="0.08" />
-                <line x1="0" y1="80" x2={chartWidth} y2="80" stroke="currentColor" strokeOpacity="0.08" />
-                <line x1="0" y1="140" x2={chartWidth} y2="140" stroke="currentColor" strokeOpacity="0.08" />
+                <line x1="0" y1="20" x2={chartWidth} y2="20" stroke="currentColor" strokeOpacity="0.12" />
+                <line x1="0" y1="80" x2={chartWidth} y2="80" stroke="currentColor" strokeOpacity="0.12" />
+                <line x1="0" y1="140" x2={chartWidth} y2="140" stroke="currentColor" strokeOpacity="0.12" />
 
                 <polyline
                   fill="none"
-                  stroke="#3E5C46"
+                  stroke="var(--accent)"
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -292,7 +289,7 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
                       cx={p.x}
                       cy={p.y}
                       r="4"
-                      className="fill-white dark:fill-[#1E2B22] stroke-[#3E5C46] stroke-2 hover:r-6 transition-all cursor-pointer"
+                      className="fill-[var(--surface)] stroke-[var(--accent)] stroke-2 hover:r-6 transition-all cursor-pointer"
                     >
                       <title>{`${p.date}: ${p.clicks} clicks`}</title>
                     </circle>
@@ -300,7 +297,7 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
                       x={p.x}
                       y={chartHeight + 16}
                       textAnchor="middle"
-                      className="text-[10px] fill-stone-400 font-mono"
+                      className="text-[11px] fill-[var(--text-subtle)] font-mono"
                     >
                       {p.date}
                     </text>
@@ -310,45 +307,45 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
             </div>
           </div>
         ) : (
-          <div className="py-12 text-center text-xs text-stone-400 italic">
+          <div className="py-12 text-center admin-subtle italic">
             Chưa có đủ lượt nhấp theo ngày trong chu kỳ.
           </div>
         )}
       </div>
 
       {/* Top Search Queries Table */}
-      <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+      <div className="admin-card p-6 flex flex-col gap-4">
         <div>
-          <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+          <h2 className="admin-h2 font-serif text-[var(--text)]">
             Top Từ Khóa Tìm Kiếm (Top Queries)
           </h2>
-          <p className="text-xs text-stone-500">Các cụm từ người dùng tìm kiếm để tìm thấy Cẩm Cù House</p>
+          <p className="admin-subtle mt-0.5">Các cụm từ người dùng tìm kiếm để tìm thấy Cẩm Cù House</p>
         </div>
 
         {(data?.topQueries || []).length === 0 ? (
-          <div className="text-xs text-stone-400 py-6 text-center italic">
+          <div className="admin-subtle py-6 text-center italic">
             Chưa có dữ liệu từ khóa trong khoảng thời gian này.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-stone-50 dark:bg-stone-900/60 text-stone-500 font-semibold border-b border-stone-200 dark:border-stone-800">
+          <div className="overflow-x-auto rounded-xl border border-[var(--border)]">
+            <table className="w-full text-left text-[13px]">
+              <thead className="bg-[var(--surface-2)] text-[var(--text-muted)] font-semibold border-b border-[var(--border)]">
                 <tr>
-                  <th className="py-2.5 px-3">Cụm từ tìm kiếm</th>
-                  <th className="py-2.5 px-3 text-right">Lượt nhấp</th>
-                  <th className="py-2.5 px-3 text-right">Lượt hiển thị</th>
-                  <th className="py-2.5 px-3 text-right">CTR</th>
-                  <th className="py-2.5 px-3 text-right">Vị trí trung bình</th>
+                  <th className="py-3 px-4">Cụm từ tìm kiếm</th>
+                  <th className="py-3 px-4 text-right">Lượt nhấp</th>
+                  <th className="py-3 px-4 text-right">Lượt hiển thị</th>
+                  <th className="py-3 px-4 text-right">CTR</th>
+                  <th className="py-3 px-4 text-right">Vị trí trung bình</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-100 dark:divide-stone-800 text-stone-700 dark:text-stone-300">
+              <tbody className="divide-y divide-[var(--border)] text-[var(--text)]">
                 {data?.topQueries.map((q, idx) => (
-                  <tr key={idx} className="hover:bg-stone-50/50 dark:hover:bg-stone-800/30">
-                    <td className="py-2.5 px-3 font-semibold text-stone-900 dark:text-stone-100">{q.query}</td>
-                    <td className="py-2.5 px-3 text-right font-bold text-[#3E5C46] dark:text-[#9DC183]">{q.clicks}</td>
-                    <td className="py-2.5 px-3 text-right font-mono">{q.impressions}</td>
-                    <td className="py-2.5 px-3 text-right font-mono">{q.ctr}%</td>
-                    <td className="py-2.5 px-3 text-right font-mono">#{q.position}</td>
+                  <tr key={idx} className="hover:bg-[var(--surface-2)] transition-colors">
+                    <td className="py-3 px-4 font-semibold text-[var(--text)]">{q.query}</td>
+                    <td className="py-3 px-4 text-right font-bold text-[var(--accent)] font-mono">{q.clicks}</td>
+                    <td className="py-3 px-4 text-right font-mono text-[var(--text-muted)]">{q.impressions}</td>
+                    <td className="py-3 px-4 text-right font-mono text-[var(--text-muted)]">{q.ctr}%</td>
+                    <td className="py-3 px-4 text-right font-mono text-[var(--text-muted)]">#{q.position}</td>
                   </tr>
                 ))}
               </tbody>
@@ -358,26 +355,27 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
       </div>
 
       {/* URL Inspection for 5 Main Pages */}
-      <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+      <div className="admin-card p-6 flex flex-col gap-4">
         <div>
-          <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+          <h2 className="admin-h2 font-serif text-[var(--text)]">
             Trạng Thái Lập Chỉ Mục 5 Trang Chính (URL Inspection API)
           </h2>
-          <p className="text-xs text-stone-500">Kiểm tra trực tiếp độ phủ và trạng thái xuất hiện trên Google</p>
+          <p className="admin-subtle mt-0.5">Kiểm tra trực tiếp độ phủ và trạng thái xuất hiện trên Google</p>
         </div>
 
-        <div className="divide-y divide-stone-100 dark:divide-stone-800 text-xs">
+        <div className="divide-y divide-[var(--border)] text-[13px]">
           {(data?.urlInspections || []).map((item, idx) => (
-            <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="font-mono text-stone-800 dark:text-stone-200">{item.url}</span>
+            <div key={idx} className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <CheckCircle2 className="w-4 h-4 text-[var(--success)] shrink-0" />
+                <span className="font-mono text-[var(--text)] truncate">{item.url}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px]">
-                  {item.coverageState}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[rgba(127,209,155,0.15)] text-[var(--success)] font-semibold text-[12px] border border-[var(--border)]">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>{item.coverageState}</span>
                 </span>
-                <span className="text-[10px] text-stone-400 font-mono">Google Verified</span>
+                <span className="text-[11px] admin-subtle font-mono">Google Verified</span>
               </div>
             </div>
           ))}

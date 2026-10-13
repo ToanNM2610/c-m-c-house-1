@@ -26,7 +26,6 @@ import {
   ExternalLink,
   Search,
   Lock,
-  Delete,
   Check,
   Phone,
   MapPin,
@@ -36,9 +35,7 @@ import {
   X,
   UploadCloud,
   Camera,
-  FileImage,
   Upload,
-  FileSpreadsheet,
   Download,
   Key,
   Shield,
@@ -47,7 +44,7 @@ import {
   FileText,
   Copy,
 } from "lucide-react";
-import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
+import { MENU_ITEMS, MENU_CATEGORIES } from "@/data/menu";
 import { getLocalEventStats } from "@/lib/analytics";
 import { OverrideMode, StatusOverrideData } from "@/lib/status";
 import rawBackupData from "@/data/backup/camcu_raw_backup.json";
@@ -56,7 +53,6 @@ import {
   setSharedData,
   KEYS,
   SharedAnnouncement,
-  SharedGalleryItem,
 } from "@/lib/syncStore";
 import {
   CAMCU_AUTH_KEY,
@@ -66,7 +62,6 @@ import {
   CAMCU_GALLERY_KEY,
   getStoredData,
   setStoredData,
-  setSharedCookie,
   getSharedCookie,
   removeSharedCookie,
   compressImageFile,
@@ -74,10 +69,9 @@ import {
 
 import defaultGalleryData from "@/data/gallery.json";
 import ThemeToggle from "@/components/ThemeToggle";
-import LightboxModal, { LightboxPhoto } from "@/components/LightboxModal";
+import LightboxModal from "@/components/LightboxModal";
 import {
   useStoreStatus,
-  getStoreOverride,
   setStoreOverride,
   StoreOverrideMode,
 } from "@/lib/openingHours";
@@ -119,16 +113,14 @@ interface StoreSettingsData {
   topBannerEnabled?: boolean;
 }
 
+function createUniqueId(prefix = ""): string {
+  return `${prefix}${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+}
+
 export default function AdminPage({ initialTab = "overview" }: { initialTab?: AdminTab }) {
   // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [needsFirstLogin, setNeedsFirstLogin] = useState<boolean>(false);
-  const [pinInput, setPinInput] = useState<string>("");
-  const [pinError, setPinError] = useState<string>("");
-  const [isVerifyingPin, setIsVerifyingPin] = useState<boolean>(false);
-  const [require2FA, setRequire2FA] = useState<boolean>(false);
-  const [totpInput, setTotpInput] = useState<string>("");
-  const [verifiedPinTemp, setVerifiedPinTemp] = useState<string>("");
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
@@ -504,7 +496,6 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     localStorage.removeItem(CAMCU_AUTH_KEY);
     removeSharedCookie(CAMCU_AUTH_KEY);
     setIsAuthenticated(false);
-    setPinInput("");
     showToast("Đã đăng xuất phiên làm việc an toàn");
   };
 
@@ -780,7 +771,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       return;
     }
 
-    const uniqueId = Date.now().toString();
+    const uniqueId = createUniqueId("notice_");
     const newNoticeItem: AnnouncementItem = {
       id: uniqueId,
       title: newNotice.title.trim(),
@@ -863,7 +854,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
           .trim();
 
         newPendingList.push({
-          id: `pending_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+          id: createUniqueId("pending_"),
           name: file.name,
           dataUrl: compressedDataUrl,
           sizeKb: compressedSizeKb,
@@ -927,7 +918,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
         return;
       }
       const newPhotoItem: GalleryItem = {
-        id: `photo_${Date.now()}`,
+        id: createUniqueId("photo_"),
         title: newPhoto.title.trim(),
         url: newPhoto.url.trim(),
         category: batchCategory as any,
@@ -1171,163 +1162,163 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
         </div>
       )}
 
-      {/* Sidebar - HIDDEN ON MOBILE, FIXED & FULLY INTERACTIVE ON DESKTOP */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-stone-100 dark:bg-[#16231A] z-50 flex-col justify-between py-6 px-4 border-r border-stone-200 dark:border-stone-800 shadow-sm transition-colors duration-200">
+      {/* Sidebar - ALWAYS DARK IN BOTH MODES (Background #14241C, Text #F5EEDC, Active #1F3A2A with left border sage #9DC183) */}
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-[#14241C] text-[#F5EEDC] z-50 flex-col justify-between py-6 px-4 border-r border-[rgba(245,238,220,0.14)] shadow-sm transition-colors duration-200">
         <div className="flex flex-col gap-6">
           {/* Brand */}
           <div className="flex items-center gap-3 px-2">
-            <div className="w-9 h-9 rounded-full bg-[#3E5C46] text-white flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-[#1F3A2A] border border-[#9DC183]/40 text-[#9DC183] flex items-center justify-center shrink-0 shadow-sm">
               <Sparkles className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-lg font-bold text-[#3E5C46] leading-tight">
+              <span className="font-serif text-lg font-bold text-[#F5EEDC] leading-tight">
                 Cẩm Cù Admin
               </span>
-              <span className="text-[11px] text-stone-500 font-medium">Management Console</span>
+              <span className="text-[11px] text-[#A7A18F] font-medium">Management Console</span>
             </div>
           </div>
 
-          <div className="text-[11px] font-bold uppercase tracking-wider text-stone-400 px-2">
+          <div className="text-[12px] font-bold uppercase tracking-wider text-[#A7A18F] px-2">
             Hệ Thống Quản Trị
           </div>
 
-          {/* Navigation Links - ACTIVE STATE ACTIVATED */}
+          {/* Navigation Links - Always dark, clear active pill with sage left border */}
           <nav className="flex flex-col gap-1.5">
             <button
               type="button"
               onClick={() => setActiveTab("overview")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "overview"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <LayoutDashboard className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Tổng quan</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("analytics")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "analytics"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Google Analytics</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("searchConsole")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "searchConsole"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Search Console</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("integrations")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "integrations"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <Key className="w-4 h-4" />
+              <Key className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Tích Hợp &amp; Khóa</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("menu")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "menu"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <UtensilsCrossed className="w-4 h-4" />
+              <UtensilsCrossed className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Quản Lý Thực Đơn (67 món)</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("gallery")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "gallery"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <ImageIcon className="w-4 h-4" />
+              <ImageIcon className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Thư Viện Ảnh (30+ ảnh)</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("settings")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "settings"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <Settings className="w-4 h-4" />
+              <Settings className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Cài Đặt Cửa Hàng</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("content")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "content"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Nội Dung Trang (5 trang)</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("security")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "security"
-                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
-                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <Shield className="w-4 h-4" />
+              <Shield className="w-4 h-4 shrink-0 text-[#9DC183]" />
               <span>Tài Khoản &amp; 2FA</span>
             </button>
           </nav>
         </div>
 
         {/* User Card with Logout Action */}
-        <div className="p-3 bg-white dark:bg-[#1E2B22] rounded-2xl border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex items-center justify-between">
+        <div className="p-3 bg-[#16231C] text-[#F5EEDC] rounded-2xl border border-[rgba(245,238,220,0.14)] shadow-sm flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#3E5C46] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-full bg-[#1F3A2A] border border-[#9DC183]/40 text-[#9DC183] flex items-center justify-center font-bold text-xs shrink-0">
               CC
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-stone-800 dark:text-stone-100">Quản lý viên</span>
-              <span className="text-[10px] text-stone-400">Gia Nghĩa Hub</span>
+              <span className="text-[13px] font-bold text-[#F5EEDC]">Quản lý viên</span>
+              <span className="text-[12px] text-[#A7A18F]">Gia Nghĩa Hub</span>
             </div>
           </div>
           <button
             type="button"
             onClick={handleLogout}
             title="Đăng xuất khỏi hệ thống"
-            className="p-2 rounded-xl text-stone-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            className="p-2 rounded-xl text-[#A7A18F] hover:text-[#F28B82] hover:bg-red-950/30 transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
           </button>
@@ -1335,9 +1326,9 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       </aside>
 
       {/* Main Content Body */}
-      <div className="pl-0 md:pl-64 pb-20 md:pb-8 w-full min-h-screen flex flex-col bg-[#F9F8F3] dark:bg-[#121A15] text-[#1B281D] dark:text-[#F5F4EE] transition-colors duration-300">
+      <div className="pl-0 md:pl-64 pb-20 md:pb-8 w-full min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-300">
         {/* Top Header */}
-        <header className="h-16 bg-[#F9F8F3]/95 dark:bg-[#121A15]/95 backdrop-blur-xl border-b border-stone-200 dark:border-stone-800 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8">
+        <header className="h-16 bg-[var(--bg)]/95 backdrop-blur-xl border-b border-[var(--border)] sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8">
           <div className="flex items-center gap-3">
             {/* Store Status Override Control */}
             <div className="flex items-center gap-2">
@@ -1388,26 +1379,26 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
           </div>
         </header>
 
-        {/* Dashboard Main Workspace */}
-        <main className="p-6 sm:p-8 flex flex-col gap-8 max-w-7xl mx-auto w-full">
+        {/* Dashboard Main Workspace (Max width 1200px, 24px gap between cards) */}
+        <main className="p-6 sm:p-8 flex flex-col gap-6 max-w-[1200px] mx-auto w-full">
           {/* ========================================================= */}
           {/* TAB 1: OVERVIEW (TỔNG QUAN) */}
           {/* ========================================================= */}
           {activeTab === "overview" && (
             <>
               {/* Welcome Banner */}
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 rounded-2xl shadow-sm">
+              <div className="admin-card p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#396663] uppercase tracking-wider">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="flex items-center gap-2 text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider">
+                    <Sparkles className="w-4 h-4 shrink-0" />
                     <span>Bảng Điều Khiển Vận Hành</span>
                   </div>
-                  <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                  <h1 className="admin-h1 font-serif text-[32px] leading-[1.2] font-bold text-[var(--text)]">
                     Xin chào Quản lý Cẩm Cù House
                   </h1>
-                  <p className="text-xs sm:text-sm text-stone-600 flex items-center gap-2 flex-wrap">
+                  <p className="admin-subtle flex items-center gap-2 flex-wrap">
                     <span>Hôm nay:</span>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#3E5C46] font-bold text-[11px]">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] font-bold text-[12px]">
                       {settings.isOpen ? "Quán đang mở cửa đón khách" : "Quán đang tạm nghỉ"}
                     </span>
                     <span>•</span>
@@ -1419,15 +1410,15 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                   <button
                     type="button"
                     onClick={() => setNoticeModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-100 hover:bg-stone-200 text-[#3E5C46] text-xs font-semibold transition-all border border-stone-200"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--surface-2)] hover:opacity-90 text-[var(--text)] text-[13px] font-semibold transition-all border border-[var(--border)] cursor-pointer"
                   >
-                    <Radio className="w-4 h-4 text-[#396663]" />
+                    <Radio className="w-4 h-4 text-[var(--accent)]" />
                     <span>+ Tạo Tin Mới</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setActiveTab("menu")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-semibold hover:bg-[#2D4233] transition-all shadow-md"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--btn-primary)] text-white text-[13px] font-semibold hover:opacity-90 transition-all shadow-md cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Quản Lý Menu Món</span>
@@ -1435,227 +1426,230 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                 </div>
               </div>
 
-              {/* 4 Operational KPI Real Metrics Cards (No Fake Metrics) */}
-              {/* 4 Real KPI Metrics Cards: GA4 Users, Google Search Clicks, Call Clicks, Directions Clicks */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+              {/* 4 KPI Cards (Equal height, 1-line label, same row values & icons, >= 44px outline button) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                 {/* 1. Người dùng 7 ngày (GA4) */}
-                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Người Dùng (7 Ngày Qua)
+                <div className="admin-card p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col min-w-0">
+                      <span className="admin-label truncate block">
+                        Người dùng 7 ngày
                       </span>
                       <div className="mt-1">
                         {overviewGa4?.connected ? (
                           <div className="flex items-baseline gap-2">
-                            <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
+                            <span className="kpi-stat-value text-[32px] font-bold text-[var(--accent)] font-sans">
                               {overviewGa4.users.toLocaleString("vi-VN")}
                             </span>
-                            <span className="text-xs text-stone-500 font-medium">khách</span>
+                            <span className="admin-subtle">khách</span>
                           </div>
                         ) : (
-                          <span className="font-serif text-xl font-bold text-amber-600 dark:text-amber-400">
-                            Chưa kết nối
+                          <span className="inline-flex items-center gap-1.5 text-[15px] font-bold text-[var(--warn)]">
+                            <AlertCircle className="w-4 h-4 shrink-0" />
+                            <span>Chưa kết nối</span>
                           </span>
                         )}
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-[#3E5C46] dark:text-[#9DC183]">
-                      <Users className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <Users className="w-5 h-5 text-[var(--accent)]" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="text-stone-500 text-[11px]">
-                      {overviewGa4?.connected ? "Google Analytics 4 API" : "Cần cấu hình GA4"}
+                  <div className="mt-4 pt-3 flex items-center justify-between text-[13px] border-t border-[var(--border)]">
+                    <span className="admin-subtle truncate">
+                      {overviewGa4?.connected ? "Google Analytics 4" : "Cần cấu hình GA4"}
                     </span>
                     <button
                       type="button"
                       onClick={() => setActiveTab(overviewGa4?.connected ? "analytics" : "integrations")}
-                      className="text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] hover:underline cursor-pointer"
+                      className={
+                        overviewGa4?.connected
+                          ? "min-h-[44px] px-2 flex items-center text-[13px] font-bold text-[var(--accent)] hover:underline cursor-pointer"
+                          : "min-h-[44px] px-3.5 rounded-xl border border-[var(--accent)] text-[var(--accent)] text-[13px] font-bold hover:bg-[var(--accent)]/10 transition-colors flex items-center cursor-pointer"
+                      }
                     >
                       {overviewGa4?.connected ? "Xem chi tiết →" : "Kết nối ngay →"}
                     </button>
                   </div>
                 </div>
 
-                {/* 2. Lượt nhấp từ Google 7 ngày (GSC) */}
-                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Lượt Nhấp Từ Google (7 Ngày)
+                {/* 2. Nhấp từ Google 7 ngày (GSC) */}
+                <div className="admin-card p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col min-w-0">
+                      <span className="admin-label truncate block">
+                        Nhấp từ Google 7 ngày
                       </span>
                       <div className="mt-1">
                         {overviewGsc?.connected ? (
                           <div className="flex items-baseline gap-2">
-                            <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
+                            <span className="kpi-stat-value text-[32px] font-bold text-[var(--accent)] font-sans">
                               {overviewGsc.clicks.toLocaleString("vi-VN")}
                             </span>
-                            <span className="text-xs text-stone-500 font-medium">lượt nhấp</span>
+                            <span className="admin-subtle">lượt nhấp</span>
                           </div>
                         ) : (
-                          <span className="font-serif text-xl font-bold text-amber-600 dark:text-amber-400">
-                            Chưa kết nối
+                          <span className="inline-flex items-center gap-1.5 text-[15px] font-bold text-[var(--warn)]">
+                            <AlertCircle className="w-4 h-4 shrink-0" />
+                            <span>Chưa kết nối</span>
                           </span>
                         )}
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      <Search className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <Search className="w-5 h-5 text-[var(--accent)]" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="text-stone-500 text-[11px]">
-                      {overviewGsc?.connected ? "Google Search Console" : "Cần cấu hình GSC"}
+                  <div className="mt-4 pt-3 flex items-center justify-between text-[13px] border-t border-[var(--border)]">
+                    <span className="admin-subtle truncate">
+                      {overviewGsc?.connected ? "Search Console API" : "Cần cấu hình GSC"}
                     </span>
                     <button
                       type="button"
                       onClick={() => setActiveTab(overviewGsc?.connected ? "searchConsole" : "integrations")}
-                      className="text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] hover:underline cursor-pointer"
+                      className={
+                        overviewGsc?.connected
+                          ? "min-h-[44px] px-2 flex items-center text-[13px] font-bold text-[var(--accent)] hover:underline cursor-pointer"
+                          : "min-h-[44px] px-3.5 rounded-xl border border-[var(--accent)] text-[var(--accent)] text-[13px] font-bold hover:bg-[var(--accent)]/10 transition-colors flex items-center cursor-pointer"
+                      }
                     >
                       {overviewGsc?.connected ? "Xem chi tiết →" : "Kết nối ngay →"}
                     </button>
                   </div>
                 </div>
 
-                {/* 3. Lượt bấm Gọi Hotline */}
-                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Lượt Bấm Gọi Hotline
+                {/* 3. Bấm gọi hotline */}
+                <div className="admin-card p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col min-w-0">
+                      <span className="admin-label truncate block">
+                        Bấm gọi hotline
                       </span>
                       <div className="mt-1">
-                        {overviewGa4?.connected || analyticsStats.click_call > 0 ? (
-                          <div className="flex items-baseline gap-2">
-                            <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
-                              {(overviewGa4?.calls || 0) + (analyticsStats.click_call || 0)}
-                            </span>
-                            <span className="text-xs text-stone-500 font-medium">lượt bấm</span>
-                          </div>
-                        ) : (
-                          <span className="font-serif text-xl font-bold text-stone-500 dark:text-stone-400">
-                            0 lượt
+                        <div className="flex items-baseline gap-2">
+                          <span className="kpi-stat-value text-[32px] font-bold text-[var(--accent)] font-sans">
+                            {((overviewGa4?.calls || 0) + (analyticsStats.click_call || 0)).toLocaleString("vi-VN")}
                           </span>
-                        )}
+                          <span className="admin-subtle">lượt bấm</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
-                      <Phone className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <Phone className="w-5 h-5 text-[var(--accent)]" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="text-stone-500 text-[11px]">Hotline 038 285 1688</span>
-                    <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">Tự động đo lường</span>
+                  <div className="mt-4 pt-3 flex items-center justify-between text-[13px] border-t border-[var(--border)]">
+                    <span className="admin-subtle">Hotline 038 285 1688</span>
+                    <span className="inline-flex items-center gap-1 font-bold text-[var(--accent)] text-[13px]">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      <span>Tự động đo lường</span>
+                    </span>
                   </div>
                 </div>
 
-                {/* 4. Lượt bấm Chỉ đường */}
-                <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Lượt Bấm Chỉ Đường Maps
+                {/* 4. Bấm chỉ đường */}
+                <div className="admin-card p-5 h-full flex flex-col justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col min-w-0">
+                      <span className="admin-label truncate block">
+                        Bấm chỉ đường
                       </span>
                       <div className="mt-1">
-                        {overviewGa4?.connected || analyticsStats.click_directions > 0 ? (
-                          <div className="flex items-baseline gap-2">
-                            <span className="font-serif text-3xl font-bold text-[#CC7755] dark:text-[#E0B872]">
-                              {(overviewGa4?.directions || 0) + (analyticsStats.click_directions || 0)}
-                            </span>
-                            <span className="text-xs text-stone-500 font-medium">lượt bấm</span>
-                          </div>
-                        ) : (
-                          <span className="font-serif text-xl font-bold text-stone-500 dark:text-stone-400">
-                            0 lượt
+                        <div className="flex items-baseline gap-2">
+                          <span className="kpi-stat-value text-[32px] font-bold text-[var(--accent)] font-sans">
+                            {((overviewGa4?.directions || 0) + (analyticsStats.click_directions || 0)).toLocaleString("vi-VN")}
                           </span>
-                        )}
+                          <span className="admin-subtle">lượt bấm</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/50 text-[#CC7755] dark:text-[#E0B872] flex items-center justify-center">
-                      <MapPin className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <MapPin className="w-5 h-5 text-[var(--accent)]" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="text-stone-500 text-[11px]">Đường bờ suối Gia Nghĩa</span>
-                    <span className="text-[#CC7755] dark:text-[#E0B872] font-bold text-[11px]">Google Maps</span>
+                  <div className="mt-4 pt-3 flex items-center justify-between text-[13px] border-t border-[var(--border)]">
+                    <span className="admin-subtle">Đường bờ suối</span>
+                    <span className="inline-flex items-center gap-1 font-bold text-[var(--accent)] text-[13px]">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      <span>Google Maps</span>
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* 7-Day Analytics Engagement Panel (Customer Actions & Conversions) */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-7 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-200/60 dark:border-stone-700/60">
+              <div className="admin-card p-6 sm:p-7 flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[var(--border)]">
                   <div className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-[#396663] dark:text-[#88B795]" />
-                    <h2 className="font-serif text-lg sm:text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                    <Activity className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                    <h2 className="admin-h2 font-serif text-[22px] font-bold text-[var(--text)]">
                       Tương Tác Khách Hàng (7 Ngày Qua)
                     </h2>
                   </div>
-                  <span className="text-[11px] text-stone-500 font-medium">
+                  <span className="admin-subtle text-[13px]">
                     Số liệu thực tế từ lượt bấm hành động của khách ghé thăm website
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {/* Call */}
-                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Gọi Hotline</span>
-                      <span className="font-serif text-2xl font-bold text-[#3E5C46] dark:text-[#9DC183] mt-1 block">
-                        {analyticsStats.click_call} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      <span className="admin-label block">Gọi Hotline</span>
+                      <span className="kpi-stat-value text-[24px] font-bold text-[var(--text)] mt-1 block">
+                        {analyticsStats.click_call} <span className="admin-subtle text-[13px] font-normal">lượt</span>
                       </span>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-[#9DC183] flex items-center justify-center">
-                      <Phone className="w-4 h-4" />
+                    <div className="w-9 h-9 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <Phone className="w-4 h-4 text-[var(--accent)]" />
                     </div>
                   </div>
 
                   {/* Zalo */}
-                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Nhắn Zalo</span>
-                      <span className="font-serif text-2xl font-bold text-sky-700 dark:text-sky-400 mt-1 block">
-                        {analyticsStats.click_zalo} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      <span className="admin-label block">Nhắn Zalo</span>
+                      <span className="kpi-stat-value text-[24px] font-bold text-[var(--text)] mt-1 block">
+                        {analyticsStats.click_zalo} <span className="admin-subtle text-[13px] font-normal">lượt</span>
                       </span>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 flex items-center justify-center">
-                      <Radio className="w-4 h-4" />
+                    <div className="w-9 h-9 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <Radio className="w-4 h-4 text-[var(--accent)]" />
                     </div>
                   </div>
 
                   {/* Directions */}
-                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Chỉ Đường Maps</span>
-                      <span className="font-serif text-2xl font-bold text-[#CC7755] dark:text-[#E0B872] mt-1 block">
-                        {analyticsStats.click_directions} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      <span className="admin-label block">Chỉ Đường Maps</span>
+                      <span className="kpi-stat-value text-[24px] font-bold text-[var(--text)] mt-1 block">
+                        {analyticsStats.click_directions} <span className="admin-subtle text-[13px] font-normal">lượt</span>
                       </span>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-950/60 text-[#CC7755] dark:text-[#E0B872] flex items-center justify-center">
-                      <MapPin className="w-4 h-4" />
+                    <div className="w-9 h-9 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4 text-[var(--accent)]" />
                     </div>
                   </div>
 
                   {/* Menu Views */}
-                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Xem Thực Đơn</span>
-                      <span className="font-serif text-2xl font-bold text-purple-700 dark:text-purple-400 mt-1 block">
-                        {analyticsStats.view_menu} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      <span className="admin-label block">Xem Thực Đơn</span>
+                      <span className="kpi-stat-value text-[24px] font-bold text-[var(--text)] mt-1 block">
+                        {analyticsStats.view_menu} <span className="admin-subtle text-[13px] font-normal">lượt</span>
                       </span>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 flex items-center justify-center">
-                      <Eye className="w-4 h-4" />
+                    <div className="w-9 h-9 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+                      <Eye className="w-4 h-4 text-[var(--accent)]" />
                     </div>
                   </div>
                 </div>
 
                 {/* Quick Status Control with Duration */}
-                <div className="pt-3 border-t border-stone-200/60 dark:border-stone-700/60 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="pt-3 border-t border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-stone-400" />
-                    <span className="text-xs font-semibold text-stone-700 dark:text-stone-300">
+                    <Clock className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                    <span className="text-[13px] font-semibold text-[var(--text)]">
                       Thời lượng áp dụng khi đóng/mở đột xuất:
                     </span>
                   </div>
@@ -1670,10 +1664,10 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                             handleStoreOverrideChange(storeOverride, dur);
                           }
                         }}
-                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                        className={`min-h-[44px] px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all cursor-pointer flex items-center justify-center ${
                           overrideDuration === dur
-                            ? "bg-[#3E5C46] text-white shadow-sm font-bold"
-                            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200"
+                            ? "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] shadow-sm font-bold"
+                            : "bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
                         }`}
                       >
                         {dur === "1h"
@@ -1692,35 +1686,35 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               </div>
 
               {/* 2-Column Overview Section: Bảng Tin + Quick Dish Status */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Left 7 Cols: Bảng tin mới nhất */}
                 <div className="lg:col-span-7 flex flex-col gap-6">
-                  <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+                  <div className="admin-card p-6 sm:p-8 flex flex-col gap-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                       <div className="flex items-center gap-2">
-                        <Radio className="w-5 h-5 text-[#396663]" />
-                        <h2 className="font-serif text-xl font-bold text-[#3E5C46]">
+                        <Radio className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                        <h2 className="admin-h2 font-serif text-[22px] font-bold text-[var(--text)]">
                           Bảng Tin &amp; Thông Báo Quán
                         </h2>
                       </div>
                       <button
                         type="button"
                         onClick={() => setNoticeModalOpen(true)}
-                        className="text-xs font-semibold text-[#3E5C46] hover:underline"
+                        className="text-[13px] font-semibold text-[var(--accent)] hover:underline min-h-[44px] px-2 flex items-center cursor-pointer"
                       >
                         + Thêm tin
                       </button>
                     </div>
 
-                    <div className="flex flex-col divide-y divide-stone-100">
+                    <div className="flex flex-col divide-y divide-[var(--border)]">
                       {announcements.length === 0 ? (
-                        <div className="py-8 text-center text-stone-400 text-xs flex flex-col items-center justify-center gap-2">
-                          <Radio className="w-8 h-8 text-stone-300" />
+                        <div className="py-8 text-center admin-subtle text-[13px] flex flex-col items-center justify-center gap-2">
+                          <Radio className="w-8 h-8 text-[var(--text-subtle)]" />
                           <p>Chưa có bảng tin hoặc thông báo nào.</p>
                           <button
                             type="button"
                             onClick={() => setNoticeModalOpen(true)}
-                            className="text-[#3E5C46] font-semibold underline hover:text-[#2D4233]"
+                            className="text-[var(--accent)] font-semibold underline hover:opacity-80 cursor-pointer min-h-[44px] flex items-center"
                           >
                             Bấm vào đây để tạo tin mới
                           </button>
@@ -1728,15 +1722,15 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                       ) : (
                         announcements.map((a) => (
                           <div key={a.id} className="py-4 flex items-start justify-between gap-4 group">
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-2">
+                            <div className="flex flex-col gap-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
                                 <span
-                                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                  className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
                                     a.type === "event" || a.category === "event"
-                                      ? "bg-purple-100 text-purple-700"
+                                      ? "bg-purple-950/40 text-purple-300 border border-purple-800"
                                       : a.type === "special" || a.category === "special"
-                                      ? "bg-amber-100 text-amber-800"
-                                      : "bg-emerald-100 text-[#3E5C46]"
+                                      ? "bg-amber-950/40 text-amber-300 border border-amber-800"
+                                      : "bg-[rgba(157,193,131,0.15)] text-[var(--accent)] border border-[var(--border)]"
                                   }`}
                                 >
                                   {a.type === "event" || a.category === "event"
@@ -1745,21 +1739,22 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                                     ? "Đặc sản"
                                     : "Thông báo"}
                                 </span>
-                                <span className="text-xs text-stone-400">{a.date || a.createdAt}</span>
+                                <span className="admin-subtle text-[12px]">{a.date || a.createdAt}</span>
                                 {(a.isHighlighted || a.isPinned) && (
-                                  <span className="text-[10px] text-red-600 font-bold bg-red-50 px-1.5 py-0.5 rounded">
+                                  <span className="text-[11px] text-[var(--danger)] font-bold bg-[rgba(242,139,130,0.15)] px-1.5 py-0.5 rounded border border-[var(--danger)]">
                                     Ghim
                                   </span>
                                 )}
                               </div>
-                              <h3 className="font-serif text-base font-bold text-[#1B281D]">{a.title}</h3>
-                              <p className="text-xs text-stone-600 leading-relaxed">{a.content}</p>
+                              <h3 className="font-serif text-base font-bold text-[var(--text)]">{a.title}</h3>
+                              <p className="admin-subtle text-[13px] leading-relaxed">{a.content}</p>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleDeleteAnnouncement(a.id)}
                               title="Xóa tin này"
-                              className="btn-press p-2 text-stone-400 hover:text-red-500 hover:bg-red-50 hover:scale-110 active:scale-95 rounded-lg transition-all duration-200"
+                              aria-label="Xóa tin này"
+                              className="p-2.5 text-[var(--text-subtle)] hover:text-[var(--danger)] rounded-lg transition-colors cursor-pointer shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1772,33 +1767,33 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
 
                 {/* Right 5 Cols: Trạng Thái Món Nhanh (Top 5 Quick Toggles) */}
                 <div className="lg:col-span-5 flex flex-col gap-6">
-                  <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-8 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-stone-200">
+                  <div className="admin-card p-6 sm:p-8 flex flex-col gap-4">
+                    <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                       <div className="flex items-center gap-2">
-                        <UtensilsCrossed className="w-5 h-5 text-[#3E5C46]" />
-                        <h2 className="font-serif text-xl font-bold text-[#3E5C46]">
+                        <UtensilsCrossed className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                        <h2 className="admin-h2 font-serif text-[22px] font-bold text-[var(--text)]">
                           Trạng Thái Món Nhanh
                         </h2>
                       </div>
                       <button
                         type="button"
                         onClick={() => setActiveTab("menu")}
-                        className="text-xs font-semibold text-[#3E5C46] hover:underline"
+                        className="text-[13px] font-semibold text-[var(--accent)] hover:underline min-h-[44px] px-2 flex items-center cursor-pointer"
                       >
                         Xem tất cả ({totalMenuItems} món)
                       </button>
                     </div>
 
-                    <div className="flex flex-col divide-y divide-stone-100">
+                    <div className="flex flex-col divide-y divide-[var(--border)]">
                       {MENU_ITEMS.slice(0, 6).map((item) => {
                         const inStock = menuOverrides[item.id]?.inStock ?? true;
                         const price = menuOverrides[item.id]?.price ?? item.price;
 
                         return (
                           <div key={item.id} className="py-3 flex items-center justify-between gap-3">
-                            <div className="flex flex-col">
-                              <span className="text-xs font-bold text-[#1B281D] dark:text-[#F3EBD8]">{item.name}</span>
-                              <span className="text-[11px] text-[#CC7755] dark:text-[#E0B872] font-serif font-bold">
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-[14px] font-bold text-[var(--text)] truncate">{item.name}</span>
+                              <span className="text-[13px] text-[var(--clay)] font-bold font-numeric">
                                 {price.toLocaleString("vi-VN")}đ
                               </span>
                             </div>
@@ -1807,8 +1802,8 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                             <button
                               type="button"
                               onClick={() => handleToggleStock(item.id, inStock)}
-                              className={`btn-press relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none min-h-[44px] items-center ${
-                                inStock ? "bg-emerald-600" : "bg-stone-400"
+                              className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none min-h-[44px] items-center ${
+                                inStock ? "bg-[var(--accent)]" : "bg-stone-500"
                               }`}
                               aria-label={inStock ? `Đang còn ${item.name}, bấm để báo hết` : `Đang hết ${item.name}, bấm để bật còn`}
                             >
@@ -1861,16 +1856,16 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
           {activeTab === "menu" && (
             <div className="flex flex-col gap-6">
               {/* Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm">
+              <div className="admin-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
+                  <h1 className="admin-h1 font-serif text-[var(--text)]">
                     Quản Lý Thực Đơn Cẩm Cù House
                   </h1>
-                  <p className="text-xs text-stone-600 mt-1">
+                  <p className="admin-subtle mt-1 text-[13px]">
                     Bật/Tắt trạng thái còn hàng hoặc cập nhật giá bán. Dữ liệu sẽ tự động đồng bộ sang trang khách hàng.
                   </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2.5">
                   <input
                     ref={csvInputRef}
                     type="file"
@@ -1881,29 +1876,29 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                   <button
                     type="button"
                     onClick={handleExportMenuCsv}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold border border-stone-200 dark:border-stone-700 transition-all cursor-pointer shadow-sm"
+                    className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--border)] text-[var(--text)] text-[13px] font-semibold border border-[var(--border)] transition-all cursor-pointer shadow-sm"
                     title="Xuất danh sách 67 món ra file CSV"
                   >
-                    <Download className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#9DC183]" />
+                    <Download className="w-3.5 h-3.5 text-[var(--accent)]" />
                     <span>Xuất CSV</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => csvInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold border border-stone-200 dark:border-stone-700 transition-all cursor-pointer shadow-sm"
+                    className="min-h-[44px] inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--surface-2)] hover:bg-[var(--border)] text-[var(--text)] text-[13px] font-semibold border border-[var(--border)] transition-all cursor-pointer shadow-sm"
                     title="Nhập cập nhật món từ file CSV"
                   >
-                    <Upload className="w-3.5 h-3.5 text-[#CC7755]" />
+                    <Upload className="w-3.5 h-3.5 text-[var(--clay)]" />
                     <span>Nhập CSV</span>
                   </button>
                   <div className="relative">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-subtle)]" />
                     <input
                       type="text"
                       placeholder="Tìm kiếm món..."
                       value={menuSearch}
                       onChange={(e) => setMenuSearch(e.target.value)}
-                      className="pl-9 pr-4 py-2 bg-stone-100 dark:bg-stone-800 dark:text-stone-100 rounded-full text-xs text-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="min-h-[44px] pl-9 pr-4 py-2 bg-[var(--surface-2)] text-[var(--text)] rounded-xl text-[13px] border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1916,10 +1911,10 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-4 py-2 rounded-full text-xs font-semibold shrink-0 transition-all ${
+                    className={`min-h-[44px] px-4 py-2 rounded-xl text-[13px] font-semibold shrink-0 transition-all cursor-pointer ${
                       selectedCategory === cat.id
-                        ? "bg-[#3E5C46] text-white shadow-sm"
-                        : "bg-white dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 hover:bg-stone-100 dark:hover:bg-white/10"
+                        ? "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] font-bold shadow-sm"
+                        : "bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] hover:text-[var(--text)]"
                     }`}
                   >
                     {cat.name}
@@ -1928,10 +1923,10 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               </div>
 
               {/* Menu Items Table */}
-              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 overflow-hidden shadow-sm">
+              <div className="admin-card overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-stone-700">
-                    <thead className="bg-stone-50 dark:bg-[#16231A] border-b border-stone-200 dark:border-stone-700/60 uppercase tracking-wider text-[11px] text-stone-500 dark:text-stone-400 font-bold">
+                  <table className="w-full text-left text-[13px] text-[var(--text)]">
+                    <thead className="bg-[var(--surface-2)] border-b border-[var(--border)] uppercase tracking-wider text-[12px] text-[var(--text-muted)] font-bold">
                       <tr>
                         <th className="py-3.5 px-6">Tên Món</th>
                         <th className="py-3.5 px-4">Nhóm Món</th>
@@ -1940,7 +1935,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                         <th className="py-3.5 px-6 text-right">Thao Tác</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-stone-100">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {filteredMenuItems.map((item) => {
                         const inStock = menuOverrides[item.id]?.inStock ?? true;
                         const currentPrice = menuOverrides[item.id]?.price ?? item.price;
@@ -1949,35 +1944,35 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                         return (
                           <tr
                             key={item.id}
-                            className={`hover:bg-stone-50 transition-colors ${
-                              !inStock ? "bg-stone-50/60 opacity-60" : ""
+                            className={`hover:bg-[var(--surface-2)] transition-colors ${
+                              !inStock ? "opacity-60" : ""
                             }`}
                           >
-                            <td className="py-3.5 px-6 font-semibold text-[#1B281D]">
+                            <td className="py-3.5 px-6 font-semibold text-[var(--text)]">
                               <div className="flex items-center gap-2">
                                 <span>{item.name}</span>
                                 {item.tag && (
-                                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[#3E5C46] text-[10px] font-bold">
+                                  <span className="px-2 py-0.5 rounded-full bg-[rgba(157,193,131,0.15)] text-[var(--accent)] text-[11px] font-bold border border-[var(--border)]">
                                     {item.tag}
                                   </span>
                                 )}
                               </div>
                             </td>
-                            <td className="py-3.5 px-4 text-stone-500">{item.categoryName}</td>
-                            <td className="py-3.5 px-4 font-serif font-bold text-[#7D5E4A]">
+                            <td className="py-3.5 px-4 admin-subtle">{item.categoryName}</td>
+                            <td className="py-3.5 px-4 font-numeric font-bold text-[var(--clay)]">
                               {isEditingPrice ? (
                                 <div className="flex items-center gap-1.5">
                                   <input
                                     type="text"
                                     value={editingPriceValue}
                                     onChange={(e) => setEditingPriceValue(e.target.value)}
-                                    className="w-24 px-2 py-1 bg-stone-100 rounded border border-stone-300 text-xs text-stone-800"
+                                    className="w-24 px-2 py-1.5 bg-[var(--surface-2)] rounded-lg border border-[var(--border)] text-[13px] text-[var(--text)]"
                                     autoFocus
                                   />
                                   <button
                                     type="button"
                                     onClick={() => handleSavePrice(item.id)}
-                                    className="p-1 rounded bg-[#3E5C46] text-white hover:bg-[#2D4233]"
+                                    className="w-8 h-8 rounded-lg bg-[var(--btn-primary)] text-white flex items-center justify-center cursor-pointer"
                                     title="Lưu"
                                   >
                                     <Check className="w-3.5 h-3.5" />
@@ -1985,7 +1980,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                                   <button
                                     type="button"
                                     onClick={() => setEditingPriceId(null)}
-                                    className="p-1 rounded bg-stone-200 text-stone-600 hover:bg-stone-300"
+                                    className="w-8 h-8 rounded-lg bg-[var(--surface-2)] text-[var(--text-muted)] border border-[var(--border)] flex items-center justify-center cursor-pointer"
                                     title="Hủy"
                                   >
                                     <X className="w-3.5 h-3.5" />
@@ -2000,33 +1995,43 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                                       setEditingPriceId(item.id);
                                       setEditingPriceValue(currentPrice.toString());
                                     }}
-                                    className="text-stone-400 hover:text-[#3E5C46]"
+                                    className="w-7 h-7 flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--accent)] cursor-pointer"
                                     title="Đổi giá"
                                   >
-                                    <Edit2 className="w-3 h-3" />
+                                    <Edit2 className="w-3.5 h-3.5" />
                                   </button>
                                 </div>
                               )}
                             </td>
                             <td className="py-3.5 px-4 text-center">
                               <span
-                                className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${
+                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-bold border border-[var(--border)] ${
                                   inStock
-                                    ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
-                                    : "bg-stone-200 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-300 dark:border-stone-700"
+                                    ? "bg-[rgba(127,209,155,0.15)] text-[var(--success)]"
+                                    : "bg-[rgba(240,195,107,0.15)] text-[var(--warn)]"
                                 }`}
                               >
-                                {inStock ? "🟢 Còn hàng" : "⚪ Tạm hết"}
+                                {inStock ? (
+                                  <>
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    <span>Còn hàng</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <AlertCircle className="w-3.5 h-3.5" />
+                                    <span>Tạm hết</span>
+                                  </>
+                                )}
                               </span>
                             </td>
                             <td className="py-3.5 px-6 text-right">
                               <button
                                 type="button"
                                 onClick={() => handleToggleStock(item.id, inStock)}
-                                className={`min-h-[44px] px-4 py-2 rounded-full text-xs font-semibold transition-all inline-flex items-center justify-center gap-1.5 ${
+                                className={`min-h-[44px] px-4 py-2 rounded-xl text-[13px] font-semibold transition-all inline-flex items-center justify-center gap-1.5 cursor-pointer ${
                                   inStock
-                                    ? "bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-300 dark:bg-stone-800 dark:text-stone-200 dark:border-stone-700"
-                                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                                    ? "bg-[var(--surface-2)] hover:bg-[var(--border)] text-[var(--text)] border border-[var(--border)]"
+                                    : "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] font-bold shadow-sm"
                                 }`}
                               >
                                 {inStock ? "Báo Tạm Hết" : "Bật Còn Hàng"}
@@ -3280,114 +3285,114 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
         onClose={() => setAdminLightboxOpen(false)}
       />
 
-      {/* Mobile Bottom Navigation Bar (Mobile-first, touch targets >= 44px) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#16231A]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 z-50 flex items-center overflow-x-auto no-scrollbar px-2 gap-1 shadow-lg">
+      {/* Mobile Bottom Navigation Bar (Always dark, touch targets >= 44px) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-[#14241C] text-[#F5EEDC] border-t border-[rgba(245,238,220,0.14)] z-50 flex items-center overflow-x-auto no-scrollbar px-2 gap-1 shadow-lg">
         <button
           type="button"
           onClick={() => setActiveTab("overview")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "overview"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <LayoutDashboard className="w-4 h-4 mb-0.5" />
+          <LayoutDashboard className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Tổng quan</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("analytics")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "analytics"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <TrendingUp className="w-4 h-4 mb-0.5" />
+          <TrendingUp className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>GA4</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("searchConsole")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "searchConsole"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <Search className="w-4 h-4 mb-0.5" />
+          <Search className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>GSC</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("integrations")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "integrations"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <Key className="w-4 h-4 mb-0.5" />
+          <Key className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Tích hợp</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("menu")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "menu"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <UtensilsCrossed className="w-4 h-4 mb-0.5" />
+          <UtensilsCrossed className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Thực đơn</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("gallery")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "gallery"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <ImageIcon className="w-4 h-4 mb-0.5" />
+          <ImageIcon className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Thư viện</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("settings")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "settings"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <Settings className="w-4 h-4 mb-0.5" />
+          <Settings className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Cài đặt</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("content")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "content"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <FileText className="w-4 h-4 mb-0.5" />
+          <FileText className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Nội dung</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("security")}
-          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[10px] font-bold transition-all ${
             activeTab === "security"
-              ? "text-[#3E5C46] dark:text-[#9DC183]"
-              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+              ? "text-[#9DC183] bg-[#1F3A2A] font-bold"
+              : "text-[#C9C2AE] hover:text-[#F5EEDC]"
           }`}
         >
-          <Shield className="w-4 h-4 mb-0.5" />
+          <Shield className="w-4 h-4 mb-0.5 text-[#9DC183]" />
           <span>Bảo mật</span>
         </button>
       </nav>

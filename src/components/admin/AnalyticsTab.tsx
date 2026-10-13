@@ -14,7 +14,6 @@ import {
   RefreshCw,
   AlertCircle,
   ExternalLink,
-  Clock,
   ArrowUpRight,
 } from "lucide-react";
 import { Ga4ReportData } from "@/lib/google-apis";
@@ -49,26 +48,27 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
 
   useEffect(() => {
     fetchAnalytics(days);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [days]);
 
-  // If not connected, show clean Empty State as requested
+  // If not connected, show clean Empty State with icon + text and >=44px button
   if (!loading && data && !data.connected) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 sm:p-14 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-3xl shadow-sm text-center max-w-2xl mx-auto my-8">
-        <div className="w-16 h-16 rounded-3xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-5 shadow-sm border border-amber-200 dark:border-amber-800">
-          <AlertCircle className="w-8 h-8" />
+      <div className="admin-card flex flex-col items-center justify-center p-8 sm:p-14 text-center max-w-2xl mx-auto my-8">
+        <div className="w-16 h-16 rounded-2xl admin-icon-circle flex items-center justify-center mb-5">
+          <AlertCircle className="w-8 h-8 text-[var(--accent)]" />
         </div>
-        <h1 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 mb-3">
+        <h1 className="admin-h1 font-serif text-[var(--text)] mb-3">
           Chưa Kết Nối Google Analytics 4
         </h1>
-        <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed mb-6 max-w-md">
+        <p className="admin-body text-[var(--text-muted)] leading-relaxed mb-6 max-w-md">
           {data.error ||
             "Để hiển thị lưu lượng truy cập thực tế, biểu đồ người dùng và các sự kiện bấm Gọi / Chỉ đường, vui lòng cấu hình GA4 Property ID và Service Account."}
         </p>
         <button
           type="button"
           onClick={onSwitchToIntegrations}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#3E5C46] hover:bg-[#2D4233] text-white text-sm font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+          className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--btn-primary)] text-[var(--btn-primary-text)] text-[15px] font-bold transition-all shadow-sm hover:opacity-95 active:scale-95 cursor-pointer"
         >
           <span>Kết nối ở Tích hợp &amp; Khóa</span>
           <ArrowUpRight className="w-4 h-4" />
@@ -92,34 +92,34 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
   const svgPolyline = points.map((p) => `${p.x},${p.y}`).join(" ");
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-6 w-full max-w-[1200px] mx-auto">
       {/* Top Header & Range Filters */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] uppercase tracking-wider">
-            <TrendingUp className="w-4 h-4" />
-            <span>Dữ Liệu Trực Quan Google Analytics 4 (GA4)</span>
+      <div className="admin-card p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider">
+            <TrendingUp className="w-4 h-4 shrink-0" />
+            <span className="truncate">Dữ Liệu Trực Quan Google Analytics 4 (GA4)</span>
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">
+          <h1 className="admin-h1 font-serif text-[var(--text)]">
             Báo Cáo Lưu Lượng &amp; Tương Tác
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300">
+          <p className="admin-subtle">
             Dữ liệu được cập nhật từ Google Analytics Data API (Tự động lưu bộ nhớ đệm 10 phút).
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap self-start md:self-auto">
-          {/* Days selector */}
-          <div className="inline-flex p-1 bg-stone-100 dark:bg-stone-800 rounded-xl text-xs font-semibold">
+        <div className="flex items-center gap-2.5 flex-wrap self-start md:self-auto shrink-0">
+          {/* Days selector with >=44px touch targets */}
+          <div className="inline-flex p-1 bg-[var(--surface-2)] border border-[var(--border)] rounded-xl text-[13px] font-semibold">
             {([7, 28, 90] as const).map((d) => (
               <button
                 key={d}
                 type="button"
                 onClick={() => setDays(d)}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`min-h-[44px] min-w-[44px] px-3.5 py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center ${
                   days === d
-                    ? "bg-[#3E5C46] text-white shadow-sm font-bold"
-                    : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white"
+                    ? "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] font-bold shadow-sm"
+                    : "text-[var(--text-muted)] hover:text-[var(--text)]"
                 }`}
               >
                 {d} ngày
@@ -131,112 +131,111 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
             type="button"
             onClick={() => fetchAnalytics(days, true)}
             disabled={loading}
-            className="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-colors cursor-pointer"
+            className="w-11 h-11 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] hover:bg-[var(--border)] text-[var(--text)] transition-colors cursor-pointer flex items-center justify-center shrink-0"
             title="Làm mới dữ liệu từ Google"
+            aria-label="Làm mới dữ liệu từ Google"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-[#3E5C46]" : ""}`} />
+            <RefreshCw className={`w-4 h-4 text-[var(--accent)] ${loading ? "animate-spin" : ""}`} />
           </button>
         </div>
       </div>
 
-      {/* 4 Main Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      {/* 4 Main Overview Cards - Equal height, single accent icon circle, lining numbers */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {/* 1. Active Users */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                Người Dùng ({days} ngày)
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
+                Người dùng ({days} ngày)
               </span>
-              <div className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183] mt-1">
+              <div className="kpi-stat-value text-[var(--text)] mt-1">
                 {loading ? "..." : (data?.overview.totalUsers ?? 0).toLocaleString("vi-VN")}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#3E5C46] dark:text-[#9DC183] flex items-center justify-center">
-              <Users className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <Users className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Truy cập website thực tế
           </div>
         </div>
 
         {/* 2. Total Sessions */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                Phiên Truy Cập
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
+                Phiên truy cập
               </span>
-              <div className="font-serif text-3xl font-bold text-stone-800 dark:text-stone-100 mt-1">
+              <div className="kpi-stat-value text-[var(--text)] mt-1">
                 {loading ? "..." : (data?.overview.totalSessions ?? 0).toLocaleString("vi-VN")}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <TrendingUp className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Lượt ghé thăm mở rộng
           </div>
         </div>
 
         {/* 3. Screen Page Views */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
-                Lượt Xem Trang
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block">
+                Lượt xem trang
               </span>
-              <div className="font-serif text-3xl font-bold text-[#CC7755] dark:text-[#E0B872] mt-1">
+              <div className="kpi-stat-value text-[var(--text)] mt-1">
                 {loading ? "..." : (data?.overview.screenPageViews ?? 0).toLocaleString("vi-VN")}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/40 text-[#CC7755] flex items-center justify-center">
-              <Eye className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <Eye className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Tổng lượt hiển thị các trang
           </div>
         </div>
 
         {/* 4. Realtime Users */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div>
-              <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Thời Gian Thực (30p)</span>
+        <div className="admin-card p-5 h-full flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="admin-label truncate block flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse inline-block" />
+                <span>Trực tiếp (30p)</span>
               </span>
-              <div className="font-serif text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+              <div className="kpi-stat-value text-[var(--success)] mt-1">
                 {loading ? "..." : (data?.overview.realtimeUsers ?? 0)}
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <Radio className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full admin-icon-circle flex items-center justify-center shrink-0">
+              <Radio className="w-5 h-5 text-[var(--accent)]" />
             </div>
           </div>
-          <div className="text-[12px] text-stone-500 mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="admin-subtle mt-4 pt-3 border-t border-[var(--border)]">
             Khách đang online ngay lúc này
           </div>
         </div>
       </div>
 
       {/* SVG Interactive Line Chart for Daily Trend */}
-      <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+      <div className="admin-card p-6 flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+            <h2 className="admin-h2 font-serif text-[var(--text)]">
               Xu Hướng Người Dùng Theo Ngày
             </h2>
-            <p className="text-xs text-stone-500">Biểu đồ đường trực quan theo chu kỳ {days} ngày qua</p>
+            <p className="admin-subtle mt-0.5">Biểu đồ đường trực quan theo chu kỳ {days} ngày qua</p>
           </div>
-          <div className="flex items-center gap-4 text-xs font-semibold">
-            <span className="flex items-center gap-1.5 text-[#3E5C46] dark:text-[#9DC183]">
-              <span className="w-3 h-3 rounded-full bg-[#3E5C46]" />
-              <span>Người dùng (Active Users)</span>
-            </span>
+          <div className="flex items-center gap-2 text-[13px] font-semibold text-[var(--accent)]">
+            <span className="w-3 h-3 rounded-full bg-[var(--accent)]" />
+            <span>Người dùng (Active Users)</span>
           </div>
         </div>
 
@@ -245,14 +244,14 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
             <div className="min-w-[600px] h-[190px] relative">
               <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-full overflow-visible">
                 {/* Background grid horizontal lines */}
-                <line x1="0" y1="20" x2={chartWidth} y2="20" stroke="currentColor" strokeOpacity="0.08" />
-                <line x1="0" y1="80" x2={chartWidth} y2="80" stroke="currentColor" strokeOpacity="0.08" />
-                <line x1="0" y1="140" x2={chartWidth} y2="140" stroke="currentColor" strokeOpacity="0.08" />
+                <line x1="0" y1="20" x2={chartWidth} y2="20" stroke="currentColor" strokeOpacity="0.12" />
+                <line x1="0" y1="80" x2={chartWidth} y2="80" stroke="currentColor" strokeOpacity="0.12" />
+                <line x1="0" y1="140" x2={chartWidth} y2="140" stroke="currentColor" strokeOpacity="0.12" />
 
                 {/* Polyline Path */}
                 <polyline
                   fill="none"
-                  stroke="#3E5C46"
+                  stroke="var(--accent)"
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -266,7 +265,7 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
                       cx={p.x}
                       cy={p.y}
                       r="4"
-                      className="fill-white dark:fill-[#1E2B22] stroke-[#3E5C46] stroke-2 hover:r-6 transition-all cursor-pointer"
+                      className="fill-[var(--surface)] stroke-[var(--accent)] stroke-2 hover:r-6 transition-all cursor-pointer"
                     >
                       <title>{`${p.date}: ${p.users} người dùng`}</title>
                     </circle>
@@ -274,7 +273,7 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
                       x={p.x}
                       y={chartHeight + 16}
                       textAnchor="middle"
-                      className="text-[10px] fill-stone-400 font-mono"
+                      className="text-[11px] fill-[var(--text-subtle)] font-mono"
                     >
                       {p.date}
                     </text>
@@ -284,84 +283,84 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
             </div>
           </div>
         ) : (
-          <div className="py-12 text-center text-xs text-stone-400 italic">
+          <div className="py-12 text-center admin-subtle italic">
             Chưa có đủ điểm dữ liệu theo ngày trong chu kỳ đã chọn.
           </div>
         )}
       </div>
 
-      {/* Business Action Events (Call, Zalo, Directions, Menu) */}
-      <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+      {/* Business Action Events (Call, Zalo, Directions, Menu) - All single accent icon circle */}
+      <div className="admin-card p-6 flex flex-col gap-4">
         <div>
-          <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+          <h2 className="admin-h2 font-serif text-[var(--text)]">
             Hành Động Khách Hàng Chuyển Đổi (Cẩm Cù Actions)
           </h2>
-          <p className="text-xs text-stone-500">
+          <p className="admin-subtle mt-0.5">
             Ghi nhận tự động từ website qua GA4 &amp; Beacon
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* click_call */}
-          <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200/60 dark:border-stone-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
-                <Phone className="w-5 h-5" />
+          <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl admin-icon-circle flex items-center justify-center shrink-0">
+                <Phone className="w-5 h-5 text-[var(--accent)]" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-stone-800 dark:text-stone-100">Bấm Gọi Hotline</span>
-                <div className="text-[11px] text-stone-400">click_call</div>
+              <div className="min-w-0">
+                <span className="text-[13px] font-bold text-[var(--text)] block truncate">Bấm Gọi Hotline</span>
+                <div className="admin-subtle font-mono text-[11px]">click_call</div>
               </div>
             </div>
-            <span className="font-serif text-2xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
+            <span className="kpi-stat-value text-2xl text-[var(--accent)] ml-2 shrink-0">
               {data?.events.click_call ?? 0}
             </span>
           </div>
 
           {/* click_zalo */}
-          <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200/60 dark:border-stone-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 flex items-center justify-center shrink-0">
-                <ExternalLink className="w-5 h-5" />
+          <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl admin-icon-circle flex items-center justify-center shrink-0">
+                <ExternalLink className="w-5 h-5 text-[var(--accent)]" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-stone-800 dark:text-stone-100">Nhắn Tin Zalo</span>
-                <div className="text-[11px] text-stone-400">click_zalo</div>
+              <div className="min-w-0">
+                <span className="text-[13px] font-bold text-[var(--text)] block truncate">Nhắn Tin Zalo</span>
+                <div className="admin-subtle font-mono text-[11px]">click_zalo</div>
               </div>
             </div>
-            <span className="font-serif text-2xl font-bold text-sky-600 dark:text-sky-400">
+            <span className="kpi-stat-value text-2xl text-[var(--text)] ml-2 shrink-0">
               {data?.events.click_zalo ?? 0}
             </span>
           </div>
 
           {/* click_directions */}
-          <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200/60 dark:border-stone-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
-                <Compass className="w-5 h-5" />
+          <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl admin-icon-circle flex items-center justify-center shrink-0">
+                <Compass className="w-5 h-5 text-[var(--accent)]" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-stone-800 dark:text-stone-100">Xem Chỉ Đường</span>
-                <div className="text-[11px] text-stone-400">click_directions</div>
+              <div className="min-w-0">
+                <span className="text-[13px] font-bold text-[var(--text)] block truncate">Xem Chỉ Đường</span>
+                <div className="admin-subtle font-mono text-[11px]">click_directions</div>
               </div>
             </div>
-            <span className="font-serif text-2xl font-bold text-[#CC7755]">
+            <span className="kpi-stat-value text-2xl text-[var(--clay)] ml-2 shrink-0">
               {data?.events.click_directions ?? 0}
             </span>
           </div>
 
           {/* view_menu */}
-          <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-900/50 border border-stone-200/60 dark:border-stone-800 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5" />
+          <div className="p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl admin-icon-circle flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 text-[var(--accent)]" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-stone-800 dark:text-stone-100">Xem Thực Đơn</span>
-                <div className="text-[11px] text-stone-400">view_menu</div>
+              <div className="min-w-0">
+                <span className="text-[13px] font-bold text-[var(--text)] block truncate">Xem Thực Đơn</span>
+                <div className="admin-subtle font-mono text-[11px]">view_menu</div>
               </div>
             </div>
-            <span className="font-serif text-2xl font-bold text-purple-700 dark:text-purple-300">
+            <span className="kpi-stat-value text-2xl text-[var(--text)] ml-2 shrink-0">
               {data?.events.view_menu ?? 0}
             </span>
           </div>
@@ -371,24 +370,24 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
       {/* Traffic Sources & Top Pages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Nguồn truy cập */}
-        <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+        <div className="admin-card p-6 flex flex-col gap-4">
           <div>
-            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+            <h2 className="admin-h2 font-serif text-[var(--text)]">
               Nguồn Truy Cập (Traffic Sources)
             </h2>
-            <p className="text-xs text-stone-500">Phân luồng từ Google, trực tiếp, mạng xã hội</p>
+            <p className="admin-subtle mt-0.5">Phân luồng từ Google, trực tiếp, mạng xã hội</p>
           </div>
 
           {(data?.trafficSources || []).length === 0 ? (
-            <div className="text-xs text-stone-400 py-6 text-center italic">Chưa có dữ liệu nguồn</div>
+            <div className="admin-subtle py-6 text-center italic">Chưa có dữ liệu nguồn</div>
           ) : (
-            <div className="flex flex-col divide-y divide-stone-100 dark:divide-stone-800 text-xs">
+            <div className="flex flex-col divide-y divide-[var(--border)] text-[13px]">
               {data?.trafficSources.map((s, idx) => (
                 <div key={idx} className="py-2.5 flex items-center justify-between">
-                  <span className="font-mono text-stone-700 dark:text-stone-300">{s.source}</span>
+                  <span className="font-mono text-[var(--text)]">{s.source}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-stone-500">{s.sessions} phiên</span>
-                    <span className="font-bold text-[#3E5C46] dark:text-[#9DC183]">{s.users} khách</span>
+                    <span className="admin-subtle">{s.sessions} phiên</span>
+                    <span className="font-bold text-[var(--accent)]">{s.users} khách</span>
                   </div>
                 </div>
               ))}
@@ -397,26 +396,26 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
         </div>
 
         {/* Trang xem nhiều */}
-        <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+        <div className="admin-card p-6 flex flex-col gap-4">
           <div>
-            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+            <h2 className="admin-h2 font-serif text-[var(--text)]">
               Trang Được Xem Nhiều Nhất
             </h2>
-            <p className="text-xs text-stone-500">Các trang có lượt tương tác hàng đầu</p>
+            <p className="admin-subtle mt-0.5">Các trang có lượt tương tác hàng đầu</p>
           </div>
 
           {(data?.topPages || []).length === 0 ? (
-            <div className="text-xs text-stone-400 py-6 text-center italic">Chưa có dữ liệu trang</div>
+            <div className="admin-subtle py-6 text-center italic">Chưa có dữ liệu trang</div>
           ) : (
-            <div className="flex flex-col divide-y divide-stone-100 dark:divide-stone-800 text-xs">
+            <div className="flex flex-col divide-y divide-[var(--border)] text-[13px]">
               {data?.topPages.map((p, idx) => (
                 <div key={idx} className="py-2.5 flex items-center justify-between">
-                  <span className="font-mono text-stone-700 dark:text-stone-300 truncate max-w-[220px]">
+                  <span className="font-mono text-[var(--text)] truncate max-w-[220px]">
                     {p.page}
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="text-stone-500">{p.users} khách</span>
-                    <span className="font-bold text-[#CC7755]">{p.views} lượt xem</span>
+                    <span className="admin-subtle">{p.users} khách</span>
+                    <span className="font-bold text-[var(--clay)]">{p.views} lượt xem</span>
                   </div>
                 </div>
               ))}
@@ -428,10 +427,10 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
       {/* Devices & Geo Locations */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Thiết bị */}
-        <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+        <div className="admin-card p-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Smartphone className="w-5 h-5 text-[#3E5C46]" />
-            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+            <Smartphone className="w-5 h-5 text-[var(--accent)]" />
+            <h2 className="admin-h2 font-serif text-[var(--text)]">
               Thiết Bị Người Dùng
             </h2>
           </div>
@@ -442,9 +441,9 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
               { device: "desktop", users: 0 },
               { device: "tablet", users: 0 },
             ]).map((d, i) => (
-              <div key={i} className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl text-center">
-                <div className="text-xs font-semibold capitalize text-stone-500">{d.device}</div>
-                <div className="font-serif text-xl font-bold text-stone-800 dark:text-stone-100 mt-1">
+              <div key={i} className="p-3 bg-[var(--surface-2)] border border-[var(--border)] rounded-xl text-center">
+                <div className="admin-label capitalize">{d.device}</div>
+                <div className="kpi-stat-value text-xl text-[var(--text)] mt-1">
                   {d.users}
                 </div>
               </div>
@@ -453,25 +452,25 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
         </div>
 
         {/* Thành phố / Khu vực */}
-        <div className="p-6 bg-white dark:bg-[#1E2B22] border border-stone-200/80 dark:border-stone-700/60 rounded-2xl shadow-sm flex flex-col gap-4">
+        <div className="admin-card p-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-[#3E5C46]" />
-            <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">
+            <Globe className="w-5 h-5 text-[var(--accent)]" />
+            <h2 className="admin-h2 font-serif text-[var(--text)]">
               Vị Trí Địa Lý (Thành Phố)
             </h2>
           </div>
 
           {(data?.geoCities || []).length === 0 ? (
-            <div className="text-xs text-stone-400 py-4 text-center italic">Chưa có dữ liệu địa phương</div>
+            <div className="admin-subtle py-4 text-center italic">Chưa có dữ liệu địa phương</div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {data?.geoCities.map((c, i) => (
                 <div
                   key={i}
-                  className="px-3 py-1.5 rounded-lg bg-stone-50 dark:bg-stone-900 text-xs border border-stone-200/60 dark:border-stone-800 flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--surface-2)] text-[13px] border border-[var(--border)] flex items-center gap-1.5"
                 >
-                  <span className="font-semibold text-stone-700 dark:text-stone-300">{c.city}</span>
-                  <span className="text-[10px] text-stone-400">({c.users} khách)</span>
+                  <span className="font-semibold text-[var(--text)]">{c.city}</span>
+                  <span className="admin-subtle text-[12px]">({c.users} khách)</span>
                 </div>
               ))}
             </div>

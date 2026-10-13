@@ -54,7 +54,23 @@ export function middleware(request: NextRequest) {
     response = NextResponse.next();
   }
 
-  // Security check: Protected admin sub-paths require authenticated session
+  // Security check 1: Protected admin API routes require authenticated session
+  if (url.pathname.startsWith("/api/admin") && !url.pathname.startsWith("/api/admin/auth")) {
+    const authCookie =
+      request.cookies.get("camcu_admin_auth")?.value ||
+      request.cookies.get("camcu_auth_session")?.value;
+
+    if (!authCookie) {
+      const unauthResponse = NextResponse.json(
+        { success: false, error: "Yêu cầu đăng nhập quản trị viên." },
+        { status: 401 }
+      );
+      unauthResponse.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+      return unauthResponse;
+    }
+  }
+
+  // Security check 2: Protected admin sub-paths require authenticated session
   const protectedAdminPaths = [
     "/admin/integrations",
     "/admin/analytics",
