@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Footer from "@/components/Footer";
-import LightboxModal, { LightboxPhoto } from "@/components/LightboxModal";
-import MaskRevealImage from "@/components/motion/MaskRevealImage";
-import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
+import LightboxModal from "@/components/LightboxModal";
+import ContourLines from "@/components/ui/ContourLines";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,14 +14,16 @@ import {
   SharedGalleryItem,
 } from "@/lib/syncStore";
 import {
-  Droplets,
-  Trees,
   Play,
   Pause,
   PhoneCall,
   Navigation,
   CheckCircle2,
   Maximize2,
+  Thermometer,
+  ShieldCheck,
+  Droplets,
+  Trees,
 } from "lucide-react";
 
 export default function SpacePage() {
@@ -34,6 +36,73 @@ export default function SpacePage() {
   const [galleryPhotos, setGalleryPhotos] = useState<SharedGalleryItem[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+
+  // Audio wave canvas visualizer
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let phase = 0;
+
+    const render = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const width = canvas.width;
+      const height = canvas.height;
+      const bars = 24;
+      const barWidth = 3;
+      const spacing = (width - bars * barWidth) / (bars - 1);
+
+      for (let i = 0; i < bars; i++) {
+        let barHeight = 4;
+        if (isPlayingAudio) {
+          barHeight = Math.max(4, Math.sin(phase + i * 0.4) * (height / 2.5) + (height / 2.5));
+        }
+        const x = i * (barWidth + spacing);
+        const y = (height - barHeight) / 2;
+
+        ctx.fillStyle = isPlayingAudio ? "#E0764F" : "rgba(244,236,221,0.3)";
+        ctx.beginPath();
+        ctx.roundRect(x, y, barWidth, barHeight, 2);
+        ctx.fill();
+      }
+
+      if (isPlayingAudio) {
+        phase += 0.15;
+      }
+      animationFrameRef.current = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isPlayingAudio]);
+
+  // Audio playback state remembered in localStorage
+  useEffect(() => {
+    try {
+      const savedAudioState = localStorage.getItem("camcu_stream_audio");
+      if (savedAudioState === "true") {
+        setIsPlayingAudio(true);
+      }
+    } catch {}
+  }, []);
+
+  const toggleAudio = () => {
+    const nextState = !isPlayingAudio;
+    setIsPlayingAudio(nextState);
+    try {
+      localStorage.setItem("camcu_stream_audio", String(nextState));
+    } catch {}
+  };
 
   const handleFilterChange = (catId: string) => {
     if (catId === activeFilter) return;
@@ -101,9 +170,6 @@ export default function SpacePage() {
       case "workspace":
       case "chill-work":
         return ["workspace", "chill-work"];
-      case "hero":
-      case "khong-gian":
-        return ["stream", "checkin", "wooden-terrace"];
       default:
         return [cat];
     }
@@ -153,53 +219,31 @@ export default function SpacePage() {
         (g as { caption?: string }).caption ||
         (isEn
           ? "A serene rustic moment by the Dak Nong rock stream."
-          : "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông được cập nhật mới nhất từ ban quản lý."),
+          : "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông."),
       image: g.url,
       category: mapAdminCategoryToSpace(g.category),
       tag: getCategorySubtitle(g.category),
-      aspect: "aspect-[4/3]",
     }));
 
-  // Combine dynamic items with default space items, deduplicating by URL
-  const allItems: SpaceItem[] = (() => {
-    const seen = new Set<string>();
-    const list: SpaceItem[] = [];
+  const allDisplayItems =
+    dynamicItems.length > 0
+      ? [
+          ...dynamicItems,
+          ...SPACE_ITEMS.filter((item) => !dynamicItems.some((d) => d.image === item.image)),
+        ]
+      : SPACE_ITEMS;
 
-    dynamicItems.forEach((item) => {
-      if (!seen.has(item.image)) {
-        seen.add(item.image);
-        list.push(item);
-      }
-    });
+  const filteredItems =
+    activeFilter === "all"
+      ? allDisplayItems
+      : allDisplayItems.filter((item) => item.category.includes(activeFilter));
 
-    SPACE_ITEMS.forEach((item) => {
-      if (!seen.has(item.image)) {
-        seen.add(item.image);
-        list.push(item);
-      }
-    });
-
-    return list;
-  })();
-
-  const filteredItems = allItems.filter((item) => {
-    if (activeFilter === "all") return true;
-    return (
-      item.category.includes(activeFilter) ||
-      (activeFilter === "stream" && item.category.includes("bo-suoi")) ||
-      (activeFilter === "wooden-terrace" && item.category.includes("hien-go")) ||
-      (activeFilter === "checkin" && item.category.includes("check-in")) ||
-      (activeFilter === "workspace" && item.category.includes("chill-work"))
-    );
-  });
-
-  // Prepare photos for Lightbox Modal
-  const lightboxPhotos: LightboxPhoto[] = filteredItems.map((item) => ({
+  const lightboxPhotos = filteredItems.map((item) => ({
     url: item.image,
     title: item.title,
     caption: item.description,
-    subtitle: item.subtitle,
     category: item.tag,
+    subtitle: item.subtitle,
   }));
 
   const handleOpenLightbox = (index: number) => {
@@ -208,298 +252,325 @@ export default function SpacePage() {
   };
 
   return (
-    <div className="bg-[var(--bg)] min-h-screen text-[var(--text)] transition-colors duration-300">
-      <main className="pt-24 sm:pt-28">
-        {/* Top Narrative Intro */}
-        <section className="relative w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-6 sm:pt-10 pb-8">
-          <div className="animate-fade-up-1 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-            <div className="max-w-[900px]">
-              <div className="badge-unified mb-3">
-                <Droplets className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                <span>{dict.space.badge}, Gia Nghĩa</span>
-              </div>
-              <StaggerText
-                as="h1"
-                lines={
-                  isEn
-                    ? ["Eco Sanctuary, Serenity by the Rock Stream"]
-                    : ["Không Gian Sinh Thái, Bên Bờ Suối Đá"]
-                }
-                stagger={0.1}
-                className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[var(--text)] font-bold tracking-tight leading-tight max-w-[900px] text-balance"
-              />
-              <div className="mt-3 max-w-2xl">
-                <StaggerParagraph
-                  text={
-                    isEn
-                      ? "Every corner at Cẩm Cù House preserves pristine rustic tranquility. Listen to the gentle stream murmur and discover peaceful serenity in the heart of the Dak Nong highlands."
-                      : "Mỗi mét vuông tại Cẩm Cù House được gìn giữ trọn vẹn nét mộc mạc nguyên sơ. Lắng nghe tiếng nước róc rách và thong thả tìm lại an yên giữa đại ngàn Đắk Nông."
-                  }
-                  className="text-base sm:text-lg text-[var(--text-muted)] leading-relaxed font-medium"
-                  delay={0.15}
-                />
-              </div>
-            </div>
+    <div className="bg-[var(--paper)] text-[var(--ink)] min-h-screen selection:bg-[var(--basalt)] selection:text-white transition-colors overflow-x-hidden">
+      <main className="overflow-x-hidden">
+        {/* =========================================================================
+            8.3.1 ĐẦU TRANG (H1 MỘT KHỐI + THẺ THÔNG TIN CHỈ SỐ: 22°C–26°C, ĐÁ BAZAN CỔ)
+           ========================================================================= */}
+        <section className="relative pt-32 sm:pt-40 pb-12 sm:pb-16 border-b border-[var(--line)] overflow-hidden">
+          <ContourLines opacity={0.07} className="text-[var(--ink)]" />
 
-            {/* Quick Atmosphere Metrics */}
-            <div className="flex items-center gap-4 bg-[var(--surface)] backdrop-blur-sm border border-[var(--border)] px-5 py-3 rounded-2xl shadow-sm self-start lg:self-end">
-              <div className="flex flex-col">
-                <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">
-                  {isEn ? "Valley Temp" : "Nhiệt Độ Thung Lũng"}
+          <div className="container-unified relative z-10">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+              {/* Trái: H1 một khối không ngắt giữa cụm */}
+              <div className="max-w-3xl flex flex-col gap-3">
+                <span className="font-mono text-xs uppercase tracking-widest text-[var(--stream)] font-bold">
+                  {isEn ? "NATURAL ECO SANCTUARY" : "KHÔNG GIAN NGUYÊN BẢN"}
                 </span>
-                <span className="font-serif text-xl font-bold text-[var(--text)]">
-                  22°C - 26°C
-                </span>
-              </div>
-              <div className="w-px h-8 bg-[var(--border)]" />
-              <div className="flex flex-col">
-                <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">
-                  {isEn ? "Natural Stream" : "Bờ Suối Tự Nhiên"}
-                </span>
-                <span className="font-serif text-xl font-bold text-[var(--accent-clay)]">
-                  {isEn ? "Basalt Pebbles" : "Đá Bazan Cổ"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Filter Tabs - Sticky top-16 sm:top-20 */}
-          <div className="sticky top-16 sm:top-20 z-30 w-full bg-[var(--bg)]/95 backdrop-blur-md py-3 border-y border-[var(--border)] shadow-sm">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth w-full sm:w-auto py-1">
-                {SPACE_CATEGORIES.map((cat) => {
-                  const label = dict.space.categories[cat.id] || cat.name;
-                  const isActive = activeFilter === cat.id;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => handleFilterChange(cat.id)}
-                      type="button"
-                      className={`btn-press-sm min-h-[44px] px-5 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 shrink-0 ${
-                        isActive
-                          ? "bg-[#CC7755] text-white shadow-sm font-bold"
-                          : "bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] border border-[var(--border)]"
-                      }`}
-                    >
-                      <span>
-                        {cat.id === "all" ? `${label} (${allItems.length})` : label}
-                      </span>
-                    </button>
-                  );
-                })}
+                <h1 className="font-serif text-[clamp(34px,5.5vw,68px)] font-bold text-[var(--ink)] tracking-tight leading-[1.08] text-balance">
+                  Không Gian Sinh Thái, Bên Bờ Suối Đá
+                </h1>
+                <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] leading-[1.7] max-w-[60ch] mt-1">
+                  {dict.space.subtitle}
+                </p>
               </div>
 
-              <div className="hidden lg:flex items-center gap-2 text-xs text-[var(--text-muted)] font-medium shrink-0">
-                <span>
-                  {filteredItems.length} {isEn ? "scenic stream spots" : "góc ảnh bờ suối"}
-                </span>
+              {/* Phải: Thẻ thông tin chỉ số (Section 8.3.1) */}
+              <div className="card-accent rounded-[24px] p-5 sm:p-6 flex items-center gap-5 sm:gap-6 border border-[var(--line)] shadow-xs shrink-0 bg-[var(--paper-2)]">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1.5 text-[var(--stream)] font-bold font-mono text-xs uppercase tracking-wider mb-1">
+                    <Thermometer className="w-3.5 h-3.5" />
+                    <span>NHIỆT ĐỘ SUỐI</span>
+                  </div>
+                  <span className="font-serif text-2xl sm:text-3xl font-bold text-[var(--ink)] leading-none">
+                    22°C–26°C
+                  </span>
+                </div>
+
+                <div className="w-[1px] h-10 bg-[var(--line)]" />
+
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1.5 text-[var(--basalt)] font-bold font-mono text-xs uppercase tracking-wider mb-1">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>ĐỊA CHẤT</span>
+                  </div>
+                  <span className="font-serif text-2xl sm:text-3xl font-bold text-[var(--ink)] leading-none">
+                    Đá Bazan Cổ
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Gallery Grid Section: Card ảnh stagger khi lọc tab (FLIP), tự căn giữa hàng cuối */}
-        <section className="animate-fade-up-3 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16 min-h-[480px]">
+        {/* =========================================================================
+            8.3.2 THANH LỌC DÍNH (5 CHIP MONO, ĐANG CHỌN: NỀN INK CHỮ PAPER)
+           ========================================================================= */}
+        <div className="sticky top-16 z-30 w-full bg-[var(--paper)]/95 backdrop-blur-md border-b border-[var(--line)] py-3 transition-colors shadow-xs">
+          <div className="container-unified overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-max">
+              {SPACE_CATEGORIES.map((cat) => {
+                const isSelected = activeFilter === cat.id;
+                const label =
+                  cat.id === "all"
+                    ? isEn
+                      ? `All (${allDisplayItems.length})`
+                      : `Tất Cả (${allDisplayItems.length})`
+                    : cat.name;
+
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => handleFilterChange(cat.id)}
+                    className={`btn-press-sm px-4 py-2 rounded-full font-mono text-[12px] uppercase tracking-wider transition-all duration-200 select-none ${
+                      isSelected
+                        ? "bg-[var(--ink)] text-[var(--paper)] font-bold shadow-xs scale-102"
+                        : "bg-[var(--card)] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)] border border-[var(--line)] font-medium"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            8.3.3 LƯỚI ẢNH BENTO 12 CỘT (HOVER PHÓNG 1.04, GRADIENT ĐÁY ẢNH, FLIP .45S)
+           ========================================================================= */}
+        <section className="container-unified section-unified min-h-[500px]">
           {isFiltering ? (
-            <div className="flex flex-wrap justify-center gap-6 w-full">
-              {[...Array(8)].map((_, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 w-full">
+              {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] rounded-[20px] aspect-[4/3] bg-[var(--surface-2)] animate-pulse border border-[var(--border)] p-4 flex flex-col justify-end"
-                >
-                  <div className="h-3 w-20 bg-white/10 rounded-full mb-2" />
-                  <div className="h-4 w-36 bg-white/10 rounded-full" />
-                </div>
+                  className="lg:col-span-4 rounded-[28px] aspect-[4/3] bg-[var(--paper-2)] animate-pulse border border-[var(--line)]"
+                />
               ))}
             </div>
           ) : (
-            <motion.div layout className="flex flex-wrap justify-center gap-6 w-full">
-            <AnimatePresence mode="popLayout">
-              {filteredItems.map((item, idx) => (
-                <motion.div
-                  layout
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.92, y: 15 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.92 }}
-                  transition={{
-                    duration: 0.35,
-                    delay: Math.min((idx % 8) * 0.04, 0.2),
-                    layout: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as const },
-                  }}
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  onClick={() => handleOpenLightbox(idx)}
-                  className="group relative cursor-pointer rounded-[20px] overflow-hidden aspect-[4/3] bg-[var(--surface)] shadow-sm hover:shadow-2xl border border-[var(--border)] hover:border-[var(--border-hover)] transition-all duration-300 transform-gpu w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] shrink-0"
-                >
-                  <MaskRevealImage
-                    src={item.image}
-                    alt={item.title}
-                    aspectRatio="aspect-[4/3]"
-                    delay={0.05 * (idx % 6)}
-                  />
-                  <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/95 via-stone-950/70 to-transparent flex flex-col justify-end p-4 text-white transition-opacity duration-300">
-                    <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--accent-green)] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-1">
-                      {item.subtitle}
-                    </span>
-                    <h3 className="font-serif text-[15px] sm:text-[16px] font-bold text-white line-clamp-2 group-hover:text-[var(--accent-clay)] transition-colors transform group-hover:-translate-y-0.5 duration-300 leading-snug drop-shadow-sm">
-                      {item.title}
-                    </h3>
-                    <p className="text-[13px] text-white/90 line-clamp-2 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5 font-medium drop-shadow-sm">
-                      {item.description}
-                    </p>
-                  </div>
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 w-full items-start">
+              <AnimatePresence mode="popLayout">
+                {filteredItems.map((item, idx) => {
+                  // Bento 12-column pattern: alternate 1x1, 2x1, 1x2, 2x2
+                  let colSpan = "lg:col-span-4";
+                  let aspect = "aspect-[4/3]";
 
-                  <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#CC7755] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
-                    <Maximize2 className="w-4 h-4" />
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                  if (idx % 7 === 0) {
+                    colSpan = "lg:col-span-8";
+                    aspect = "aspect-[16/10]";
+                  } else if (idx % 7 === 1) {
+                    colSpan = "lg:col-span-4";
+                    aspect = "aspect-[4/5]";
+                  } else if (idx % 7 === 2) {
+                    colSpan = "lg:col-span-4";
+                    aspect = "aspect-[4/5]";
+                  } else if (idx % 7 === 3) {
+                    colSpan = "lg:col-span-4";
+                    aspect = "aspect-[4/5]";
+                  } else if (idx % 7 === 4) {
+                    colSpan = "lg:col-span-4";
+                    aspect = "aspect-[4/5]";
+                  } else if (idx % 7 === 5) {
+                    colSpan = "lg:col-span-6";
+                    aspect = "aspect-[16/10]";
+                  } else {
+                    colSpan = "lg:col-span-6";
+                    aspect = "aspect-[16/10]";
+                  }
+
+                  return (
+                    <motion.div
+                      layout
+                      key={item.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{
+                        duration: 0.45, // FLIP .45s per spec
+                        layout: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+                      }}
+                      onClick={() => handleOpenLightbox(idx)}
+                      className={`group relative cursor-pointer ${colSpan} rounded-[28px] overflow-hidden ${aspect} bg-[var(--paper-2)] border border-[var(--line)] shadow-sm hover:shadow-2xl transition-all duration-500 transform-gpu select-none`}
+                    >
+                      {/* Ảnh phóng 1.04 khi hover */}
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-600 ease-out group-hover:scale-[1.04]"
+                      />
+
+                      {/* Lớp gradient tối đáy ảnh */}
+                      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#1C1612]/92 via-[#1C1612]/35 to-transparent flex flex-col justify-end p-5 sm:p-6 text-[#F4ECDD] transition-all">
+                        {/* Nhãn danh mục hiện rõ khi hover */}
+                        <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--flower)] mb-1 opacity-90 group-hover:opacity-100 transition-opacity">
+                          {item.subtitle}
+                        </span>
+
+                        {/* Tên ảnh tối đa 2 dòng */}
+                        <h3 className="font-serif text-[17px] sm:text-[20px] font-bold text-[#F4ECDD] leading-snug line-clamp-2 group-hover:text-[var(--flower)] transition-colors">
+                          {item.title}
+                        </h3>
+
+                        <p className="font-mono text-[11px] text-[#C7BBA8] line-clamp-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      {/* Nút phóng to ở góc */}
+                      <div className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white/90 group-hover:bg-[var(--basalt)] group-hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                        <Maximize2 className="w-3.5 h-3.5" />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </motion.div>
           )}
         </section>
 
-        {/* Stream Ambience Floating Audio Bar */}
-        <section className="container-unified pb-10">
-          <div className="card-unified flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] flex items-center justify-center shrink-0">
-                <Droplets className="w-6 h-6 animate-pulse" />
-              </div>
+        {/* =========================================================================
+            8.3.5 THANH ÂM SUỐI (THANH NỔI DƯỚI MÀN HÌNH, NÚT BAZAN, SÓNG CANVAS)
+           ========================================================================= */}
+        <section className="container-unified pb-16">
+          <div className="rounded-[28px] p-6 sm:p-8 bg-[#1C1612] text-[#F4ECDD] border border-[rgba(244,236,221,0.14)] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <ContourLines opacity={0.08} className="text-[#F4ECDD]" />
+
+            <div className="flex items-center gap-4 relative z-10">
+              {/* Nút phát tròn bazan */}
+              <button
+                type="button"
+                onClick={toggleAudio}
+                className="w-14 h-14 rounded-full bg-[var(--basalt)] text-white hover:opacity-95 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg shrink-0"
+                aria-label={isPlayingAudio ? "Tắt thanh âm suối" : "Bật thanh âm suối"}
+              >
+                {isPlayingAudio ? (
+                  <Pause className="w-5 h-5 fill-current" />
+                ) : (
+                  <Play className="w-5 h-5 fill-current ml-0.5" />
+                )}
+              </button>
+
               <div className="flex flex-col">
-                <span className="font-serif font-bold text-lg text-[var(--text)]">
-                  {isEn ? "Highland Stream Natural Audio" : "Thanh Âm Suối Nguồn Cao Nguyên"}
+                <span className="font-serif text-lg sm:text-xl font-bold text-[#F4ECDD]">
+                  {isEn ? "Highland Rock Stream Ambience" : "Thanh Âm Suối Đá · Cao Nguyên"}
                 </span>
-                <span className="text-[15px] font-medium text-[var(--text-muted)]">
-                  {isEn
-                    ? "Recorded live on location beside the basalt rock stream at Cam Cu House, Dak Nong"
-                    : "Thu âm trực tiếp bên bờ suối đá Cẩm Cù House, Đắk Nông"}
+                <span className="font-mono text-xs text-[#C7BBA8] mt-0.5">
+                  {isPlayingAudio
+                    ? isEn ? "Playing: Live natural stream echo" : "Đang phát: Tiếng suối reo tự nhiên"
+                    : isEn ? "Click to play soothing stream audio" : "Bấm để nghe tiếng suối róc rách thư thái"}
                 </span>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-              className={`btn-primary min-h-[44px] px-7 py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-md ${
-                isPlayingAudio
-                  ? "bg-[#CC7755] text-[#1B120E]"
-                  : "bg-[#CC7755] text-[#1B120E] hover:bg-[#D98A68]"
-              }`}
-            >
-              {isPlayingAudio ? (
-                <>
-                  <Pause className="w-4 h-4" />
-                  <span>{dict.space.muteAudio}</span>
-                  <span className="flex items-center gap-0.5 ml-1">
-                    <span className="w-1 h-3 bg-[#1B120E] rounded-full animate-pulse" />
-                    <span className="w-1 h-4 bg-[#1B120E] rounded-full animate-pulse delay-75" />
-                    <span className="w-1 h-2 bg-[#1B120E] rounded-full animate-pulse delay-150" />
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>{dict.space.playAudio}</span>
-                </>
-              )}
-            </button>
+            {/* Sóng âm vẽ bằng Canvas */}
+            <div className="relative z-10 flex items-center gap-4">
+              <canvas
+                ref={canvasRef}
+                width={160}
+                height={36}
+                className="w-[160px] h-[36px]"
+              />
+              <span className="font-mono text-[11px] text-[var(--flower)] uppercase tracking-wider hidden sm:inline">
+                {isPlayingAudio ? "24 BARS LIVE" : "MẶC ĐỊNH TẮT"}
+              </span>
+            </div>
           </div>
         </section>
 
-        {/* Eco Charter Section (Bảo Tồn Dòng Nước Suối: khối nền --surface-2, 3 cam kết dạng icon + chữ ngang hàng, 2 nút cuối) */}
-        <section className="section-unified">
-          <div className="container-unified">
-            <div className="card-accent relative overflow-hidden">
-              <div className="relative z-10 max-w-4xl">
-                <div className="badge-unified inline-flex items-center gap-2 mb-4">
-                  <Trees className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                  <span>{isEn ? "Eco Commitment from Cẩm Cù House" : "Lời Hứa Xanh Từ Cẩm Cù House"}</span>
-                </div>
-                <h3 className="font-serif text-[clamp(24px,3.2vw,32px)] text-[var(--text)] font-bold tracking-tight mb-4 leading-tight">
-                  {isEn
-                    ? "Preserving Natural Basalt Streams & Plastic-Free Living"
-                    : "Bảo Tồn Dòng Nước Suối Bazan Tự Nhiên & Giảm Thiểu Nhựa"}
-                </h3>
-                <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed max-w-[65ch]">
-                  {isEn
-                    ? "We treasure every pebble and blade of grass along our stream bank. Cẩm Cù House strictly avoids direct discharge into waterways, utilizes natural reed straws, reusable glassware, and regularly organizes stream cleanups."
-                    : "Chúng tôi trân trọng từng viên sỏi, từng ngọn cỏ ven dòng suối. Cẩm Cù House cam kết 100% không xả thải trực tiếp vào dòng chảy, sử dụng ống hút sậy tự nhiên, cốc thủy tinh tái sử dụng và thường xuyên cùng du khách dọn sạch rác dọc hai bên bờ suối."}
-                </p>
+        {/* =========================================================================
+            8.3.6 BẢO TỒN DÒNG NƯỚC SUỐI (KHỐI NỀN --STREAM TỐI, 3 CAM KẾT, 2 NÚT)
+           ========================================================================= */}
+        <section className="container-unified section-unified">
+          <div className="rounded-[32px] p-8 sm:p-12 lg:p-16 bg-[var(--stream)] text-white border border-[rgba(255,255,255,0.15)] shadow-2xl relative overflow-hidden">
+            <div className="relative z-10 max-w-4xl">
+              <span className="font-mono text-xs uppercase tracking-widest text-emerald-200 font-bold mb-3 block">
+                {isEn ? "ECO PRESERVATION COMMITMENT" : "CAM KẾT BẢO TỒN NGUỒN NƯỚC"}
+              </span>
 
-                {/* 3 cam kết dạng icon + chữ ngang hàng */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-[var(--border)]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center text-[var(--accent-green)] shrink-0 border border-[var(--border)]">
-                      <CheckCircle2 className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-[15px] font-bold text-[var(--text)]">
-                        {isEn ? "Single-Use Plastic Free" : "Không Nhựa 1 Lần"}
-                      </p>
-                      <p className="text-[14px] font-medium text-[var(--text-muted)]">
-                        {isEn ? "100% natural materials" : "100% vật liệu tự nhiên"}
-                      </p>
-                    </div>
+              <h2 className="font-serif text-[clamp(26px,3.8vw,44px)] font-bold text-white tracking-tight leading-tight mb-4 text-balance">
+                Bảo Tồn Dòng Nước Suối &amp; Giảm Thiểu Nhựa Một Lần
+              </h2>
+
+              <p className="text-[16px] sm:text-[17px] text-emerald-100/90 leading-relaxed max-w-3xl mb-8">
+                Chúng tôi trân trọng từng viên sỏi và mạch nước ngầm cao nguyên. Cẩm Cù House cam kết 100% không xả thải hóa chất, sử dụng ống hút thiên nhiên và cùng du khách gìn giữ bờ suối sạch sẽ, an lành.
+              </p>
+
+              {/* 3 Cam kết dạng cột có icon nét mảnh */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-white/20 mb-10">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20">
+                    <CheckCircle2 className="w-5 h-5" />
                   </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center text-[var(--accent-green)] shrink-0 border border-[var(--border)]">
-                      <Droplets className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-[15px] font-bold text-[var(--text)]">
-                        {isEn ? "Water Source Protection" : "Bảo Vệ Nguồn Nước"}
-                      </p>
-                      <p className="text-[14px] font-medium text-[var(--text-muted)]">
-                        {isEn ? "Safe closed-loop filtration" : "Lọc thải khép kín an toàn"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[var(--surface)] flex items-center justify-center text-[#CC7755] shrink-0 border border-[var(--border)]">
-                      <Trees className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-[15px] font-bold text-[var(--text)]">
-                        {isEn ? "Forest Ecosystem" : "Hệ Sinh Thái Rừng"}
-                      </p>
-                      <p className="text-[14px] font-medium text-[var(--text-muted)]">
-                        {isEn ? "Preserving native flora" : "Gìn giữ thảm thực vật bản địa"}
-                      </p>
-                    </div>
+                  <div>
+                    <h4 className="font-serif text-[17px] font-bold text-white">
+                      Không Nhựa 1 Lần
+                    </h4>
+                    <p className="font-mono text-xs text-emerald-200 mt-1">
+                      100% ống hút sậy &amp; ly sứ
+                    </p>
                   </div>
                 </div>
 
-                {/* 2 nút cuối */}
-                <div className="mt-8 flex flex-wrap items-center gap-3.5">
-                  <a
-                    href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md"
-                  >
-                    <span>{dict.common.getDirections}</span>
-                    <Navigation className="w-4 h-4" />
-                  </a>
-                  <a
-                    href="tel:0382851688"
-                    className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
-                  >
-                    <PhoneCall className="w-4 h-4 text-[#CC7755]" />
-                    <span>
-                      {isEn ? "Call Hotline: 038 285 1688" : "Gọi Hotline: 038 285 1688"}
-                    </span>
-                  </a>
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20">
+                    <Droplets className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-[17px] font-bold text-white">
+                      Bảo Vệ Mạch Nước
+                    </h4>
+                    <p className="font-mono text-xs text-emerald-200 mt-1">
+                      Không ngăn đập phá vỡ dòng
+                    </p>
+                  </div>
                 </div>
+
+                <div className="flex items-start gap-3.5">
+                  <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20">
+                    <Trees className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-serif text-[17px] font-bold text-white">
+                      Đá Bazan Nguyên Vẹn
+                    </h4>
+                    <p className="font-mono text-xs text-emerald-200 mt-1">
+                      Giữ trọn thảm rêu cổ kính
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2 Nút */}
+              <div className="flex flex-wrap items-center gap-4">
+                <a
+                  href="tel:0382851688"
+                  className="btn-primary min-h-[48px] px-8 text-[15px] font-semibold !bg-[var(--basalt)]"
+                >
+                  <PhoneCall className="w-4 h-4" />
+                  <span>Gọi Hotline: 038 285 1688</span>
+                </a>
+
+                <a
+                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary min-h-[48px] px-8 text-[15px] font-semibold !border-white/40 !text-white hover:!bg-white hover:!text-[#1C1612]"
+                >
+                  <Navigation className="w-4 h-4" />
+                  <span>Chỉ đường tới bờ suối</span>
+                </a>
               </div>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Lightbox Modal Component */}
+      {/* Lightbox Modal */}
       <LightboxModal
         isOpen={lightboxOpen}
         photos={lightboxPhotos}

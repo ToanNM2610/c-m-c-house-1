@@ -109,7 +109,7 @@ export default function LightboxModal({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         onClick={onClose}
-        className="fixed inset-0 z-[100] flex flex-col items-center justify-between bg-black/92 backdrop-blur-md p-3 sm:p-6 select-none"
+        className="fixed inset-0 z-[100] flex flex-col items-center justify-between bg-[#0E0B09]/96 backdrop-blur-xl p-3 sm:p-6 select-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -117,13 +117,13 @@ export default function LightboxModal({
         {/* Top Controls Bar */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-6xl flex items-center justify-between text-white py-2 z-10"
+          className="w-full max-w-6xl flex items-center justify-between text-[#F4ECDD] py-2 z-10"
         >
-          {/* Index Counter Pill */}
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-stone-200">
-            <ImageIcon className="w-3.5 h-3.5 text-emerald-400" />
+          {/* Index Counter Pill: Số "03 / 30" mono (Section 8.3.4) */}
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1C1612] border border-[rgba(244,236,221,0.18)] font-mono text-xs font-semibold text-[var(--flower)]">
+            <ImageIcon className="w-3.5 h-3.5 text-[var(--flower)]" />
             <span>
-              {currentIndex + 1} / {photos.length}
+              {String(currentIndex + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
             </span>
           </div>
 
@@ -182,30 +182,30 @@ export default function LightboxModal({
           )}
         </div>
 
-        {/* Bottom Narrative / Caption Glass Card */}
+        {/* Bottom Narrative / Caption Glass Card (Section 8.3.4) */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-3xl bg-white/10 dark:bg-stone-900/80 backdrop-blur-xl border border-white/15 dark:border-stone-700/60 rounded-2xl p-4 sm:p-5 text-center text-white shadow-2xl z-10 mb-2"
+          className="w-full max-w-3xl bg-[#1C1612]/95 border border-[rgba(244,236,221,0.18)] rounded-[20px] p-4 sm:p-5 text-center text-[#F4ECDD] shadow-2xl z-10 mb-2"
         >
           <div className="flex items-center justify-center gap-2 mb-1.5 flex-wrap">
             {currentPhoto.subtitle && (
-              <span className="px-2.5 py-0.5 rounded-full bg-[#3E5C46]/80 text-emerald-200 text-[10px] font-bold uppercase tracking-wider">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#2A201A] text-[var(--stream)] font-mono text-[11px] font-semibold uppercase tracking-wider border border-[rgba(244,236,221,0.12)]">
                 {currentPhoto.subtitle}
               </span>
             )}
-            <h3 className="font-serif text-base sm:text-xl font-bold tracking-tight text-white drop-shadow-sm">
+            <h3 className="font-serif text-base sm:text-xl font-bold tracking-tight text-[#F4ECDD]">
               {currentPhoto.title}
             </h3>
           </div>
 
           {currentPhoto.caption && (
-            <p className="text-xs sm:text-sm text-stone-200/90 leading-relaxed max-w-2xl mx-auto italic font-light">
-              &ldquo;{currentPhoto.caption}&rdquo;
+            <p className="font-mono text-xs sm:text-[13px] text-[#C7BBA8] leading-relaxed max-w-2xl mx-auto">
+              {currentPhoto.caption}
             </p>
           )}
 
-          <div className="mt-2.5 text-[11px] text-stone-400 font-medium hidden sm:block">
-            <span>Dùng phím mũi tên ← → hoặc vuốt màn hình để chuyển ảnh • Phím Esc để đóng</span>
+          <div className="mt-2 text-[11px] font-mono text-[rgba(244,236,221,0.4)] hidden sm:block">
+            <span>Dùng phím mũi tên ← → hoặc vuốt màn hình để chuyển ảnh · Phím Esc để đóng</span>
           </div>
         </div>
       </motion.div>
