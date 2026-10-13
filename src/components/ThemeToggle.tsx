@@ -22,7 +22,7 @@ export default function ThemeToggle({ className = "", showLabel = false }: Theme
     return (
       <button
         type="button"
-        className={`w-9 h-9 sm:w-10 sm:h-10 min-w-[40px] min-h-[40px] rounded-full flex items-center justify-center bg-stone-100 dark:bg-[#1E2B22] border border-stone-200 dark:border-stone-700/60 text-stone-500 opacity-60 ${className}`}
+        className={`w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center bg-[var(--card)] border border-[var(--line)] text-[var(--ink-muted)] opacity-60 ${className}`}
         aria-label="Chuyển đổi giao diện"
       >
         <Moon className="w-4 h-4" />
@@ -34,25 +34,21 @@ export default function ThemeToggle({ className = "", showLabel = false }: Theme
     <button
       type="button"
       onClick={toggleTheme}
-      className={`btn-press relative inline-flex items-center justify-center gap-2 w-9 h-9 sm:w-10 sm:h-10 min-w-[40px] min-h-[40px] rounded-full transition-all duration-300 shadow-sm ${
-        isDark
-          ? "bg-[#1E2B22] hover:bg-[#25362B] text-amber-300 border border-stone-700/70 hover:shadow-emerald-950/40"
-          : "bg-white hover:bg-stone-50 text-[#3E5C46] border border-stone-200/80 hover:shadow-stone-200"
-      } ${className}`}
-      aria-label={isDark ? "Chuyển sang giao diện Sáng mộc mạc" : "Chuyển sang giao diện Tối đêm ấm cúng"}
-      title={isDark ? "Giao diện Tối (Bấm để chuyển sang Sáng)" : "Giao diện Sáng (Bấm để chuyển sang Tối)"}
+      className={`btn-press relative inline-flex items-center justify-center gap-2 w-9 h-9 sm:w-10 sm:h-10 min-w-[36px] min-h-[36px] rounded-full transition-all duration-300 bg-[var(--card)] hover:bg-[var(--paper-2)] text-[var(--ink)] border border-[var(--line)] shadow-xs ${className}`}
+      aria-label={isDark ? "Chuyển sang giao diện Sáng (mặc định)" : "Chuyển sang giao diện Đêm bên suối"}
+      title={isDark ? "Đêm bên suối (Bấm để chuyển sang Sáng)" : "Giao diện Sáng (Bấm để chuyển sang Đêm bên suối)"}
     >
       <div className="relative w-4 h-4 flex items-center justify-center">
         {isDark ? (
-          <Sun className="w-4 h-4 text-amber-300 animate-in spin-in-90 duration-300" />
+          <Sun className="w-4 h-4 text-[var(--flower)] transition-transform duration-300" />
         ) : (
-          <Moon className="w-4 h-4 text-[#3E5C46] animate-in spin-in-90 duration-300" />
+          <Moon className="w-4 h-4 text-[var(--ink)] transition-transform duration-300" />
         )}
       </div>
 
       {showLabel && (
         <span className="text-xs font-semibold pr-1">
-          {isDark ? "Chế độ Tối" : "Chế độ Sáng"}
+          {isDark ? "Đêm bên suối" : "Ban ngày"}
         </span>
       )}
     </button>
