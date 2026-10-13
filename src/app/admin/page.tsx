@@ -1798,21 +1798,46 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                               </span>
                             </div>
 
-                            {/* Stock Toggle Switch (Green/Gray with Undo) */}
-                            <button
-                              type="button"
-                              onClick={() => handleToggleStock(item.id, inStock)}
-                              className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none min-h-[44px] items-center ${
-                                inStock ? "bg-[var(--accent)]" : "bg-stone-500"
-                              }`}
-                              aria-label={inStock ? `Đang còn ${item.name}, bấm để báo hết` : `Đang hết ${item.name}, bấm để bật còn`}
-                            >
+                            {/* Stock Toggle Switch (Elegant iOS style with status badge & undo) */}
+                            <div className="flex items-center gap-2.5 shrink-0">
                               <span
-                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-out transform-gpu ${
-                                  inStock ? "translate-x-6" : "translate-x-1"
+                                className={`text-[12px] font-bold px-2.5 py-0.5 rounded-full border transition-all ${
+                                  inStock
+                                    ? "bg-[rgba(127,209,155,0.15)] text-[var(--success)] border-[var(--border)]"
+                                    : "bg-[rgba(240,195,107,0.15)] text-[var(--warn)] border-[var(--border)]"
                                 }`}
-                              />
-                            </button>
+                              >
+                                {inStock ? "Còn món" : "Tạm hết"}
+                              </span>
+                              <button
+                                type="button"
+                                role="switch"
+                                aria-checked={inStock}
+                                onClick={() => handleToggleStock(item.id, inStock)}
+                                className="min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer group focus:outline-none"
+                                aria-label={inStock ? `Đang còn ${item.name}, bấm để báo hết` : `Đang hết ${item.name}, bấm để bật còn`}
+                              >
+                                <div
+                                  className={`w-12 h-6 rounded-full p-0.5 transition-colors duration-200 ease-in-out relative flex items-center shadow-inner ${
+                                    inStock
+                                      ? "bg-[var(--accent)]"
+                                      : "bg-stone-300 dark:bg-stone-700"
+                                  }`}
+                                >
+                                  <div
+                                    className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out flex items-center justify-center ${
+                                      inStock ? "translate-x-6" : "translate-x-0"
+                                    }`}
+                                  >
+                                    <div
+                                      className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                                        inStock ? "bg-[var(--accent)]" : "bg-stone-400"
+                                      }`}
+                                    />
+                                  </div>
+                                </div>
+                              </button>
+                            </div>
                           </div>
                         );
                       })}
@@ -2560,17 +2585,31 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                       <button
                         id="topBannerToggle"
                         type="button"
+                        role="switch"
+                        aria-checked={settings.topBannerEnabled}
                         onClick={() => setSettings({ ...settings, topBannerEnabled: !settings.topBannerEnabled })}
-                        className={`btn-press relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none min-h-[44px] items-center ${
-                          settings.topBannerEnabled ? "bg-emerald-600" : "bg-stone-400"
-                        }`}
+                        className="min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer group focus:outline-none shrink-0"
                         aria-label="Bật hoặc tắt thông báo thanh đầu trang"
                       >
-                        <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform duration-200 ease-out transform-gpu ${
-                            settings.topBannerEnabled ? "translate-x-6" : "translate-x-1"
+                        <div
+                          className={`w-12 h-6 rounded-full p-0.5 transition-colors duration-200 ease-in-out relative flex items-center shadow-inner ${
+                            settings.topBannerEnabled
+                              ? "bg-[var(--accent)]"
+                              : "bg-stone-300 dark:bg-stone-700"
                           }`}
-                        />
+                        >
+                          <div
+                            className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out flex items-center justify-center ${
+                              settings.topBannerEnabled ? "translate-x-6" : "translate-x-0"
+                            }`}
+                          >
+                            <div
+                              className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                                settings.topBannerEnabled ? "bg-[var(--accent)]" : "bg-stone-400"
+                              }`}
+                            />
+                          </div>
+                        </div>
                       </button>
                     </div>
 

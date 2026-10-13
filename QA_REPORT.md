@@ -126,6 +126,7 @@
 | 4 | `src/app/admin/page.tsx` | Các nút thời lượng đột xuất có vùng bấm dưới 44px | **Nhẹ** | Thêm `min-h-[44px] px-3.5 py-1.5` đảm bảo chuẩn tiếp xúc cảm ứng mobile | Chạm mượt mà trên mobile |
 | 5 | `IntegrationsTab.tsx` | Nút lưu, xóa và kiểm tra thiếu min-height 44px | **Nhẹ** | Chuẩn hóa toàn bộ buttons lên `min-h-[44px]` và padding thoải mái | Thao tác ngón tay không bị bấm nhầm |
 | 6 | `AdminPasswordLogin.tsx` | Chưa áp dụng token `--btn-primary` và lớp `.admin-card` | **Nhẹ** | Refactor sang toàn bộ biến CSS tokens của hệ thống | Khớp màu sắc chính xác theo thiết kế |
+| 7 | `src/app/admin/page.tsx` | Nút gạt toggle switch bị co kéo/biến dạng do `min-h-[44px]` đè lên `h-7 w-12` | **Vừa** | Thiết kế lại cấu trúc switch chuẩn iOS: khung bấm 44px độc lập, thanh trượt 48x24px cố định, bi trượt 20x20px có bóng đổ nổi và bổ sung chip trạng thái trực quan "Còn món" / "Tạm hết" | Nút gạt cân đối, sang trọng, không biến dạng |
 
 ---
 
