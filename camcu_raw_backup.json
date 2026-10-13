@@ -1,0 +1,1772 @@
+{
+  "metadata": {
+    "exportedAt": "2026-10-13T04:16:20.540Z",
+    "storeName": "Cẩm Cù House",
+    "version": "1.0.0-initial",
+    "stats": {
+      "totalMenuItems": 67,
+      "totalMenuCategories": 8,
+      "totalSpaceItems": 30,
+      "totalGalleryPhotos": 31,
+      "totalReviews": 6
+    }
+  },
+  "settings": {
+    "brandName": "Cẩm Cù House",
+    "taglineVi": "Chốn dừng chân mộc mạc bên bờ suối đá",
+    "taglineEn": "A rustic eco-sanctuary along rocky streams",
+    "address": "Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Tỉnh Đắk Nông",
+    "coordinates": {
+      "lat": 11.99,
+      "lng": 107.69,
+      "display": "11.99° N, 107.69° E"
+    },
+    "hotline1": "038 285 1688",
+    "hotline2": "077 465 9000",
+    "zalo": "038 285 1688",
+    "email": "camcuhouse@gmail.com",
+    "socials": {
+      "facebook": "https://facebook.com/camcuhouse",
+      "tiktok": "https://tiktok.com/@camcuhouse",
+      "youtube": "",
+      "googleMaps": "https://maps.app.goo.gl/3Q8Yp7pM1X1Z7"
+    },
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  "opening_hours": [
+    {
+      "weekday": 1,
+      "dayNameVi": "Thứ Hai",
+      "openTime": "07:00",
+      "closeTime": "18:00",
+      "isClosed": false
+    },
+    {
+      "weekday": 2,
+      "dayNameVi": "Thứ Ba",
+      "openTime": "07:00",
+      "closeTime": "18:00",
+      "isClosed": false
+    },
+    {
+      "weekday": 3,
+      "dayNameVi": "Thứ Tư",
+      "openTime": "07:00",
+      "closeTime": "18:00",
+      "isClosed": false
+    },
+    {
+      "weekday": 4,
+      "dayNameVi": "Thứ Năm",
+      "openTime": "07:00",
+      "closeTime": "18:00",
+      "isClosed": false
+    },
+    {
+      "weekday": 5,
+      "dayNameVi": "Thứ Sáu",
+      "openTime": "07:00",
+      "closeTime": "22:00",
+      "isClosed": false
+    },
+    {
+      "weekday": 6,
+      "dayNameVi": "Thứ Bảy",
+      "openTime": "07:00",
+      "closeTime": "22:00",
+      "isClosed": false
+    },
+    {
+      "weekday": 0,
+      "dayNameVi": "Chủ Nhật",
+      "openTime": "07:00",
+      "closeTime": "22:00",
+      "isClosed": false
+    }
+  ],
+  "menu_categories": [
+    {
+      "id": "all",
+      "name": "Tất Cả"
+    },
+    {
+      "id": "coffee",
+      "name": "Cà Phê Mộc"
+    },
+    {
+      "id": "tea",
+      "name": "Trà Thảo Mộc"
+    },
+    {
+      "id": "smoothie",
+      "name": "Sinh Tố"
+    },
+    {
+      "id": "juice",
+      "name": "Nước Ép"
+    },
+    {
+      "id": "soda-yogurt",
+      "name": "Soda & Sữa Chua"
+    },
+    {
+      "id": "others",
+      "name": "Đồ Uống Khác"
+    },
+    {
+      "id": "food",
+      "name": "Món Ăn Lành"
+    }
+  ],
+  "menu_items": [
+    {
+      "id": "c1",
+      "name": "Cà phê đen / sữa",
+      "price": 20000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=80",
+      "description": "Robusta Đắk Nông nguyên bản rang mộc thủ công"
+    },
+    {
+      "id": "c2",
+      "name": "Cà phê Sài Gòn",
+      "price": 25000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=400&q=80",
+      "description": "Hương vị ngọt dịu nhẹ, đậm đà phong cách phương Nam"
+    },
+    {
+      "id": "c3",
+      "name": "Bạc xỉu",
+      "price": 25000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=400&q=80",
+      "description": "Sữa thơm ngọt béo quyện chút cà phê nồng nàn"
+    },
+    {
+      "id": "c4",
+      "name": "Cacao sữa",
+      "price": 25000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=400&q=80",
+      "description": "Bột cacao nguyên chất hòa sữa ấm sánh mịn"
+    },
+    {
+      "id": "c5",
+      "name": "Cà phê muối Đắk Nông",
+      "price": 28000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "tag": "Signature",
+      "image": "/images/coffee-drink.png",
+      "description": "Robusta Đắk Nông hòa quyện lớp kem béo mặn mòi, vị ngọt thanh lưu luyến"
+    },
+    {
+      "id": "c6",
+      "name": "Cà phê dừa xay",
+      "price": 28000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=400&q=80",
+      "description": "Cốt dừa béo ngậy xay mịn cùng giọt cà phê đắng êm dịu"
+    },
+    {
+      "id": "c7",
+      "name": "Cacao kem muối",
+      "price": 28000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=400&q=80",
+      "description": "Lớp bọt muối mặn mòi kết hợp cacao đậm đà"
+    },
+    {
+      "id": "c8",
+      "name": "Cà phê kem trứng",
+      "price": 30000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "tag": "Đặc biệt",
+      "image": "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=400&q=80",
+      "description": "Kem trứng đánh bông mịn như mây bên dòng suối"
+    },
+    {
+      "id": "c9",
+      "name": "Cacao kem trứng",
+      "price": 30000,
+      "category": "coffee",
+      "categoryName": "Cà Phê Mộc",
+      "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=400&q=80",
+      "description": "Vị đắng nhẹ thơm lừng hòa lớp kem trứng béo ngậy"
+    },
+    {
+      "id": "t1",
+      "name": "Trà gừng mật ong",
+      "price": 25000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80",
+      "description": "Gừng sẻ cay ấm kết hợp mật ong rừng cao nguyên"
+    },
+    {
+      "id": "t2",
+      "name": "Trà sữa truyền thống",
+      "price": 25000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1558857563-b37df2dd93b8?auto=format&fit=crop&w=400&q=80",
+      "description": "Vị trà đậm, sữa thanh béo vừa vặn"
+    },
+    {
+      "id": "t3",
+      "name": "Trà Lipton thảo mộc",
+      "price": 27000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=400&q=80",
+      "description": "Kèm lát cam vàng và thảo mộc thơm lành"
+    },
+    {
+      "id": "t4",
+      "name": "Trà vải",
+      "price": 27000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=400&q=80",
+      "description": "Trái vải mọng nước, hương thơm thanh tao ngọt mát"
+    },
+    {
+      "id": "t5",
+      "name": "Trà đào",
+      "price": 27000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "/images/fruit-tea.png",
+      "description": "Miếng đào giòn sần sật trong nền trà thanh thoát"
+    },
+    {
+      "id": "t6",
+      "name": "Trà sữa Thái xanh",
+      "price": 27000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1558857563-b37df2dd93b8?auto=format&fit=crop&w=400&q=80",
+      "description": "Hương trà xanh thơm mát béo ngậy"
+    },
+    {
+      "id": "t7",
+      "name": "Trà hoa cúc",
+      "price": 28000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=400&q=80",
+      "description": "Hoa cúc sấy lạnh xoa dịu tinh thần, an thần ngủ ngon"
+    },
+    {
+      "id": "t8",
+      "name": "Hoa đu đủ mật ong",
+      "price": 28000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "tag": "Best Seller",
+      "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80",
+      "description": "Hoa đu đủ đực ngâm mật ong rừng giúp thư thái, thanh giọng"
+    },
+    {
+      "id": "t9",
+      "name": "Trà đào cam sả",
+      "price": 30000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "tag": "Thanh Mát",
+      "image": "/images/fruit-tea.png",
+      "description": "Trà ủ hương sả tươi đồi cao, từng lát cam vàng ươm mọng nước"
+    },
+    {
+      "id": "t10",
+      "name": "Trà sữa kem trứng",
+      "price": 30000,
+      "category": "tea",
+      "categoryName": "Trà Thảo Mộc",
+      "image": "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=400&q=80",
+      "description": "Trà sữa thơm quyện kem trứng vàng ươm sánh mượt"
+    },
+    {
+      "id": "s1",
+      "name": "Sinh tố mãng cầu",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=400&q=80",
+      "description": "Chua ngọt sảng khoái từ mãng cầu xiêm tươi vườn"
+    },
+    {
+      "id": "s2",
+      "name": "Sinh tố sapoche",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=400&q=80",
+      "description": "Ngọt đượm tự nhiên, xay cùng sữa đặc béo ngậy"
+    },
+    {
+      "id": "s3",
+      "name": "Sinh tố xoài",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?auto=format&fit=crop&w=400&q=80",
+      "description": "Xoài chín cây thơm ngát, sánh đặc hấp dẫn"
+    },
+    {
+      "id": "s4",
+      "name": "Sinh tố dừa",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=400&q=80",
+      "description": "Cơm dừa non béo thơm xay đá mát lạnh"
+    },
+    {
+      "id": "s5",
+      "name": "Sinh tố bơ Đắk Nông",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "tag": "Đặc Sản",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=400&q=80",
+      "description": "Bơ sáp 034 nức tiếng đất đỏ Đắk Nông dẻo quánh"
+    },
+    {
+      "id": "s6",
+      "name": "Sinh tố đậu đỏ",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=400&q=80",
+      "description": "Đậu đỏ ninh mềm bùi béo tự nhiên"
+    },
+    {
+      "id": "s7",
+      "name": "Sinh tố việt quất / dâu",
+      "price": 28000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=400&q=80",
+      "description": "Vị dâu tây tươi mát bùng nổ năng lượng"
+    },
+    {
+      "id": "s8",
+      "name": "Sinh tố bơ sầu riêng",
+      "price": 33000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "tag": "Đặc Sản VIP",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=400&q=80",
+      "description": "Bơ sáp béo quyện sầu riêng Ri6 thơm lừng nức tiếng"
+    },
+    {
+      "id": "s9",
+      "name": "Sinh tố hạt sen",
+      "price": 33000,
+      "category": "smoothie",
+      "categoryName": "Sinh Tố",
+      "image": "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=400&q=80",
+      "description": "Hạt sen Huế bùi thơm thanh nhiệt cơ thể"
+    },
+    {
+      "id": "j1",
+      "name": "Nước ép táo",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=400&q=80",
+      "description": "Táo giòn ngọt mát ép chậm giữ trọn vitamin"
+    },
+    {
+      "id": "j2",
+      "name": "Nước ép ổi",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=400&q=80",
+      "description": "Ổi ruột hồng giàu vitamin C và chất chống oxy hóa"
+    },
+    {
+      "id": "j3",
+      "name": "Nước ép cam",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=400&q=80",
+      "description": "Cam vắt tươi ngọt thanh bổ dưỡng"
+    },
+    {
+      "id": "j4",
+      "name": "Nước ép thơm",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=400&q=80",
+      "description": "Dứa mật vàng ươm giải nhiệt ngày hè"
+    },
+    {
+      "id": "j5",
+      "name": "Nước ép chanh dây",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=400&q=80",
+      "description": "Chanh dây thơm lừng vị chua sảng khoái"
+    },
+    {
+      "id": "j6",
+      "name": "Nước ép cà rốt",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=400&q=80",
+      "description": "Cà rốt tươi mát lành sáng mắt"
+    },
+    {
+      "id": "j7",
+      "name": "Nước ép dưa hấu",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "image": "https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?auto=format&fit=crop&w=400&q=80",
+      "description": "Dưa hấu mọng nước đỏ tươi ngọt mát"
+    },
+    {
+      "id": "j8",
+      "name": "Nước ép cải kale",
+      "price": 30000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "tag": "Healthy",
+      "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80",
+      "description": "Cải xoăn hữu cơ giàu khoáng chất detox cơ thể"
+    },
+    {
+      "id": "j9",
+      "name": "Nước ép mix tùy chọn",
+      "price": 35000,
+      "category": "juice",
+      "categoryName": "Nước Ép",
+      "tag": "Theo Yêu Cầu",
+      "image": "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=400&q=80",
+      "description": "Phối hợp 2-3 loại trái cây tươi theo sở thích của bạn"
+    },
+    {
+      "id": "sy1",
+      "name": "Sữa chua dầm",
+      "price": 23000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80",
+      "description": "Sữa chua nhà làm lên men tự nhiên mát lành"
+    },
+    {
+      "id": "sy2",
+      "name": "Sữa chua nếp cẩm",
+      "price": 27000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80",
+      "description": "Nếp cẩm dẻo thơm quyện cùng sữa chua sánh mịn"
+    },
+    {
+      "id": "sy3",
+      "name": "Sữa chua chanh dây",
+      "price": 27000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80",
+      "description": "Sốt chanh dây tự nấu chua ngọt kích thích vị giác"
+    },
+    {
+      "id": "sy4",
+      "name": "Sữa chua việt quất / dâu",
+      "price": 27000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80",
+      "description": "Sốt quả mọng chua ngọt hòa quyện"
+    },
+    {
+      "id": "sy5",
+      "name": "Soda Atiso đỏ",
+      "price": 30000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80",
+      "description": "Hoa bụp giấm đỏ ruby sủi bọt mát lạnh"
+    },
+    {
+      "id": "sy6",
+      "name": "Soda chanh bạc hà",
+      "price": 30000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80",
+      "description": "Bạc hà the mát cùng chanh tươi giải nhiệt tuyệt đỉnh"
+    },
+    {
+      "id": "sy7",
+      "name": "Soda việt quất / dâu",
+      "price": 30000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80",
+      "description": "Sắc màu rực rỡ, vị sủi bọt đã khát"
+    },
+    {
+      "id": "sy8",
+      "name": "Sữa chua hạt đác",
+      "price": 30000,
+      "category": "soda-yogurt",
+      "categoryName": "Soda & Sữa Chua",
+      "tag": "Mát Lành",
+      "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80",
+      "description": "Hạt đác rim thơm dẻo dai hòa sữa chua mát lạnh"
+    },
+    {
+      "id": "o1",
+      "name": "Dừa tươi ướp lạnh suối",
+      "price": 22000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "tag": "Sát Suối",
+      "image": "https://images.unsplash.com/photo-1525385133512-2f3bdd039054?auto=format&fit=crop&w=400&q=80",
+      "description": "Dừa xiêm ngâm trực tiếp dưới dòng nước mát lạnh tự nhiên"
+    },
+    {
+      "id": "o2",
+      "name": "Chanh mật ong",
+      "price": 25000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80",
+      "description": "Chanh tươi mật ong thanh lọc cơ thể"
+    },
+    {
+      "id": "o3",
+      "name": "Chanh muối",
+      "price": 25000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=400&q=80",
+      "description": "Chanh muối ủ chum sành truyền thống đậm đà"
+    },
+    {
+      "id": "o4",
+      "name": "Đá me",
+      "price": 27000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80",
+      "description": "Me ngào dẻo thơm bùi đậu phộng rang giòn"
+    },
+    {
+      "id": "o5",
+      "name": "Tắc xí muội",
+      "price": 27000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=400&q=80",
+      "description": "Vị mặn ngọt thanh tao gợi nhớ ký ức tuổi thơ"
+    },
+    {
+      "id": "o6",
+      "name": "Dưa hấu tắc xay",
+      "price": 27000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?auto=format&fit=crop&w=400&q=80",
+      "description": "Sự kết hợp độc đáo sảng khoái bất ngờ"
+    },
+    {
+      "id": "o7",
+      "name": "Matcha latte",
+      "price": 27000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=400&q=80",
+      "description": "Trà xanh thanh khiết hòa cùng sữa tươi thơm mịn"
+    },
+    {
+      "id": "o8",
+      "name": "Matcha đậu đỏ",
+      "price": 30000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=400&q=80",
+      "description": "Matcha nguyên chất kèm topping đậu đỏ bùi thơm"
+    },
+    {
+      "id": "o9",
+      "name": "Oreo đá xay",
+      "price": 30000,
+      "category": "others",
+      "categoryName": "Đồ Uống Khác",
+      "image": "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=400&q=80",
+      "description": "Bánh quy Oreo xay cùng sữa và kem tươi béo ngậy"
+    },
+    {
+      "id": "f1",
+      "name": "Bánh tráng phơi sương + Sa tế",
+      "price": 12000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Bánh dẻo phơi sương sớm, sa tế cay nồng đậm vị"
+    },
+    {
+      "id": "f2",
+      "name": "Bánh tráng phơi sương + Ớt cay",
+      "price": 12000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Bánh tráng dẻo thơm cuộn muối ớt cay xé lưỡi"
+    },
+    {
+      "id": "f3",
+      "name": "Phô mai que",
+      "price": 20000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=400&q=80",
+      "description": "Chiên vàng giòn rụm, phô mai kéo sợi thơm phức"
+    },
+    {
+      "id": "f4",
+      "name": "Khoai tây chiên",
+      "price": 20000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=400&q=80",
+      "description": "Khoai tây giòn rụm chấm tương ớt cay nhẹ"
+    },
+    {
+      "id": "f5",
+      "name": "Cá viên",
+      "price": 20000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Cá viên chiên nóng hổi thơm ngon"
+    },
+    {
+      "id": "f6",
+      "name": "Bò viên",
+      "price": 20000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Bò viên chiên giòn dai ngon đậm vị"
+    },
+    {
+      "id": "f7",
+      "name": "Chả cá cốm",
+      "price": 25000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Cốm xanh thơm dẻo bọc chả cá ngọt mềm chiên vàng"
+    },
+    {
+      "id": "f8",
+      "name": "Hồ lô nướng",
+      "price": 25000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Viên hồ lô thơm nức tiêu rừng Tây Nguyên"
+    },
+    {
+      "id": "f9",
+      "name": "Xúc xích Đức",
+      "price": 25000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+      "description": "Xúc xích xông khói thơm lừng nướng giòn"
+    },
+    {
+      "id": "f10",
+      "name": "Bánh mì ốp la xúc xích",
+      "price": 30000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "tag": "Ăn Sáng",
+      "image": "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=400&q=80",
+      "description": "Bánh mì nướng than giòn rụm, 2 trứng lòng đào béo ngậy kèm xúc xích"
+    },
+    {
+      "id": "f11",
+      "name": "Mì Ý Spaghetti bò bằm",
+      "price": 35000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "image": "https://images.unsplash.com/photo-1621996346565-e3d5d6281292?auto=format&fit=crop&w=400&q=80",
+      "description": "Sợi mì dai mềm quyện sốt cà chua tươi và thịt bò bằm"
+    },
+    {
+      "id": "f12",
+      "name": "Bò kho + bánh mì",
+      "price": 45000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "tag": "Đặc Sản",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80",
+      "description": "Hầm thảo quả và quế hồi thơm phức, thịt nạm bò mềm thấm đượm gia vị núi rừng"
+    },
+    {
+      "id": "f13",
+      "name": "Cà ri gà + bánh mì",
+      "price": 45000,
+      "category": "food",
+      "categoryName": "Món Ăn Lành",
+      "tag": "Đặc Sản",
+      "image": "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=400&q=80",
+      "description": "Thịt gà thả vườn thơm ngọt, nước cà ri béo ngậy nước cốt dừa"
+    }
+  ],
+  "space_items": [
+    {
+      "id": "sp1",
+      "title": "Chòi Gỗ Mộc Ngắm Đồi Xanh",
+      "subtitle": "Hiên Gỗ Nhìn Thung Lũng",
+      "description": "Hiên gỗ lợp lá thoáng đãng phóng tầm mắt ra thung lũng Đắk Nông lộng gió ban mai.",
+      "image": "/uploads/gallery/1788250253551-943009233.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Hiên Gỗ Thung Lũng",
+      "colSpan": "lg:col-span-8",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp2",
+      "title": "Ban Công Suối Đón Gió Chiều",
+      "subtitle": "Lan Can Mộc Ven Suối",
+      "description": "Bàn tròn thư thái bên lan can mộc mạc nhìn xuống bờ suối róc rách đón gió chiều mát rượi.",
+      "image": "/uploads/gallery/1788250253554-875120458.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Ban Công Ngắm Suối",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4] md:aspect-[4/5]"
+    },
+    {
+      "id": "sp3",
+      "title": "Băng Ghế Mộc Bên Vườn Hoa Vàng",
+      "subtitle": "Góc Check-in Rực Rỡ",
+      "description": "Ghế gỗ và nón lá thơ mộng dưới tán hoa chuông vàng rực rỡ bên triền đồi suối mát.",
+      "image": "/uploads/gallery/1788250253557-29323827.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Hoa Chuông Vàng",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp4",
+      "title": "Góc Bình Yên Dưới Tán Rừng",
+      "subtitle": "Khoảng Lặng Thiên Nhiên",
+      "description": "Điểm đọc sách và check-in rợp bóng cây xanh mát lành bên tiếng chim muông ríu rít.",
+      "image": "/uploads/gallery/1788250253560-200373033.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Dưới Tán Rừng",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp5",
+      "title": "Tán Cây Xanh Mát Bên Dòng Suối",
+      "subtitle": "Mép Nước Tự Nhiên",
+      "description": "Hơi nước mát lạnh và bóng mát thiên nhiên nguyên bản bên khóm dong riềng nở rộ ven mép nước.",
+      "image": "/uploads/gallery/1788250253562-580915883.jpg",
+      "category": [
+        "stream",
+        "bo-suoi"
+      ],
+      "tag": "Bờ Suối Mát",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp6",
+      "title": "Góc Thổ Cẩm & Lồng Đèn Sắc Màu",
+      "subtitle": "Sắc Màu Bản Địa Tây Nguyên",
+      "description": "Không gian rực rỡ đậm chất văn hóa bản địa cao nguyên Đắk Nông với họa tiết dệt tay tinh xảo.",
+      "image": "/uploads/gallery/1788250253564-115851131.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Họa Tiết Thổ Cẩm",
+      "colSpan": "lg:col-span-6",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp7",
+      "title": "Ban Công Cờ Đỏ & Ghế Bar Ngắm Đồi",
+      "subtitle": "Tầm Nhìn 180° Thung Lũng",
+      "description": "Bàn bar gỗ trên cao phóng tầm mắt trọn vẹn thung lũng xanh biếc cùng cờ đỏ bay phấp phới.",
+      "image": "/uploads/gallery/1788250253566-618481408.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Tầm Nhìn Đồi Xanh",
+      "colSpan": "lg:col-span-6",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp8",
+      "title": "Hoa Đào Nở Rộ Bên Ban Công Đón Nắng",
+      "subtitle": "Sắc Hồng Cao Nguyên",
+      "description": "Sắc hồng hoa đào khoe sắc rực rỡ bên hiên gỗ ngập tràn ánh nắng ấm áp buổi sớm mai.",
+      "image": "/uploads/gallery/1788250253568-69250175.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Hoa Đào Ban Mai",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp9",
+      "title": "Chòi Gỗ Mái Trong Suốt Bên Suối",
+      "subtitle": "Không Gian Ngập Tràn Ánh Sáng",
+      "description": "Không gian chòi gỗ thoáng đãng đón trọn ánh sáng tự nhiên và luồng gió suối trong lành.",
+      "image": "/uploads/gallery/1788250253570-358232239.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Chòi Gỗ Thoáng Đãng",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp10",
+      "title": "Hiên Mái Lá & Bàn Dài Làm Việc",
+      "subtitle": "Work & Study Sanctuary",
+      "description": "Bàn dài hội nhóm rợp bóng mát dưới mái lá tre đan mộc mạc, lý tưởng cho làm việc từ xa và đọc sách.",
+      "image": "/uploads/gallery/1788250253572-915114239.jpg",
+      "category": [
+        "workspace",
+        "chill-work"
+      ],
+      "tag": "Bàn Dài Làm Việc",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp11",
+      "title": "Ban Công Cờ Đỏ Bay Cao Giữa Đại Ngàn",
+      "subtitle": "Niềm Tự Hào Cao Nguyên",
+      "description": "Lá cờ đỏ sao vàng tung bay kiêu hãnh giữa không gian núi rừng Gia Nghĩa bạt ngàn.",
+      "image": "/uploads/gallery/1788250253574-977351820.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Cờ Đỏ Sao Vàng",
+      "colSpan": "lg:col-span-3",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp12",
+      "title": "Ấm Áp Bên Lửa Trại Đêm Ven Suối",
+      "subtitle": "Đêm Lửa Trại Suối Reo",
+      "description": "Bếp lửa bập bùng cùng tiếng suối róc rách sưởi ấm đêm se lạnh cao nguyên và gắn kết bạn bè.",
+      "image": "/uploads/gallery/1788250253576-148814823.jpg",
+      "category": [
+        "stream",
+        "bo-suoi"
+      ],
+      "tag": "Lửa Trại Đêm Suối",
+      "colSpan": "lg:col-span-3",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp13",
+      "title": "Sắc Màu Thổ Cẩm & Dù Hoa Cẩm Cù",
+      "subtitle": "Góc Nghệ Thuật Bản Địa",
+      "description": "Góc check-in nghệ thuật kết hợp hài hòa nét văn hóa Tây Nguyên và hoa cỏ sân vườn.",
+      "image": "/uploads/gallery/1788250253578-396525469.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Nghệ Thuật Thổ Cẩm",
+      "colSpan": "lg:col-span-3",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp14",
+      "title": "Chòi Mộc Nhà Cù & Giàn Hoa Giấy Tím",
+      "subtitle": "Mái Nhà Rẫy Thân Thương",
+      "description": "Nét bình dị của mái chòi gỗ rêu phong nép mình bên dòng nước êm đềm cùng sắc hoa giấy tím thủy chung.",
+      "image": "/uploads/gallery/1788250253579-355700743.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Chòi Mộc Nhà Cù",
+      "colSpan": "lg:col-span-3",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp15",
+      "title": "Ghế Vàng Thư Thái Dưới Bóng Cây Râm",
+      "subtitle": "Góc Đọc Sách Yên Tĩnh",
+      "description": "Góc ngồi yên tĩnh cho những phút giây đọc sách và lắng nghe thanh âm thì thầm của cỏ cây.",
+      "image": "/uploads/gallery/1788250253581-551654423.jpg",
+      "category": [
+        "workspace",
+        "chill-work"
+      ],
+      "tag": "Góc Tĩnh Tâm",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp16",
+      "title": "Dù Tím Cẩm Cù House & Xích Đu Gỗ",
+      "subtitle": "Góc Nghỉ Chân Thơ Mộng",
+      "description": "Góc nghỉ chân râm mát với xích đu gỗ đung đưa bên hàng cây xanh và dòng nước mát lành.",
+      "image": "/uploads/gallery/1788250253583-466696218.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Xích Đu Suối",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp17",
+      "title": "Đường Lát Đá Cờ Đỏ & Hàng Dong Riềng",
+      "subtitle": "Lối Vào Sinh Thái",
+      "description": "Lối mòn lát đá bazan dẫn lối giữa hai hàng cây xanh mát rượi và hàng cờ rực rỡ đón chào.",
+      "image": "/uploads/gallery/1788250253585-162974099.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Lối Đá Rêu Phong",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp18",
+      "title": "Bàn Dài Cắm Trại Dưới Tán Tre Ngà",
+      "subtitle": "Khu Picnic & Hội Họp",
+      "description": "Không gian dã ngoại ngoài trời thoáng đãng, bàn dài thuận tiện làm việc hội nhóm và sinh hoạt chung.",
+      "image": "/uploads/gallery/1788250253587-81750666.jpg",
+      "category": [
+        "workspace",
+        "chill-work"
+      ],
+      "tag": "Camping Farm Bàn Dài",
+      "colSpan": "lg:col-span-6",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp19",
+      "title": "Bàn Giếng Cổ Nệm Thổ Cẩm Dưới Nắng Sớm",
+      "subtitle": "Nét Đẹp Hoài Niệm",
+      "description": "Sự kết hợp tinh tế giữa đồ mộc bản địa, nệm hoa văn Tây Nguyên và hoa cỏ tự nhiên quanh quán.",
+      "image": "/uploads/gallery/1788250253590-409844081.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Bàn Giếng Cổ",
+      "colSpan": "lg:col-span-6",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp20",
+      "title": "Vườn Hoa Anh Đào & Lối Đi Lát Đá",
+      "subtitle": "Khu Vườn Bốn Mùa",
+      "description": "Quang cảnh sân vườn rực rỡ sắc xuân đưa bạn vào chốn thần tiên tĩnh lặng giữa đại ngàn Đắk Nông.",
+      "image": "/uploads/gallery/1788250253592-73071293.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Vườn Hoa Xuân",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp21",
+      "title": "Hiên Lá Nhiệt Đới & Hàng Cờ Tổ Quốc",
+      "subtitle": "Rừng Cây Bản Địa",
+      "description": "Góc xanh ngập tràn sức sống với các loài dương xỉ, môn rừng và cây râm mát đặc trưng cao nguyên.",
+      "image": "/uploads/gallery/1788250253595-367274421.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Thảm Thực Vật Xanh",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp22",
+      "title": "Biển Hiệu Vàng Tiệm Cà Phê Nhà Cù",
+      "subtitle": "Dấu Ấn Thân Thương",
+      "description": "Biển hiệu mộc mạc vẽ tay nhánh cà phê chín đỏ thân quen đón chào du khách muôn phương.",
+      "image": "/uploads/gallery/1788250253597-677832947.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Biển Hiệu Nhà Cù",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp23",
+      "title": "Bàn Gỗ Dài Dưới Tán Cây Mít Cổ Thụ",
+      "subtitle": "Góc Tụ Họp Gia Đình",
+      "description": "Không gian làm việc và hội họp gia đình mát mẻ dưới tán cây cổ thụ xòe bóng râm quanh năm.",
+      "image": "/uploads/gallery/1788250253600-584656525.jpg",
+      "category": [
+        "workspace",
+        "chill-work"
+      ],
+      "tag": "Dưới Tán Mít Cổ",
+      "colSpan": "lg:col-span-6",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp24",
+      "title": "Bếp Lửa Trại & Khóm Hoa Huệ Cam Bên Suối",
+      "subtitle": "Bếp Ấm Ven Suối",
+      "description": "Điểm ngồi ngắm suối thơ mộng bên khóm hoa huệ cam khoe sắc cùng làn gió nước dịu dàng.",
+      "image": "/uploads/gallery/1788250253602-486743244.jpg",
+      "category": [
+        "stream",
+        "bo-suoi"
+      ],
+      "tag": "Hoa Huệ Cam Ven Suối",
+      "colSpan": "lg:col-span-6",
+      "aspect": "aspect-[4/3] md:aspect-[16/10]"
+    },
+    {
+      "id": "sp25",
+      "title": "Góc Du Ca Gia Nghĩa Bên Tường Củi Mộc",
+      "subtitle": "Sân Khấu Acoustic Mộc Mạc",
+      "description": "Không gian âm nhạc du ca và chụp ảnh đậm chất mộc với tường củi gỗ thông xếp lớp độc đáo.",
+      "image": "/uploads/gallery/1788250253605-481608936.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Du Ca Gia Nghĩa",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp26",
+      "title": "Góc Thưởng Trà Dưới Gốc Cây Ven Suối",
+      "subtitle": "Bàn Tròn Gốc Cây",
+      "description": "Ngồi uống trà, nhâm nhi cà phê ngay sát dòng suối reo róc rách dưới bóng mát đại thụ.",
+      "image": "/uploads/gallery/1788250253607-878531206.jpg",
+      "category": [
+        "stream",
+        "bo-suoi"
+      ],
+      "tag": "Thưởng Trà Ven Nước",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp27",
+      "title": "Bàn Gỗ Kẻ Sọc Bên Bờ Suối & Bụi Dong Riềng",
+      "subtitle": "Chạm Mép Nước Suối Trong",
+      "description": "Góc ngồi sát mép nước suối, tận hưởng trọn vẹn luồng không khí mát lạnh tự nhiên tỏa lên từ lòng suối đá.",
+      "image": "/uploads/gallery/1788250253610-67011063.jpg",
+      "category": [
+        "stream",
+        "bo-suoi"
+      ],
+      "tag": "Mép Nước Suối Trong",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp28",
+      "title": "Gian Bếp Mộc Bắp Ngô Cẩm Cù House",
+      "subtitle": "Bếp Lửa Truyền Thống",
+      "description": "Tái hiện gian bếp cao nguyên xưa với bắp ngô phơi khô, củi thông ấm áp và ấm trà thơm nóng hổi.",
+      "image": "/uploads/gallery/1788250253612-490050258.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Bếp Ngô Cũ",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp29",
+      "title": "Mái Nhà Tranh Cổ Điển Nhìn Ra Bờ Suối Xanh",
+      "subtitle": "Bức Họa Thiên Nhiên",
+      "description": "Toàn cảnh góc chòi mộc mạc nép mình bên thảm cỏ xanh mướt và bờ suối hiền hòa trôi.",
+      "image": "/uploads/gallery/1788250253614-227589611.jpg",
+      "category": [
+        "wooden-terrace",
+        "hien-go"
+      ],
+      "tag": "Chòi Suối Toàn Cảnh",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    },
+    {
+      "id": "sp30",
+      "title": "Bàn Khăn Thổ Cẩm Dưới Tán Hoa Đào & Bếp Cũ",
+      "subtitle": "Không Gian Trà Đạo Cao Nguyên",
+      "description": "Góc check-in rực rỡ sắc màu thổ cẩm và hoa đào nở rộ giữa nắng ấm cao nguyên Gia Nghĩa.",
+      "image": "/uploads/gallery/1788250253618-436325211.jpg",
+      "category": [
+        "checkin",
+        "check-in"
+      ],
+      "tag": "Thổ Cẩm & Hoa Đào",
+      "colSpan": "lg:col-span-4",
+      "aspect": "aspect-[3/4]"
+    }
+  ],
+  "gallery_items": [
+    {
+      "id": "1788269970861-16527830",
+      "url": "/uploads/gallery/1788269970861-16527830.jpg",
+      "title": "Tách Cà Phê Ban Mai Đón Nắng Sớm",
+      "caption": "Hương vị cà phê Robusta đậm đà bên khung cửa sổ đón ánh ban mai ấm áp.",
+      "category": "coffee"
+    },
+    {
+      "id": "1788250253551-943009233",
+      "url": "/uploads/gallery/1788250253551-943009233.jpg",
+      "title": "Chòi Gỗ Mộc Ngắm Đồi Xanh",
+      "caption": "Hiên gỗ lợp lá thoáng đãng phóng tầm mắt ra thung lũng Đắk Nông.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253554-875120458",
+      "url": "/uploads/gallery/1788250253554-875120458.jpg",
+      "title": "Ban Công Suối Đón Gió Chiều",
+      "caption": "Bàn tròn thư thái bên lan can mộc mạc nhìn xuống bờ suối róc rách.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253557-29323827",
+      "url": "/uploads/gallery/1788250253557-29323827.jpg",
+      "title": "Băng Ghế Mộc Bên Vườn Hoa Vàng",
+      "caption": "Ghế gỗ và nón lá thơ mộng dưới tán hoa chuông vàng rực rỡ.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253560-200373033",
+      "url": "/uploads/gallery/1788250253560-200373033.jpg",
+      "title": "Góc Bình Yên Dưới Tán Rừng",
+      "caption": "Điểm đọc sách và check-in rợp bóng cây xanh mát lành.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253562-580915883",
+      "url": "/uploads/gallery/1788250253562-580915883.jpg",
+      "title": "Tán Cây Xanh Mát Bên Dòng Suối",
+      "caption": "Hơi nước mát lạnh và bóng mát thiên nhiên nguyên bản bên mép nước.",
+      "category": "stream"
+    },
+    {
+      "id": "1788250253564-115851131",
+      "url": "/uploads/gallery/1788250253564-115851131.jpg",
+      "title": "Góc Thổ Cẩm & Lồng Đèn Sắc Màu",
+      "caption": "Không gian rực rỡ đậm chất văn hóa bản địa cao nguyên Đắk Nông.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253566-618481408",
+      "url": "/uploads/gallery/1788250253566-618481408.jpg",
+      "title": "Ban Công Cờ Đỏ & Ghế Bar Ngắm Đồi",
+      "caption": "Bàn bar gỗ trên cao phóng tầm mắt trọn vẹn thung lũng xanh biếc.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253568-69250175",
+      "url": "/uploads/gallery/1788250253568-69250175.jpg",
+      "title": "Hoa Đào Nở Rộ Bên Ban Công Đón Nắng",
+      "caption": "Sắc hồng hoa đào khoe sắc rực rỡ bên hiên gỗ ngập tràn ánh nắng.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253570-358232239",
+      "url": "/uploads/gallery/1788250253570-358232239.jpg",
+      "title": "Chòi Gỗ Mái Trong Suốt Bên Suối",
+      "caption": "Không gian chòi gỗ thoáng đãng đón trọn ánh sáng tự nhiên và gió suối.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253572-915114239",
+      "url": "/uploads/gallery/1788250253572-915114239.jpg",
+      "title": "Hiên Mái Lá & Bàn Dài Làm Việc",
+      "caption": "Bàn dài hội nhóm rợp bóng mát, lý tưởng cho làm việc từ xa và đọc sách.",
+      "category": "workspace"
+    },
+    {
+      "id": "1788250253574-977351820",
+      "url": "/uploads/gallery/1788250253574-977351820.jpg",
+      "title": "Ban Công Cờ Đỏ Bay Cao Giữa Đại Ngàn",
+      "caption": "Lá cờ đỏ sao vàng tung bay kiêu hãnh giữa không gian núi rừng Gia Nghĩa.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253576-148814823",
+      "url": "/uploads/gallery/1788250253576-148814823.jpg",
+      "title": "Ấm Áp Bên Lửa Trại Đêm Ven Suối",
+      "caption": "Bếp lửa bập bùng cùng tiếng suối róc rách sưởi ấm đêm se lạnh cao nguyên.",
+      "category": "stream"
+    },
+    {
+      "id": "1788250253578-396525469",
+      "url": "/uploads/gallery/1788250253578-396525469.jpg",
+      "title": "Sắc Màu Thổ Cẩm & Dù Hoa Cẩm Cù",
+      "caption": "Góc check-in nghệ thuật kết hợp hài hòa nét văn hóa Tây Nguyên.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253579-355700743",
+      "url": "/uploads/gallery/1788250253579-355700743.jpg",
+      "title": "Chòi Mộc Nhà Cù & Giàn Hoa Giấy Tím",
+      "caption": "Nét bình dị của mái chòi gỗ rêu phong nép mình bên dòng nước êm đềm.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253581-551654423",
+      "url": "/uploads/gallery/1788250253581-551654423.jpg",
+      "title": "Ghế Vàng Thư Thái Dưới Bóng Cây Râm",
+      "caption": "Góc ngồi yên tĩnh cho những phút giây đọc sách và lắng nghe thiên nhiên.",
+      "category": "workspace"
+    },
+    {
+      "id": "1788250253583-466696218",
+      "url": "/uploads/gallery/1788250253583-466696218.jpg",
+      "title": "Dù Tím Cẩm Cù House & Xích Đu Gỗ",
+      "caption": "Góc nghỉ chân râm mát với xích đu gỗ đung đưa bên hàng cây xanh.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253585-162974099",
+      "url": "/uploads/gallery/1788250253585-162974099.jpg",
+      "title": "Đường Lát Đá Cờ Đỏ & Hàng Dong Riềng",
+      "caption": "Lối mòn lát đá bazan dẫn lối giữa hai hàng cây xanh mát rượi.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253587-81750666",
+      "url": "/uploads/gallery/1788250253587-81750666.jpg",
+      "title": "Bàn Dài Cắm Trại Dưới Tán Tre Ngà",
+      "caption": "Không gian dã ngoại ngoài trời thoáng đãng, bàn dài thuận tiện làm việc hội nhóm.",
+      "category": "workspace"
+    },
+    {
+      "id": "1788250253590-409844081",
+      "url": "/uploads/gallery/1788250253590-409844081.jpg",
+      "title": "Bàn Giếng Cổ Nệm Thổ Cẩm Dưới Nắng Sớm",
+      "caption": "Sự kết hợp tinh tế giữa đồ mộc bản địa và hoa cỏ tự nhiên quanh quán.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253592-73071293",
+      "url": "/uploads/gallery/1788250253592-73071293.jpg",
+      "title": "Vườn Hoa Anh Đào & Lối Đi Lát Đá",
+      "caption": "Quang cảnh sân vườn rực rỡ sắc xuân đưa bạn vào chốn thần tiên giữa đại ngàn.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253595-367274421",
+      "url": "/uploads/gallery/1788250253595-367274421.jpg",
+      "title": "Hiên Lá Nhiệt Đới & Hàng Cờ Tổ Quốc",
+      "caption": "Góc xanh ngập tràn sức sống với các loài dương xỉ và cây rừng đặc trưng.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253597-677832947",
+      "url": "/uploads/gallery/1788250253597-677832947.jpg",
+      "title": "Biển Hiệu Vàng Tiệm Cà Phê Nhà Cù",
+      "caption": "Biển hiệu mộc mạc vẽ nhánh cà phê chín đỏ thân quen đón chào du khách.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253600-584656525",
+      "url": "/uploads/gallery/1788250253600-584656525.jpg",
+      "title": "Bàn Gỗ Dài Dưới Tán Cây Mít Cổ Thụ",
+      "caption": "Không gian làm việc và hội họp gia đình mát mẻ dưới tán cây râm mát.",
+      "category": "workspace"
+    },
+    {
+      "id": "1788250253602-486743244",
+      "url": "/uploads/gallery/1788250253602-486743244.jpg",
+      "title": "Bếp Lửa Trại & Khóm Hoa Huệ Cam Bên Suối",
+      "caption": "Điểm ngồi ngắm suối thơ mộng bên khóm hoa huệ cam khoe sắc.",
+      "category": "stream"
+    },
+    {
+      "id": "1788250253605-481608936",
+      "url": "/uploads/gallery/1788250253605-481608936.jpg",
+      "title": "Góc Du Ca Gia Nghĩa Bên Tường Củi Mộc",
+      "caption": "Không gian acoustic và chụp ảnh đậm chất mộc với tường củi gỗ cao nguyên.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253607-878531206",
+      "url": "/uploads/gallery/1788250253607-878531206.jpg",
+      "title": "Góc Thưởng Trà Dưới Gốc Cây Ven Suối",
+      "caption": "Ngồi uống trà, nhâm nhi cà phê ngay sát dòng suối reo róc rách.",
+      "category": "stream"
+    },
+    {
+      "id": "1788250253610-67011063",
+      "url": "/uploads/gallery/1788250253610-67011063.jpg",
+      "title": "Bàn Gỗ Kẻ Sọc Bên Bờ Suối & Bụi Dong Riềng",
+      "caption": "Góc ngồi sát mép nước suối, tận hưởng trọn vẹn luồng gió mát rượi tự nhiên.",
+      "category": "stream"
+    },
+    {
+      "id": "1788250253612-490050258",
+      "url": "/uploads/gallery/1788250253612-490050258.jpg",
+      "title": "Gian Bếp Mộc Bắp Ngô Cẩm Cù House",
+      "caption": "Tái hiện gian bếp cao nguyên xưa với bắp ngô phơi khô, củi thông ấm áp.",
+      "category": "checkin"
+    },
+    {
+      "id": "1788250253614-227589611",
+      "url": "/uploads/gallery/1788250253614-227589611.jpg",
+      "title": "Mái Nhà Tranh Cổ Điển Nhìn Ra Bờ Suối Xanh",
+      "caption": "Toàn cảnh góc chòi mộc mạc nép mình bên thảm cỏ xanh mướt và bờ suối.",
+      "category": "wooden-terrace"
+    },
+    {
+      "id": "1788250253618-436325211",
+      "url": "/uploads/gallery/1788250253618-436325211.jpg",
+      "title": "Bàn Khăn Thổ Cẩm Dưới Tán Hoa Đào & Bếp Cũ",
+      "caption": "Góc check-in rực rỡ sắc màu thổ cẩm và hoa đào nở giữa nắng ấm Gia Nghĩa.",
+      "category": "checkin"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Minh Quân Nguyễn",
+      "initial": "Q",
+      "badgeType": "local_guide",
+      "badgeTextVi": "Local Guide • Cấp 6 (82 bài đánh giá)",
+      "badgeTextEn": "Local Guide • Level 6 (82 reviews)",
+      "rating": 5,
+      "publishedTimeVi": "2 tuần trước",
+      "publishedTimeEn": "2 weeks ago",
+      "textVi": "Không gian bên suối siêu mát mẻ, nước chảy róc rách ngồi uống cà phê muối rất thư thái. Đường bê tông xe 7 chỗ vào tận sân quán rộng rãi. Chủ quán nhiệt tình, đồ uống giá chỉ 25k-40k mà vị rất đậm đà.",
+      "textEn": "The stream atmosphere is amazingly cool and tranquil; sipping salted coffee while listening to babbling water is pure bliss. Concrete road easily accommodates 7-seater cars right into the yard.",
+      "dineInVi": "Dùng tại chỗ",
+      "dineInEn": "Dine-in",
+      "priceVi": "30.000 – 45.000 đ/người",
+      "priceEn": "30,000 – 45,000 VND/person",
+      "recommendVi": "Cà phê muối, Trà đào cam sả",
+      "recommendEn": "Salted Coffee, Peach Lemongrass Tea",
+      "source": "google"
+    },
+    {
+      "id": "rev-2",
+      "author": "Hồng Hạnh (Hanh Leo)",
+      "initial": "H",
+      "badgeType": "local_guide",
+      "badgeTextVi": "Local Guide • Cấp 5 (46 bài đánh giá)",
+      "badgeTextEn": "Local Guide • Level 5 (46 reviews)",
+      "rating": 5,
+      "publishedTimeVi": "3 tuần trước",
+      "publishedTimeEn": "3 weeks ago",
+      "textVi": "Gia đình mình đi từ Buôn Ma Thuột về ghé quán ăn sáng uống cà phê. Quán có điểm tâm bò kho bánh mì và mì tôm rất ngon, các bé thích mê lội chân suối nước trong vắt. Rất đáng trải nghiệm khi đến Gia Nghĩa!",
+      "textEn": "Our family stopped by for breakfast and coffee. The beef stew bread and hot noodles were delicious, and our kids loved dipping their feet into the crystal stream water.",
+      "dineInVi": "Điểm tâm & Nước",
+      "dineInEn": "Breakfast & Drinks",
+      "priceVi": "40.000 – 60.000 đ/người",
+      "priceEn": "40,000 – 60,000 VND/person",
+      "recommendVi": "Bò kho bánh mì, Cà phê sữa rang củi",
+      "recommendEn": "Beef Stew Bread, Wood-fired Milk Coffee",
+      "source": "google"
+    },
+    {
+      "id": "rev-3",
+      "author": "Trần Đức Trọng",
+      "initial": "T",
+      "badgeType": "local_guide",
+      "badgeTextVi": "Local Guide • Cấp 7 (140 bài đánh giá)",
+      "badgeTextEn": "Local Guide • Level 7 (140 reviews)",
+      "rating": 5,
+      "publishedTimeVi": "1 tháng trước",
+      "publishedTimeEn": "1 month ago",
+      "textVi": "Một viên ngọc ẩn giữa Gia Nghĩa! Cà phê rang củi mộc chuẩn gu người sành, thơm nồng không hề có bơ hay hương liệu công nghiệp. Ngồi chòi gỗ ngắm đồi xanh ngút ngàn, gió mát rượi không cần máy lạnh.",
+      "textEn": "A hidden gem in Gia Nghia! Authentic wood-fired roasted coffee with pure robust aroma without artificial additives. Sitting in the wooden hut gazing at misty green hills is therapeutic.",
+      "dineInVi": "Dùng tại chỗ",
+      "dineInEn": "Dine-in",
+      "priceVi": "25.000 – 35.000 đ/người",
+      "priceEn": "25,000 – 35,000 VND/person",
+      "recommendVi": "Cà phê đen rang củi, Trà mộc hoa cúc",
+      "recommendEn": "Wood-fired Black Coffee, Chamomile Tea",
+      "source": "google"
+    },
+    {
+      "id": "rev-4",
+      "author": "Thùy Trang Travel",
+      "initial": "T",
+      "badgeType": "local_guide",
+      "badgeTextVi": "Local Guide • Cấp 4 (32 bài đánh giá)",
+      "badgeTextEn": "Local Guide • Level 4 (32 reviews)",
+      "rating": 5,
+      "publishedTimeVi": "1 tháng trước",
+      "publishedTimeEn": "1 month ago",
+      "textVi": "Góc check-in bờ suối chụp hình lên thơ mộng dã man. Ánh nắng rọi qua kẽ lá xuống mặt suối lung linh. Nhân viên và cô chú chủ quán dễ thương mộc mạc đúng chất người Đắk Nông.",
+      "textEn": "Picturesque stream photography spots with golden sunlight filtering through tree canopies. The owners are warmly hospitable with authentic Dak Nong sincerity.",
+      "dineInVi": "Dùng tại chỗ",
+      "dineInEn": "Dine-in",
+      "priceVi": "30.000 – 50.000 đ/người",
+      "priceEn": "30,000 – 50,000 VND/person",
+      "recommendVi": "Trà thảo mộc mật ong, Sinh tố bơ Đắk Nông",
+      "recommendEn": "Wild Honey Herbal Tea, Dak Nong Avocado Smoothie",
+      "source": "google"
+    },
+    {
+      "id": "rev-5",
+      "author": "Lê Văn Thắng",
+      "initial": "T",
+      "badgeType": "review_count",
+      "badgeTextVi": "19 bài đánh giá",
+      "badgeTextEn": "19 reviews",
+      "rating": 5,
+      "publishedTimeVi": "2 tháng trước",
+      "publishedTimeEn": "2 months ago",
+      "textVi": "Quán có bãi đỗ xe ô tô cực rộng, xe 16 chỗ vào quay đầu êm ru. Thích hợp cho đoàn du lịch nghỉ chân trên cung đường khám phá Đắk Nông. Đồ uống pha chế sạch sẽ, giá cả niêm yết rõ ràng.",
+      "textEn": "Spacious parking courtyard accommodating up to 16-seater vans comfortably. Perfect rest stop for travelers exploring Dak Nong. Clean prep station and transparent pricing.",
+      "dineInVi": "Dùng tại chỗ",
+      "dineInEn": "Dine-in",
+      "priceVi": "30.000 – 40.000 đ/người",
+      "priceEn": "30,000 – 40,000 VND/person",
+      "recommendVi": "Cà phê sữa đá, Nước ép cam nguyên chất",
+      "recommendEn": "Iced Milk Coffee, Fresh Orange Juice",
+      "source": "google"
+    },
+    {
+      "id": "rev-6",
+      "author": "Thu Phương",
+      "initial": "P",
+      "badgeType": "review_count",
+      "badgeTextVi": "27 bài đánh giá • 14 ảnh",
+      "badgeTextEn": "27 reviews • 14 photos",
+      "rating": 5,
+      "publishedTimeVi": "1 tháng trước",
+      "publishedTimeEn": "1 month ago",
+      "textVi": "Quán giữ được nét mộc mạc nguyên bản của Tây Nguyên, rặng cây xanh mướt và tiếng suối róc rách xua tan mệt mỏi đường dài. Rất recommend mọi người ghé qua!",
+      "textEn": "Preserves the raw charm of the Central Highlands; verdant trees and babbling stream water wash away travel fatigue. Highly recommend!",
+      "dineInVi": "Dùng tại chỗ",
+      "dineInEn": "Dine-in",
+      "priceVi": "~40.000 đ/người",
+      "priceEn": "~40,000 VND/person",
+      "recommendVi": "Trà thảo mộc, Bò kho bánh mì",
+      "recommendEn": "Herbal Tea, Beef Stew Bread",
+      "source": "google"
+    }
+  ],
+  "content_blocks": {
+    "vi": {
+      "common": {
+        "brandName": "Cẩm Cù House",
+        "brandTagline": "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá",
+        "brandSubtitle": "Cà Phê & Ẩm Thực, Gia Nghĩa",
+        "coordinates": "Tọa độ 11.99° N, 107.69° E, Gia Nghĩa, Đắk Nông",
+        "openGoogleMaps": "Mở Google Maps",
+        "callHotline": "Gọi Hotline",
+        "callToOrder": "Gọi Hotline Gọi Món",
+        "viewMenu": "Xem Thực Đơn 50+ Món",
+        "exploreStream": "Khám Phá Góc Suối",
+        "getDirections": "Chỉ Đường Tới Quán",
+        "viewLarger": "Xem lớn",
+        "noticeBoard": "Bảng Tin Quán",
+        "openingHoursGMT": "Giờ Mở Cửa (GMT+7)",
+        "themeLabel": "Giao diện:",
+        "admin": "Quản Trị Viên",
+        "allRightsReserved": "© 2026 Cẩm Cù House coffee & Food. All rights reserved.",
+        "curatedByNature": "Thiết kế theo dòng chảy thiên nhiên Gia Nghĩa, Đắk Nông",
+        "addressFull": "Hẻm 437 Hùng Vương, Phường Nghĩa Trung, Thành phố Gia Nghĩa, Tỉnh Đắk Nông",
+        "carParkingNote": "Đường bê tông rộng, xe ô tô 4 – 16 chỗ vào quay đầu tận sân quán.",
+        "soldOut": "Tạm Hết",
+        "soldOutToday": "Tạm Hết Hôm Nay"
+      },
+      "nav": {
+        "home": "Trang Chủ",
+        "about": "Câu Chuyện",
+        "space": "Không Gian Suối",
+        "menu": "Thực Đơn",
+        "contact": "Chỉ Đường & Liên Hệ",
+        "openNow": "Đang mở cửa",
+        "closed": "Đã đóng cửa",
+        "closingSoon": "Sắp đến giờ đóng cửa",
+        "temporarilyClosed": "Tạm nghỉ",
+        "seeYouTomorrow": "Quán đã đóng cửa, Hẹn gặp bạn lúc 07:00 ngày mai"
+      },
+      "introSplash": {
+        "skip": "Bỏ qua ✕",
+        "slogan": "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá, Đắk Nông"
+      },
+      "home": {
+        "introBadge": "🌿 VỀ CẨM CÙ HOUSE",
+        "introTitle": "Nơi thời gian lắng lại cùng tiếng suối róc rách",
+        "introDesc": "Nép mình bên dòng suối đá mát rượi của cao nguyên Gia Nghĩa, Cẩm Cù House gìn giữ nét mộc mạc nguyên bản. Những hạt cà phê Robusta chín mọng được thu hái từ rẫy đất đỏ bazan, rang củi thủ công đượm mùi khói thơm ấm nồng, hòa quyện cùng làn gió mát và thanh âm suối reo thanh khiết.",
+        "introMetric1Val": "800m+",
+        "introMetric1Label": "Độ cao cao nguyên",
+        "introMetric2Val": "100%",
+        "introMetric2Label": "Robusta rang củi mộc",
+        "introMetric3Val": "0 khói bụi",
+        "introMetric3Label": "Thiên nhiên thuần khiết",
+        "introCta": "Đọc trọn vẹn câu chuyện →",
+        "introPhotoMainCaption": "Dòng suối đá tự nhiên róc rách quanh năm",
+        "introPhotoSubCaption": "Góc chòi gỗ & Cà phê muối bốc khói",
+        "heroTitleLine1": "CẨM CÙ HOUSE",
+        "heroTitleLine2": "Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá",
+        "heroDescription": "Thưởng thức tách cà phê Robusta rang củi nguyên bản, lắng nghe dòng suối róc rách giữa thung lũng xanh thanh bình miền cao nguyên Đắk Nông.",
+        "badgeRecommended": "100% Đề Xuất Hài Lòng",
+        "badgePrice": "Mức Giá Bình Dân (20k - 45k)",
+        "badgeOrganic": "Nguyên Liệu Xanh Sạch",
+        "tempText": "23°C",
+        "windText": "Gió mát nhẹ",
+        "waterText": "Nước trong veo",
+        "streamEcoSpace": "Không Gian Sinh Thái Suối Reo",
+        "heroCardTitle": "Chòi Gỗ Mộc Ngắm Đồi Xanh & Hiên Suối Thanh Bình",
+        "heroCardDesc": "Hiên gỗ lợp lá thoáng đãng phóng tầm mắt ra thung lũng Đắk Nông lộng gió ban mai.",
+        "pillarsHeading": "Vì Sao Chọn Cẩm Cù House?",
+        "pillarsSubheading": "Bốn giá trị mộc mạc làm nên trải nghiệm an yên bên bờ suối",
+        "pillar1Title": "Suối Nguồn Tự Nhiên Mát Lạnh",
+        "pillar1Desc": "Dòng suối đá tự nhiên chảy quanh năm từ thượng nguồn Gia Nghĩa, nước trong vắt và mát lạnh 20-22°C.",
+        "pillar2Title": "Cà Phê Robusta Rang Củi Mộc",
+        "pillar2Desc": "Những hạt cà phê chín mọng từ đất đỏ bazan Đắk Nông, rang củi theo phương pháp thủ công đậm đà nguyên bản.",
+        "pillar3Title": "Thực Đơn 50+ Món Tự Nhiên",
+        "pillar3Desc": "Hơn 50 món thức uống thanh mát và điểm tâm sáng đặc sản núi rừng, từ cà phê muối đến trà thảo mộc mật ong.",
+        "pillar4Title": "Không Gian Mộc Mạc Thư Thái",
+        "pillar4Desc": "Bàn ghế gỗ mộc nép mình dưới bóng cây râm mát, nơi tâm hồn lắng lại sau những ồn ào phố thị."
+      },
+      "menu": {
+        "badge": "Ẩm Thực Tự Nhiên & Nông Sản Bản Địa Gia Nghĩa",
+        "title": "Thực Đơn Mộc Mạc, Thức Uống Xanh & Món Ăn Lành",
+        "subtitle": "Mỗi món nước hay món ăn đều trọn vẹn hương vị mộc mạc, chế biến từ nông sản Đắk Nông tươi rói, kết hợp cùng không gian tiếng suối róc rách trong trẻo.",
+        "pureSpring": "Nước Suối Nguồn Mát",
+        "dailyFresh": "Nông Sản Trong Ngày",
+        "noAdditives": "Không Phụ Gia Hóa Học",
+        "searchPlaceholder": "Tìm món nhanh...",
+        "menuListHeading": "Danh Sách Món",
+        "menuListSubheading": "Giá niêm yết đã bao gồm phục vụ tại bàn sát bờ suối",
+        "signatureTag": "Món Được Yêu Thích Nhất",
+        "signatureTitle": "Signature: Cà Phê Muối Đắk Nông",
+        "signatureHeading": "Cà Phê Muối Gia Nghĩa & Trà Hoa Đu Đủ Rừng",
+        "signatureDesc": "Được ủ từ hạt Robusta chín mọng rang than củi, lớp kem muối biển béo ngậy mặn ngọt cân bằng hoàn hảo. Ngoài ra, ấm trà hoa đu đủ đực ngâm mật ong rừng luôn là sự lựa chọn thanh giọng, an lành nhất bên dòng suối mát.",
+        "categories": {
+          "all": "Tất Cả",
+          "coffee": "Cà Phê Mộc",
+          "tea": "Trà Thảo Mộc",
+          "smoothie": "Sinh Tố",
+          "juice": "Nước Ép",
+          "soda-yogurt": "Soda & Sữa Chua",
+          "others": "Đồ Uống Khác",
+          "food": "Món Ăn Lành"
+        }
+      },
+      "space": {
+        "badge": "Không Gian Sinh Thái Suối Reo",
+        "title": "Khám Phá Góc Suối Mát Lành Gia Nghĩa",
+        "subtitle": "Dừng chân trên những phiến đá cuội, lắng nghe tiếng suối reo hòa cùng tiếng chim rừng và đón những cơn gió cao nguyên mát rượi.",
+        "playAudio": "Bật Tiếng Suối",
+        "muteAudio": "Tắt Tiếng Suối",
+        "categories": {
+          "all": "Tất Cả Không Gian",
+          "stream": "Bờ Suối Tự Nhiên",
+          "wooden-terrace": "Hiên Gỗ & Chòi Mộc",
+          "checkin": "Góc Check-in & Cảnh Quan",
+          "workspace": "Bàn Ghế Làm Việc / Đọc Sách"
+        }
+      },
+      "about": {
+        "badge": "Tâm Tình Từ Cao Nguyên",
+        "title": "Câu Chuyện Cẩm Cù",
+        "subtitle": "Chốn Bình Yên Giữa Đất Ngàn",
+        "description": "Khởi nguồn từ tình yêu với thiên nhiên Gia Nghĩa và khát khao gìn giữ một khoảng xanh trong trẻo cho lữ khách ghé chân, buông bỏ muộn phiền để hòa nhịp cùng suối ngàn.",
+        "hoyaFlower": "Loài hoa Hoya bền bỉ",
+        "pureStream": "Suối nguồn tự nhiên 100%"
+      },
+      "contact": {
+        "badge": "Khu Ẩm Thực & Cà Phê Sinh Thái Bên Suối, Gia Nghĩa",
+        "title": "Từ Gia Nghĩa, Cẩm Cù House Chờ Đón Bạn",
+        "subtitle": "Một chốn bình yên giấu mình bên dòng suối mát rượi, rất dễ tìm với đường ô tô rộng thoáng vào tận hiên quán. Mở Google Maps hoặc gọi hotline để được đón tiếp chu đáo nhất!",
+        "coordinatesTitle": "Tọa độ cao nguyên",
+        "openingHoursTitle": "Giờ Mở Cửa & Hotline",
+        "hotlineTitle": "Hotline Đón Tiếp:",
+        "addressTitle": "Địa Chỉ & Kết Nối",
+        "quickLinksTitle": "Điều Hướng Nhanh"
+      }
+    },
+    "en": {
+      "common": {
+        "brandName": "Cẩm Cù House",
+        "brandTagline": "A Rustic Sanctuary by the Rock Stream",
+        "brandSubtitle": "Coffee & Food, Gia Nghia",
+        "coordinates": "Coordinates 11.99° N, 107.69° E, Gia Nghia, Dak Nong",
+        "openGoogleMaps": "Open Google Maps",
+        "callHotline": "Call Hotline",
+        "callToOrder": "Call Hotline to Order",
+        "viewMenu": "View 50+ Menu Items",
+        "exploreStream": "Explore the Stream",
+        "getDirections": "Get Directions",
+        "viewLarger": "View larger",
+        "noticeBoard": "Notice Board",
+        "openingHoursGMT": "Opening Hours (GMT+7)",
+        "themeLabel": "Theme:",
+        "admin": "Admin Portal",
+        "allRightsReserved": "© 2026 Cẩm Cù House coffee & Food. All rights reserved.",
+        "curatedByNature": "Crafted following the natural flow of Gia Nghia, Dak Nong",
+        "addressFull": "Alley 437 Hung Vuong, Nghia Trung Ward, Gia Nghia City, Dak Nong Province",
+        "carParkingNote": "Wide paved access road; 4 to 16-seater cars can park and turn around directly in our courtyard.",
+        "soldOut": "Sold Out",
+        "soldOutToday": "Sold Out Today"
+      },
+      "nav": {
+        "home": "Home",
+        "about": "Our Story",
+        "space": "Stream Sanctuary",
+        "menu": "Menu",
+        "contact": "Directions & Contact",
+        "openNow": "Open Now",
+        "closed": "Closed",
+        "closingSoon": "Closing Soon",
+        "temporarilyClosed": "Temporarily Closed",
+        "seeYouTomorrow": "Currently Closed, See you tomorrow at 07:00"
+      },
+      "introSplash": {
+        "skip": "Skip ✕",
+        "slogan": "A Rustic Sanctuary by the Stream, Dak Nong"
+      },
+      "home": {
+        "introBadge": "🌿 ABOUT CẨM CÙ HOUSE",
+        "introTitle": "Where time slows down by the whispering stream",
+        "introDesc": "Nestled beside the cool rock stream of Gia Nghia highlands, Cẩm Cù House preserves pristine rustic tranquility. Ripe Robusta cherries hand-picked from fertile volcanic soils are artisanal firewood-roasted with a warm smoky aroma, harmonizing with the mountain breeze and the pure melody of flowing water.",
+        "introMetric1Val": "800m+",
+        "introMetric1Label": "Highland Elevation",
+        "introMetric2Val": "100%",
+        "introMetric2Label": "Wood-fired Robusta",
+        "introMetric3Val": "0 Pollution",
+        "introMetric3Label": "Pristine Nature",
+        "introCta": "Read Our Full Story →",
+        "introPhotoMainCaption": "Natural pebble stream flowing year-round",
+        "introPhotoSubCaption": "Wooden deck & Steaming salt coffee",
+        "heroTitleLine1": "CẨM CÙ HOUSE",
+        "heroTitleLine2": "A Rustic Retreat by the Rock Stream",
+        "heroDescription": "Savor authentic firewood-roasted Robusta coffee while listening to the tranquil stream murmur through the lush valleys of the Đắk Nông highlands.",
+        "badgeRecommended": "100% Recommended",
+        "badgePrice": "Affordable Prices (20k - 45k)",
+        "badgeOrganic": "Farm-Fresh Ingredients",
+        "tempText": "23°C",
+        "windText": "Gentle Highland Breeze",
+        "waterText": "Crystal Clear Stream",
+        "streamEcoSpace": "Murmuring Stream Eco Sanctuary",
+        "heroCardTitle": "Rustic Wooden Deck with Hillside View & Serene Stream",
+        "heroCardDesc": "An airy thatched wooden terrace overlooking the breezy Dak Nong valley in the morning mist.",
+        "pillarsHeading": "Why Cẩm Cù House?",
+        "pillarsSubheading": "Four authentic qualities creating our serene riverside retreat",
+        "pillar1Title": "Natural Cool Pebble Stream",
+        "pillar1Desc": "Year-round natural crystal-clear spring water originating from Gia Nghia mountains, refreshing at 20-22°C.",
+        "pillar2Title": "Firewood-Roasted Robusta Coffee",
+        "pillar2Desc": "Ripe Robusta coffee cherries from fertile Dak Nong volcanic soils, artisanal firewood-roasted for deep richness.",
+        "pillar3Title": "50+ Farm-Fresh Offerings",
+        "pillar3Desc": "A diverse collection of refreshing beverages and local mountain breakfasts, from salted cream coffee to wild honey teas.",
+        "pillar4Title": "Tranquil Eco-Sanctuary",
+        "pillar4Desc": "Rustic wooden seating tucked under generous tree shade, where your mind unwinds away from bustling city life."
+      },
+      "menu": {
+        "badge": "Natural Cuisine & Gia Nghia Highland Harvest",
+        "title": "Rustic Sanctuary Menu, Pure Sips & Wholesome Bites",
+        "subtitle": "Every drink and dish carries the pure, unpretentious flavors of fresh Dak Nong produce, accompanied by the gentle melody of the stream.",
+        "pureSpring": "Chilled Spring Water",
+        "dailyFresh": "Daily Fresh Harvest",
+        "noAdditives": "No Artificial Additives",
+        "searchPlaceholder": "Search menu...",
+        "menuListHeading": "Menu Offerings",
+        "menuListSubheading": "Listed prices include table service right beside the stream",
+        "signatureTag": "Most Loved Signature",
+        "signatureTitle": "Signature: Dak Nong Salt Coffee",
+        "signatureHeading": "Gia Nghia Salt Coffee & Wild Papaya Flower Tea",
+        "signatureDesc": "Brewed from ripe Robusta beans roasted over firewood, paired with a velvety layer of sweet-and-savory sea salt cream. Plus soothing highland male papaya flower tea infused with wild honey.",
+        "categories": {
+          "all": "All Items",
+          "coffee": "Specialty Coffee",
+          "tea": "Herbal & Fruit Tea",
+          "smoothie": "Fresh Smoothies",
+          "juice": "Cold-Pressed Juice",
+          "soda-yogurt": "Soda & Artisan Yogurt",
+          "others": "Refreshing Drinks",
+          "food": "Wholesome Bites & Food"
+        }
+      },
+      "space": {
+        "badge": "Stream Sanctuary",
+        "title": "Explore the Serene Stream of Gia Nghia",
+        "subtitle": "Step onto natural pebbles, listen to the bubbling brook harmonize with forest birds, and embrace the crisp highland breeze.",
+        "playAudio": "Play Stream Sound",
+        "muteAudio": "Mute Stream Sound",
+        "categories": {
+          "all": "All Spaces",
+          "stream": "Natural Stream",
+          "wooden-terrace": "Wooden Terraces & Pavilions",
+          "checkin": "Scenic Photo Spots",
+          "workspace": "Co-working & Reading Nooks"
+        }
+      },
+      "about": {
+        "badge": "Heartfelt Tale from the Highlands",
+        "title": "The Story of Cam Cu",
+        "subtitle": "A Peaceful Haven in the Highlands",
+        "description": "Born from a deep love for Gia Nghia's wilderness and a desire to preserve a pristine green haven where wanderers can leave their worries behind and tune into the river flow.",
+        "hoyaFlower": "Resilient Hoya Blossoms",
+        "pureStream": "100% Natural Stream Spring"
+      },
+      "contact": {
+        "badge": "Eco Coffee & Food Sanctuary Beside Stream, Gia Nghia",
+        "title": "From Gia Nghia, Cẩm Cù House Welcomes You",
+        "subtitle": "A peaceful retreat hidden beside the crystal stream, easily accessible by car right to our courtyard. Open Google Maps or call our hotline for the warmest welcome!",
+        "coordinatesTitle": "Highland Coordinates",
+        "openingHoursTitle": "Opening Hours & Hotline",
+        "hotlineTitle": "Reception Hotline:",
+        "addressTitle": "Address & Connect",
+        "quickLinksTitle": "Quick Navigation"
+      }
+    }
+  }
+}
