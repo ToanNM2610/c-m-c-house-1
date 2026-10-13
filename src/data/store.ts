@@ -27,6 +27,9 @@ export interface StoreSettings {
   address: string;
   topBanner: string;
   adminPin: string;
+  totpSecret?: string;
+  totpEnabled?: boolean;
+  recoveryCodes?: string[];
 }
 
 import defaultGalleryData from "./gallery.json";
@@ -157,6 +160,44 @@ export function changeAdminPin(oldPin: string, newPin: string): boolean {
   }
   store.settings.adminPin = newPin.trim();
   return true;
+}
+
+export function getTotpConfig() {
+  const store = getGlobalStore();
+  return {
+    totpEnabled: Boolean(store.settings.totpEnabled),
+    totpSecret: store.settings.totpSecret || "",
+    hasRecoveryCodes: (store.settings.recoveryCodes || []).length > 0,
+  };
+}
+
+export function enableTotp(secret: string, recoveryCodes: string[]): boolean {
+  const store = getGlobalStore();
+  store.settings.totpSecret = secret;
+  store.settings.totpEnabled = true;
+  store.settings.recoveryCodes = recoveryCodes;
+  return true;
+}
+
+export function disableTotp(): boolean {
+  const store = getGlobalStore();
+  store.settings.totpEnabled = false;
+  store.settings.totpSecret = "";
+  store.settings.recoveryCodes = [];
+  return true;
+}
+
+export function verifyRecoveryCode(code: string): boolean {
+  const store = getGlobalStore();
+  const codes = store.settings.recoveryCodes || [];
+  const clean = code.trim().toUpperCase();
+  const idx = codes.findIndex((c) => c.toUpperCase() === clean);
+  if (idx !== -1) {
+    // Consume one-time recovery code
+    store.settings.recoveryCodes = codes.filter((_, i) => i !== idx);
+    return true;
+  }
+  return false;
 }
 
 // 4. Gallery Operations

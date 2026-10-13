@@ -37,9 +37,20 @@ import {
   UploadCloud,
   Camera,
   FileImage,
-  Upload
+  Upload,
+  FileSpreadsheet,
+  Download,
+  Key,
+  Shield,
+  QrCode,
+  Activity,
+  FileText,
+  Copy,
 } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES, MenuItem } from "@/data/menu";
+import { getLocalEventStats } from "@/lib/analytics";
+import { OverrideMode, StatusOverrideData } from "@/lib/status";
+import rawBackupData from "@/data/backup/camcu_raw_backup.json";
 import {
   getSharedData,
   setSharedData,
@@ -99,16 +110,87 @@ export default function AdminPage() {
   const [pinInput, setPinInput] = useState<string>("");
   const [pinError, setPinError] = useState<string>("");
   const [isVerifyingPin, setIsVerifyingPin] = useState<boolean>(false);
+  const [require2FA, setRequire2FA] = useState<boolean>(false);
+  const [totpInput, setTotpInput] = useState<string>("");
+  const [verifiedPinTemp, setVerifiedPinTemp] = useState<string>("");
 
-  // Active navigation tab
-  const [activeTab, setActiveTab] = useState<"overview" | "menu" | "gallery" | "settings">("overview");
+  // Active navigation tab (6 tabs according to Section 7)
+  const [activeTab, setActiveTab] = useState<"overview" | "menu" | "gallery" | "settings" | "content" | "security">("overview");
 
   // Store opening hours & override state (Single source of truth)
   const storeStatus = useStoreStatus();
   const [storeOverride, setStoreOverrideState] = useState<StoreOverrideMode>("auto");
+  const [overrideDuration, setOverrideDuration] = useState<"1h" | "2h" | "4h" | "today" | "indefinite">("indefinite");
   const [lastToggledItem, setLastToggledItem] = useState<{ id: string; name: string; prevStatus: boolean } | null>(null);
   const [adminLightboxOpen, setAdminLightboxOpen] = useState<boolean>(false);
   const [adminLightboxIndex, setAdminLightboxIndex] = useState<number>(0);
+
+  // 2FA Security State
+  const [totpEnabled, setTotpEnabled] = useState<boolean>(false);
+  const [isTotpModalOpen, setIsTotpModalOpen] = useState<boolean>(false);
+  const [totpSetupData, setTotpSetupData] = useState<{ secret: string; uri: string; recoveryCodes: string[] } | null>(null);
+  const [totpVerificationCode, setTotpVerificationCode] = useState<string>("");
+  const [totpModalMsg, setTotpModalMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [recoveryCodesCopied, setRecoveryCodesCopied] = useState<boolean>(false);
+
+  // 7-day Analytics Engagement Stats
+  const [analyticsStats, setAnalyticsStats] = useState({
+    click_call: 0,
+    click_zalo: 0,
+    click_directions: 0,
+    view_menu: 0,
+  });
+
+  // CSV input ref
+  const csvInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Content Blocks Page Selection & State
+  const [selectedContentPage, setSelectedContentPage] = useState<
+    "home" | "about" | "space" | "menu" | "contact" | "common" | "nav"
+  >("home");
+  const [contentData, setContentData] = useState<{ vi: Record<string, any>; en: Record<string, any> }>(() => {
+    return ((rawBackupData as any).content_blocks || { vi: {}, en: {} });
+  });
+  const [editingContentKey, setEditingContentKey] = useState<string | null>(null);
+  const [editViVal, setEditViVal] = useState<string>("");
+  const [editEnVal, setEditEnVal] = useState<string>("");
+
+  const handleSaveContentKey = async (section: string, key: string) => {
+    try {
+      const updated = {
+        vi: {
+          ...contentData.vi,
+          [section]: {
+            ...(contentData.vi[section] || {}),
+            [key]: editViVal,
+          },
+        },
+        en: {
+          ...contentData.en,
+          [section]: {
+            ...(contentData.en[section] || {}),
+            [key]: editEnVal,
+          },
+        },
+      };
+      setContentData(updated);
+      setEditingContentKey(null);
+      showToast(`Đã lưu nội dung [${key}] thành công!`);
+
+      await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          section,
+          key,
+          value_vi: editViVal,
+          value_en: editEnVal,
+        }),
+      });
+    } catch {
+      showToast("Lỗi khi lưu nội dung");
+    }
+  };
 
   // Store data state
   const [menuOverrides, setMenuOverrides] = useState<Record<string, { inStock: boolean; price?: number }>>({});
@@ -295,6 +377,48 @@ export default function AdminPage() {
         }
       })
       .catch((err) => console.warn(err));
+
+    // Hydrate 7-day Analytics
+    const localStats = getLocalEventStats(7);
+    setAnalyticsStats(localStats);
+
+    fetch("/api/analytics")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && d.stats) {
+          setAnalyticsStats((prev) => ({
+            click_call: Math.max(prev.click_call, d.stats.click_call || 0),
+            click_zalo: Math.max(prev.click_zalo, d.stats.click_zalo || 0),
+            click_directions: Math.max(prev.click_directions, d.stats.click_directions || 0),
+            view_menu: Math.max(prev.view_menu, d.stats.view_menu || 0),
+          }));
+        }
+      })
+      .catch(() => {});
+
+    // Check 2FA configuration
+    fetch("/api/admin/auth", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "status" }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && typeof d.totpEnabled === "boolean") {
+          setTotpEnabled(d.totpEnabled);
+        }
+      })
+      .catch(() => {});
+
+    // Hydrate Content Blocks from API
+    fetch("/api/admin/content")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && d.content) {
+          setContentData(d.content);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Handle PIN input
@@ -328,6 +452,14 @@ export default function AdminPage() {
         body: JSON.stringify({ pin: pinToTest }),
       });
       const data = await res.json();
+
+      if (data.require2FA) {
+        setRequire2FA(true);
+        setVerifiedPinTemp(pinToTest);
+        setPinError("");
+        return;
+      }
+
       if (data.success || pinToTest === "2610") {
         setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
         setIsAuthenticated(true);
@@ -351,6 +483,36 @@ export default function AdminPage() {
     }
   };
 
+  const handleVerifyTotp = async () => {
+    if (!totpInput || totpInput.trim().length < 6) {
+      setPinError("Vui lòng nhập 6 chữ số TOTP hoặc mã khôi phục");
+      return;
+    }
+    setIsVerifyingPin(true);
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: verifiedPinTemp, totpCode: totpInput.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
+        setIsAuthenticated(true);
+        setRequire2FA(false);
+        setTotpInput("");
+        setVerifiedPinTemp("");
+        setPinError("");
+      } else {
+        setPinError(data.error || "Mã 2FA không chính xác");
+      }
+    } catch {
+      setPinError("Lỗi kết nối khi xác thực 2FA");
+    } finally {
+      setIsVerifyingPin(false);
+    }
+  };
+
   // Logout handler
   const handleLogout = async () => {
     try {
@@ -363,6 +525,191 @@ export default function AdminPage() {
     setIsAuthenticated(false);
     setPinInput("");
     showToast("Đã đăng xuất phiên làm việc an toàn");
+  };
+
+  // Store status override with duration
+  const handleStoreOverrideChange = (
+    mode: StoreOverrideMode,
+    duration: "1h" | "2h" | "4h" | "today" | "indefinite" = overrideDuration
+  ) => {
+    setStoreOverrideState(mode);
+    setStoreOverride(mode);
+
+    let until: string | null = null;
+    if (mode !== "auto") {
+      const now = new Date();
+      if (duration === "1h") {
+        until = new Date(now.getTime() + 60 * 60 * 1000).toISOString();
+      } else if (duration === "2h") {
+        until = new Date(now.getTime() + 2 * 60 * 60 * 1000).toISOString();
+      } else if (duration === "4h") {
+        until = new Date(now.getTime() + 4 * 60 * 60 * 1000).toISOString();
+      } else if (duration === "today") {
+        const endOfDay = new Date(now);
+        endOfDay.setHours(23, 59, 59, 999);
+        until = endOfDay.toISOString();
+      }
+    }
+
+    const detailMode: OverrideMode = mode === "force_open" ? "open" : mode === "force_closed" ? "closed" : "auto";
+    const detailData: StatusOverrideData = { mode: detailMode, until };
+    setStoredData("camcu_status_override_detail", detailData, true);
+
+    const label = mode === "auto" ? "Tự động theo lịch" : mode === "force_open" ? "🟢 Mở cửa" : "🔴 Tạm đóng cửa";
+    const durationLabel = until
+      ? ` (hết hạn lúc ${new Date(until).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })})`
+      : "";
+    showToast(`Đã lưu trạng thái: ${label}${durationLabel}`);
+  };
+
+  // CSV Export & Import for Menu Items
+  const handleExportMenuCsv = () => {
+    const headers = ["id", "category", "categoryName", "name", "price", "tag", "inStock", "description"];
+    const rows = MENU_ITEMS.map((item) => {
+      const inStock = menuOverrides[item.id]?.inStock ?? true;
+      const price = menuOverrides[item.id]?.price ?? item.price;
+      return [
+        item.id,
+        item.category,
+        `"${item.categoryName.replace(/"/g, '""')}"`,
+        `"${item.name.replace(/"/g, '""')}"`,
+        price,
+        item.tag || "",
+        inStock ? "1" : "0",
+        `"${(item.description || "").replace(/"/g, '""')}"`,
+      ];
+    });
+
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `thuc-don-cam-cu-house-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("Đã xuất danh sách 67 món ra file CSV thành công!");
+  };
+
+  const handleImportMenuCsv = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = (event.target?.result as string) || "";
+        const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+        if (lines.length <= 1) {
+          showToast("File CSV không có dữ liệu món");
+          return;
+        }
+
+        const newOverrides: Record<string, { inStock: boolean; price?: number }> = { ...menuOverrides };
+        let updatedCount = 0;
+
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].split(",");
+          if (parts.length >= 5) {
+            const id = parts[0].trim().replace(/^"|"$/g, "");
+            const price = parseInt(parts[4].trim(), 10);
+            const inStock = parts[6] ? parts[6].trim() === "1" || parts[6].trim().toLowerCase() === "còn hàng" : true;
+
+            const existingItem = MENU_ITEMS.find((m) => m.id === id);
+            if (existingItem) {
+              newOverrides[id] = {
+                inStock,
+                price: !isNaN(price) && price > 0 ? price : existingItem.price,
+              };
+              updatedCount++;
+            }
+          }
+        }
+
+        setMenuOverrides(newOverrides);
+        setStoredData(CAMCU_MENU_OVERRIDES_KEY, newOverrides, true);
+
+        const disabledIds = Object.entries(newOverrides)
+          .filter(([, v]) => v.inStock === false)
+          .map(([k]) => k);
+        setSharedData(KEYS.DISABLED_MENU_IDS, disabledIds);
+
+        showToast(`Đã nhập thành công ${updatedCount} món từ file CSV!`);
+      } catch (err) {
+        showToast("Lỗi khi đọc file CSV");
+      }
+    };
+    reader.readAsText(file, "UTF-8");
+    e.target.value = "";
+  };
+
+  // 2FA TOTP Management Handlers
+  const handleStartTotpSetup = async () => {
+    setTotpModalMsg(null);
+    setTotpVerificationCode("");
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "setup" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTotpSetupData(data);
+        setIsTotpModalOpen(true);
+      }
+    } catch {
+      showToast("Lỗi khi tạo mã bảo mật 2FA");
+    }
+  };
+
+  const handleVerifyAndEnableTotp = async () => {
+    if (!totpSetupData || !totpVerificationCode.trim()) {
+      setTotpModalMsg({ type: "error", text: "Vui lòng nhập mã 6 số từ ứng dụng Authenticator" });
+      return;
+    }
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "verify_enable",
+          secret: totpSetupData.secret,
+          code: totpVerificationCode.trim(),
+          recoveryCodes: totpSetupData.recoveryCodes,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTotpEnabled(true);
+        setTotpModalMsg({ type: "success", text: "Đã kích hoạt 2FA thành công! Hãy lưu 5 mã khôi phục bên dưới." });
+        showToast("Đã kích hoạt bảo mật 2 lớp 2FA!");
+      } else {
+        setTotpModalMsg({ type: "error", text: data.error || "Mã xác thực không đúng" });
+      }
+    } catch {
+      setTotpModalMsg({ type: "error", text: "Lỗi kết nối khi kích hoạt 2FA" });
+    }
+  };
+
+  const handleDisableTotp = async () => {
+    if (!confirm("Bạn có chắc chắn muốn tắt bảo mật 2 lớp 2FA không?")) return;
+    try {
+      const res = await fetch("/api/admin/auth", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "disable" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTotpEnabled(false);
+        setIsTotpModalOpen(false);
+        showToast("Đã tắt xác thực 2 lớp 2FA");
+      }
+    } catch {
+      showToast("Lỗi khi tắt 2FA");
+    }
   };
 
   // Keyboard support for PIN lock screen
@@ -699,19 +1046,6 @@ export default function AdminPage() {
     } catch {}
   };
 
-  // Store Override Change Handler
-  const handleStoreOverrideChange = (mode: StoreOverrideMode) => {
-    setStoreOverrideState(mode);
-    setStoreOverride(mode);
-    showToast(
-      mode === "auto"
-        ? "Đã chuyển sang: Tự động theo lịch (GMT+7)"
-        : mode === "force_open"
-        ? "Đã ghi đè: Bắt buộc mở cửa đón khách"
-        : "Đã ghi đè: Tạm đóng cửa / Nghỉ lễ"
-    );
-  };
-
   // Lightbox Modal Handler
   const handleOpenAdminLightbox = (index: number) => {
     setAdminLightboxIndex(index);
@@ -837,79 +1171,128 @@ export default function AdminPage() {
             CẨM CÙ ADMIN
           </h1>
           <p className="text-xs text-stone-500 mt-1 uppercase tracking-widest font-semibold">
-            Bảo Mật Bằng Mã PIN Hệ Thống
+            {require2FA ? "Xác Thực 2 Lớp (TOTP)" : "Bảo Mật Bằng Mã PIN Hệ Thống"}
           </p>
 
-          {/* PIN Dots Display */}
-          <div className="flex items-center justify-center gap-3 my-6">
-            {[0, 1, 2, 3].map((index) => {
-              const isFilled = pinInput.length > index;
-              return (
-                <div
-                  key={index}
-                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                    isFilled
-                      ? "bg-[#3E5C46] scale-110 shadow-md ring-4 ring-[#3E5C46]/20"
-                      : "bg-stone-200 border border-stone-300"
-                  }`}
-                />
-              );
-            })}
-          </div>
+          {require2FA ? (
+            <div className="w-full flex flex-col gap-4 my-5 animate-fade-in">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-200 font-medium text-left">
+                Tài khoản đã kích hoạt 2FA. Vui lòng mở ứng dụng <strong>Google Authenticator</strong> để lấy mã 6 số (hoặc nhập mã khôi phục).
+              </div>
 
-          {/* Error Message */}
-          {pinError && (
-            <div className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full mb-4 font-medium animate-shake">
-              {pinError}
-            </div>
-          )}
+              <input
+                type="text"
+                maxLength={9}
+                placeholder="000000 hoặc mã khôi phục"
+                value={totpInput}
+                onChange={(e) => setTotpInput(e.target.value)}
+                className="w-full py-3 px-4 text-center font-mono text-xl tracking-widest bg-stone-100 dark:bg-stone-800 rounded-2xl border border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                autoFocus
+              />
 
-          {/* Numeric Keypad */}
-          <div className="grid grid-cols-3 gap-3 w-full max-w-[260px] mb-6">
-            {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
+              {pinError && (
+                <div className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full font-medium">
+                  {pinError}
+                </div>
+              )}
+
               <button
-                key={num}
                 type="button"
-                onClick={() => handlePinDigit(num)}
+                onClick={handleVerifyTotp}
                 disabled={isVerifyingPin}
-                className="h-14 rounded-2xl bg-stone-100 hover:bg-[#3E5C46] hover:text-white active:scale-95 text-stone-800 font-serif text-2xl font-bold transition-all shadow-sm flex items-center justify-center"
+                className="btn-primary w-full min-h-[44px] py-3 rounded-full font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer"
               >
-                {num}
+                <Shield className="w-4 h-4" />
+                <span>{isVerifyingPin ? "Đang xác thực..." : "Xác Nhận Đăng Nhập"}</span>
               </button>
-            ))}
 
-            <button
-              type="button"
-              onClick={handlePinClear}
-              className="h-14 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-600 text-xs font-bold transition-all flex items-center justify-center"
-            >
-              Xóa hết
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRequire2FA(false);
+                  setPinInput("");
+                  setTotpInput("");
+                  setPinError("");
+                }}
+                className="text-xs text-stone-500 hover:text-[#3E5C46] underline cursor-pointer mt-1"
+              >
+                ← Quay lại nhập mã PIN
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* PIN Dots Display */}
+              <div className="flex items-center justify-center gap-3 my-6">
+                {[0, 1, 2, 3].map((index) => {
+                  const isFilled = pinInput.length > index;
+                  return (
+                    <div
+                      key={index}
+                      className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                        isFilled
+                          ? "bg-[#3E5C46] scale-110 shadow-md ring-4 ring-[#3E5C46]/20"
+                          : "bg-stone-200 border border-stone-300"
+                      }`}
+                    />
+                  );
+                })}
+              </div>
 
-            <button
-              type="button"
-              onClick={() => handlePinDigit("0")}
-              disabled={isVerifyingPin}
-              className="h-14 rounded-2xl bg-stone-100 hover:bg-[#3E5C46] hover:text-white active:scale-95 text-stone-800 font-serif text-2xl font-bold transition-all shadow-sm flex items-center justify-center"
-            >
-              0
-            </button>
+              {/* Error Message */}
+              {pinError && (
+                <div className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full mb-4 font-medium animate-shake">
+                  {pinError}
+                </div>
+              )}
 
-            <button
-              type="button"
-              onClick={handlePinDelete}
-              className="h-14 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-600 transition-all flex items-center justify-center"
-              aria-label="Xóa 1 số"
-            >
-              <Delete className="w-5 h-5" />
-            </button>
-          </div>
+              {/* Numeric Keypad */}
+              <div className="grid grid-cols-3 gap-3 w-full max-w-[260px] mb-6">
+                {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => handlePinDigit(num)}
+                    disabled={isVerifyingPin}
+                    className="h-14 rounded-2xl bg-stone-100 hover:bg-[#3E5C46] hover:text-white active:scale-95 text-stone-800 font-serif text-2xl font-bold transition-all shadow-sm flex items-center justify-center"
+                  >
+                    {num}
+                  </button>
+                ))}
 
-          {/* Helper Default PIN Badge */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#3E5C46] text-[11px] font-semibold border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Mã PIN mặc định: <strong>2610</strong></span>
-          </div>
+                <button
+                  type="button"
+                  onClick={handlePinClear}
+                  className="h-14 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-600 text-xs font-bold transition-all flex items-center justify-center"
+                >
+                  Xóa hết
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePinDigit("0")}
+                  disabled={isVerifyingPin}
+                  className="h-14 rounded-2xl bg-stone-100 hover:bg-[#3E5C46] hover:text-white active:scale-95 text-stone-800 font-serif text-2xl font-bold transition-all shadow-sm flex items-center justify-center"
+                >
+                  0
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handlePinDelete}
+                  className="h-14 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-600 transition-all flex items-center justify-center"
+                  aria-label="Xóa 1 số"
+                >
+                  <Delete className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Helper Default PIN Badge */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#3E5C46] text-[11px] font-semibold border border-emerald-200">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Mã PIN mặc định: <strong>2610</strong></span>
+              </div>
+            </>
+          )}
 
           <a
             href="https://camcuhouse.online"
@@ -996,7 +1379,7 @@ export default function AdminPage() {
               }`}
             >
               <UtensilsCrossed className="w-4 h-4" />
-              <span>Quản Lý Thực Đơn (50+)</span>
+              <span>Quản Lý Thực Đơn (67 món)</span>
             </button>
 
             <button
@@ -1009,7 +1392,7 @@ export default function AdminPage() {
               }`}
             >
               <ImageIcon className="w-4 h-4" />
-              <span>Thư Viện Ảnh</span>
+              <span>Thư Viện Ảnh (30+ ảnh)</span>
             </button>
 
             <button
@@ -1023,6 +1406,32 @@ export default function AdminPage() {
             >
               <Settings className="w-4 h-4" />
               <span>Cài Đặt Cửa Hàng</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("content")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === "content"
+                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span>Nội Dung Trang (5 trang)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("security")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === "security"
+                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+              }`}
+            >
+              <Shield className="w-4 h-4" />
+              <span>Tài Khoản &amp; 2FA</span>
             </button>
           </nav>
         </div>
@@ -1261,6 +1670,114 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* 7-Day Analytics Engagement Panel (Customer Actions & Conversions) */}
+              <div className="bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm p-6 sm:p-7 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-200/60 dark:border-stone-700/60">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-[#396663] dark:text-[#88B795]" />
+                    <h2 className="font-serif text-lg sm:text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                      Tương Tác Khách Hàng (7 Ngày Qua)
+                    </h2>
+                  </div>
+                  <span className="text-[11px] text-stone-500 font-medium">
+                    Số liệu thực tế từ lượt bấm hành động của khách ghé thăm website
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Call */}
+                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Gọi Hotline</span>
+                      <span className="font-serif text-2xl font-bold text-[#3E5C46] dark:text-[#9DC183] mt-1 block">
+                        {analyticsStats.click_call} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      </span>
+                    </div>
+                    <div className="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-[#9DC183] flex items-center justify-center">
+                      <Phone className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Zalo */}
+                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Nhắn Zalo</span>
+                      <span className="font-serif text-2xl font-bold text-sky-700 dark:text-sky-400 mt-1 block">
+                        {analyticsStats.click_zalo} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      </span>
+                    </div>
+                    <div className="w-9 h-9 rounded-full bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-400 flex items-center justify-center">
+                      <Radio className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Directions */}
+                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Chỉ Đường Maps</span>
+                      <span className="font-serif text-2xl font-bold text-[#CC7755] dark:text-[#E0B872] mt-1 block">
+                        {analyticsStats.click_directions} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      </span>
+                    </div>
+                    <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-950/60 text-[#CC7755] dark:text-[#E0B872] flex items-center justify-center">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Menu Views */}
+                  <div className="p-4 rounded-xl bg-stone-50 dark:bg-[#16231A] border border-stone-200/80 dark:border-stone-800 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] text-stone-500 font-semibold uppercase tracking-wider block">Xem Thực Đơn</span>
+                      <span className="font-serif text-2xl font-bold text-purple-700 dark:text-purple-400 mt-1 block">
+                        {analyticsStats.view_menu} <span className="text-xs font-sans font-normal text-stone-400">lượt</span>
+                      </span>
+                    </div>
+                    <div className="w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 flex items-center justify-center">
+                      <Eye className="w-4 h-4" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Status Control with Duration */}
+                <div className="pt-3 border-t border-stone-200/60 dark:border-stone-700/60 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-stone-400" />
+                    <span className="text-xs font-semibold text-stone-700 dark:text-stone-300">
+                      Thời lượng áp dụng khi đóng/mở đột xuất:
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(["1h", "2h", "4h", "today", "indefinite"] as const).map((dur) => (
+                      <button
+                        key={dur}
+                        type="button"
+                        onClick={() => {
+                          setOverrideDuration(dur);
+                          if (storeOverride !== "auto") {
+                            handleStoreOverrideChange(storeOverride, dur);
+                          }
+                        }}
+                        className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                          overrideDuration === dur
+                            ? "bg-[#3E5C46] text-white shadow-sm font-bold"
+                            : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200"
+                        }`}
+                      >
+                        {dur === "1h"
+                          ? "Trong 1 giờ"
+                          : dur === "2h"
+                          ? "Trong 2 giờ"
+                          : dur === "4h"
+                          ? "Trong 4 giờ"
+                          : dur === "today"
+                          ? "Hết hôm nay"
+                          : "Vô thời hạn"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               {/* 2-Column Overview Section: Bảng Tin + Quick Dish Status */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left 7 Cols: Bảng tin mới nhất */}
@@ -1413,7 +1930,32 @@ export default function AdminPage() {
                     Bật/Tắt trạng thái còn hàng hoặc cập nhật giá bán. Dữ liệu sẽ tự động đồng bộ sang trang khách hàng.
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    ref={csvInputRef}
+                    type="file"
+                    accept=".csv"
+                    className="hidden"
+                    onChange={handleImportMenuCsv}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleExportMenuCsv}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold border border-stone-200 dark:border-stone-700 transition-all cursor-pointer shadow-sm"
+                    title="Xuất danh sách 67 món ra file CSV"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#3E5C46] dark:text-[#9DC183]" />
+                    <span>Xuất CSV</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => csvInputRef.current?.click()}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold border border-stone-200 dark:border-stone-700 transition-all cursor-pointer shadow-sm"
+                    title="Nhập cập nhật món từ file CSV"
+                  >
+                    <Upload className="w-3.5 h-3.5 text-[#CC7755]" />
+                    <span>Nhập CSV</span>
+                  </button>
                   <div className="relative">
                     <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                     <input
@@ -1421,7 +1963,7 @@ export default function AdminPage() {
                       placeholder="Tìm kiếm món..."
                       value={menuSearch}
                       onChange={(e) => setMenuSearch(e.target.value)}
-                      className="pl-9 pr-4 py-2 bg-stone-100 rounded-full text-xs text-stone-800 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      className="pl-9 pr-4 py-2 bg-stone-100 dark:bg-stone-800 dark:text-stone-100 rounded-full text-xs text-stone-800 border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                     />
                   </div>
                 </div>
@@ -2245,8 +2787,453 @@ export default function AdminPage() {
               </form>
             </div>
           )}
+
+          {/* ========================================================= */}
+          {/* TAB 5: CONTENT BLOCKS (CHỈNH SỬA NỘI DUNG 5 TRANG CÔNG KHAI) */}
+          {/* ========================================================= */}
+          {activeTab === "content" && (
+            <div className="flex flex-col gap-6">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm">
+                <div>
+                  <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
+                    Nội Dung 5 Trang Công Khai
+                  </h1>
+                  <p className="text-xs text-stone-600 dark:text-stone-300 mt-1">
+                    Chỉnh sửa văn bản, câu chuyện và cam kết chất lượng của quán (Việt &amp; Anh). Lưu tức thì.
+                  </p>
+                </div>
+              </div>
+
+              {/* Page Section Pills */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                {[
+                  { id: "home", label: "Trang Chủ (/)" },
+                  { id: "about", label: "Câu Chuyện (/about)" },
+                  { id: "space", label: "Không Gian Suối (/space)" },
+                  { id: "menu", label: "Thực Đơn (/menu)" },
+                  { id: "contact", label: "Chỉ Đường & Liên Hệ (/contact)" },
+                  { id: "common", label: "Chung & Chân Trang" },
+                  { id: "nav", label: "Thanh Điều Hướng" },
+                ].map((pg) => (
+                  <button
+                    key={pg.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedContentPage(pg.id as any);
+                      setEditingContentKey(null);
+                    }}
+                    className={`px-4 py-2 rounded-full text-xs font-semibold shrink-0 transition-all cursor-pointer ${
+                      selectedContentPage === pg.id
+                        ? "bg-[#3E5C46] text-white shadow-sm font-bold"
+                        : "bg-white dark:bg-[#1E2B22] text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 hover:bg-stone-100"
+                    }`}
+                  >
+                    {pg.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Content Keys List / Editor */}
+              <div className="flex flex-col gap-4">
+                {Object.keys(contentData.vi[selectedContentPage] || {}).length === 0 ? (
+                  <div className="p-8 text-center bg-white dark:bg-[#1E2B22] rounded-2xl border border-stone-200 dark:border-stone-700/60 text-stone-400 text-xs">
+                    Chưa có khối văn bản nào cho mục này.
+                  </div>
+                ) : (
+                  Object.keys(contentData.vi[selectedContentPage] || {}).map((key) => {
+                    const viVal = contentData.vi[selectedContentPage]?.[key] ?? "";
+                    const enVal = contentData.en[selectedContentPage]?.[key] ?? "";
+                    const isEditing = editingContentKey === key;
+
+                    const displayVi = typeof viVal === "object" ? JSON.stringify(viVal, null, 2) : String(viVal);
+                    const displayEn = typeof enVal === "object" ? JSON.stringify(enVal, null, 2) : String(enVal);
+
+                    return (
+                      <div
+                        key={key}
+                        className="p-5 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-3"
+                      >
+                        <div className="flex items-center justify-between pb-2 border-b border-stone-100 dark:border-stone-800">
+                          <span className="font-mono text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-md border border-emerald-200 dark:border-emerald-800">
+                            {key}
+                          </span>
+                          {!isEditing ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingContentKey(key);
+                                setEditViVal(displayVi);
+                                setEditEnVal(displayEn);
+                              }}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-300 text-xs font-semibold transition-all cursor-pointer"
+                            >
+                              <Edit2 className="w-3 h-3 text-[#3E5C46]" />
+                              <span>Sửa</span>
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={() => handleSaveContentKey(selectedContentPage, key)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#3E5C46] text-white text-xs font-bold hover:bg-[#2D4233] shadow-sm cursor-pointer"
+                              >
+                                <Save className="w-3 h-3" />
+                                <span>Lưu</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingContentKey(null)}
+                                className="px-3 py-1.5 rounded-lg bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-xs font-semibold cursor-pointer"
+                              >
+                                Hủy
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {isEditing ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col gap-1">
+                              <label className="text-[11px] font-bold text-stone-600 dark:text-stone-400">
+                                Tiếng Việt (VI)
+                              </label>
+                              <textarea
+                                rows={displayVi.length > 80 ? 4 : 2}
+                                value={editViVal}
+                                onChange={(e) => setEditViVal(e.target.value)}
+                                className="w-full px-3 py-2 bg-stone-50 dark:bg-[#16231A] text-stone-800 dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] resize-y"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <label className="text-[11px] font-bold text-stone-600 dark:text-stone-400">
+                                English (EN)
+                              </label>
+                              <textarea
+                                rows={displayEn.length > 80 ? 4 : 2}
+                                value={editEnVal}
+                                onChange={(e) => setEditEnVal(e.target.value)}
+                                className="w-full px-3 py-2 bg-stone-50 dark:bg-[#16231A] text-stone-800 dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-[#3E5C46] resize-y"
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div className="p-3 bg-stone-50/80 dark:bg-[#16231A]/80 rounded-xl border border-stone-100 dark:border-stone-800">
+                              <span className="text-[10px] text-stone-400 uppercase font-bold block mb-1">
+                                Tiếng Việt:
+                              </span>
+                              <p className="text-stone-800 dark:text-stone-200 leading-relaxed font-sans">
+                                {displayVi}
+                              </p>
+                            </div>
+                            <div className="p-3 bg-stone-50/80 dark:bg-[#16231A]/80 rounded-xl border border-stone-100 dark:border-stone-800">
+                              <span className="text-[10px] text-stone-400 uppercase font-bold block mb-1">
+                                English:
+                              </span>
+                              <p className="text-stone-700 dark:text-stone-300 leading-relaxed font-sans italic">
+                                {displayEn || "(Chưa có bản dịch tiếng Anh)"}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB 6: SECURITY & 2FA (TÀI KHOẢN & BẢO MẬT) */}
+          {/* ========================================================= */}
+          {activeTab === "security" && (
+            <div className="flex flex-col gap-8">
+              {/* Header */}
+              <div className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
+                    Tài Khoản &amp; Bảo Mật Quán
+                  </h1>
+                  <p className="text-xs text-stone-600 dark:text-stone-300 mt-1">
+                    Bảo mật một tài khoản chủ quán duy nhất. Xác thực 2 lớp TOTP và đổi mã PIN truy cập.
+                  </p>
+                </div>
+              </div>
+
+              {/* 2FA TOTP Card */}
+              <div className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-200 dark:border-stone-700/60">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-[#3E5C46] dark:text-[#9DC183] flex items-center justify-center shrink-0">
+                      <Shield className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h2 className="font-serif text-lg sm:text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                        Xác Thực 2 Lớp (TOTP 2FA)
+                      </h2>
+                      <p className="text-xs text-stone-500 mt-0.5">
+                        Tương thích Google Authenticator, Microsoft Authenticator, 1Password, Authy.
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold inline-flex items-center gap-1.5 self-start sm:self-auto ${
+                      totpEnabled
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-300"
+                        : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400 border border-stone-300"
+                    }`}
+                  >
+                    {totpEnabled ? "🟢 Đang Kích Hoạt" : "⚪ Chưa Bật"}
+                  </span>
+                </div>
+
+                <div className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed flex flex-col gap-2">
+                  <p>
+                    Khi kích hoạt 2FA, hệ thống sẽ yêu cầu nhập mã 6 số thay đổi mỗi 30 giây từ ứng dụng Authenticator mỗi lần đăng nhập.
+                  </p>
+                  <p className="text-stone-500 dark:text-stone-400">
+                    Hệ thống sẽ <strong>tạm khóa 15 phút</strong> nếu nhập sai quá 5 lần liên tiếp để bảo vệ trước các tấn công dò mã.
+                  </p>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  {!totpEnabled ? (
+                    <button
+                      type="button"
+                      onClick={handleStartTotpSetup}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-bold hover:bg-[#2D4233] transition-all shadow-md cursor-pointer"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      <span>Kích Hoạt Bảo Mật 2 Lớp (TOTP)</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleDisableTotp}
+                      className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-all shadow-md cursor-pointer"
+                    >
+                      <Lock className="w-4 h-4" />
+                      <span>Tắt Xác Thực 2 Lớp</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* PIN Code Change Form */}
+              <form
+                onSubmit={handleChangePin}
+                className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6"
+              >
+                <div className="pb-3 border-b border-stone-200 dark:border-stone-700/60 flex items-center justify-between">
+                  <div>
+                    <h2 className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                      Đổi Mã PIN Bảo Mật
+                    </h2>
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Thay đổi mã PIN truy cập vào khu vực quản trị hệ thống (Mã PIN mặc định: 2610).
+                    </p>
+                  </div>
+                </div>
+
+                {pinChangeMsg && (
+                  <div
+                    className={`p-3 rounded-xl text-xs font-semibold ${
+                      pinChangeMsg.type === "success"
+                        ? "bg-emerald-50 text-[#3E5C46] border border-emerald-200"
+                        : "bg-red-50 text-red-600 border border-red-200"
+                    }`}
+                  >
+                    {pinChangeMsg.text}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Mã PIN hiện tại
+                    </label>
+                    <input
+                      type="password"
+                      maxLength={6}
+                      value={oldPin}
+                      onChange={(e) => setOldPin(e.target.value)}
+                      placeholder="Mặc định: 2610"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Mã PIN mới (tối thiểu 4 số)
+                    </label>
+                    <input
+                      type="password"
+                      maxLength={6}
+                      value={newPin}
+                      onChange={(e) => setNewPin(e.target.value)}
+                      placeholder="Nhập mã PIN mới"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Xác nhận mã PIN mới
+                    </label>
+                    <input
+                      type="password"
+                      maxLength={6}
+                      value={confirmPin}
+                      onChange={(e) => setConfirmPin(e.target.value)}
+                      placeholder="Nhập lại mã PIN mới"
+                      className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="self-end px-6 py-2.5 rounded-full bg-[#2D4233] text-white text-xs font-bold hover:bg-[#1f2e23] transition-all shadow-md cursor-pointer"
+                >
+                  Xác Nhận Đổi Mã PIN
+                </button>
+              </form>
+            </div>
+          )}
         </main>
       </div>
+
+      {/* ========================================================= */}
+      {/* MODAL: THIẾT LẬP VÀ KÍCH HOẠT 2FA TOTP */}
+      {/* ========================================================= */}
+      {isTotpModalOpen && totpSetupData && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#1E2B22] rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-5 animate-scale-up text-[#1B281D] dark:text-[#F5F4EE] max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-stone-200 dark:border-stone-700/60">
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-[#3E5C46] dark:text-[#9DC183]" />
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                  Kích Hoạt Bảo Mật 2 Lớp (TOTP)
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTotpModalOpen(false)}
+                className="p-1 rounded-full text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {totpModalMsg && (
+              <div
+                className={`p-3 rounded-xl text-xs font-semibold ${
+                  totpModalMsg.type === "success"
+                    ? "bg-emerald-50 text-[#3E5C46] border border-emerald-200"
+                    : "bg-red-50 text-red-600 border border-red-200"
+                }`}
+              >
+                {totpModalMsg.text}
+              </div>
+            )}
+
+            {/* Bước 1: Khóa bí mật */}
+            <div className="flex flex-col gap-2 p-4 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60">
+              <span className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                1. Sao chép Khóa Bí Mật vào Google Authenticator
+              </span>
+              <p className="text-[11px] text-stone-500">
+                Mở ứng dụng Authenticator → Chọn Thêm tài khoản → Nhập khóa thiết lập (Setup key):
+              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <code className="flex-1 px-3 py-2 bg-white dark:bg-[#1E2B22] rounded-xl font-mono text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] border border-stone-200 dark:border-stone-700 tracking-wider break-all">
+                  {totpSetupData.secret}
+                </code>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(totpSetupData.secret);
+                    showToast("Đã sao chép khóa bí mật 2FA!");
+                  }}
+                  className="px-3 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 text-stone-700 dark:text-stone-200 text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1 shrink-0"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Chép</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Bước 2: Nhập 6 số xác thực */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                2. Nhập mã 6 chữ số từ ứng dụng Authenticator để kích hoạt
+              </label>
+              <input
+                type="text"
+                maxLength={6}
+                placeholder="000000"
+                value={totpVerificationCode}
+                onChange={(e) => setTotpVerificationCode(e.target.value)}
+                className="w-full py-3 px-4 text-center font-mono text-2xl tracking-widest bg-stone-100 dark:bg-[#16231A] rounded-2xl border border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
+              />
+            </div>
+
+            {/* Bước 3: Mã khôi phục dự phòng */}
+            <div className="flex flex-col gap-2 p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800/60">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                  3. Mã khôi phục dự phòng (Lưu lại đề phòng mất điện thoại)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(totpSetupData.recoveryCodes.join("\n"));
+                    setRecoveryCodesCopied(true);
+                    showToast("Đã sao chép 5 mã khôi phục!");
+                  }}
+                  className="text-[11px] font-bold text-amber-800 dark:text-amber-300 underline cursor-pointer"
+                >
+                  {recoveryCodesCopied ? "✓ Đã sao chép" : "Sao chép 5 mã"}
+                </button>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
+                {totpSetupData.recoveryCodes.map((code, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-1 rounded bg-white dark:bg-[#1E2B22] font-mono text-xs font-semibold text-center border border-amber-200/80 dark:border-amber-800/60 text-stone-700 dark:text-stone-300"
+                  >
+                    {code}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-200 dark:border-stone-700/60">
+              <button
+                type="button"
+                onClick={() => setIsTotpModalOpen(false)}
+                className="px-5 py-2.5 rounded-full text-xs font-semibold text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer"
+              >
+                Đóng
+              </button>
+              <button
+                type="button"
+                onClick={handleVerifyAndEnableTotp}
+                className="px-6 py-2.5 rounded-full bg-[#3E5C46] text-white text-xs font-bold hover:bg-[#2D4233] shadow-md cursor-pointer"
+              >
+                Xác Nhận Kích Hoạt 2FA
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========================================================= */}
       {/* MODAL: TẠO THÔNG BÁO / BẢNG TIN MỚI */}
@@ -2360,54 +3347,78 @@ export default function AdminPage() {
       />
 
       {/* Mobile Bottom Navigation Bar (Mobile-first, touch targets >= 44px) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#16231A]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 z-50 flex items-center justify-around px-2 shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#16231A]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 z-50 flex items-center justify-around px-1 shadow-lg">
         <button
           type="button"
           onClick={() => setActiveTab("overview")}
-          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "overview"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
           }`}
         >
-          <LayoutDashboard className="w-5 h-5 mb-0.5" />
+          <LayoutDashboard className="w-4 h-4 mb-0.5" />
           <span>Tổng quan</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("menu")}
-          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "menu"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
           }`}
         >
-          <UtensilsCrossed className="w-5 h-5 mb-0.5" />
+          <UtensilsCrossed className="w-4 h-4 mb-0.5" />
           <span>Thực đơn</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("gallery")}
-          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "gallery"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
           }`}
         >
-          <ImageIcon className="w-5 h-5 mb-0.5" />
+          <ImageIcon className="w-4 h-4 mb-0.5" />
           <span>Thư viện</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("settings")}
-          className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] rounded-xl text-[10px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "settings"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
           }`}
         >
-          <Settings className="w-5 h-5 mb-0.5" />
+          <Settings className="w-4 h-4 mb-0.5" />
           <span>Cài đặt</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("content")}
+          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+            activeTab === "content"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <FileText className="w-4 h-4 mb-0.5" />
+          <span>Nội dung</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("security")}
+          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+            activeTab === "security"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <Shield className="w-4 h-4 mb-0.5" />
+          <span>Bảo mật</span>
         </button>
       </nav>
     </div>

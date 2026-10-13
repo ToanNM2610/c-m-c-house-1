@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
+import { trackEvent } from "@/lib/analytics";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
 import {
@@ -235,7 +236,7 @@ export default function ContactPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[var(--border)]">
                     {/* Hotline 1 (Zalo) */}
                     <div className="p-3.5 rounded-2xl bg-[var(--bg)]/50 border border-[var(--border)] flex items-center justify-between gap-3">
-                      <a href="tel:0382851688" className="flex flex-col group">
+                      <a href="tel:0382851688" onClick={() => trackEvent("click_call")} className="flex flex-col group">
                         <span className="text-[13px] text-[var(--text-muted)]">Hotline 1 (Zalo)</span>
                         <span className="text-[17px] font-bold text-[var(--accent-clay)] group-hover:underline">
                           038 285 1688
@@ -257,6 +258,7 @@ export default function ContactPage() {
                         </button>
                         <a
                           href="tel:0382851688"
+                          onClick={() => trackEvent("click_call")}
                           aria-label="Gọi Hotline 1"
                           className="p-2 rounded-full bg-[var(--accent-clay)] text-[#1B120E] hover:bg-[#D98A68] transition-colors"
                         >
@@ -267,7 +269,7 @@ export default function ContactPage() {
 
                     {/* Hotline 2 */}
                     <div className="p-3.5 rounded-2xl bg-[var(--bg)]/50 border border-[var(--border)] flex items-center justify-between gap-3">
-                      <a href="tel:0774659000" className="flex flex-col group">
+                      <a href="tel:0774659000" onClick={() => trackEvent("click_call")} className="flex flex-col group">
                         <span className="text-[13px] text-[var(--text-muted)]">Hotline 2</span>
                         <span className="text-[17px] font-bold text-[var(--accent-clay)] group-hover:underline">
                           077 465 9000
@@ -365,6 +367,7 @@ export default function ContactPage() {
                       href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackEvent("click_directions")}
                       className="btn-primary w-full flex items-center justify-center gap-2"
                     >
                       <Navigation className="w-4 h-4" />

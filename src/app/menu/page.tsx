@@ -15,6 +15,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 import {
   getSharedData,
@@ -34,6 +35,7 @@ export default function MenuPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
+    trackEvent("view_menu");
     // 1. Hydrate immediately from LocalStorage & Shared Cookie to survive F5
     const storedOverrides = getStoredData<Record<string, { inStock: boolean; price?: number }>>(
       CAMCU_MENU_OVERRIDES_KEY,

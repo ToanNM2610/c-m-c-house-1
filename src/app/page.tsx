@@ -12,6 +12,7 @@ import KenBurnsImage from "@/components/motion/KenBurnsImage";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
 import { getStoreStatusI18n } from "@/lib/translations";
+import { trackEvent } from "@/lib/analytics";
 import {
   Compass,
   Star,
@@ -346,6 +347,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/menu"
+                onClick={() => trackEvent("view_menu")}
                 className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
               >
                 <UtensilsCrossed className="w-4 h-4 text-[var(--accent-green)]" />
@@ -353,6 +355,7 @@ export default function HomePage() {
               </Link>
               <a
                 href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
+                onClick={() => trackEvent("click_call")}
                 className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
               >
                 <PhoneCall className="w-4 h-4 text-[#CC7755]" />
@@ -362,6 +365,7 @@ export default function HomePage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("click_directions")}
                 className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
               >
                 <MapPin className="w-4 h-4 text-[var(--accent-green)]" />
