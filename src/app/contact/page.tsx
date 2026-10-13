@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
 import { useLanguage } from "@/context/LanguageContext";
@@ -48,8 +47,6 @@ export default function ContactPage() {
 
   return (
     <div className="bg-[var(--bg)] min-h-screen text-[var(--text)] font-sans selection:bg-[var(--surface-2)] selection:text-[var(--text)] transition-colors duration-200">
-      <Navbar />
-
       <main className="pt-24 md:pt-28">
         {/* 1. Header / Đầu Trang */}
         <section className="w-full max-w-[1200px] mx-auto px-5 sm:px-10 pt-6 sm:pt-10 pb-8 sm:pb-12">

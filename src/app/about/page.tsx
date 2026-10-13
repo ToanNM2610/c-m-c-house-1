@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MaskRevealImage from "@/components/motion/MaskRevealImage";
 import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";

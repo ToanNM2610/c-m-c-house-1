@@ -100,10 +100,23 @@ export default function MenuPage() {
     };
   }, []);
 
+function removeVietnameseTones(str: string): string {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase();
+}
+
   const filteredItems = menuItems.filter((item) => {
     const matchesCategory = activeCategory === "all" || item.category === activeCategory;
-    const matchesSearch = !searchQuery.trim() || item.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
-    return matchesCategory && matchesSearch;
+    if (!matchesCategory) return false;
+    if (!searchQuery.trim()) return true;
+    const cleanQuery = removeVietnameseTones(searchQuery.trim());
+    const cleanName = removeVietnameseTones(item.name);
+    const cleanDesc = removeVietnameseTones(item.description || "");
+    return cleanName.includes(cleanQuery) || cleanDesc.includes(cleanQuery);
   });
 
   const getCategoryCount = (catId: string) => {
