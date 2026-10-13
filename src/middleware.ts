@@ -15,21 +15,23 @@ export function middleware(request: NextRequest) {
     host.startsWith("admin.") ||
     (isLocalhost && host.startsWith("admin."));
 
+  let response: NextResponse;
+
   if (isAdminSubdomain) {
     // When on admin subdomain:
     // Root path '/' on admin.camcuhouse.online maps to '/admin'
     if (url.pathname === "/") {
       url.pathname = "/admin";
-      return NextResponse.rewrite(url);
-    }
-    // If accessing path without /admin prefix (and not API or static): rewrite to /admin/...
-    if (
+      response = NextResponse.rewrite(url);
+    } else if (
       !url.pathname.startsWith("/admin") &&
       !url.pathname.startsWith("/api") &&
       !url.pathname.startsWith("/_next")
     ) {
       url.pathname = `/admin${url.pathname}`;
-      return NextResponse.rewrite(url);
+      response = NextResponse.rewrite(url);
+    } else {
+      response = NextResponse.next();
     }
   } else {
     // When on main domain (camcuhouse.online or www.camcuhouse.online):
@@ -48,17 +50,39 @@ export function middleware(request: NextRequest) {
       }
       return NextResponse.redirect(redirectUrl, 307);
     }
+
+    response = NextResponse.next();
   }
 
-  // Preserve legacy portal protection if accessed
-  if (url.pathname.startsWith("/portal-camcu-2610")) {
-    const authCookie = request.cookies.get("camcu_auth_session");
-    if (!authCookie && url.pathname !== "/portal-camcu-2610") {
-      return NextResponse.redirect(new URL("/portal-camcu-2610", request.url));
+  // Security check: Protected admin sub-paths require authenticated session
+  const protectedAdminPaths = [
+    "/admin/integrations",
+    "/admin/analytics",
+    "/admin/search-console",
+  ];
+
+  const isProtectedPath = protectedAdminPaths.some((p) =>
+    url.pathname.startsWith(p)
+  );
+
+  if (isProtectedPath) {
+    const authCookie =
+      request.cookies.get("camcu_admin_auth")?.value ||
+      request.cookies.get("camcu_auth_session")?.value;
+
+    if (!authCookie) {
+      const loginUrl = new URL("/admin", request.url);
+      loginUrl.searchParams.set("from", url.pathname);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
-  return NextResponse.next();
+  // Admin and API security headers: strictly prevent indexing of admin area
+  if (isAdminSubdomain || url.pathname.startsWith("/admin") || url.pathname.startsWith("/api/admin")) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive, nosnippet");
+  }
+
+  return response;
 }
 
 export const config = {

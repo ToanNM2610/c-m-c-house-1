@@ -38,6 +38,15 @@ export function trackEvent(eventType: TrackEventType): void {
     // 2. Dispatch custom event for real-time admin sync
     window.dispatchEvent(new CustomEvent("camcu_analytics_tracked", { detail: { event: eventType } }));
 
+    // 2.1 Send event to Google Analytics 4 (GA4) if loaded
+    if (typeof (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag === "function") {
+      (window as unknown as { gtag: (...args: unknown[]) => void }).gtag("event", eventType, {
+        event_category: "engagement",
+        event_label: eventType,
+        value: 1,
+      });
+    }
+
     // 3. Send non-blocking beacon to /api/analytics
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/api/analytics", JSON.stringify({ event: eventType, ts: Date.now() }));

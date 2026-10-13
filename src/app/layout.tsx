@@ -5,6 +5,8 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
 import PublicShell from "@/components/PublicShell";
+import Script from "next/script";
+import { getPublicIntegrations } from "@/lib/integrations";
 import "lenis/dist/lenis.css";
 
 const playfair = Playfair_Display({
@@ -69,14 +71,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const integrations = await getPublicIntegrations();
+
   return (
     <html lang="vi" suppressHydrationWarning className={`dark ${playfair.variable} ${quicksand.variable} font-sans`}>
       <head>
+        {integrations.searchConsoleVerification && (
+          <meta
+            name="google-site-verification"
+            content={integrations.searchConsoleVerification}
+          />
+        )}
+        {integrations.ga4MeasurementId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${integrations.ga4MeasurementId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${integrations.ga4MeasurementId}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
         <script
           dangerouslySetInnerHTML={{
             __html: `
