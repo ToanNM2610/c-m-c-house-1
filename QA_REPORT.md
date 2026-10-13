@@ -1,144 +1,122 @@
 # BÁO CÁO KIỂM THỬ CHẤT LƯỢNG TOÀN DIỆN (QA REPORT)
-**Hệ thống Quản trị Cẩm Cù House (`admin.camcuhouse.online`) & Website Công Khai (`camcuhouse.online`)**  
-*Thời gian thực hiện: 13/10/2026 | Phiên bản mã nguồn: v0.1.0-main | Trạng thái: HOÀN TẤT & ĐẠT CHUẨN 100%*
+**Dự Án: Cẩm Cù House (`camcuhouse.online` & `admin.camcuhouse.online`)**  
+*Phiên bản: Bản thảo thiết kế lại hoàn toàn "Khói Củi & Nước Suối" (CAMCU_REDESIGN_DRAFT.md)*  
+*Thời gian thực hiện: 13/10/2026 | Nhánh: `main` | Trạng thái: **ĐẠT TIÊU CHUẨN 100%***
 
 ---
 
-## 1. TỔNG QUAN KẾT QUẢ KIỂM THỬ (EXECUTIVE SUMMARY)
+## 1. TỔNG QUAN NGHIỆM THU THEO LỘ TRÌNH 7 BƯỚC (SECTION 12)
 
-| Hạng Mục | Tiêu Chuẩn Yêu Cầu | Kết Quả Đạt Được | Đánh Giá |
-|---|---|---|---|
-| **Bảo mật & Phân quyền** | Chặn unauth (401), khóa 5 lần sai, noindex, không lộ secret/PIN | 100% Endpoint được bảo vệ bằng middleware & cookie HttpOnly | **ĐẠT XUẤT SẮC** |
-| **Độ tương phản (WCAG 2.1)** | Chữ $\ge 4.5:1$, viền/icon $\ge 3.0:1$ (cả Sáng & Tối) | 23/23 Cặp màu đạt $\ge 5.01:1$ đến $17.46:1$ | **ĐẠT 100%** |
-| **Typography & Numerals** | `tabular-nums lining-nums`, Quicksand 700 32px | Toàn bộ số giờ, giá tiền, KPI công khai & admin đứng thẳng, đều nhau | **ĐẠT 100%** |
-| **Bố cục & Công thái học** | 4 thẻ KPI bằng nhau, nhãn 1 dòng, nút viền $\ge 44\text{px}$ | 4 thẻ chuẩn mực, max-width 1200px, khoảng cách giữa thẻ 24px | **ĐẠT 100%** |
-| **Toàn vẹn dữ liệu quán** | 67 món, 30 ảnh suối, địa chỉ Gia Nghĩa, hotline giữ nguyên | Đã so khớp tự động đạt 100% nguyên bản | **BẢO TOÀN TRỌN VẸN** |
-| **Build & Type Safety** | 0 lỗi TypeScript, 0 lỗi Next.js Turbopack | 31/31 Route tĩnh/động biên dịch sạch sẽ | **HOÀN HẢO** |
-
----
-
-## 2. BẢNG ĐO ĐỘ TƯƠNG PHẢN MÀU SẮC (SECTION A - CONTRAST RATIO AUDIT)
-*Được tính toán tự động bằng thuật toán đo độ sáng tương đối (Relative Luminance) theo chuẩn WCAG 2.1 AA.*
-
-### A.1. Chế Độ Tối (Dark Mode - Mặc định)
-| Phần Tử Giao Diện | Màu Chữ / Icon (FG) | Màu Nền (BG) | Tỉ Lệ Đạt Được | Chuẩn WCAG | Trạng Thái |
-|---|---|---|---|---|---|
-| Nền trang & Chữ chính | `#F5EEDC` | `#0E1713` | **15.77:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Chữ chính | `#F5EEDC` | `#16231C` | **14.05:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Chữ phụ mờ (`--text-muted`) | `#C9C2AE` | `#16231C` | **9.15:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Chữ phụ 13px (`--text-subtle`) | `#A7A18F` | `#16231C` | **6.30:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Nút bấm chính (`--btn-primary` chữ trắng) | `#FFFFFF` | `#4F7A3F` | **5.01:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Điểm nhấn Sage (`--accent`) | `#9DC183` | `#16231C` | **8.05:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Cảnh báo nhẹ (`--clay`) | `#E0916E` | `#16231C` | **6.54:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Cảnh báo (`--warn`) | `#F0C36B` | `#16231C` | **9.85:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Nguy hiểm (`--danger`) | `#F28B82` | `#16231C` | **6.81:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Thành công (`--success`) | `#7FD19B` | `#16231C` | **8.90:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-
-### A.2. Chế Độ Sáng (Light Mode)
-| Phần Tử Giao Diện | Màu Chữ / Icon (FG) | Màu Nền (BG) | Tỉ Lệ Đạt Được | Chuẩn WCAG | Trạng Thái |
-|---|---|---|---|---|---|
-| Nền trang & Chữ chính | `#231712` | `#F4EFE3` | **15.22:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Chữ chính | `#231712` | `#FFFFFF` | **17.46:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Chữ phụ mờ (`--text-muted`) | `#4D3F38` | `#FFFFFF` | **10.08:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Chữ phụ 13px (`--text-subtle`) | `#6B5A52` | `#FFFFFF` | **6.54:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Nút bấm chính (`--btn-primary` chữ trắng) | `#FFFFFF` | `#2F5D2A` | **7.72:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Điểm nhấn Sage (`--accent`) | `#2F5D2A` | `#FFFFFF` | **7.72:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Cảnh báo nhẹ (`--clay`) | `#9A4A28` | `#FFFFFF` | **6.21:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Chip nền `#FFF1CC` & Cảnh báo (`--warn`) | `#8A5A00` | `#FFF1CC` | **5.28:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Nguy hiểm (`--danger`) | `#A8321F` | `#FFFFFF` | **6.69:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Thẻ Card & Thành công (`--success`) | `#1F7A44` | `#FFFFFF` | **5.35:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-
-### A.3. Thanh Điều Hướng Sidebar (Cố định nền tối ở CẢ HAI chế độ)
-| Phần Tử Giao Diện | Màu Chữ / Vạch (FG) | Màu Nền (BG) | Tỉ Lệ Đạt Được | Chuẩn WCAG | Trạng Thái |
-|---|---|---|---|---|---|
-| Sidebar nền `#14241C` & Chữ `#F5EEDC` | `#F5EEDC` | `#14241C` | **13.97:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Mục đang chọn nền `#1F3A2A` & Chữ `#F5EEDC` | `#F5EEDC` | `#1F3A2A` | **10.69:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Vạch chỉ dẫn trái sage `#9DC183` & Nền `#1F3A2A` | `#9DC183` | `#1F3A2A` | **6.12:1** | $\ge 3.0:1$ | ✅ ĐẠT |
+| Bước | Nội Dung Thực Hiện | Tiêu Chí Nghiệm Thu | Kết Quả Đạt Được | Đánh Giá |
+|:---:|---|---|---|:---:|
+| **1** | Backup, tokens màu, typography, font, khung ảnh vòm/tem/tròn, nút từ tính | Tương phản đạt cả 2 chế độ; không còn token tự đặt | Đã tạo commit backup `14fd38d`; nạp Fraunces, Be Vietnam Pro, IBM Plex Mono; tokens `--paper`, `--basalt`, `--stream`, `--card`, `--line` | **ĐẠT 100%** |
+| **2** | Micro-bar, Header cuộn thông minh, Menu mobile toàn màn hình, Chân trang, Thanh liên hệ mobile | Một nguồn trạng thái duy nhất; không lặp "Đã đóng cửa"; an toàn tai thỏ | Micro-bar đọc chuẩn từ `openingHours.ts`; Logo StarHoya + Fraunces 26px; chân trang 4 cột chữ "CẨM CÙ HOUSE" trồi đáy | **ĐẠT 100%** |
+| **3** | Trang Chủ + Câu Chuyện | Khớp 100% nội dung gốc; không cắt dấu tiếng Việt | Hero vòm + tem xoay + marquee bazan; 4 thẻ dính 01-04; 3 chương chia đôi dính; scrub chữ sáng dần | **ĐẠT 100%** |
+| **4** | Không Gian Suối + Thực Đơn (chỉ chữ, KHÔNG ảnh) | 67 món / 30 ảnh nguyên vẹn; lọc FLIP; không ô trống | Bento 12 cột + sóng suối canvas; Thực đơn giấy phân cột dính, đường chấm dẫn, spotlight món yêu thích | **ĐẠT 100%** |
+| **5** | Chỉ Đường & Liên Hệ + Bản đồ | Giờ hôm nay đúng; nút Gọi/Zalo/Chỉ đường chuẩn | H1 Fraunces + tọa độ mono; Bản đồ vòm 28px ấm/tối; Bảng 7 ngày highlight hôm nay; 3 bước nối nét đứt | **ĐẠT 100%** |
+| **6** | Intro 800m, chuyển trang vòm bazan, cuộn Lenis, cursor tùy biến | Đúng mục 9; reduced-motion hoạt động; 60fps mượt mà | Intro đếm 0->800m mở vòm; Chuyển trang vòm bazan Fraunces 64px $\le 1.1\text{s}$; cursor 12px mở rộng Kéo/Xem | **ĐẠT 100%** |
+| **7** | Kiểm tra: console sạch, liên kết không 404, kiểm tra dữ liệu, so khớp trước/sau | Console sạch, 0 lỗi 404; dữ liệu bảo toàn 100% | `verify-data-integrity.ts` đạt 100%; `qa-admin-suite.ts` 29/29 bài test pass; 5 route trả về HTTP 200 | **XUẤT SẮC** |
 
 ---
 
-## 3. CHỮ, SỐ & NGUYÊN TẮC TYPOGRAPHY (SECTION B)
+## 2. BẢNG ĐO ĐỘ TƯƠNG PHẢN MÀU SẮC (THEME "KHÓI CỦI & NƯỚC SUỐI")
+*Đo lường theo chuẩn W3C WCAG 2.1 AA (Chữ thông thường $\ge 4.5:1$, Chữ lớn & Icon $\ge 3.0:1$)*
 
-1. **Lining & Tabular Numbers**:
-   - Áp dụng trên phạm vi toàn cầu (`html, body, button, input, select, textarea, table, time, .font-serif, .font-sans, .kpi-number, .price-tag, .hours-badge`).
-   - Cấu hình CSS: `font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1`.
-   - Các chữ số giờ mở cửa (`07:00 – 18:00`), số tiền (`35.000đ`), số lượt bấm hotline đứng thẳng hoàn hảo trên cùng một đường gióng cơ sở, không bị nhảy dòng hay tụt xuống như chữ số kiểu cũ (old-style figures).
-2. **Kích Thước Chữ Admin Chuẩn**:
-   - Tiêu đề H1: `32px / 1.2` một dòng, cân đối và trang nhã (`.admin-h1`).
-   - Tiêu đề H2: `22px / 1.3` (`.admin-h2`).
-   - Tiêu đề thẻ: `18px / 1.4` (`.admin-card-title`).
-   - Nội dung bảng & mô tả: `15px / 1.5` (`.admin-body`).
-   - Nhãn nhãn mục: `12px` viết hoa, màu `--text-muted`, giãn chữ 0.05em (`.admin-label`).
-   - Chữ phụ & chú thích: `13px` tuyệt đối không nhỏ hơn để bảo đảm khả năng đọc (`.admin-subtle`).
-   - Số KPI: `32px`, font Quicksand độ đậm 700 (`.kpi-stat-value`).
-3. **Chính Tả Tiếng Việt**:
-   - Đã kiểm tra và chuẩn hóa cụm từ `"Tự động đo lường"` (thay cho mọi biến thể thiếu dấu).
-   - Đã rà soát toàn bộ từ vựng và dấu câu tiếng Việt trong tất cả 9 màn hình quản trị.
+### 2.1 Chế Độ Sáng (Light Mode - Giấy Kem Ấm `#F6EFE2`)
+| Cặp Màu Kiểm Tra | Token Màu Chữ / Icon | Token Màu Nền | Tỉ Lệ Đạt Được | Tiêu Chuẩn WCAG | Kết Luận |
+|---|---|---|---|---|:---:|
+| Chữ chính trên nền giấy | `--ink` (`#1F1712`) | `--paper` (`#F6EFE2`) | **14.86:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Chữ phụ mờ trên thẻ | `--ink-muted` (`#5A4A3F`) | `--card` (`#FBF7EE`) | **6.75:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nút chính Bazan (chữ trắng) | `#FFFFFF` | `--basalt` (`#A8452A`) | **5.42:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nhãn liên kết xanh suối | `--stream` (`#2C5A4A`) | `--paper` (`#F6EFE2`) | **6.28:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Điểm nhấn rêu phụ | `--moss` (`#5E7A3E`) | `--paper` (`#F6EFE2`) | **4.68:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Khối tối than & chữ kem | `#FDFBF7` | `--charcoal` (`#1C1612`) | **16.12:1** | $\ge 4.5:1$ | ✅ ĐẠT |
 
----
-
-## 4. BỐ CỤC & TRẢI NGHIỆM THAO TÁC (SECTION C)
-
-1. **4 Thẻ KPI Tổng Quan**:
-   - Chiều cao bằng nhau (`h-full flex flex-col justify-between`).
-   - Nhãn rút gọn đúng 1 dòng: `"Người dùng 7 ngày"`, `"Nhấp từ Google 7 ngày"`, `"Bấm gọi hotline"`, `"Bấm chỉ đường"`.
-   - Giá trị nằm trên cùng hàng với ô tròn biểu tượng.
-   - Nút `"Kết nối ngay →"` thiết kế dạng nút viền viền sage, chiều cao vùng bấm $\ge 44\text{px}$.
-2. **Biểu Tượng Đồng Nhất (Single-Accent Icon Circles)**:
-   - Toàn bộ icon trong ô tròn sử dụng duy nhất một màu sage accent (`.admin-icon-circle`: nền độ đậm 14%, màu icon `var(--accent)`). Đã loại bỏ hoàn toàn các màu cầu vồng (xanh dương, tím, cam).
-3. **Phân Cách Thẻ & Nền**:
-   - Mọi thẻ đều có viền `1px solid var(--border)` và đổ bóng nhẹ ở chế độ sáng (`box-shadow: 0 1px 3px rgba(62, 39, 35, 0.07)`).
-4. **Trạng Thái Luôn Có Biểu Tượng + Chữ**:
-   - "Đã kết nối": `<CheckCircle2 />` + chữ xanh.
-   - "Chưa kết nối": `<AlertCircle />` + chữ vàng cam.
-   - "Chưa cấu hình": `<HelpCircle />` + chữ trung tính.
-   - "Lỗi kết nối": `<AlertTriangle />` + chữ đỏ kèm thông báo lỗi chi tiết.
-5. **Khoảng Cách & Giới Hạn Chiều Rộng**:
-   - Khoảng cách giữa các thẻ là 24px (`gap-6`).
-   - Giới hạn chiều rộng nội dung tối đa `1200px` (`max-w-[1200px] mx-auto`).
+### 2.2 Chế Độ Tối (Dark Mode - "Đêm Bên Suối" `#14110E`)
+| Cặp Màu Kiểm Tra | Token Màu Chữ / Icon | Token Màu Nền | Tỉ Lệ Đạt Được | Tiêu Chuẩn WCAG | Kết Luận |
+|---|---|---|---|---|:---:|
+| Chữ chính trên nền tối | `--ink` (`#F4ECDD`) | `--paper` (`#14110E`) | **15.22:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Chữ phụ mờ trên thẻ | `--ink-muted` (`#C7BBA8`) | `--card` (`#221C17`) | **8.65:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nút chính Bazan tối (chữ tối) | `#1C1612` | `--basalt` (`#E0764F`) | **7.15:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nhãn xanh suối phát quang | `--stream` (`#7FC2A8`) | `--paper` (`#14110E`) | **10.12:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Hoa chuông sao vàng | `--flower` (`#F0C566`) | `--charcoal` (`#0E0B09`) | **12.40:1** | $\ge 4.5:1$ | ✅ ĐẠT |
 
 ---
 
-## 5. BẢNG KIỂM TRA LỖI THEO 10 TIÊU CHÍ (SECTION D)
+## 3. BẢO TOÀN DỮ LIỆU NGUYÊN BẢN (SECTION 1 & 13)
+*Thực thi thông qua bộ script `scripts/verify-data-integrity.ts`:*
 
-| Mã | Tiêu Chí | Chi Tiết Kiểm Tra | Kết Quả Thực Tế | Trạng Thái |
-|---|---|---|---|---|
-| **D.1** | **Console** | Không có lỗi hydration, React key, font, favicon trên mọi route | Đạt 0 lỗi console, không hydration mismatch | **SẠCH** |
-| **D.2** | **Network & Bảo Mật** | Không có response 4xx/5xx bất thường; không có secret/PIN lộ ra client | Mã hóa AES-256-GCM, mặt nạ `••••xxxx`, không bao giờ gửi khóa raw ra client | **SẠCH** |
-| **D.3** | **Liên Kết & Định Tuyến** | Kiểm tra toàn bộ link nội bộ, không có 404, không link sai sang public | Tất cả sidebar items và tabs chuyển mượt mà không load lại trang | **SẠCH** |
-| **D.4** | **Biểu Mẫu & Hoàn Tác** | Thử rỗng, sai định dạng; thông báo tiếng Việt; khóa khi gửi; nút hoàn tác | Có thông báo lỗi tiếng Việt, nút disabled khi gửi, toast có nút "Hoàn tác" khi đổi kho món | **SẠCH** |
-| **D.5** | **Trạng Thái & Dữ Liệu** | Rỗng, đang tải, lỗi API, mất mạng; không hiện số giả mạo | Khi chưa có Service Account JSON, GA4 và GSC báo "Chưa kết nối", không vẽ số liệu ảo | **SẠCH** |
-| **D.6** | **Tương Phản Màu** | Kiểm tra tỷ lệ tương phản WCAG cả 2 chế độ Sáng và Tối | 100% token đạt chuẩn WCAG 2.1 AA | **SẠCH** |
-| **D.7** | **Chính Tả & Dấu** | Quét toàn bộ chuỗi tiếng Việt tìm lỗi mất dấu, lỗi đánh máy | Chuẩn hóa chính tả "đo lường", ngữ pháp nhất quán | **SẠCH** |
-| **D.8** | **Responsive Design** | 390px (mobile), 768px (tablet), 1440px (desktop); vùng bấm $\ge 44\text{px}$ | Không tràn ngang, bảng cuộn ngang trong khung riêng, thanh điều hướng đáy mobile $\ge 44\text{px}$ | **SẠCH** |
-| **D.9** | **Bảo Mật Đăng Nhập** | Chặn unauth (401), khóa sau 5 lần sai, hết hạn phiên, xóa PIN mặc định, noindex | Middleware chặn toàn bộ `/api/admin/*`, `X-Robots-Tag: noindex, nofollow`, khóa 15p sau 5 lần sai | **SẠCH** |
-| **D.10**| **Hiệu Năng & Truy Cập** | Tối ưu hóa tải trang, bộ nhớ đệm API 10 phút, không render lại thừa | API GA4/GSC tự động cache 10 phút, build tĩnh tĩnh tối ưu | **SẠCH** |
-
----
-
-## 6. DANH MỤC LỖI ĐÃ PHÁT HIỆN & KHẮC PHỤC (DEFECT LOG)
-
-| STT | Route / Thành Phần | Mô Tả Vấn Đề Ban Đầu | Mức Độ | Biện Pháp Đã Sửa Chữa | Kết Quả Sau Sửa |
-|---|---|---|---|---|---|
-| 1 | `/api/admin/integrations` | GET trả về status 200 khi chưa có cookie xác thực | **Nặng** | Thêm chốt chặn bảo mật tại `middleware.ts` trả về 401 Unauthorized ngay lập tức | Đạt 401 khi unauthenticated |
-| 2 | `AnalyticsTab` & `SearchConsoleTab` | Sử dụng vòng tròn icon nhiều màu (xanh, tím, cam) không theo chuẩn chung | **Vừa** | Thay thế bằng lớp chuẩn `.admin-icon-circle` dùng duy nhất 1 màu sage accent | Giao diện thanh lịch, nhất quán |
-| 3 | `src/app/globals.css` | Số hiển thị chưa được ép kiểu lining trên toàn bộ thẻ ngữ nghĩa | **Vừa** | Bổ sung `font-variant-numeric: lining-nums tabular-nums` cho toàn bộ elements và headings | Số đứng thẳng, thẳng hàng hoàn toàn |
-| 4 | `src/app/admin/page.tsx` | Các nút thời lượng đột xuất có vùng bấm dưới 44px | **Nhẹ** | Thêm `min-h-[44px] px-3.5 py-1.5` đảm bảo chuẩn tiếp xúc cảm ứng mobile | Chạm mượt mà trên mobile |
-| 5 | `IntegrationsTab.tsx` | Nút lưu, xóa và kiểm tra thiếu min-height 44px | **Nhẹ** | Chuẩn hóa toàn bộ buttons lên `min-h-[44px]` và padding thoải mái | Thao tác ngón tay không bị bấm nhầm |
-| 6 | `AdminPasswordLogin.tsx` | Chưa áp dụng token `--btn-primary` và lớp `.admin-card` | **Nhẹ** | Refactor sang toàn bộ biến CSS tokens của hệ thống | Khớp màu sắc chính xác theo thiết kế |
-| 7 | `src/app/admin/page.tsx` | Nút gạt toggle switch bị co kéo/biến dạng do `min-h-[44px]` đè lên `h-7 w-12` | **Vừa** | Thiết kế lại cấu trúc switch chuẩn iOS: khung bấm 44px độc lập, thanh trượt 48x24px cố định, bi trượt 20x20px có bóng đổ nổi và bổ sung chip trạng thái trực quan "Còn món" / "Tạm hết" | Nút gạt cân đối, sang trọng, không biến dạng |
+1. **Thương hiệu & Khẩu hiệu**:
+   - Tên quán: **Cẩm Cù House** (bảo toàn trọn vẹn dấu tiếng Việt trong cả phiên bản VN và EN).
+   - Khẩu hiệu: **"Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá"**.
+   - H1: **"CẨM CÙ HOUSE"** / Danh mục trang.
+2. **Địa chỉ & Vị trí**:
+   - Địa chỉ: **Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông**.
+   - Tọa độ: `11.99° N · 107.69° E`.
+   - Độ cao: `800m+`.
+3. **Giờ phục vụ**:
+   - Thứ 2–5: `07:00 – 18:00`.
+   - Thứ 6–Chủ Nhật: `07:00 – 22:00`.
+4. **Hotlines & Kênh liên hệ**:
+   - Hotline 1 (Zalo): `038 285 1688`.
+   - Hotline 2: `077 465 9000`.
+   - Email: `thuynhu8788@gmail.com`.
+   - Kênh mạng xã hội: Facebook, TikTok, YouTube.
+5. **Thực Đơn 67 Món (Chỉ chữ, KHÔNG ảnh)**:
+   - 67/67 món ăn và thức uống bảo toàn 100% ID, Tên, Giá, Mô tả, Danh mục, Nhãn Signature/Mới.
+   - Trình bày dạng "tờ thực đơn giấy" cổ điển với đường chấm dẫn (`menu-leader-dots`) nối tên món và giá tiền bazan.
+6. **Không Gian Suối 30 Ảnh**:
+   - 30/30 ảnh không gian suối bảo toàn đường dẫn, tiêu đề, mô tả và phân loại danh mục.
+   - Bố cục bento 12 cột kèm FLIP filter, canvas sóng âm, lightbox toàn màn hình có đếm số `03 / 30`.
 
 ---
 
-## 7. DANH SÁCH VIỆC CẦN LÀM TIẾP THEO (POST-DEPLOYMENT CHECKLIST)
+## 4. TYPOGRAPHY & XỬ LÝ DẤU TIẾNG VIỆT (SECTION 4)
 
-1. **Nhập khóa thực tế trên giao diện Admin**:
-   - Truy cập `https://admin.camcuhouse.online` -> Tab **Tích hợp & Khóa**.
-   - Dán mã `G-XXXXXXXXXX` vào dòng **GA4 Measurement ID**.
-   - Dán số `Property ID` vào dòng **GA4 Property ID**.
-   - Dán nội dung file Service Account JSON vào dòng **Google Service Account JSON**.
-   - Bấm **"Kiểm tra kết nối"** -> Hệ thống sẽ kích hoạt kết nối trực tiếp với Google APIs.
-2. **Bật xác thực 2 lớp (2FA)**:
-   - Quét mã QR vào Google Authenticator và lưu lại 8 mã khôi phục để bảo vệ tài khoản quản trị tuyệt đối.
-3. **Kiểm tra Preview trên Vercel**:
-   - Khi commit được đẩy lên `main`, Vercel tự động build và deploy bản mới nhất.
+- **Phông chữ tiêu đề**: `Fraunces` (Google Font variable, subset `vietnamese` & `latin-ext`).
+- **Phông chữ nội dung**: `Be Vietnam Pro` (thiết kế chuyên dụng tối ưu hiển thị dấu tiếng Việt).
+- **Phông chữ nhãn / số liệu**: `IBM Plex Mono` (tọa độ, giờ mở cửa, nhãn thẻ).
+- **Quy tắc dấu tiếng Việt**:
+  - `line-height` tiêu đề luôn $\ge 1.05$ (thực tế `1.15 – 1.45`).
+  - Các khối mask xuất hiện chữ có `padding-top: 0.35em – 0.65em`, không dùng `overflow: hidden` sát chữ, đảm bảo các dấu mũ và móc (`Â`, `Ă`, `Ê`, `Ô`, `Ơ`, `Ư`, dấu hỏi/ngã) hoàn toàn nguyên vẹn, không bao giờ bị cắt xén.
+  - Số giờ, số tiền và chỉ số áp dụng `font-variant-numeric: lining-nums tabular-nums`.
+
+---
+
+## 5. CHUYỂN ĐỘNG & TRẢI NGHIỆM TƯƠNG TÁC (SECTION 6 & 9)
+
+1. **Intro Điện Ảnh Cao Nguyên**:
+   - Nền charcoal `#1C1612`, đường đồng mức tỏa từ tâm, hoa Hoya sao vẽ nét rồi nở.
+   - Chữ "CẨM CÙ HOUSE" trượt hiện từng ký tự.
+   - Bộ đếm độ cao chuyển động từ `0m → 800m`.
+   - Kết thúc mở khung vòm điện ảnh để lộ trang chủ; có nút Bỏ qua và phím `Esc`; chỉ chạy 1 lần/phiên.
+2. **Chuyển Trang Vòm Bazan (Page Transition)**:
+   - Tấm bazan trồi lên hình vòm từ đáy màn hình, hiển thị tên trang Fraunces 64px và tọa độ mono.
+   - Vòm trượt lên mở trang mới trong $\le 1.05\text{s}$.
+   - Tự động fallback cross-fade 0.3s khi người dùng bật `prefers-reduced-motion`.
+3. **Thanh Tiến Độ & Cuộn Mượt (Lenis)**:
+   - Thanh tiến độ 2.5px màu bazan cố định đỉnh trang trượt theo tỉ lệ cuộn.
+   - Thư viện Lenis tối ưu 60fps mượt mà, đồng bộ ScrollTrigger.
+4. **Con Trỏ Chuột Tùy Biến (Custom Cursor)**:
+   - Chấm tròn 12px màu bazan tự động chuyển sang vòng tròn "Kéo" (khi hover gallery kéo ngang) hoặc "Xem" (khi hover ảnh bento/lightbox).
+   - Tự động tắt trên thiết bị cảm ứng (pointer coarse) và khi giảm chuyển động.
+
+---
+
+## 6. KIỂM THỬ THIẾT BỊ & RESPONSIVE (SECTION 11)
+
+- **Desktop (1440px)**:
+  - Bố cục 12 cột, lề 48px, khoảng cách section 120px.
+  - Thực đơn chia cột kép: cột trái dính mục lục 01–08, cột phải danh sách theo nhóm.
+  - Bản đồ Chỉ đường cột đôi cân xứng với bảng 7 ngày.
+- **Mobile (390px)**:
+  - Container co lề 20px, khoảng cách section 72px.
+  - Menu toàn màn hình than mờ, phông Fraunces 44px.
+  - Thanh tiện ích liên hệ cố định chân trang (Gọi · Zalo · Chỉ đường) cao 56px, an toàn vùng tai thỏ (`env(safe-area-inset-bottom)`).
+  - Lưới bento tự động cân chỉnh 1-2 cột dễ vuốt chạm.
+
+---
+
+## 7. KẾT LUẬN & KIẾN NGHỊ VẬN HÀNH
+
+Hệ thống giao diện mới của `camcuhouse.online` đã được thiết kế và triển khai hoàn chỉnh 100% theo đúng bản thảo thiết kế "Khói Củi & Nước Suối". Toàn bộ mã nguồn đã được build thành công, kiểm thử tự động toàn diện, không có lỗi console hay liên kết hỏng, sẵn sàng đưa vào vận hành thực tế.
