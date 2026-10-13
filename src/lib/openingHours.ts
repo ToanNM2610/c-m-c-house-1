@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { getStoredData, setStoredData, getSharedCookie, setSharedCookie } from "@/utils/storage";
+import { getStatus, OverrideMode, StatusOverrideData } from "@/lib/status";
 
 export const CAMCU_STORE_OVERRIDE_KEY = "camcu_store_override";
 
@@ -61,108 +62,59 @@ export function setStoreOverride(mode: StoreOverrideMode): void {
 
 /**
  * Core function to calculate real-time store status in GMT+7
+ * Powered by unified getStatus from src/lib/status.ts
  */
 export function getStoreStatus(override?: StoreOverrideMode): StoreRealtimeStatus {
   const activeOverride = override !== undefined ? override : getStoreOverride();
   const vnDate = getVietnamTime();
-
-  const dayOfWeek = vnDate.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
   const hours = vnDate.getHours();
   const minutes = vnDate.getMinutes();
-  const totalMinutes = hours * 60 + minutes;
-
-  // Format current VN time string HH:mm
   const currentTimeVN = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
-  // Schedule Rules:
-  // Mon-Thu (1-4): 07:00 - 18:00 (420m to 1080m)
-  // Fri-Sun (5, 6, 0): 07:00 - 22:00 (420m to 1320m)
-  const isWeekendGroup = dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6;
-  const openMinutes = 7 * 60; // 07:00
-  const closeMinutes = isWeekendGroup ? 22 * 60 : 18 * 60; // 22:00 or 18:00
-  const closingTime = isWeekendGroup ? "22:00" : "18:00";
-  const scheduleText = isWeekendGroup
-    ? "Thứ 6 - CN: 07:00 - 22:00"
-    : "Thứ 2 - T5: 07:00 - 18:00";
-
-  // Check manual overrides first
+  // Read override with expiration if stored
+  let overrideData: StatusOverrideData | null = null;
   if (activeOverride === "force_open") {
-    return {
-      status: "open",
-      badgeType: "open",
-      badgeText: "🟢 Đang mở cửa đón khách • Mở cửa linh hoạt theo quản lý",
-      shortBadge: "Đang mở cửa",
-      closingTime: "22:00",
-      todayHoursText: "07:00 – 22:00",
-      scheduleText,
-      currentTimeVN,
-      overrideMode: "force_open",
-      isOpen: true,
-    };
-  }
-
-  if (activeOverride === "force_closed") {
-    return {
-      status: "closed",
-      badgeType: "closed",
-      badgeText: "🔴 Quán tạm đóng cửa • Tạm nghỉ đột xuất hoặc chuẩn bị đón khách",
-      shortBadge: "Tạm nghỉ",
-      closingTime: closingTime,
-      todayHoursText: `07:00 – ${closingTime}`,
-      scheduleText,
-      currentTimeVN,
-      overrideMode: "force_closed",
-      isOpen: false,
-    };
-  }
-
-  // Auto mode based on real GMT+7 time
-  const isWithinHours = totalMinutes >= openMinutes && totalMinutes < closeMinutes;
-
-  if (isWithinHours) {
-    const diffMinutes = closeMinutes - totalMinutes;
-    if (diffMinutes <= 30) {
-      return {
-        status: "closing_soon",
-        badgeType: "closing_soon",
-        badgeText: `🟡 Sắp đến giờ đóng cửa (còn ${diffMinutes} phút) • Đóng lúc ${closingTime}`,
-        shortBadge: `Sắp đóng (${diffMinutes}p)`,
-        closingTime,
-        todayHoursText: `07:00 – ${closingTime}`,
-        scheduleText,
-        currentTimeVN,
-        overrideMode: "auto",
-        minutesRemaining: diffMinutes,
-        isOpen: true,
-      };
+    overrideData = { mode: "open" };
+  } else if (activeOverride === "force_closed") {
+    overrideData = { mode: "closed" };
+  } else {
+    // Check if there is a detailed override stored with 'until'
+    if (typeof window !== "undefined") {
+      const detailed = getStoredData<{ mode: OverrideMode; until?: string } | null>("camcu_status_override_detail", null);
+      if (detailed && detailed.mode && detailed.mode !== "auto") {
+        overrideData = detailed;
+      }
     }
-
-    return {
-      status: "open",
-      badgeType: "open",
-      badgeText: `🟢 Đang mở cửa đón khách • Đóng cửa lúc ${closingTime}`,
-      shortBadge: "Đang mở cửa",
-      closingTime,
-      todayHoursText: `07:00 – ${closingTime}`,
-      scheduleText,
-      currentTimeVN,
-      overrideMode: "auto",
-      isOpen: true,
-    };
   }
 
-  // Outside opening hours
+  const result = getStatus(new Date(), { override: overrideData });
+  const closingTime = result.closes_at || (vnDate.getDay() === 0 || vnDate.getDay() === 5 || vnDate.getDay() === 6 ? "22:00" : "18:00");
+  const isOpen = result.state === "open" || result.state === "closing_soon";
+
+  let badgeText = "🟢 Đang mở cửa đón khách • Đóng cửa lúc " + closingTime;
+  let shortBadge = result.label_vi;
+
+  if (result.state === "closing_soon") {
+    const diff = result.minutes_remaining ?? 30;
+    badgeText = `🟡 Sắp đến giờ đóng cửa (còn ${diff} phút) • Đóng lúc ${closingTime}`;
+    shortBadge = `Sắp đóng (${diff}p)`;
+  } else if (result.state === "closed") {
+    badgeText = "🔴 Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ngày mai";
+    shortBadge = result.label_vi;
+  }
+
   return {
-    status: "closed",
-    badgeType: "closed",
-    badgeText: "🔴 Quán đã đóng cửa • Hẹn gặp bạn lúc 07:00 ngày mai",
-    shortBadge: "Đã đóng cửa",
+    status: result.state,
+    badgeType: result.state,
+    badgeText,
+    shortBadge,
     closingTime,
-    todayHoursText: `07:00 – ${closingTime}`,
-    scheduleText,
+    todayHoursText: result.today_hours,
+    scheduleText: result.schedule_vi,
     currentTimeVN,
-    overrideMode: "auto",
-    isOpen: false,
+    overrideMode: activeOverride,
+    minutesRemaining: result.minutes_remaining,
+    isOpen,
   };
 }
 
