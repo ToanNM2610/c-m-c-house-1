@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 interface MaskRevealImageProps {
@@ -23,6 +23,7 @@ export default function MaskRevealImage({
 }: MaskRevealImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <div
@@ -48,17 +49,17 @@ export default function MaskRevealImage({
           setHasError(true);
           setIsLoaded(true);
         }}
-        initial={{ scale: 1.08, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
+        initial={shouldReduceMotion ? { opacity: 0 } : { scale: 1.08, opacity: 0 }}
+        whileInView={shouldReduceMotion ? { opacity: 1 } : { scale: 1, opacity: 1 }}
         viewport={{ once: true, margin: "-20px" }}
         transition={{
-          duration: 0.8,
+          duration: shouldReduceMotion ? 0.2 : 0.8,
           ease: [0.2, 0.7, 0.2, 1] as const,
-          delay: Math.min(delay, 0.2),
+          delay: shouldReduceMotion ? 0 : Math.min(delay, 0.2),
         }}
-        className={`w-full h-full object-cover transition-all duration-700 ease-out transform-gpu group-hover:scale-105 ${
-          isLoaded ? "blur-0 opacity-100" : "blur-sm opacity-60"
-        }`}
+        className={`w-full h-full object-cover transition-all duration-700 ease-out transform-gpu ${
+          shouldReduceMotion ? "" : "group-hover:scale-105"
+        } ${isLoaded ? "blur-0 opacity-100" : "blur-sm opacity-60"}`}
       />
     </div>
   );

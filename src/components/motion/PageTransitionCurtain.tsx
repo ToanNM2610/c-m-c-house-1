@@ -1,14 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Flower2 } from "lucide-react";
 import { usePathname } from "next/navigation";
+
 interface PageTransitionCurtainProps {
   onComplete?: () => void;
 }
 
 export default function PageTransitionCurtain({ onComplete }: PageTransitionCurtainProps) {
   const pathname = usePathname();
+  const shouldReduceMotion = useReducedMotion();
+
+  // Tôn trọng cài đặt giảm chuyển động của người dùng
+  if (shouldReduceMotion) {
+    return null;
+  }
 
   // Xác định tên trang mục tiêu
   const getPageTitle = (path: string) => {

@@ -31,6 +31,12 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Tôn trọng thiết lập prefers-reduced-motion của người dùng
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) {
+      return;
+    }
+
     // Khởi tạo Lenis với easing điện ảnh
     const lenis = new Lenis({
       duration: 1.15,
