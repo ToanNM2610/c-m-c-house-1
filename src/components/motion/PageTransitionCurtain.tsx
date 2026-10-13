@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Flower2 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import StarHoya from "@/components/ui/StarHoya";
 
 interface PageTransitionCurtainProps {
   onComplete?: () => void;
@@ -11,11 +11,6 @@ interface PageTransitionCurtainProps {
 export default function PageTransitionCurtain({ onComplete }: PageTransitionCurtainProps) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
-
-  // Tôn trọng cài đặt giảm chuyển động của người dùng
-  if (shouldReduceMotion) {
-    return null;
-  }
 
   // Xác định tên trang mục tiêu
   const getPageTitle = (path: string) => {
@@ -30,47 +25,72 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
 
   const currentTitle = getPageTitle(pathname || "");
 
+  // Dự phòng cross-fade 0.3s khi bật reduced-motion
+  if (shouldReduceMotion) {
+    return (
+      <motion.div
+        key={`reduced-transition-${pathname}`}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onAnimationComplete={onComplete}
+        className="fixed inset-0 z-[99999] pointer-events-none bg-[var(--paper)]"
+      />
+    );
+  }
+
   return (
     <motion.div
-      key={`page-curtain-${pathname}`}
-      initial={{ clipPath: "circle(150% at 50% 50%)", opacity: 1 }}
-      animate={{ clipPath: "circle(0% at 50% 50%)", opacity: 1 }}
+      key={`page-arch-curtain-${pathname}`}
+      initial={{ y: "100%", borderRadius: "999px 999px 0 0" }}
+      animate={{
+        y: ["100%", "0%", "-100%"],
+        borderRadius: ["999px 999px 0 0", "0px 0px 0 0", "0 0 999px 999px"],
+      }}
       transition={{
-        duration: 0.75,
-        ease: [0.2, 0.7, 0.2, 1] as const,
-        delay: 0.2,
+        duration: 1.05,
+        times: [0, 0.45, 1],
+        ease: [0.65, 0, 0.35, 1],
       }}
       onAnimationComplete={onComplete}
-      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[#183A28] text-[#F3EBD8] shadow-2xl overflow-hidden"
+      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[var(--basalt)] text-white shadow-2xl overflow-hidden"
     >
-
-
-
-      {/* Huy hiệu & Tên trang hiện giữa màn hình */}
+      {/* Tên trang Fraunces 64px + Tọa độ Mono */}
       <motion.div
-        initial={{ opacity: 1, scale: 1, y: 0 }}
-        animate={{ opacity: 0, scale: 0.95, y: -15 }}
-        transition={{ duration: 0.35, delay: 0.18 }}
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          scale: [0.9, 1, 1, 0.95],
+          y: [30, 0, 0, -30],
+        }}
+        transition={{
+          duration: 1.05,
+          times: [0, 0.35, 0.65, 1],
+          ease: "easeInOut",
+        }}
         className="relative z-10 flex flex-col items-center text-center px-6"
       >
-        {/* Logo nhỏ phía trên */}
-        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-300/40 bg-emerald-950/60 shadow-lg mb-4">
-          <Flower2 className="w-4 h-4 text-emerald-300 animate-pulse" />
-          <span className="font-serif text-xs font-bold tracking-widest text-emerald-200 uppercase">
-            CẨM CÙ HOUSE
-          </span>
+        {/* Star Hoya Icon */}
+        <div className="w-12 h-12 rounded-full border border-white/30 bg-white/10 flex items-center justify-center mb-5 backdrop-blur-sm">
+          <StarHoya size={24} className="text-white" strokeWidth={1.5} />
         </div>
 
-        {/* Tên trang chữ lớn điện ảnh >= 40px màu kem sáng */}
-        <h2 className="font-serif text-[40px] sm:text-5xl lg:text-6xl font-bold tracking-wider sm:tracking-widest text-[#F3EBD8] uppercase drop-shadow-lg leading-tight">
+        {/* Tọa độ mono */}
+        <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/80 mb-2">
+          11.99° N · 107.69° E · ĐỘ CAO 800M+
+        </span>
+
+        {/* Tên trang Fraunces 64px */}
+        <h2 className="font-serif text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-white leading-tight uppercase">
           {currentTitle}
         </h2>
 
-        <p className="text-[13px] sm:text-[14px] font-sans tracking-[0.2em] text-[#F3EBD8]/95 uppercase mt-3 font-semibold">
-          Chốn Dừng Chân Bên Suối Đá, Gia Nghĩa
+        {/* Slogan */}
+        <p className="font-serif italic text-[16px] sm:text-[18px] text-white/90 mt-2">
+          Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
         </p>
 
-        <div className="w-24 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent mt-4" />
+        <div className="w-20 h-[1.5px] bg-white/40 mt-4" />
       </motion.div>
     </motion.div>
   );

@@ -6,6 +6,8 @@ import Navbar from "@/components/Navbar";
 import MobileBottomBar from "@/components/MobileBottomBar";
 import CamcuIntro from "@/components/CamcuIntro";
 import SmoothScroll from "@/components/motion/SmoothScroll";
+import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
+import CustomCursor from "@/components/ui/CustomCursor";
 
 export default function PublicShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -25,6 +27,8 @@ export default function PublicShell({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <ScrollProgressBar />
+      <CustomCursor />
       <CamcuIntro />
       <Navbar />
       <SmoothScroll>
