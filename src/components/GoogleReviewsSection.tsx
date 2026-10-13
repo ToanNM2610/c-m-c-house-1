@@ -199,6 +199,10 @@ interface GoogleReviewsSectionProps {
 export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSectionProps) {
   const [isPaused, setIsPaused] = useState(false);
 
+  if (!GOOGLE_REVIEWS_DATA || GOOGLE_REVIEWS_DATA.length === 0) {
+    return null;
+  }
+
   const googleMapsUrl =
     "https://maps.google.com/?q=C%E1%BA%A9m+C%C3%B9+House+Gia+Ngh%C4%A9a+%C4%90%E1%BA%AFk+N%C3%B4ng";
 
