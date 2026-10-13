@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Quicksand } from "next/font/google";
+import { Fraunces, Be_Vietnam_Pro, IBM_Plex_Mono } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
@@ -9,17 +9,25 @@ import Script from "next/script";
 import { getPublicIntegrations } from "@/lib/integrations";
 import "lenis/dist/lenis.css";
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["600", "700"],
-  variable: "--font-playfair",
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 
-const quicksand = Quicksand({
+const beVietnamPro = Be_Vietnam_Pro({
   subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-quicksand",
+  variable: "--font-be-vietnam",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["400", "500", "600"],
+  variable: "--font-ibm-mono",
   display: "swap",
 });
 
@@ -28,8 +36,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F9F8F3" },
-    { media: "(prefers-color-scheme: dark)", color: "#121A15" },
+    { media: "(prefers-color-scheme: light)", color: "#F6EFE2" },
+    { media: "(prefers-color-scheme: dark)", color: "#14110E" },
   ],
 };
 
@@ -79,7 +87,7 @@ export default async function RootLayout({
   const integrations = await getPublicIntegrations();
 
   return (
-    <html lang="vi" suppressHydrationWarning className={`dark ${playfair.variable} ${quicksand.variable} font-sans`}>
+    <html lang="vi" suppressHydrationWarning className={`${fraunces.variable} ${beVietnamPro.variable} ${ibmPlexMono.variable} font-sans`}>
       <head>
         {integrations.searchConsoleVerification && (
           <meta
@@ -113,10 +121,10 @@ export default async function RootLayout({
                   var cookieMatch = document.cookie.match(/(?:^|;\\s*)camcu_theme=([^;]*)/);
                   var storedTheme = localStorage.getItem('camcu_theme');
                   var theme = (cookieMatch ? cookieMatch[1] : null) || storedTheme;
-                  if (theme === 'light') {
-                    document.documentElement.classList.remove('dark');
-                  } else {
+                  if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
                   }
                   var seenIntro = sessionStorage.getItem('cc_intro') === '1';
                   var params = new URLSearchParams(location.search);
@@ -182,7 +190,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--accent-green)] selection:text-white transition-colors duration-200">
+      <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--basalt)] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>
