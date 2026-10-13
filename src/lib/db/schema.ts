@@ -154,3 +154,24 @@ export const adminUsersTable = pgTable("admin_users", {
   lastLogin: timestamp("last_login"),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+// 13. Integration Settings (Dynamic API keys, Google Analytics, Search Console, Places)
+export const integrationSettingsTable = pgTable("integration_settings", {
+  key: text("key").primaryKey(), // e.g. ga4_measurement_id, google_places_api_key
+  name: text("name").notNull(), // User-friendly Vietnamese name
+  value: text("value").notNull(), // Plain text or AES-256-GCM encrypted
+  isSecret: boolean("is_secret").notNull().default(false),
+  status: text("status").notNull().default("unconfigured"), // 'connected' | 'error' | 'unconfigured'
+  statusMessage: text("status_message").default(""),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// 14. Integration Audit Log (Records who, when, which key - NEVER the value)
+export const integrationAuditLogTable = pgTable("integration_audit_log", {
+  id: text("id").primaryKey(),
+  user: text("user").notNull().default("admin"),
+  action: text("action").notNull(), // 'update' | 'delete' | 'test'
+  keyName: text("key_name").notNull(),
+  ip: text("ip").default(""),
+  timestamp: timestamp("timestamp").defaultNow(),
+});
