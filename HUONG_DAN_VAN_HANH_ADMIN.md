@@ -1,88 +1,81 @@
 # CẨM CÙ HOUSE — TÀI LIỆU HƯỚNG DẪN VẬN HÀNH DÀNH CHO CHỦ QUÁN
 
 > **Địa chỉ trang quản trị:** `admin.camcuhouse.online` (hoặc `camcuhouse.online/admin`)  
-> **Mã PIN mặc định ban đầu:** `2610`  
-> **Nguyên tắc vận hành:** Thao tác trên điện thoại $\le 3$ lần chạm. Mọi thay đổi lưu = áp dụng ngay lập tức lên website khách.
+> **Tiêu chuẩn bảo mật:** Mật khẩu mạnh $\ge 12$ ký tự + Bảo mật 2 lớp Google Authenticator (TOTP)  
+> **Nguyên tắc vận hành:** Mọi thay đổi cấu hình, khóa tích hợp hoặc thực đơn lưu xong có hiệu lực tức thì trên website khách mà không cần triển khai lại code (Zero-redeploy).
 
 ---
 
-## 1. Đăng Nhập & Bảo Mật 2 Lớp (TOTP 2FA)
+## 1. Đăng Nhập & Bảo Mật Quản Trị Viên
 
-1. Nhập mã PIN 4 số trên màn hình số lớn (mặc định: `2610`).
-2. Nếu đã bật **Bảo mật 2 lớp (2FA)**: mở ứng dụng **Google Authenticator** trên điện thoại, nhập mã 6 số hiện thời.
-3. *Lưu ý an toàn:* Nhập sai quá 5 lần liên tiếp hệ thống sẽ tạm khóa 15 phút để chống dò mã.
+1. **Khởi tạo lần đầu:** Hệ thống yêu cầu thiết lập mật khẩu mạnh (tối thiểu 12 ký tự) và kích hoạt bảo mật 2 lớp 2FA qua Google Authenticator.
+2. **Đăng nhập thường lệ:** Nhập mật khẩu quản trị viên. Nếu tài khoản đã kích hoạt 2FA, mở ứng dụng **Google Authenticator** trên điện thoại và nhập mã 6 số hiện thời.
+3. *Chống tấn công dò mật khẩu:* Nhập sai quá 5 lần liên tiếp hệ thống sẽ tự động tạm khóa 15 phút.
+4. *Đổi mật khẩu:* Truy cập mục **Tài Khoản & Bảo Mật** hoặc **Cài Đặt**, nhập mật khẩu hiện tại và đặt mật khẩu mới $\ge 12$ ký tự.
 
 ---
 
-## 2. Đổi Trạng Thái Mở/Đóng Đón Khách (1-2 Chạm)
+## 2. Quản Lý Tích Hợp & Khóa Dịch Vụ Ngoài (`/admin/integrations`)
+
+Tất cả các khóa và ID kết nối bên ngoài được quản lý tập trung ngay trong trang Admin:
+- **GA4 Measurement ID (`G-XXXXXXXXXX`):** Thẻ theo dõi hành vi khách ghé thăm website. Lưu xong là website công khai tự động gắn thẻ đo lường ngay.
+- **GA4 Property ID:** Mã số thuộc tính GA4 dùng để trích xuất báo cáo lưu lượng truy cập.
+- **Search Console:** Mã xác minh `google-site-verification` (tự động nhúng vào thẻ meta trang chủ) và Property tên miền `sc-domain:camcuhouse.online`.
+- **Google Service Account JSON:** Khóa xác thực OAuth2 cho máy chủ để gọi Analytics Data API và Search Console API.
+- **Google Places API Key & Place ID:** Khóa đồng bộ đánh giá và địa điểm Cẩm Cù House Gia Nghĩa.
+- **Link Google Maps / Bản đồ nhúng:** URL bản đồ hiển thị trên trang Chỉ Đường.
+
+**Cơ chế an toàn:**
+- Các giá trị bí mật được mã hóa AES-256-GCM với biến `APP_ENCRYPTION_KEY` duy nhất ở Vercel.
+- Giao diện che an toàn (`••••1234`), máy chủ không bao giờ trả về giá trị bí mật nguyên bản cho trình duyệt.
+- Trước khi Lưu hoặc Xóa khóa: bắt buộc nhập lại Mật khẩu hoặc mã 2FA TOTP để xác thực.
+- Có nút **"Kiểm tra kết nối"** trực tiếp để kiểm tra tính hợp lệ của từng dịch vụ.
+
+---
+
+## 3. Xem Báo Cáo Google Analytics (`/admin/analytics`)
+
+- **Bộ lọc chu kỳ:** Xem theo 7 ngày, 28 ngày hoặc 90 ngày.
+- **Số liệu tổng quan:** Tổng người dùng, phiên truy cập, lượt xem trang và số khách đang online thời gian thực.
+- **Biểu đồ xu hướng:** Biểu đồ đường trực quan theo ngày.
+- **Hành động chuyển đổi trọng tâm (Cẩm Cù Actions):** Lượt bấm Gọi Hotline (`click_call`), Nhắn tin Zalo (`click_zalo`), Tìm đường Maps (`click_directions`), Xem thực đơn (`view_menu`).
+- **Nguồn truy cập & Thiết bị:** Phân loại từ Google tìm kiếm, mạng xã hội, trực tiếp; tỷ lệ khách dùng di động hay máy tính.
+
+---
+
+## 4. Xem Báo Cáo Google Search Console (`/admin/search-console`)
+
+- **Hiệu suất tìm kiếm tự nhiên:** Tổng lượt nhấp, lượt hiển thị, CTR và vị trí trung bình trên Google.
+- **Top từ khóa tìm kiếm (Top Queries):** Biết chính xác khách tìm cụm từ gì để đến với quán.
+- **Gửi Sitemap:** Bấm nút **"Gửi sitemap.xml"** để yêu cầu Google cập nhật cấu trúc trang mới.
+- **Kiểm tra lập chỉ mục (URL Inspection):** Trạng thái xuất hiện trên Google của 5 trang chính: Trang Chủ, Câu Chuyện, Không Gian Suối, Thực Đơn, Chỉ Đường.
+
+---
+
+## 5. Đổi Trạng Thái Mở/Đóng Đón Khách (1-2 Chạm)
 
 Tại thanh điều khiển đầu trang hoặc mục **Tổng Quan**:
 - **Tự động theo lịch (Khuyên dùng):** Hệ thống tự động tính theo giờ thực tế GMT+7 (T2–T5: 07:00–18:00 | T6–CN: 07:00–22:00).
 - **Mở cửa đột xuất:** Bấm **"Mở cửa đột xuất"** khi quán phục vụ ngoài giờ. Chọn thời hạn: `1 giờ`, `2 giờ`, `4 giờ` hoặc `Hôm nay`.
-- **Đóng cửa / Nghỉ đột xuất:** Bấm **"Nghỉ đột xuất"** khi mưa bão hoặc quán bảo trì suối. Hết giờ chọn, hệ thống tự động quay về lịch chuẩn mà không cần chủ quán nhớ bật lại.
+- **Đóng cửa / Nghỉ đột xuất:** Bấm **"Nghỉ đột xuất"** khi thời tiết xấu hoặc bảo trì suối đá. Hết thời gian đã chọn, hệ thống tự động quay về lịch chuẩn.
 
 ---
 
-## 3. Báo Tạm Hết Món & Bật Còn Hàng (1 Chạm)
+## 6. Báo Tạm Hết Món & Bật Còn Hàng (1 Chạm)
 
 Tại tab **Thực Đơn**:
-- Tìm món hoặc chọn nhóm (Cà Phê, Trà Thảo Mộc, Nước Ép, Điểm Tâm...).
+- Tìm kiếm món hoặc chọn theo danh mục (Cà Phê, Trà Thảo Mộc, Nước Ép, Món Ăn Vặt...).
 - Gạt công tắc:
   - **Màu xanh:** Đang phục vụ bình thường.
-  - **Màu xám:** Tạm hết hàng (Trên trang khách món sẽ mờ đi và hiện nhãn *"Tạm hết"*).
-- **Hoàn tác:** Có nút *"Hoàn tác"* hiện trong 10 giây ở góc dưới màn hình nếu bấm nhầm.
-- **Xuất / Nhập Excel (CSV):** Bấm **"Xuất CSV"** để tải file danh sách 67 món; bấm **"Nhập CSV"** để cập nhật nhanh giá bán từ máy tính.
+  - **Màu xám:** Tạm hết hàng (Trên trang khách món sẽ mờ đi và gắn nhãn *"Tạm hết"*).
+- **Hoàn tác:** Nút *"Hoàn tác"* xuất hiện trong vài giây nếu bấm nhầm.
+- **Xuất / Nhập Excel (CSV):** Bấm **"Xuất CSV"** để sao lưu; bấm **"Nhập CSV"** để cập nhật hàng loạt giá bán.
 
 ---
 
-## 4. Tải Nhiều Ảnh Vào Thư Viện Không Gian Suối
+## 7. Tải & Quản Lý Thư Viện Ảnh Quán
 
 Tại tab **Thư Viện Ảnh**:
-- Chọn mục **"Tải nhiều ảnh từ máy (Batch)"**.
-- Bấm **"Chọn nhiều ảnh từ thiết bị"** hoặc kéo thả cùng lúc 5–20 ảnh chụp quán.
-- Hệ thống tự động nén dung lượng WebP nhẹ nhàng, giữ màu sắc suối đá trong trẻo.
-- Chọn chuyên mục tương ứng:
-  - *Bờ Suối Tự Nhiên* (hiện vào tab bờ suối trang `/space`).
-  - *Hiên Gỗ & Chòi Mộc*.
-  - *Góc Check-in & Cảnh Quan*.
-  - *Bàn Ghế Làm Việc / Đọc Sách*.
-- Bấm **"Lưu Tất Cả Vào Thư Viện"**.
-
----
-
-## 5. Đăng Bản Tin & Thông Báo Thanh Đầu Trang
-
-- **Bản tin quán:** Tại mục **Tổng Quan**, bấm **"+ Tạo Tin Mới"** → Nhập tiêu đề, nội dung, loại tin (Sự kiện đêm suối / Món ngon đặc sản / Thông báo) → Bấm **"Đăng Bản Tin"**.
-- **Chữ chạy đầu website:** Vào tab **Cài Đặt Cửa Hàng** → Bật công tắc *"Thông Báo Thanh Đầu Trang"* → Nhập nội dung (VD: *"🌿 Chào mừng bạn ghé chơi bên bờ suối Cẩm Cù..."*).
-
----
-
-## 6. Sơ Đồ Kiến Trúc Hệ Thống & Luồng Dữ Liệu
-
-```
-Khách Hàng (Desktop / Mobile)
-   │
-   ▼
-camcuhouse.online (Next.js App Router trên Vercel)
-   │  ├── Single-source status: getStatus(now) [T2-T5: 07-18h | T6-CN: 07-22h]
-   │  ├── ISR revalidateTag: menu, gallery, settings, reviews, content
-   │  └── Bắt sự kiện: click_call, click_zalo, click_directions, view_menu
-   │
-Chủ Quán (Điện thoại / Laptop)
-   │
-   ▼
-admin.camcuhouse.online (Tách biệt layout hoàn toàn)
-   │  ├── Auth.js + TOTP 2FA + Khóa 5 lần sai
-   │  ├── 6 mục: Tổng quan, Thực đơn (67 món), Thư viện, Cài đặt, Nội dung, Bảo mật
-   │  └── Postgres (Neon) qua Drizzle ORM + Object Storage
-```
-
----
-
-## 7. Danh Sách Việc Chủ Quán Cần Cung Cấp Khi Triển Khai Thực Tế
-
-1. **Google Cloud Places API Key & Place ID:** Cung cấp vào biến môi trường `GOOGLE_PLACES_API_KEY` và `GOOGLE_PLACE_ID` để tự động cập nhật đánh giá 5 sao từ Google Maps.
-2. **Neon Postgres Database URL:** Cung cấp vào `DATABASE_URL` để lưu trữ dữ liệu vĩnh viễn trên đám mây.
-3. **Cấu hình DNS Tên Miền:**
-   - Trỏ `camcuhouse.online` về Vercel (`cname.vercel-dns.com`).
-   - Trỏ `admin.camcuhouse.online` về cùng dự án Vercel.
+- Chọn mục **"Tải nhiều ảnh từ máy (Batch)"** để đưa 5–20 ảnh suối đá, hiên gỗ lên cùng lúc.
+- Hệ thống tự động tối ưu định dạng WebP sắc nét, tải trang siêu tốc.
+- Phân loại đúng không gian: *Bờ Suối Tự Nhiên*, *Hiên Gỗ & Chòi Mộc*, *Góc Check-in*, *Khu Vực Làm Việc*.
