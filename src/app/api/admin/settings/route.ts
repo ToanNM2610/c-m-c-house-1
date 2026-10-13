@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getStoreSettings, updateStoreSettings, changeAdminPin } from "@/data/store";
+import { getStoreSettings, updateStoreSettings, changeAdminPassword } from "@/data/store";
 
 export async function GET() {
   try {
     const settings = getStoreSettings();
-    // Do not return raw adminPin to public
-    const { adminPin, ...safeSettings } = settings;
+    // Do not return raw passwordHash or credentials to client
+    const { passwordHash, ...safeSettings } = settings;
     return NextResponse.json({
       success: true,
       settings: safeSettings,
@@ -22,27 +22,27 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Check if requesting PIN change
-    if (body.action === "change_pin") {
-      const { oldPin, newPin } = body;
-      if (!oldPin || !newPin) {
+    // Check if requesting password change
+    if (body.action === "change_password") {
+      const { oldPassword, newPassword } = body;
+      if (!oldPassword || !newPassword) {
         return NextResponse.json(
-          { success: false, error: "Vui lòng nhập đầy đủ mã PIN cũ và mã PIN mới" },
+          { success: false, error: "Vui lòng nhập đầy đủ mật khẩu cũ và mật khẩu mới" },
           { status: 400 }
         );
       }
 
-      const changed = changeAdminPin(oldPin, newPin);
-      if (!changed) {
+      const result = changeAdminPassword(oldPassword, newPassword);
+      if (!result.success) {
         return NextResponse.json(
-          { success: false, error: "Mã PIN cũ không chính xác hoặc mã PIN mới không hợp lệ (tối thiểu 4 số)" },
+          { success: false, error: result.error || "Mật khẩu cũ không chính xác hoặc mật khẩu mới chưa đủ 12 ký tự" },
           { status: 400 }
         );
       }
 
       return NextResponse.json({
         success: true,
-        message: "Đổi mã PIN bảo mật thành công",
+        message: "Đổi mật khẩu quản trị thành công",
       });
     }
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       ...(topBanner ? { topBanner } : {}),
     });
 
-    const { adminPin, ...safeUpdated } = updated;
+    const { passwordHash, ...safeUpdated } = updated;
 
     return NextResponse.json({
       success: true,

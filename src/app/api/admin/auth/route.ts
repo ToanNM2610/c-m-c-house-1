@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import {
-  verifyAdminPin,
+  verifyAdminCredentials,
+  isFirstLoginRequired,
+  setupInitialPassword,
+  changeAdminPassword,
   getTotpConfig,
   enableTotp,
   disableTotp,
@@ -20,12 +24,34 @@ interface FailTracker {
 }
 const failMap = new Map<string, FailTracker>();
 
+// Active session token store
+const activeSessions = new Set<string>();
+
 function getClientIp(req: NextRequest): string {
   return (
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     req.headers.get("x-real-ip") ||
     "127.0.0.1"
   );
+}
+
+export function isValidSession(token: string): boolean {
+  if (!token) return false;
+  return activeSessions.has(token);
+}
+
+export async function GET(request: NextRequest) {
+  const needsFirstLogin = isFirstLoginRequired();
+  const totpConfig = getTotpConfig();
+  const sessionCookie = request.cookies.get("camcu_admin_auth")?.value;
+  const isAuthenticated = Boolean(sessionCookie && isValidSession(sessionCookie));
+
+  return NextResponse.json({
+    success: true,
+    isAuthenticated,
+    needsFirstLogin,
+    totpEnabled: totpConfig.totpEnabled,
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -40,7 +66,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: `Tài khoản tạm khóa do 5 lần nhập sai. Vui lòng thử lại sau ${waitMinutes} phút.`,
+          error: `Tài khoản tạm khóa do 5 lần nhập sai liên tiếp. Vui lòng thử lại sau ${waitMinutes} phút.`,
           isLocked: true,
         },
         { status: 429 }
@@ -48,18 +74,68 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { pin, totpCode } = body;
+    const { password, pin, totpCode, action, newPassword, confirmPassword } = body;
+    const credential = (password || pin || "").trim();
 
-    if (!pin) {
+    // Action 1: First-time password setup
+    if (action === "setup_initial" || isFirstLoginRequired()) {
+      if (!newPassword && !credential) {
+        return NextResponse.json({
+          success: false,
+          needsFirstLogin: true,
+          message: "Lần đầu truy cập: Vui lòng thiết lập mật khẩu quản trị an toàn (tối thiểu 12 ký tự).",
+        });
+      }
+
+      const passToSet = newPassword || credential;
+      if (confirmPassword && passToSet !== confirmPassword) {
+        return NextResponse.json(
+          { success: false, error: "Mật khẩu xác nhận không trùng khớp." },
+          { status: 400 }
+        );
+      }
+
+      const setupRes = setupInitialPassword(passToSet);
+      if (!setupRes.success) {
+        return NextResponse.json(
+          { success: false, error: setupRes.error || "Mật khẩu không hợp lệ." },
+          { status: 400 }
+        );
+      }
+
+      // Generate secure session token and prompt to enable 2FA
+      const sessionToken = crypto.randomBytes(32).toString("hex");
+      activeSessions.add(sessionToken);
+
+      const response = NextResponse.json({
+        success: true,
+        isInitialSetupDone: true,
+        require2FASetup: true,
+        message: "Thiết lập mật khẩu thành công! Vui lòng tiến hành kích hoạt 2FA TOTP để hoàn tất bảo vệ tài khoản.",
+      });
+
+      response.cookies.set("camcu_admin_auth", sessionToken, {
+        path: "/",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        sameSite: "lax",
+      });
+
+      return response;
+    }
+
+    // Action 2: Standard Login
+    if (!credential) {
       return NextResponse.json(
-        { success: false, error: "Vui lòng nhập mã PIN" },
+        { success: false, error: "Vui lòng nhập mật khẩu quản trị viên." },
         { status: 400 }
       );
     }
 
-    const isPinValid = verifyAdminPin(pin);
+    const isCredentialValid = verifyAdminCredentials(credential);
 
-    if (!isPinValid) {
+    if (!isCredentialValid) {
       tracker.count++;
       if (tracker.count >= 5) {
         tracker.lockedUntil = now + 15 * 60 * 1000; // 15 mins lockout
@@ -78,35 +154,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: `Mã PIN không chính xác (còn ${remaining} lần thử)`,
+          error: `Mật khẩu không chính xác (còn ${remaining} lần thử).`,
         },
         { status: 401 }
       );
     }
 
-    // PIN is valid, check if 2FA is enabled
+    // Password valid, check 2FA
     const totpConfig = getTotpConfig();
     if (totpConfig.totpEnabled) {
       if (!totpCode) {
-        // Prompt for 2FA TOTP code
         return NextResponse.json({
           success: false,
           require2FA: true,
-          message: "Vui lòng nhập mã xác thực 2FA (TOTP hoặc mã khôi phục)",
+          message: "Vui lòng nhập mã xác thực 6 số từ Google Authenticator (hoặc mã khôi phục).",
         });
       }
 
-      // Verify TOTP or Recovery Code
       const cleanCode = String(totpCode).trim();
       const isTotpValid = verifyTotpCode(totpConfig.totpSecret, cleanCode);
       const isRecoveryValid = !isTotpValid && verifyRecoveryCode(cleanCode);
 
       if (!isTotpValid && !isRecoveryValid) {
+        tracker.count++;
+        failMap.set(ip, tracker);
         return NextResponse.json(
           {
             success: false,
             require2FA: true,
-            error: "Mã 2FA hoặc mã khôi phục không chính xác",
+            error: "Mã xác thực 2FA hoặc mã khôi phục không chính xác.",
           },
           { status: 401 }
         );
@@ -116,15 +192,19 @@ export async function POST(request: NextRequest) {
     // Success: reset fail tracker
     failMap.delete(ip);
 
+    // Invalidate old session tokens and generate a fresh random cryptographically secure token
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+    activeSessions.add(sessionToken);
+
     const response = NextResponse.json({
       success: true,
-      message: "Xác thực danh tính thành công",
+      message: "Đăng nhập thành công",
     });
 
-    // Set 7-day session cookie
-    response.cookies.set("camcu_admin_auth", "authenticated_session_2610", {
+    response.cookies.set("camcu_admin_auth", sessionToken, {
       path: "/",
-      httpOnly: false,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 7,
       sameSite: "lax",
     });
@@ -139,18 +219,34 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * 2FA Status & Setup API
+ * 2FA Status & Setup API & Password change
  */
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, secret, code } = body;
+    const { action, secret, code, oldPassword, newPassword } = body;
 
     if (action === "status") {
       const config = getTotpConfig();
+      const needsFirstLogin = isFirstLoginRequired();
       return NextResponse.json({
         success: true,
         totpEnabled: config.totpEnabled,
+        needsFirstLogin,
+      });
+    }
+
+    if (action === "change_password") {
+      const changeRes = changeAdminPassword(oldPassword || "", newPassword || "");
+      if (!changeRes.success) {
+        return NextResponse.json(
+          { success: false, error: changeRes.error || "Không thể đổi mật khẩu." },
+          { status: 400 }
+        );
+      }
+      return NextResponse.json({
+        success: true,
+        message: "Đổi mật khẩu quản trị thành công!",
       });
     }
 
@@ -178,7 +274,7 @@ export async function PUT(request: NextRequest) {
       const isValid = verifyTotpCode(secret, String(code).trim());
       if (!isValid) {
         return NextResponse.json(
-          { success: false, error: "Mã xác thực 6 số không đúng. Vui lòng kiểm tra lại đồng hồ thiết bị." },
+          { success: false, error: "Mã xác thực 6 số không đúng. Vui lòng kiểm tra lại ứng dụng Authenticator." },
           { status: 400 }
         );
       }
@@ -202,11 +298,16 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: false, error: "Action không hợp lệ" }, { status: 400 });
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Lỗi xử lý 2FA" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Lỗi xử lý bảo mật" }, { status: 500 });
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
+  const cookie = request.cookies.get("camcu_admin_auth")?.value;
+  if (cookie) {
+    activeSessions.delete(cookie);
+  }
+
   const response = NextResponse.json({
     success: true,
     message: "Đã đăng xuất phiên làm việc",
