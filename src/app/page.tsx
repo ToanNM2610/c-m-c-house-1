@@ -3,47 +3,31 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import GoogleReviewsSection from "@/components/GoogleReviewsSection";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
-import StaggerText, { StaggerParagraph } from "@/components/motion/StaggerText";
-import MaskRevealImage from "@/components/motion/MaskRevealImage";
-import KenBurnsImage from "@/components/motion/KenBurnsImage";
+import RotatingSeal from "@/components/ui/RotatingSeal";
+import StampPhoto from "@/components/ui/StampPhoto";
+import ContourLines from "@/components/ui/ContourLines";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
 import { getStoreStatusI18n } from "@/lib/translations";
 import { trackEvent } from "@/lib/analytics";
 import {
   Compass,
-  Star,
-  DollarSign,
-  Leaf,
-  ArrowUpRight,
   ArrowRight,
-  UtensilsCrossed,
-  Thermometer,
-  Coffee,
   PhoneCall,
   MapPin,
   CheckCircle2,
-  Flower2,
   Waves,
-  Sparkles,
   Clock,
-  Maximize2,
-  Flame,
-  Wind
+  Sparkles,
+  Coffee,
+  Leaf,
+  Flower2,
+  ShieldCheck,
 } from "lucide-react";
-
-import {
-  getSharedData,
-  KEYS,
-  SharedAnnouncement,
-} from "@/lib/syncStore";
-import {
-  CAMCU_SETTINGS_KEY,
-  getStoredData,
-} from "@/utils/storage";
 
 const HOME_SPACE_PREVIEWS = [
   {
@@ -76,12 +60,10 @@ const HOME_SPACE_PREVIEWS = [
   },
 ];
 
-
-
 function MetricCounter({
   target,
   suffix = "",
-  duration = 1.4,
+  duration = 1.6,
 }: {
   target: number;
   suffix?: string;
@@ -98,7 +80,6 @@ function MetricCounter({
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
-      // easeOutQuart
       const ease = 1 - Math.pow(1 - progress, 4);
       setCount(Math.round(ease * target));
       if (progress < 1) {
@@ -114,6 +95,7 @@ function MetricCounter({
     <motion.span
       onViewportEnter={() => setHasStarted(true)}
       viewport={{ once: true, margin: "-10px" }}
+      className="inline-block"
     >
       {count}
       {suffix}
@@ -127,117 +109,8 @@ export default function HomePage() {
   const isEn = locale === "en";
   const i18nStatus = getStoreStatusI18n(storeStatus, locale);
 
-  const [settings, setSettings] = useState({
-    isOpen: true,
-    statusText: "Quán đang mở cửa đón khách",
-    hoursWeekday: "07:00 - 18:00",
-    hoursWeekend: "07:00 - 22:00",
-    hotline1: "038 285 1688",
-    topBanner: "🌿 Chào mừng đến với Cẩm Cù House • Giờ mở cửa: T2 - T5 (07:00 - 18:00) | T6 - CN (07:00 - 22:00)",
-  });
-  const [announcements, setAnnouncements] = useState<SharedAnnouncement[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Soft Parallax offset: di chuyển chậm hơn chữ phía trước 1 nhịp nhẹ (tối đa translateY 12-14px)
-  const heroParallaxOffset = Math.min(Math.round(scrollY * 0.04), 14);
-
-  const [introDone, setIntroDone] = useState(false);
-
-  useEffect(() => {
-    const handleIntroDone = () => setIntroDone(true);
-    document.addEventListener("camcu:intro-done", handleIntroDone);
-    if (
-      typeof window !== "undefined" &&
-      (sessionStorage.getItem("cc_intro") === "1" ||
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    ) {
-      setIntroDone(true);
-    }
-    return () => document.removeEventListener("camcu:intro-done", handleIntroDone);
-  }, []);
-
-  useEffect(() => {
-    // 1. Immediately hydrate from Shared Storage & Cookie (survives F5)
-    const storedSettings = getStoredData<typeof settings | null>(CAMCU_SETTINGS_KEY, null);
-    if (storedSettings) {
-      setSettings((prev) => ({ ...prev, ...storedSettings }));
-    }
-
-    const storedAnnouncements = getSharedData<SharedAnnouncement[]>(KEYS.ANNOUNCEMENTS, []);
-    setAnnouncements(storedAnnouncements);
-
-    // Real-time synchronization listener across tabs & windows
-    const handleSync = (e: Event) => {
-      const custom = e as CustomEvent;
-      if (custom.detail?.key === KEYS.ANNOUNCEMENTS) {
-        setAnnouncements(custom.detail.value || []);
-      }
-    };
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === KEYS.ANNOUNCEMENTS) {
-        const next = getSharedData<SharedAnnouncement[]>(KEYS.ANNOUNCEMENTS, []);
-        setAnnouncements(next);
-      }
-    };
-
-    window.addEventListener("camcu_sync_update", handleSync);
-    window.addEventListener("storage", handleStorage);
-
-    // 2. Fetch server updates (fallback if no local cookie is present)
-    async function loadData() {
-      try {
-        const [settingsRes, annRes] = await Promise.all([
-          fetch("/api/admin/settings").catch(() => null),
-          fetch("/api/admin/announcements").catch(() => null),
-        ]);
-
-        if (settingsRes && settingsRes.ok) {
-          const sData = await settingsRes.json();
-          if (sData.settings) {
-            setSettings((prev) => ({ ...prev, ...sData.settings }));
-          }
-        }
-
-        if (annRes && annRes.ok) {
-          const aData = await annRes.json();
-          if (aData.announcements && Array.isArray(aData.announcements)) {
-            const clientCookie = getSharedData<SharedAnnouncement[] | null>(KEYS.ANNOUNCEMENTS, null);
-            if (clientCookie === null) {
-              setAnnouncements(aData.announcements);
-            }
-          }
-        }
-      } catch (e) {
-        // Fallback gracefully
-      }
-    }
-    loadData();
-
-    return () => {
-      window.removeEventListener("camcu_sync_update", handleSync);
-      window.removeEventListener("storage", handleStorage);
-    };
-  }, []);
-
-  const pinnedNews =
-    announcements.find((a) => a.isPinned || a.isHighlighted) || announcements[0] || null;
 
   const handleOpenLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -245,526 +118,503 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-300 overflow-x-hidden w-full max-w-full">
-      <main className="pt-20 sm:pt-28 overflow-x-hidden">
-        {/* Dynamic Announcement Banner from Shared Cookie Store: Render only if pinnedNews exists */}
-        {pinnedNews && (
-          <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 pb-2">
-            <div className="bg-[#2D4233] dark:bg-[#16231A] text-white p-3.5 sm:p-5 rounded-2xl shadow-md border border-[#3E5C46]/50 dark:border-stone-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-              <div className="flex items-start sm:items-center gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 text-amber-300 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
+    <div className="bg-[var(--paper)] text-[var(--ink)] min-h-screen selection:bg-[var(--basalt)] selection:text-white transition-colors overflow-x-hidden">
+      <main className="overflow-x-hidden">
+        {/* =========================================================================
+            8.1.1 HERO (TOÀN MÀN HÌNH, NỀN ẢNH + LỚP TỐI, CHỮ CẨM CÙ PARALLAX)
+           ========================================================================= */}
+        <section className="relative min-h-[92vh] lg:min-h-screen flex flex-col justify-between pt-28 sm:pt-36 pb-12 sm:pb-16 overflow-hidden bg-[#1C1612] text-[#F4ECDD]">
+          {/* Ảnh nền phủ lớp tối tương phản cao rgba(20,14,10,0.65) */}
+          <div className="absolute inset-0 pointer-events-none select-none z-0">
+            <Image
+              src="/uploads/gallery/1788250253551-943009233.jpg"
+              alt="Cẩm Cù House bên bờ suối đá"
+              fill
+              priority
+              className="object-cover opacity-35 filter brightness-90 contrast-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#1C1612]/80 via-[#1C1612]/60 to-[#1C1612]" />
+            <ContourLines opacity={0.12} className="text-[#F4ECDD]" />
+          </div>
+
+          {/* Chữ khổng lồ "CẨM CÙ" Display XXL mờ .12 nằm giữa các lớp parallax */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
+            <span className="font-serif text-[20vw] font-bold text-[#F4ECDD] opacity-[0.08] tracking-widest whitespace-nowrap -translate-y-8">
+              CẨM CÙ
+            </span>
+          </div>
+
+          {/* Nội dung Hero: 2 Cột */}
+          <div className="container-unified relative z-10 my-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+              {/* Cột trái (7 cols): Tọa độ mono + H1 CẨM CÙ HOUSE + Khẩu hiệu Fraunces nghiêng màu flower */}
+              <div className="lg:col-span-7 flex flex-col gap-4 sm:gap-6 text-left">
+                {/* Nhãn tọa độ mono */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2A201A] border border-[rgba(244,236,221,0.15)] font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[var(--flower)] w-fit shadow-xs">
+                  <Compass className="w-3.5 h-3.5 text-[var(--flower)]" />
+                  <span>11.99° N · 107.69° E · ĐỘ CAO 800M+</span>
                 </div>
-                <div className="flex flex-col min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-800 text-emerald-200 text-[10px] font-bold uppercase tracking-wider">
-                      {pinnedNews.category === "event" || pinnedNews.type === "event"
-                        ? (isEn ? "Special Event" : "Sự Kiện")
-                        : pinnedNews.category === "special" || pinnedNews.type === "special"
-                        ? (isEn ? "Specialty" : "Món Đặc Sản")
-                        : dict.common.noticeBoard}
-                    </span>
-                    <span className="text-sm sm:text-base font-bold text-white truncate">
-                      {pinnedNews.title}
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-200 mt-0.5 line-clamp-1">
-                    {pinnedNews.content}
+
+                {/* H1 CẨM CÙ HOUSE */}
+                <div className="flex flex-col gap-1 sm:gap-2">
+                  <h1 className="font-serif text-[clamp(44px,7vw,104px)] font-bold text-[#F4ECDD] tracking-tight leading-[1.05]">
+                    CẨM CÙ HOUSE
+                  </h1>
+                  <p className="font-serif text-[clamp(22px,3.5vw,42px)] italic font-semibold text-[var(--flower)] leading-[1.2]">
+                    Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
                   </p>
                 </div>
+
+                {/* Mô tả 18px */}
+                <p className="text-[17px] sm:text-[18px] text-[#C7BBA8] leading-[1.7] max-w-[58ch]">
+                  {dict.home.heroDescription}
+                </p>
+
+                {/* 2 Nút: Khám Phá Góc Suối (chính) / Xem Thực Đơn (phụ) */}
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <Link
+                    href="/space"
+                    className="btn-primary min-h-[48px] px-7 text-[15px] font-semibold"
+                  >
+                    <span>{dict.common.exploreStream}</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </Link>
+
+                  <Link
+                    href="/menu"
+                    onClick={() => trackEvent("view_menu")}
+                    className="btn-secondary min-h-[48px] px-7 text-[15px] font-semibold !border-[rgba(244,236,221,0.35)] !text-[#F4ECDD] hover:!bg-[#F4ECDD] hover:!text-[#1C1612]"
+                  >
+                    <span>{dict.common.viewMenu}</span>
+                  </Link>
+                </div>
               </div>
-              <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                <Link
-                  href="/menu"
-                  className="btn-press px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#F9F8F3] text-[#2D4233] text-xs font-bold hover:bg-white transition-all shadow-sm"
-                >
-                  {dict.common.viewMenu}
-                </Link>
+
+              {/* Cột phải (5 cols): Ảnh chính trong khung vòm nghiêng nhẹ + Tem tròn xoay */}
+              <div className="lg:col-span-5 relative flex items-center justify-center">
+                <div className="relative w-full max-w-[380px] sm:max-w-[420px] aspect-[3/4] frame-arch border-2 sm:border-4 border-[rgba(244,236,221,0.18)] shadow-2xl rotate-[-1.5deg] hover:rotate-0 transition-transform duration-500 overflow-hidden bg-[#2A201A]">
+                  <Image
+                    src="/uploads/gallery/1788250253551-943009233.jpg"
+                    alt="Chòi gỗ mộc mạc bên bờ suối Cẩm Cù House"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 420px"
+                    priority
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1C1612]/80 via-transparent to-transparent flex items-end p-5">
+                    <span className="font-mono text-xs text-[var(--flower)] uppercase tracking-wider">
+                      KHÔNG GIAN SUỐI ĐÁ TỰ NHIÊN
+                    </span>
+                  </div>
+                </div>
+
+                {/* Tem tròn xoay đặt đè cạnh góc ảnh vòm */}
+                <div className="absolute -bottom-6 -right-3 sm:-bottom-8 sm:-right-6 z-20">
+                  <RotatingSeal size={120} className="text-[#F4ECDD]" />
+                </div>
               </div>
-            </div>
-          </section>
-        )}
-
-        {/* HERO SECTION - WARM CREAM BEIGE / DARK FOREST NATURE */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-10 pb-12 sm:pb-16 text-center w-full">
-          {/* Eyebrow Coordinate Badge & Headlines (Stagger 1: 50ms) */}
-          <div className="animate-fade-up-1">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[var(--surface-2)] text-[12px] tracking-[0.12em] uppercase font-semibold text-[var(--accent-green)] mb-3 sm:mb-4 shadow-sm border border-[var(--border)]">
-              <Compass className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-              <span>{dict.common.coordinates}</span>
-            </div>
-
-            {/* Hero Headlines: Line 1 Kem, Line 2 Cam đất */}
-            <div className="mb-3 sm:mb-4 max-w-[900px] mx-auto text-balance">
-              <StaggerText
-                as="h1"
-                lines={[dict.home.heroTitleLine1, dict.home.heroTitleLine2]}
-                stagger={0.1}
-                className="font-serif font-bold tracking-tight text-balance max-w-[900px] mx-auto"
-                lineClassNames={[
-                  "text-[clamp(40px,6vw,76px)] leading-[1.15] text-[var(--text)]",
-                  "text-[clamp(24px,3.8vw,44px)] leading-[1.25] text-[var(--accent-clay)] font-semibold mt-2",
-                ]}
-              />
-            </div>
-
-            {/* Subtitle Description */}
-            <div className="max-w-2xl mx-auto mb-4 sm:mb-6 px-2">
-              <StaggerParagraph
-                text={dict.home.heroDescription}
-                className="text-[var(--text-muted)] text-[15px] sm:text-[17px] leading-[1.7] max-w-[65ch] mx-auto"
-                delay={0.2}
-              />
             </div>
           </div>
 
-          {/* 3 Trust Badges & 4 CTA Buttons (Stagger 2: 120ms) */}
-          <div className="animate-fade-up-2">
-            {/* 3 Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-2 my-3 sm:my-4">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--surface)] shadow-sm border border-[var(--border)] text-[12px] font-semibold text-[var(--text)]">
-                <Star className="w-3.5 h-3.5 fill-[#E0B872] text-[#E0B872]" />
-                {dict.home.badgeRecommended}
-              </span>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--surface)] shadow-sm border border-[var(--border)] text-[12px] font-semibold text-[var(--text)]">
-                <DollarSign className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                {dict.home.badgePrice}
-              </span>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--surface)] shadow-sm border border-[var(--border)] text-[12px] font-semibold text-[var(--text)]">
-                <Leaf className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                {dict.home.badgeOrganic}
-              </span>
-            </div>
-
-            {/* 4 CTA Buttons: Khám Phá Góc Suối chính, Xem Thực Đơn, Hotline, Chỉ Đường */}
-            <div className="flex flex-wrap items-center justify-center gap-3 max-w-2xl mx-auto mb-6 sm:mb-8">
-              <Link
-                href="/space"
-                className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md"
-              >
-                <ArrowUpRight className="w-4 h-4" />
-                <span>{dict.common.exploreStream}</span>
-              </Link>
-              <Link
-                href="/menu"
-                onClick={() => trackEvent("view_menu")}
-                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
-              >
-                <UtensilsCrossed className="w-4 h-4 text-[var(--accent-green)]" />
-                <span>{dict.common.viewMenu}</span>
-              </Link>
-              <a
-                href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                onClick={() => trackEvent("click_call")}
-                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
-              >
-                <PhoneCall className="w-4 h-4 text-[#CC7755]" />
-                <span>Hotline: {settings.hotline1}</span>
+          {/* Dưới cùng Hero: Thanh pill kính mờ (trạng thái · giờ hôm nay · Hotline · Chỉ đường) */}
+          <div className="container-unified relative z-10 pt-8">
+            <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-5 px-5 py-2.5 rounded-full bg-[#2A201A]/90 backdrop-blur-md border border-[rgba(244,236,221,0.14)] font-mono text-[12px] sm:text-[13px] text-[#F4ECDD] shadow-lg mx-auto lg:mx-0">
+              <div className="flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full animate-pulse ${storeStatus.isOpen ? "bg-[#5E7A3E]" : "bg-[var(--basalt)]"}`} />
+                <span className="font-semibold text-[var(--flower)]">
+                  {storeStatus.isOpen ? "ĐANG MỞ CỬA" : "ĐÃ ĐÓNG CỬA"}
+                </span>
+              </div>
+              <span className="text-[rgba(244,236,221,0.3)]">•</span>
+              <div className="flex items-center gap-1.5 text-[#C7BBA8]">
+                <Clock className="w-3.5 h-3.5 text-[var(--stream)]" />
+                <span>
+                  {isEn ? `07:00 – ${storeStatus.closingTime} Today` : `07:00 – ${storeStatus.closingTime} Hôm nay`}
+                </span>
+              </div>
+              <span className="text-[rgba(244,236,221,0.3)] hidden sm:inline">•</span>
+              <a href="tel:0382851688" className="hover:text-[var(--basalt)] flex items-center gap-1.5 font-semibold">
+                <PhoneCall className="w-3.5 h-3.5 text-[var(--basalt)]" />
+                <span>038 285 1688</span>
               </a>
+              <span className="text-[rgba(244,236,221,0.3)] hidden md:inline">•</span>
               <a
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackEvent("click_directions")}
-                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold"
+                className="hover:text-[var(--stream)] flex items-center gap-1.5 text-[#C7BBA8]"
               >
-                <MapPin className="w-4 h-4 text-[var(--accent-green)]" />
-                <span>{dict.common.getDirections}</span>
+                <MapPin className="w-3.5 h-3.5 text-[var(--stream)]" />
+                <span>Chỉ đường</span>
               </a>
             </div>
           </div>
-
-          {/* Visual Hero Card & Atmospheric Meter (Stagger 3: 200ms) - bo 24px, mở bằng clip-path */}
-          <div className="animate-fade-up-3">
-            <motion.div
-              initial={{ clipPath: "inset(10% 6% 10% 6% round 24px)", opacity: 0.8 }}
-              whileInView={{ clipPath: "inset(0% 0% 0% 0% round 24px)", opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] as const, delay: 0.15 }}
-              onClick={() => handleOpenLightbox(0)}
-              style={{ transform: `translateY(${heroParallaxOffset}px)` }}
-              className="group relative cursor-pointer max-w-5xl mx-auto aspect-[16/10] sm:aspect-[16/9] md:h-[480px] rounded-[24px] overflow-hidden shadow-xl sm:shadow-2xl border border-[var(--border)] transform-gpu transition-transform duration-100 ease-out will-change-transform mb-5 sm:mb-8"
-            >
-              <KenBurnsImage
-                src="/uploads/gallery/1788250253551-943009233.jpg"
-                alt={dict.home.heroCardTitle}
-                overlayGradient={false}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/85 via-stone-950/20 to-transparent flex items-end justify-between p-4 sm:p-8">
-                <div className="text-left text-white max-w-xl">
-                  <span className="text-[12px] uppercase font-bold tracking-[0.12em] text-[var(--accent-green)]">
-                    {dict.home.streamEcoSpace}
-                  </span>
-                  <p className="text-base sm:text-2xl font-serif font-bold mt-0.5 sm:mt-1 drop-shadow-sm text-[#F3EBD8]">
-                    {dict.home.heroCardTitle}
-                  </p>
-                  <p className="text-[14px] sm:text-[15px] text-[rgba(243,235,216,0.75)] mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2">
-                    {dict.home.heroCardDesc}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-white text-[12px] font-semibold group-hover:bg-[#CC7755] group-hover:text-[#1B120E] transition-colors shrink-0">
-                  <Maximize2 className="w-3.5 h-3.5" />
-                  <span className="hidden xs:inline">{dict.common.viewLarger}</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Dải trạng thái: một hàng pill nhỏ (nhiệt độ • không gian • giờ hôm nay) */}
-            <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-4 py-2 rounded-full bg-[var(--surface-2)] text-[var(--text)] border border-[var(--border)] text-[12px] sm:text-[13px] shadow-sm">
-              <div className="flex items-center gap-1.5 text-[var(--accent-green)] font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="flex items-center gap-1">
-                  <Thermometer className="w-3.5 h-3.5" /> 23°C • {isEn ? "Gentle Breeze" : "Gió Mát Nhẹ"}
-                </span>
-              </div>
-              <span className="text-[var(--text-muted)]">•</span>
-              <div className="flex items-center gap-1.5 font-medium text-[var(--text)]">
-                <Waves className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                <span>{isEn ? "Crystal Stream Echo" : "Suối Reo Trong Lành"}</span>
-              </div>
-              <span className="text-[var(--text-muted)]">•</span>
-              <div className="flex items-center gap-1 font-semibold text-[var(--accent-clay)]">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{isEn ? `07:00 – ${storeStatus.closingTime || "18:00"} Today` : `07:00 – ${storeStatus.closingTime || "18:00"} Hôm Nay`}</span>
-              </div>
-            </div>
-          </div>
         </section>
 
-        {/* INTRO SECTION: ARTISTIC STORY & BENTO VISUAL COLLAGE */}
-        <section id="story-intro" className="container-unified section-unified border-b border-[var(--border)]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-            {/* Left Column: Artistic Narrative & Highlight Metrics (7 cols on lg) */}
-            <div className="lg:col-span-7 flex flex-col gap-5 sm:gap-6">
-              {/* Badge */}
-              <div className="badge-unified w-fit">
-                <Leaf className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                <span>{dict.home.introBadge}</span>
-              </div>
-
-              {/* Title */}
-              <h2 className="font-serif text-[clamp(28px,3.8vw,48px)] font-bold text-[var(--text)] tracking-tight leading-[1.2]">
-                {dict.home.introTitle}
-              </h2>
-
-              {/* Story Paragraph */}
-              <p className="text-[15px] sm:text-[16px] text-[var(--text-muted)] leading-relaxed max-w-[65ch]">
-                {dict.home.introDesc}
-              </p>
-
-              {/* 3 Highlight Metrics Grid with Live Counters: nền --surface-2, số Playfair 40px cam đất */}
-              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
-                <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Compass className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                    <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Elevation" : "Cao độ"}</span>
-                  </div>
-                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[var(--accent-clay)] tracking-tight leading-none">
-                    <MetricCounter target={800} suffix="m+" />
-                  </span>
-                  <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
-                    {dict.home.introMetric1Label}
-                  </span>
-                </div>
-
-                <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Flame className="w-3.5 h-3.5 text-[var(--accent-clay)]" />
-                    <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Natural" : "Mộc mạc"}</span>
-                  </div>
-                  <span className="font-serif text-[28px] sm:text-[40px] font-bold text-[var(--accent-clay)] tracking-tight leading-none">
-                    <MetricCounter target={100} suffix="%" />
-                  </span>
-                  <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
-                    {dict.home.introMetric2Label}
-                  </span>
-                </div>
-
-                <div className="card-accent !p-3.5 sm:!p-4 flex flex-col justify-center">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Wind className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                    <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-semibold">{isEn ? "Purity" : "Trong lành"}</span>
-                  </div>
-                  <div className="font-serif text-[28px] sm:text-[40px] font-bold text-[var(--accent-clay)] tracking-tight leading-none flex items-baseline gap-1">
-                    <MetricCounter target={0} suffix="" /> <span className="text-xs sm:text-sm font-sans font-normal text-[var(--text-muted)]">{isEn ? "dust" : "khói bụi"}</span>
-                  </div>
-                  <span className="text-[11px] sm:text-xs text-[var(--text-muted)] font-medium mt-1.5 line-clamp-1">
-                    {dict.home.introMetric3Label}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="pt-2">
-                <Link
-                  href="/about"
-                  className="btn-secondary min-h-[44px] px-6 text-sm font-semibold inline-flex items-center gap-2 group"
-                >
-                  <span>{dict.home.introCta}</span>
-                  <ArrowRight className="w-4 h-4 text-[var(--accent-clay)] group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Column: Bento Artistic Dual Photo Frame with Parallax Floating */}
-            <div className="lg:col-span-5 relative mt-4 lg:mt-0">
-              {/* Primary Large Photo: Natural Pebble Stream */}
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="relative rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/11] shadow-2xl border-2 sm:border-4 border-[var(--border)] bg-[var(--surface-2)] group"
-              >
-                <img
-                  src="/uploads/gallery/1788250253562-580915883.jpg"
-                  alt={dict.home.introPhotoMainCaption}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out transform-gpu"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-transparent to-transparent flex items-end p-4 sm:p-5">
-                  <div className="flex items-center gap-1.5 text-xs text-white/95 font-medium drop-shadow-sm">
-                    <Waves className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
-                    <span className="truncate">{dict.home.introPhotoMainCaption}</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Secondary Overlapping Photo: Steaming Salt Coffee / Parallax hover floating */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                whileHover={{ y: -8, scale: 1.03 }}
-                className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-1/2 sm:w-5/12 rounded-2xl overflow-hidden aspect-[4/3] shadow-[0_16px_36px_rgba(0,0,0,0.35)] border-2 sm:border-4 border-[var(--border)] bg-[var(--surface-2)] group transform-gpu transition-all duration-300"
-              >
-                <img
-                  src="/uploads/gallery/1788250253554-875120458.jpg"
-                  alt={dict.home.introPhotoSubCaption}
-                  loading="lazy"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent flex items-end p-2.5 sm:p-3">
-                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-amber-200 font-semibold truncate">
-                    <Coffee className="w-3 h-3 text-amber-300 shrink-0" />
-                    <span className="truncate">{isEn ? "Firewood Coffee" : "Cà phê mộc"}</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Nature Badge Floating Indicator */}
-              <div className="absolute -top-3 -left-2 sm:-top-4 sm:-left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)] backdrop-blur-md border border-[var(--border)] shadow-lg text-[10px] sm:text-xs font-bold text-[var(--accent-green)]">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>100% Pure Highland Air</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 1: 4 PILLARS - VÌ SAO CHỌN CẨM CÙ HOUSE */}
-        <section className="container-unified section-unified">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div>
-              <div className="badge-unified mb-3">
-                <Flower2 className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-                <span>{isEn ? "Highland Authenticity" : "Nét Đẹp Bản Địa"}</span>
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl text-[var(--text)] font-bold tracking-tight">
-                {dict.home.pillarsHeading}
-              </h2>
-            </div>
-            <p className="text-[15px] sm:text-[16px] text-[var(--text-muted)] max-w-md leading-relaxed">
-              {dict.home.pillarsSubheading}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1: Hương vị truyền thống */}
-            <div className="card-unified flex flex-col justify-between group">
-              <div>
-                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Coffee className="w-6 h-6" />
-                </div>
-                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
-                  {dict.home.pillar2Title}
-                </h3>
-                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
-                  {dict.home.pillar2Desc}
-                </p>
-              </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
-                {isEn ? "Artisanal Roasting" : "Hương vị truyền thống"}
+        {/* =========================================================================
+            8.1.2 DẢI CHỮ CHẠY (MARQUEE NỀN BAZAN, CHỮ KEM MONO)
+           ========================================================================= */}
+        <section className="w-full bg-[var(--basalt)] text-[#FFFFFF] py-3.5 overflow-hidden border-y border-[var(--basalt)] select-none">
+          <div className="animate-marquee-track flex whitespace-nowrap font-mono text-[13px] sm:text-[14px] font-bold tracking-[0.16em] uppercase">
+            {[...Array(6)].map((_, i) => (
+              <span key={i} className="flex items-center mx-4">
+                <span>ROBUSTA RANG CỦI</span>
+                <span className="mx-3 opacity-60">·</span>
+                <span>SUỐI ĐÁ</span>
+                <span className="mx-3 opacity-60">·</span>
+                <span>800M+</span>
+                <span className="mx-3 opacity-60">·</span>
+                <span>100% ĐỀ XUẤT HÀI LÒNG</span>
+                <span className="mx-3 opacity-60">·</span>
+                <span>GIÁ BÌNH DÂN 20K–45K</span>
+                <span className="mx-3 opacity-60">·</span>
+                <span>NGUYÊN LIỆU XANH SẠCH</span>
+                <span className="mx-3 opacity-60">·</span>
               </span>
-            </div>
-
-            {/* Card 2: Thiên nhiên 100% */}
-            <div className="card-unified flex flex-col justify-between group">
-              <div>
-                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Waves className="w-6 h-6" />
-                </div>
-                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
-                  {dict.home.pillar1Title}
-                </h3>
-                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
-                  {dict.home.pillar1Desc}
-                </p>
-              </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
-                {isEn ? "100% Pure Nature" : "Thiên nhiên 100%"}
-              </span>
-            </div>
-
-            {/* Card 3: Hoa Cẩm Cù Nở Rộ */}
-            <div className="card-unified flex flex-col justify-between group">
-              <div>
-                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Flower2 className="w-6 h-6" />
-                </div>
-                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
-                  {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
-                </h3>
-                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
-                  {isEn
-                    ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
-                    : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
-                </p>
-              </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
-                {isEn ? "Cafe Emblem" : "Biểu tượng quán"}
-              </span>
-            </div>
-
-            {/* Card 4: Bảo tồn tự nhiên */}
-            <div className="card-unified flex flex-col justify-between group">
-              <div>
-                <div className="w-12 h-12 rounded-full bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                  <Leaf className="w-6 h-6" />
-                </div>
-                <h3 className="text-[22px] font-bold text-[var(--text)] mb-2 group-hover:text-[var(--accent-clay)] transition-colors">
-                  {dict.home.pillar4Title}
-                </h3>
-                <p className="text-[15px] font-medium text-[var(--text-muted)] leading-relaxed mb-5">
-                  {dict.home.pillar4Desc}
-                </p>
-              </div>
-              <span className="inline-flex items-center w-fit px-3 py-1 rounded-full text-[12px] uppercase tracking-[0.12em] font-semibold bg-[var(--surface-2)] text-[var(--accent-green)] border border-[var(--border)]">
-                {isEn ? "Nature Preserved" : "Bảo tồn tự nhiên"}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* SECTION 2: SPACE PREVIEWS (4 ảnh tỷ lệ 4:5, chữ trên nền gradient tối đáy ảnh) */}
-        <section className="container-unified section-unified">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--surface-2)] border border-[var(--border)] text-[var(--accent-green)] text-[12px] font-semibold uppercase tracking-[0.12em] mb-3">
-                <Waves className="w-3.5 h-3.5" />
-                <span>{isEn ? "Open Stream Space" : "Không Gian Mở Bên Bờ Suối"}</span>
-              </div>
-              <StaggerText
-                as="h2"
-                lines={[isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"]}
-                className="font-serif text-3xl sm:text-4xl text-[var(--text)] font-bold tracking-tight"
-              />
-            </div>
-            <Link
-              href="/space"
-              className="btn-press-sm inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-green)] hover:text-[var(--accent-clay)] transition-colors"
-            >
-              <span className="link-hover-underline">{isEn ? "View all 30+ photo angles" : "Xem toàn bộ 30+ góc ảnh"}</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {/* Grid 4 ảnh tỷ lệ 4:5 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {HOME_SPACE_PREVIEWS.map((photo, idx) => (
-              <div
-                key={photo.url}
-                onClick={() => handleOpenLightbox(idx)}
-                className="group relative cursor-pointer rounded-[20px] overflow-hidden aspect-[4/5] bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--border-hover)] transition-all duration-300 hover:-translate-y-[2px] active:scale-[0.98] transform-gpu"
-              >
-                <MaskRevealImage
-                  src={photo.url}
-                  alt={photo.title}
-                  aspectRatio="aspect-[4/5]"
-                  delay={0.08 * idx}
-                />
-                <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-stone-950/90 via-stone-950/30 to-transparent flex flex-col justify-end p-4 text-white">
-                  <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-green)] mb-0.5 transform transition-transform duration-300 group-hover:-translate-y-0.5">
-                    {photo.subtitle}
-                  </span>
-                  <h3 className="font-serif text-[17px] font-bold text-[#F3EBD8] line-clamp-1 group-hover:text-[var(--accent-clay)] transition-colors">
-                    {photo.title}
-                  </h3>
-                  <p className="text-[14px] sm:text-[15px] font-medium text-[rgba(243,235,216,0.72)] line-clamp-1 mt-0.5 transition-transform duration-300 group-hover:-translate-y-0.5">
-                    {photo.caption}
-                  </p>
-                </div>
-
-                <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/50 text-white/80 group-hover:text-white group-hover:bg-[#CC7755] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
-                  <Maximize2 className="w-3.5 h-3.5" />
-                </div>
-              </div>
             ))}
           </div>
         </section>
 
-        {/* SECTION 3: AUTHENTIC GOOGLE MAPS REVIEWS & TESTIMONIALS */}
-        <GoogleReviewsSection isEn={isEn} />
+        {/* =========================================================================
+            8.1.3 GIỚI THIỆU: "Nơi thời gian lắng lại cùng tiếng suối róc rách" (5/7)
+           ========================================================================= */}
+        <section className="container-unified section-unified border-b border-[var(--line)]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            {/* Trái (5 cols): Chữ + Nút "Đọc trọn vẹn câu chuyện →" */}
+            <div className="lg:col-span-5 flex flex-col gap-5 sm:gap-6">
+              <div className="badge-unified w-fit">
+                <Leaf className="w-3.5 h-3.5 text-[var(--stream)]" />
+                <span>{dict.home.introBadge}</span>
+              </div>
 
-        {/* SECTION 4: KHỐI KÊU GỌI CUỐI (nền --surface-2, tiêu đề 36px + địa chỉ + 2 nút) */}
-        <section className="container-unified section-unified">
-          <div className="card-accent grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 xl:col-span-8">
-              <span className="text-[var(--accent-green)] text-[12px] uppercase tracking-[0.12em] font-semibold">
-                {isEn ? "Warmest Hospitality" : "Chào Đón Bạn Ghé Thăm"}
-              </span>
-              <h2 className="font-serif text-[clamp(26px,3.5vw,36px)] font-bold mt-2 mb-4 leading-tight text-[var(--text)]">
-                {isEn ? "Visit Cẩm Cù House & Savor Coffee by the Stream" : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
+              <h2 className="font-serif text-[clamp(28px,3.8vw,48px)] font-bold text-[var(--ink)] tracking-tight leading-[1.15]">
+                {dict.home.introTitle}
               </h2>
-              <p className="text-[15px] sm:text-[16px] font-medium text-[var(--text-muted)] leading-relaxed mb-6">
-                {dict.common.addressFull}. {i18nStatus.scheduleText}.
+
+              <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-[1.7] max-w-[58ch]">
+                {dict.home.introDesc}
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[var(--accent-green)]">
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
-                  {isEn ? "Direct car access" : "Đường ô tô vào tận nơi"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
-                  {isEn ? "Free spacious parking" : "Chỗ đỗ xe rộng rãi miễn phí"}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--accent-green)]" />
-                  {isEn ? "High-speed WiFi" : "Wifi cáp quang tốc độ cao"}
-                </span>
+
+              <div>
+                <Link
+                  href="/about"
+                  className="btn-secondary inline-flex items-center gap-2 group"
+                >
+                  <span>{dict.home.introCta}</span>
+                  <ArrowRight className="w-4 h-4 text-[var(--basalt)] group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
             </div>
 
-            <div className="lg:col-span-5 xl:col-span-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-start lg:justify-end gap-3.5 shrink-0 w-full">
-              <a
-                href={`tel:${settings.hotline1.replace(/\s+/g, "")}`}
-                className="btn-primary min-h-[44px] px-6 text-sm font-bold shadow-md whitespace-nowrap text-center"
-              >
-                <PhoneCall className="w-4 h-4 text-[#1B120E] shrink-0" />
-                <span>
-                  Hotline: {settings.hotline1}
+            {/* Phải (7 cols): 2 Ảnh chồng (Một vòm + Một tem ảnh) */}
+            <div className="lg:col-span-7 relative flex justify-center lg:justify-end items-center">
+              {/* Ảnh 1: Khung vòm chính bên suối đá */}
+              <div className="relative w-full max-w-[420px] aspect-[4/5] frame-arch border-2 border-[var(--line)] shadow-xl overflow-hidden bg-[var(--paper-2)]">
+                <Image
+                  src="/uploads/gallery/1788250253562-580915883.jpg"
+                  alt="Dòng suối đá Cẩm Cù House"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 420px"
+                  className="object-cover"
+                />
+              </div>
+
+              {/* Ảnh 2: Tem ảnh chồng lên (StampPhoto) xoay 2 độ */}
+              <div className="absolute -bottom-6 -left-2 sm:-bottom-8 sm:left-4 w-[220px] sm:w-[280px] z-10">
+                <StampPhoto
+                  src="/uploads/gallery/1788250253554-875120458.jpg"
+                  alt="Ly cà phê rang củi mộc"
+                  title="Cà phê rang củi"
+                  coordinates="800M+ ĐẮK NÔNG"
+                  rotate="left"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Dưới: 3 Chỉ số khổng lồ (Fraunces 96px, đếm số) "800m+ / 100% / 0 khói bụi" kèm nhãn mono */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16 sm:pt-24 mt-8 border-t border-[var(--line)]">
+            <div className="flex flex-col items-start">
+              <span className="font-serif text-[clamp(56px,8vw,96px)] font-bold text-[var(--basalt)] tracking-tight leading-none">
+                <MetricCounter target={800} suffix="m+" />
+              </span>
+              <span className="font-mono text-[13px] font-semibold uppercase tracking-wider text-[var(--ink-muted)] mt-2">
+                {dict.home.introMetric1Label}
+              </span>
+            </div>
+
+            <div className="flex flex-col items-start">
+              <span className="font-serif text-[clamp(56px,8vw,96px)] font-bold text-[var(--basalt)] tracking-tight leading-none">
+                <MetricCounter target={100} suffix="%" />
+              </span>
+              <span className="font-mono text-[13px] font-semibold uppercase tracking-wider text-[var(--ink-muted)] mt-2">
+                {dict.home.introMetric2Label}
+              </span>
+            </div>
+
+            <div className="flex flex-col items-start">
+              <div className="font-serif text-[clamp(56px,8vw,96px)] font-bold text-[var(--basalt)] tracking-tight leading-none flex items-baseline gap-2">
+                <MetricCounter target={0} suffix="" />
+                <span className="text-xl sm:text-2xl font-serif text-[var(--ink-muted)] font-normal">khói bụi</span>
+              </div>
+              <span className="font-mono text-[13px] font-semibold uppercase tracking-wider text-[var(--ink-muted)] mt-2">
+                {dict.home.introMetric3Label}
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================================
+            8.1.4 VÌ SAO CHỌN CẨM CÙ HOUSE? (4 THẺ XẾP CHỒNG DÍNH - STICKY STACK)
+           ========================================================================= */}
+        <section className="container-unified section-unified">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+            <div>
+              <div className="badge-unified mb-3">
+                <Flower2 className="w-3.5 h-3.5 text-[var(--stream)]" />
+                <span>{isEn ? "Highland Authenticity" : "Nét Đẹp Bản Địa"}</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[var(--ink)] tracking-tight">
+                {dict.home.pillarsHeading}
+              </h2>
+            </div>
+            <p className="text-[16px] text-[var(--ink-muted)] max-w-md leading-relaxed">
+              {dict.home.pillarsSubheading}
+            </p>
+          </div>
+
+          {/* 4 Thẻ xếp chồng dính (Sticky stack 01–04) */}
+          <div className="flex flex-col gap-6 relative">
+            {/* Thẻ 01: Nền paper-2 */}
+            <div className="sticky top-28 w-full rounded-[28px] p-8 sm:p-12 bg-[var(--paper-2)] text-[var(--ink)] border border-[var(--line)] shadow-lg transition-transform">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-[var(--card)] text-[var(--basalt)] flex items-center justify-center border border-[var(--line)] shadow-xs">
+                    <Coffee className="w-6 h-6" />
+                  </div>
+                  <span className="font-mono text-xs uppercase tracking-widest text-[var(--stream)] font-bold">
+                    {isEn ? "ARTISANAL ROASTING" : "HƯƠNG VỊ TRUYỀN THỐNG"}
+                  </span>
+                </div>
+                <span className="font-serif text-5xl sm:text-6xl font-bold text-[var(--basalt)] opacity-80">
+                  01
                 </span>
-              </a>
-              <a
-                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary min-h-[44px] px-6 text-sm font-semibold whitespace-nowrap text-center"
-              >
-                <MapPin className="w-4 h-4 text-[var(--accent-green)] shrink-0" />
-                <span>{dict.common.getDirections}</span>
-              </a>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-4xl font-bold mb-3">
+                {dict.home.pillar2Title}
+              </h3>
+              <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] max-w-3xl leading-relaxed">
+                {dict.home.pillar2Desc}
+              </p>
+            </div>
+
+            {/* Thẻ 02: Nền stream tối */}
+            <div className="sticky top-32 w-full rounded-[28px] p-8 sm:p-12 bg-[var(--stream)] text-white border border-[rgba(255,255,255,0.15)] shadow-xl transition-transform">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white/10 text-emerald-200 flex items-center justify-center border border-white/20">
+                    <Waves className="w-6 h-6" />
+                  </div>
+                  <span className="font-mono text-xs uppercase tracking-widest text-emerald-200 font-bold">
+                    {isEn ? "100% PURE NATURE" : "THIÊN NHIÊN NGUYÊN BẢN"}
+                  </span>
+                </div>
+                <span className="font-serif text-5xl sm:text-6xl font-bold text-white opacity-80">
+                  02
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-4xl font-bold mb-3 text-white">
+                {dict.home.pillar1Title}
+              </h3>
+              <p className="text-[16px] sm:text-[18px] text-emerald-100/90 max-w-3xl leading-relaxed">
+                {dict.home.pillar1Desc}
+              </p>
+            </div>
+
+            {/* Thẻ 03: Nền bazan */}
+            <div className="sticky top-36 w-full rounded-[28px] p-8 sm:p-12 bg-[var(--basalt)] text-white border border-[rgba(255,255,255,0.15)] shadow-2xl transition-transform">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center border border-white/20">
+                    <Flower2 className="w-6 h-6" />
+                  </div>
+                  <span className="font-mono text-xs uppercase tracking-widest text-white/90 font-bold">
+                    {isEn ? "HOYA FLOWER EMBLEM" : "BIỂU TƯỢNG HOA CẨM CÙ"}
+                  </span>
+                </div>
+                <span className="font-serif text-5xl sm:text-6xl font-bold text-white opacity-80">
+                  03
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-4xl font-bold mb-3 text-white">
+                {isEn ? "Blooming Hoya Flowers" : "Hoa Cẩm Cù Nở Rộ"}
+              </h3>
+              <p className="text-[16px] sm:text-[18px] text-white/90 max-w-3xl leading-relaxed">
+                {isEn
+                  ? "Star-shaped hoya blossoms symbolizing resilience across the high plateau, framing every pathway along our deck."
+                  : "Loài hoa Hoya hình ngôi sao biểu trưng cho sức sống dẻo dai của đất trời cao nguyên, phủ kín lối đi quanh hiên nhà."}
+              </p>
+            </div>
+
+            {/* Thẻ 04: Nền charcoal */}
+            <div className="sticky top-40 w-full rounded-[28px] p-8 sm:p-12 bg-[#1C1612] text-[#F4ECDD] border border-[rgba(244,236,221,0.14)] shadow-2xl transition-transform">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-[#2A201A] text-[var(--stream)] flex items-center justify-center border border-[rgba(244,236,221,0.14)]">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <span className="font-mono text-xs uppercase tracking-widest text-[var(--flower)] font-bold">
+                    {isEn ? "NATURE PRESERVED" : "BẢO TỒN DÒNG NƯỚC SUỐI"}
+                  </span>
+                </div>
+                <span className="font-serif text-5xl sm:text-6xl font-bold text-[var(--flower)] opacity-80">
+                  04
+                </span>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-4xl font-bold mb-3 text-[#F4ECDD]">
+                {dict.home.pillar4Title}
+              </h3>
+              <p className="text-[16px] sm:text-[18px] text-[#C7BBA8] max-w-3xl leading-relaxed">
+                {dict.home.pillar4Desc}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================================
+            8.1.5 GÓC CHECK-IN & THƯ THÁI TỰ NHIÊN (4 ẢNH VÒM LỚN SO LE CAO THẤP)
+           ========================================================================= */}
+        <section className="container-unified section-unified border-b border-[var(--line)]">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+            <div>
+              <div className="badge-unified mb-3">
+                <Waves className="w-3.5 h-3.5" />
+                <span>{isEn ? "Open Stream Space" : "Không Gian Mở Bên Bờ Suối"}</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[var(--ink)] tracking-tight">
+                {isEn ? "Scenic Photo Spots & Natural Serenity" : "Góc Check-in & Thư Thái Tự Nhiên"}
+              </h2>
+            </div>
+            <Link
+              href="/space"
+              className="inline-flex items-center gap-2 font-mono text-sm font-semibold text-[var(--basalt)] hover:underline"
+            >
+              <span>{isEn ? "View all 30+ photo angles →" : "Xem toàn bộ 30+ góc ảnh →"}</span>
+            </Link>
+          </div>
+
+          {/* 4 Ảnh vòm lớn so le cao thấp */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+            {HOME_SPACE_PREVIEWS.map((photo, idx) => {
+              // So le cao thấp: lẻ ngắn hơn, chẵn dài hơn
+              const heightClass = idx % 2 === 0 ? "h-[420px]" : "h-[360px]";
+              return (
+                <div
+                  key={photo.url}
+                  onClick={() => handleOpenLightbox(idx)}
+                  className="group relative cursor-pointer flex flex-col gap-3 select-none"
+                >
+                  <div className={`w-full ${heightClass} frame-arch border-2 border-[var(--line)] overflow-hidden bg-[var(--paper-2)] relative shadow-md transition-transform duration-500 group-hover:-translate-y-2`}>
+                    <Image
+                      src={photo.url}
+                      alt={photo.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 300px"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1C1612]/75 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                      <span className="font-mono text-xs text-white uppercase tracking-wider">
+                        BẤM ĐỂ XEM LỚN
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Tên ảnh dạng tem dưới ảnh */}
+                  <div className="px-1 flex flex-col">
+                    <span className="font-serif text-[17px] font-bold text-[var(--ink)] group-hover:text-[var(--basalt)] transition-colors truncate">
+                      {photo.title}
+                    </span>
+                    <span className="font-mono text-[11px] text-[var(--ink-muted)] uppercase tracking-wider">
+                      {photo.subtitle}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* =========================================================================
+            8.1.6 CẢM NHẬN KHÁCH (KHỐI --CHARCOAL, 4.9, TRÍCH DẪN 36PX, AVATAR STRIP)
+           ========================================================================= */}
+        <GoogleReviewsSection isEn={isEn} />
+
+        {/* =========================================================================
+            8.1.7 CHÀO ĐÓN BẠN GHÉ THĂM (CTA CUỐI TRÊN NỀN ẢNH VÒM, 3 GẠCH TIỆN ÍCH)
+           ========================================================================= */}
+        <section className="container-unified section-unified">
+          <div className="relative rounded-[32px] overflow-hidden bg-[#1C1612] text-[#F4ECDD] p-8 sm:p-14 lg:p-16 border border-[rgba(244,236,221,0.14)] shadow-2xl">
+            {/* Ảnh vòm trang trí nền */}
+            <div className="absolute inset-0 pointer-events-none select-none opacity-20">
+              <Image
+                src="/uploads/gallery/1788250253551-943009233.jpg"
+                alt="Chòi gỗ bên suối"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <ContourLines opacity={0.1} className="text-[#F4ECDD]" />
+
+            <div className="relative z-10 max-w-3xl">
+              <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--flower)] font-semibold">
+                {isEn ? "WARMEST HOSPITALITY" : "CHÀO ĐÓN BẠN GHÉ THĂM"}
+              </span>
+
+              <h2 className="font-serif text-[clamp(28px,4vw,52px)] font-bold mt-3 mb-5 leading-tight text-[#F4ECDD]">
+                {isEn
+                  ? "Visit Cẩm Cù House & Savor Coffee by the Stream"
+                  : "Ghé Cẩm Cù House Thưởng Thức Cà Phê Bên Bờ Suối"}
+              </h2>
+
+              <p className="text-[16px] sm:text-[18px] text-[#C7BBA8] leading-relaxed mb-8">
+                {dict.common.addressFull}. {i18nStatus.scheduleText}.
+              </p>
+
+              {/* 3 Gạch tiện ích */}
+              <div className="flex flex-wrap items-center gap-6 text-[14px] text-[var(--stream)] font-medium mb-10">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[var(--stream)]" />
+                  <span>{isEn ? "Direct car access" : "Đường ô tô vào tận nơi"}</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[var(--stream)]" />
+                  <span>{isEn ? "Free spacious parking" : "Chỗ đỗ xe rộng rãi miễn phí"}</span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[var(--stream)]" />
+                  <span>{isEn ? "High-speed WiFi" : "Wifi cáp quang tốc độ cao"}</span>
+                </span>
+              </div>
+
+              {/* 2 Nút: Hotline + Chỉ đường */}
+              <div className="flex flex-wrap items-center gap-4">
+                <a
+                  href="tel:0382851688"
+                  className="btn-primary min-h-[48px] px-8 text-[15px] font-semibold"
+                >
+                  <PhoneCall className="w-4 h-4" />
+                  <span>Hotline: 038 285 1688</span>
+                </a>
+                <a
+                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary min-h-[48px] px-8 text-[15px] font-semibold !border-[rgba(244,236,221,0.3)] !text-[#F4ECDD] hover:!bg-[#F4ECDD] hover:!text-[#1C1612]"
+                >
+                  <MapPin className="w-4 h-4 text-[var(--stream)]" />
+                  <span>{dict.common.getDirections}</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
