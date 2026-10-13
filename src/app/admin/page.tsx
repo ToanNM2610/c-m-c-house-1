@@ -81,6 +81,21 @@ import {
   setStoreOverride,
   StoreOverrideMode,
 } from "@/lib/openingHours";
+import IntegrationsTab from "@/components/admin/IntegrationsTab";
+import AnalyticsTab from "@/components/admin/AnalyticsTab";
+import SearchConsoleTab from "@/components/admin/SearchConsoleTab";
+import AdminPasswordLogin from "@/components/admin/AdminPasswordLogin";
+
+export type AdminTab =
+  | "overview"
+  | "analytics"
+  | "searchConsole"
+  | "integrations"
+  | "menu"
+  | "gallery"
+  | "settings"
+  | "content"
+  | "security";
 
 type AnnouncementItem = SharedAnnouncement;
 
@@ -104,9 +119,10 @@ interface StoreSettingsData {
   topBannerEnabled?: boolean;
 }
 
-export default function AdminPage() {
+export default function AdminPage({ initialTab = "overview" }: { initialTab?: AdminTab }) {
   // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [needsFirstLogin, setNeedsFirstLogin] = useState<boolean>(false);
   const [pinInput, setPinInput] = useState<string>("");
   const [pinError, setPinError] = useState<string>("");
   const [isVerifyingPin, setIsVerifyingPin] = useState<boolean>(false);
@@ -114,8 +130,20 @@ export default function AdminPage() {
   const [totpInput, setTotpInput] = useState<string>("");
   const [verifiedPinTemp, setVerifiedPinTemp] = useState<string>("");
 
-  // Active navigation tab (6 tabs according to Section 7)
-  const [activeTab, setActiveTab] = useState<"overview" | "menu" | "gallery" | "settings" | "content" | "security">("overview");
+  // Active navigation tab
+  const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
+
+  // Overview Real Metrics State
+  const [overviewGa4, setOverviewGa4] = useState<{
+    connected: boolean;
+    users: number;
+    calls: number;
+    directions: number;
+  } | null>(null);
+  const [overviewGsc, setOverviewGsc] = useState<{
+    connected: boolean;
+    clicks: number;
+  } | null>(null);
 
   // Store opening hours & override state (Single source of truth)
   const storeStatus = useStoreStatus();
@@ -274,11 +302,56 @@ export default function AdminPage() {
 
   // Check login & Hydrate state on mount from LocalStorage & Cookies
   useEffect(() => {
-    // 1. Auth check
+    // 1. Auth check: Invalidate legacy 2610 session tokens
     const authVal = getStoredData<string>(CAMCU_AUTH_KEY, "") || getSharedCookie(CAMCU_AUTH_KEY);
     if (authVal === "authenticated_session_2610") {
-      setIsAuthenticated(true);
+      localStorage.removeItem(CAMCU_AUTH_KEY);
+      removeSharedCookie(CAMCU_AUTH_KEY);
     }
+
+    // Verify session with server API
+    fetch("/api/admin/auth")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) {
+          setNeedsFirstLogin(Boolean(d.needsFirstLogin));
+          if (d.isAuthenticated) {
+            setIsAuthenticated(true);
+          }
+          if (typeof d.totpEnabled === "boolean") {
+            setTotpEnabled(d.totpEnabled);
+          }
+        }
+      })
+      .catch(() => {});
+
+    // Hydrate 7-day Google Analytics 4 Real Metrics
+    fetch("/api/admin/analytics?days=7")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data) {
+          setOverviewGa4({
+            connected: Boolean(d.data.connected),
+            users: d.data.overview?.totalUsers || 0,
+            calls: d.data.events?.click_call || 0,
+            directions: d.data.events?.click_directions || 0,
+          });
+        }
+      })
+      .catch(() => {});
+
+    // Hydrate 7-day Google Search Console Real Metrics
+    fetch("/api/admin/search-console?days=7")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data) {
+          setOverviewGsc({
+            connected: Boolean(d.data.connected),
+            clicks: d.data.overview?.totalClicks || 0,
+          });
+        }
+      })
+      .catch(() => {});
 
     // 2. Hydrate from Shared Storage first (survives F5 and syncs across subdomains)
     const storedOverrides = getStoredData<Record<string, { inStock: boolean; price?: number }>>(
@@ -420,98 +493,6 @@ export default function AdminPage() {
       })
       .catch(() => {});
   }, []);
-
-  // Handle PIN input
-  const handlePinDigit = (digit: string) => {
-    if (pinInput.length < 6) {
-      const nextPin = pinInput + digit;
-      setPinInput(nextPin);
-      setPinError("");
-      if (nextPin.length === 4) {
-        verifyPinCode(nextPin);
-      }
-    }
-  };
-
-  const handlePinDelete = () => {
-    setPinInput((prev) => prev.slice(0, -1));
-    setPinError("");
-  };
-
-  const handlePinClear = () => {
-    setPinInput("");
-    setPinError("");
-  };
-
-  const verifyPinCode = async (pinToTest: string) => {
-    setIsVerifyingPin(true);
-    try {
-      const res = await fetch("/api/admin/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin: pinToTest }),
-      });
-      const data = await res.json();
-
-      if (data.require2FA) {
-        setRequire2FA(true);
-        setVerifiedPinTemp(pinToTest);
-        setPinError("");
-        return;
-      }
-
-      if (data.success || pinToTest === "2610") {
-        setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
-        setIsAuthenticated(true);
-        setPinInput("");
-      } else {
-        setPinError(data.error || "Mã PIN không chính xác. Thử lại (mặc định: 2610)");
-        setPinInput("");
-      }
-    } catch {
-      // Fallback offline validation
-      if (pinToTest === "2610") {
-        setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
-        setIsAuthenticated(true);
-        setPinInput("");
-      } else {
-        setPinError("Mã PIN không chính xác (mặc định: 2610)");
-        setPinInput("");
-      }
-    } finally {
-      setIsVerifyingPin(false);
-    }
-  };
-
-  const handleVerifyTotp = async () => {
-    if (!totpInput || totpInput.trim().length < 6) {
-      setPinError("Vui lòng nhập 6 chữ số TOTP hoặc mã khôi phục");
-      return;
-    }
-    setIsVerifyingPin(true);
-    try {
-      const res = await fetch("/api/admin/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin: verifiedPinTemp, totpCode: totpInput.trim() }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStoredData(CAMCU_AUTH_KEY, "authenticated_session_2610", true);
-        setIsAuthenticated(true);
-        setRequire2FA(false);
-        setTotpInput("");
-        setVerifiedPinTemp("");
-        setPinError("");
-      } else {
-        setPinError(data.error || "Mã 2FA không chính xác");
-      }
-    } catch {
-      setPinError("Lỗi kết nối khi xác thực 2FA");
-    } finally {
-      setIsVerifyingPin(false);
-    }
-  };
 
   // Logout handler
   const handleLogout = async () => {
@@ -712,21 +693,7 @@ export default function AdminPage() {
     }
   };
 
-  // Keyboard support for PIN lock screen
-  useEffect(() => {
-    if (isAuthenticated) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (/^[0-9]$/.test(e.key)) {
-        handlePinDigit(e.key);
-      } else if (e.key === "Backspace") {
-        handlePinDelete();
-      } else if (e.key === "Escape") {
-        handlePinClear();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isAuthenticated, pinInput]);
+
 
   // Toggle item in stock with Undo support
   const handleToggleStock = async (id: string, currentStatus: boolean, isUndo = false) => {
@@ -1114,37 +1081,37 @@ export default function AdminPage() {
     }
   };
 
-  // Change PIN
-  const handleChangePin = async (e: React.FormEvent) => {
+  // Change Admin Password
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPinChangeMsg(null);
 
     if (newPin !== confirmPin) {
-      setPinChangeMsg({ type: "error", text: "Mã PIN mới và xác nhận không trùng khớp" });
+      setPinChangeMsg({ type: "error", text: "Mật khẩu mới và xác nhận không trùng khớp" });
       return;
     }
-    if (newPin.length < 4) {
-      setPinChangeMsg({ type: "error", text: "Mã PIN mới phải có ít nhất 4 ký tự số" });
+    if (newPin.length < 12) {
+      setPinChangeMsg({ type: "error", text: "Mật khẩu mới phải có tối thiểu 12 ký tự an toàn" });
       return;
     }
 
     try {
-      const res = await fetch("/api/admin/settings", {
-        method: "POST",
+      const res = await fetch("/api/admin/auth", {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "change_pin", oldPin, newPin }),
+        body: JSON.stringify({ action: "change_password", oldPassword: oldPin, newPassword: newPin }),
       });
       const data = await res.json();
       if (data.success) {
-        setPinChangeMsg({ type: "success", text: "Đổi mã PIN bảo mật thành công!" });
+        setPinChangeMsg({ type: "success", text: "Đổi mật khẩu quản trị viên thành công!" });
         setOldPin("");
         setNewPin("");
         setConfirmPin("");
       } else {
-        setPinChangeMsg({ type: "error", text: data.error || "Mã PIN cũ không chính xác" });
+        setPinChangeMsg({ type: "error", text: data.error || "Mật khẩu hiện tại không chính xác" });
       }
     } catch {
-      setPinChangeMsg({ type: "error", text: "Lỗi kết nối khi đổi mã PIN" });
+      setPinChangeMsg({ type: "error", text: "Lỗi kết nối khi đổi mật khẩu" });
     }
   };
 
@@ -1160,148 +1127,18 @@ export default function AdminPage() {
   // ==========================================
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#F9F8F3] dark:bg-[#121A15] flex flex-col items-center justify-center p-4 selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
-        <div className="w-full max-w-sm bg-white/95 dark:bg-[#1E2B22]/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-stone-200/80 dark:border-stone-700/60 text-center flex flex-col items-center transition-colors duration-200">
-          {/* Logo / Brand */}
-          <div className="w-14 h-14 rounded-2xl bg-[#3E5C46] text-white flex items-center justify-center mb-4 shadow-lg">
-            <Lock className="w-7 h-7" />
-          </div>
-
-          <h1 className="font-serif text-2xl font-bold text-[#2D4233] dark:text-[#F5F4EE] tracking-tight">
-            CẨM CÙ ADMIN
-          </h1>
-          <p className="text-xs text-stone-500 mt-1 uppercase tracking-widest font-semibold">
-            {require2FA ? "Xác Thực 2 Lớp (TOTP)" : "Bảo Mật Bằng Mã PIN Hệ Thống"}
-          </p>
-
-          {require2FA ? (
-            <div className="w-full flex flex-col gap-4 my-5 animate-fade-in">
-              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-200 font-medium text-left">
-                Tài khoản đã kích hoạt 2FA. Vui lòng mở ứng dụng <strong>Google Authenticator</strong> để lấy mã 6 số (hoặc nhập mã khôi phục).
-              </div>
-
-              <input
-                type="text"
-                maxLength={9}
-                placeholder="000000 hoặc mã khôi phục"
-                value={totpInput}
-                onChange={(e) => setTotpInput(e.target.value)}
-                className="w-full py-3 px-4 text-center font-mono text-xl tracking-widest bg-stone-100 dark:bg-stone-800 rounded-2xl border border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
-                autoFocus
-              />
-
-              {pinError && (
-                <div className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full font-medium">
-                  {pinError}
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={handleVerifyTotp}
-                disabled={isVerifyingPin}
-                className="btn-primary w-full min-h-[44px] py-3 rounded-full font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Shield className="w-4 h-4" />
-                <span>{isVerifyingPin ? "Đang xác thực..." : "Xác Nhận Đăng Nhập"}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setRequire2FA(false);
-                  setPinInput("");
-                  setTotpInput("");
-                  setPinError("");
-                }}
-                className="text-xs text-stone-500 hover:text-[#3E5C46] underline cursor-pointer mt-1"
-              >
-                ← Quay lại nhập mã PIN
-              </button>
-            </div>
-          ) : (
-            <>
-              {/* PIN Dots Display */}
-              <div className="flex items-center justify-center gap-3 my-6">
-                {[0, 1, 2, 3].map((index) => {
-                  const isFilled = pinInput.length > index;
-                  return (
-                    <div
-                      key={index}
-                      className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                        isFilled
-                          ? "bg-[#3E5C46] scale-110 shadow-md ring-4 ring-[#3E5C46]/20"
-                          : "bg-stone-200 border border-stone-300"
-                      }`}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Error Message */}
-              {pinError && (
-                <div className="text-xs text-red-600 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full mb-4 font-medium animate-shake">
-                  {pinError}
-                </div>
-              )}
-
-              {/* Numeric Keypad */}
-              <div className="grid grid-cols-3 gap-3 w-full max-w-[260px] mb-6">
-                {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
-                  <button
-                    key={num}
-                    type="button"
-                    onClick={() => handlePinDigit(num)}
-                    disabled={isVerifyingPin}
-                    className="h-14 rounded-2xl bg-stone-100 hover:bg-[#3E5C46] hover:text-white active:scale-95 text-stone-800 font-serif text-2xl font-bold transition-all shadow-sm flex items-center justify-center"
-                  >
-                    {num}
-                  </button>
-                ))}
-
-                <button
-                  type="button"
-                  onClick={handlePinClear}
-                  className="h-14 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-600 text-xs font-bold transition-all flex items-center justify-center"
-                >
-                  Xóa hết
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handlePinDigit("0")}
-                  disabled={isVerifyingPin}
-                  className="h-14 rounded-2xl bg-stone-100 hover:bg-[#3E5C46] hover:text-white active:scale-95 text-stone-800 font-serif text-2xl font-bold transition-all shadow-sm flex items-center justify-center"
-                >
-                  0
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handlePinDelete}
-                  className="h-14 rounded-2xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-stone-600 transition-all flex items-center justify-center"
-                  aria-label="Xóa 1 số"
-                >
-                  <Delete className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Helper Default PIN Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#3E5C46] text-[11px] font-semibold border border-emerald-200">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Mã PIN mặc định: <strong>2610</strong></span>
-              </div>
-            </>
-          )}
-
-          <a
-            href="https://camcuhouse.online"
-            className="mt-6 text-xs text-stone-500 hover:text-[#3E5C46] underline transition-colors"
-          >
-            ← Quay lại trang chủ Cẩm Cù House
-          </a>
-        </div>
-      </div>
+      <AdminPasswordLogin
+        needsFirstLogin={needsFirstLogin}
+        onLoginSuccess={(require2FAPrompt) => {
+          setIsAuthenticated(true);
+          setNeedsFirstLogin(false);
+          if (require2FAPrompt) {
+            setActiveTab("security");
+            setIsTotpModalOpen(true);
+            showToast("Vui lòng kích hoạt 2FA TOTP để hoàn tất bảo vệ tài khoản!");
+          }
+        }}
+      />
     );
   }
 
@@ -1367,6 +1204,45 @@ export default function AdminPage() {
             >
               <LayoutDashboard className="w-4 h-4" />
               <span>Tổng quan</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("analytics")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === "analytics"
+                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              <span>Google Analytics</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("searchConsole")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === "searchConsole"
+                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+              }`}
+            >
+              <Search className="w-4 h-4" />
+              <span>Search Console</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("integrations")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === "integrations"
+                  ? "bg-[#3E5C46] text-white shadow-md font-bold"
+                  : "text-stone-600 dark:text-stone-400 hover:bg-stone-200/80 dark:hover:bg-white/10 hover:text-stone-900 dark:hover:text-white"
+              }`}
+            >
+              <Key className="w-4 h-4" />
+              <span>Tích Hợp &amp; Khóa</span>
             </button>
 
             <button
@@ -1560,112 +1436,149 @@ export default function AdminPage() {
               </div>
 
               {/* 4 Operational KPI Real Metrics Cards (No Fake Metrics) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                {/* 1. Menu Items */}
+              {/* 4 Real KPI Metrics Cards: GA4 Users, Google Search Clicks, Call Clicks, Directions Clicks */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                {/* 1. Người dùng 7 ngày (GA4) */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Thực Đơn Niêm Yết
+                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+                        Người Dùng (7 Ngày Qua)
                       </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">{totalMenuItems}</span>
-                        <span className="text-xs text-stone-500 font-medium">món phục vụ</span>
+                      <div className="mt-1">
+                        {overviewGa4?.connected ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
+                              {overviewGa4.users.toLocaleString("vi-VN")}
+                            </span>
+                            <span className="text-xs text-stone-500 font-medium">khách</span>
+                          </div>
+                        ) : (
+                          <span className="font-serif text-xl font-bold text-amber-600 dark:text-amber-400">
+                            Chưa kết nối
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-[#3E5C46] dark:text-[#9DC183]">
-                      <UtensilsCrossed className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-[#3E5C46] dark:text-[#9DC183]">
+                      <Users className="w-5 h-5" />
                     </div>
                   </div>
                   <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> {inStockCount} món còn hàng
+                    <span className="text-stone-500 text-[11px]">
+                      {overviewGa4?.connected ? "Google Analytics 4 API" : "Cần cấu hình GA4"}
                     </span>
-                    <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium">
-                      {outOfStockCount > 0 ? `${outOfStockCount} món tạm hết` : "100% sẵn sàng"}
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab(overviewGa4?.connected ? "analytics" : "integrations")}
+                      className="text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] hover:underline cursor-pointer"
+                    >
+                      {overviewGa4?.connected ? "Xem chi tiết →" : "Kết nối ngay →"}
+                    </button>
                   </div>
                 </div>
 
-                {/* 2. Gallery Photos */}
+                {/* 2. Lượt nhấp từ Google 7 ngày (GSC) */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Thư Viện Không Gian
+                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+                        Lượt Nhấp Từ Google (7 Ngày)
                       </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-serif text-3xl font-bold text-[#396663] dark:text-[#88B795]">
-                          {totalGalleryPhotos}
-                        </span>
-                        <span className="text-xs text-stone-500 font-medium">khoảnh khắc</span>
+                      <div className="mt-1">
+                        {overviewGsc?.connected ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
+                              {overviewGsc.clicks.toLocaleString("vi-VN")}
+                            </span>
+                            <span className="text-xs text-stone-500 font-medium">lượt nhấp</span>
+                          </div>
+                        ) : (
+                          <span className="font-serif text-xl font-bold text-amber-600 dark:text-amber-400">
+                            Chưa kết nối
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-[#396663] dark:text-[#88B795]">
-                      <ImageIcon className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <Search className="w-5 h-5" />
                     </div>
                   </div>
                   <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="inline-flex items-center gap-1 text-[#396663] dark:text-[#88B795] font-semibold">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Suối đá &amp; Hiên gỗ
+                    <span className="text-stone-500 text-[11px]">
+                      {overviewGsc?.connected ? "Google Search Console" : "Cần cấu hình GSC"}
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[10px] font-bold">
-                      WebP Tối Ưu
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab(overviewGsc?.connected ? "searchConsole" : "integrations")}
+                      className="text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] hover:underline cursor-pointer"
+                    >
+                      {overviewGsc?.connected ? "Xem chi tiết →" : "Kết nối ngay →"}
+                    </button>
                   </div>
                 </div>
 
-                {/* 3. Store Live Status */}
+                {/* 3. Lượt bấm Gọi Hotline */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Trạng Thái Hoạt Động
+                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+                        Lượt Bấm Gọi Hotline
                       </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className={`font-serif text-2xl font-bold ${
-                          storeStatus.isOpen ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"
-                        }`}>
-                          {storeStatus.isOpen ? "Đang Mở Cửa" : "Đang Đóng Cửa"}
-                        </span>
+                      <div className="mt-1">
+                        {overviewGa4?.connected || analyticsStats.click_call > 0 ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-serif text-3xl font-bold text-[#3E5C46] dark:text-[#9DC183]">
+                              {(overviewGa4?.calls || 0) + (analyticsStats.click_call || 0)}
+                            </span>
+                            <span className="text-xs text-stone-500 font-medium">lượt bấm</span>
+                          </div>
+                        ) : (
+                          <span className="font-serif text-xl font-bold text-stone-500 dark:text-stone-400">
+                            0 lượt
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      storeStatus.isOpen ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400" : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
-                    }`}>
-                      <Clock className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
+                      <Phone className="w-5 h-5" />
                     </div>
                   </div>
                   <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="font-semibold text-stone-700 dark:text-stone-200 truncate">
-                      {storeOverride === "auto" ? "⏱ Tự động theo giờ" : storeOverride === "force_open" ? "🟢 Mở đột xuất" : "🔴 Nghỉ đột xuất"}
-                    </span>
-                    <span className="text-emerald-700 dark:text-emerald-400 text-xs font-bold shrink-0">
-                      {storeStatus.shortBadge}
-                    </span>
+                    <span className="text-stone-500 text-[11px]">Hotline 038 285 1688</span>
+                    <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">Tự động đo lường</span>
                   </div>
                 </div>
 
-                {/* 4. Operating Hours Schedule */}
+                {/* 4. Lượt bấm Chỉ đường */}
                 <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm border border-stone-200/60 dark:border-stone-700/60 shadow-sm flex flex-col justify-between">
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-[11px] text-stone-500 uppercase tracking-wider font-semibold">
-                        Lịch Đón Khách Hôm Nay
+                      <span className="text-[12px] text-stone-500 uppercase tracking-wider font-semibold">
+                        Lượt Bấm Chỉ Đường Maps
                       </span>
-                      <div className="flex items-baseline gap-2 mt-1">
-                        <span className="font-serif text-2xl font-bold text-[#CC7755] dark:text-[#E0B872]">
-                          {storeStatus.todayHoursText}
-                        </span>
+                      <div className="mt-1">
+                        {overviewGa4?.connected || analyticsStats.click_directions > 0 ? (
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-serif text-3xl font-bold text-[#CC7755] dark:text-[#E0B872]">
+                              {(overviewGa4?.directions || 0) + (analyticsStats.click_directions || 0)}
+                            </span>
+                            <span className="text-xs text-stone-500 font-medium">lượt bấm</span>
+                          </div>
+                        ) : (
+                          <span className="font-serif text-xl font-bold text-stone-500 dark:text-stone-400">
+                            0 lượt
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-[#CC7755] dark:text-[#E0B872]">
-                      <Coffee className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/50 text-[#CC7755] dark:text-[#E0B872] flex items-center justify-center">
+                      <MapPin className="w-5 h-5" />
                     </div>
                   </div>
                   <div className="mt-4 pt-3 flex items-center justify-between text-xs text-stone-600 dark:text-stone-300 border-t border-stone-200/60 dark:border-stone-700/60">
-                    <span className="text-xs text-stone-500 dark:text-stone-400 truncate">T2–T5: 18h | T6–CN: 22h</span>
-                    <span className="text-[#3E5C46] dark:text-[#9DC183] font-bold text-[10px] shrink-0">Gia Nghĩa GMT+7</span>
+                    <span className="text-stone-500 text-[11px]">Đường bờ suối Gia Nghĩa</span>
+                    <span className="text-[#CC7755] dark:text-[#E0B872] font-bold text-[11px]">Google Maps</span>
                   </div>
                 </div>
               </div>
@@ -1913,6 +1826,33 @@ export default function AdminPage() {
                 </div>
               </div>
             </>
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB: GOOGLE ANALYTICS */}
+          {/* ========================================================= */}
+          {activeTab === "analytics" && (
+            <AnalyticsTab
+              onSwitchToIntegrations={() => setActiveTab("integrations")}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB: GOOGLE SEARCH CONSOLE */}
+          {/* ========================================================= */}
+          {activeTab === "searchConsole" && (
+            <SearchConsoleTab
+              onSwitchToIntegrations={() => setActiveTab("integrations")}
+              onShowToast={showToast}
+            />
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB: TÍCH HỢP & KHÓA */}
+          {/* ========================================================= */}
+          {activeTab === "integrations" && (
+            <IntegrationsTab onShowToast={showToast} />
           )}
 
           {/* ========================================================= */}
@@ -2705,17 +2645,17 @@ export default function AdminPage() {
                 </div>
               </form>
 
-              {/* PIN Code Change Form */}
+              {/* Admin Password Change Form */}
               <form
-                onSubmit={handleChangePin}
+                onSubmit={handleChangePassword}
                 className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6"
               >
-                <div className="pb-3 border-b border-stone-200">
-                  <h2 className="font-serif text-xl font-bold text-[#3E5C46]">
-                    Đổi Mã PIN Bảo Mật
+                <div className="pb-3 border-b border-stone-200 dark:border-stone-700/60">
+                  <h2 className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                    Đổi Mật Khẩu Quản Trị Viên
                   </h2>
                   <p className="text-xs text-stone-500 mt-0.5">
-                    Thay đổi mã PIN truy cập vào khu vực quản trị hệ thống (Mã PIN mặc định: 2610).
+                    Thay đổi mật khẩu đăng nhập quản trị hệ thống (yêu cầu tối thiểu 12 ký tự an toàn).
                   </p>
                 </div>
 
@@ -2733,45 +2673,42 @@ export default function AdminPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-stone-700 block mb-1">
-                      Mã PIN hiện tại
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Mật khẩu hiện tại
                     </label>
                     <input
                       type="password"
-                      maxLength={6}
                       value={oldPin}
                       onChange={(e) => setOldPin(e.target.value)}
-                      placeholder="Mặc định: 2610"
+                      placeholder="Nhập mật khẩu hiện tại"
                       className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-stone-700 block mb-1">
-                      Mã PIN mới (tối thiểu 4 số)
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Mật khẩu mới (≥ 12 ký tự)
                     </label>
                     <input
                       type="password"
-                      maxLength={6}
                       value={newPin}
                       onChange={(e) => setNewPin(e.target.value)}
-                      placeholder="Nhập mã PIN mới"
+                      placeholder="Tối thiểu 12 ký tự"
                       className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-stone-700 block mb-1">
-                      Xác nhận mã PIN mới
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      Xác nhận mật khẩu mới
                     </label>
                     <input
                       type="password"
-                      maxLength={6}
                       value={confirmPin}
                       onChange={(e) => setConfirmPin(e.target.value)}
-                      placeholder="Nhập lại mã PIN mới"
+                      placeholder="Nhập lại mật khẩu mới"
                       className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
@@ -2780,9 +2717,9 @@ export default function AdminPage() {
 
                 <button
                   type="submit"
-                  className="self-end px-6 py-2.5 rounded-full bg-[#2D4233] text-white text-xs font-bold hover:bg-[#1f2e23] transition-all shadow-md"
+                  className="self-end px-6 py-2.5 rounded-full bg-[#2D4233] text-white text-xs font-bold hover:bg-[#1f2e23] transition-all shadow-md cursor-pointer"
                 >
-                  Xác Nhận Đổi Mã PIN
+                  Xác Nhận Đổi Mật Khẩu
                 </button>
               </form>
             </div>
@@ -3022,18 +2959,18 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* PIN Code Change Form */}
+              {/* Admin Password Change Form */}
               <form
-                onSubmit={handleChangePin}
+                onSubmit={handleChangePassword}
                 className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6"
               >
                 <div className="pb-3 border-b border-stone-200 dark:border-stone-700/60 flex items-center justify-between">
                   <div>
                     <h2 className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
-                      Đổi Mã PIN Bảo Mật
+                      Đổi Mật Khẩu Quản Trị Viên
                     </h2>
                     <p className="text-xs text-stone-500 mt-0.5">
-                      Thay đổi mã PIN truy cập vào khu vực quản trị hệ thống (Mã PIN mặc định: 2610).
+                      Thay đổi mật khẩu đăng nhập khu vực quản trị hệ thống (yêu cầu tối thiểu 12 ký tự an toàn).
                     </p>
                   </div>
                 </div>
@@ -3053,14 +2990,13 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                      Mã PIN hiện tại
+                      Mật khẩu hiện tại
                     </label>
                     <input
                       type="password"
-                      maxLength={6}
                       value={oldPin}
                       onChange={(e) => setOldPin(e.target.value)}
-                      placeholder="Mặc định: 2610"
+                      placeholder="Nhập mật khẩu hiện tại"
                       className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
@@ -3068,14 +3004,13 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                      Mã PIN mới (tối thiểu 4 số)
+                      Mật khẩu mới (≥ 12 ký tự)
                     </label>
                     <input
                       type="password"
-                      maxLength={6}
                       value={newPin}
                       onChange={(e) => setNewPin(e.target.value)}
-                      placeholder="Nhập mã PIN mới"
+                      placeholder="Tối thiểu 12 ký tự"
                       className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
@@ -3083,14 +3018,13 @@ export default function AdminPage() {
 
                   <div>
                     <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                      Xác nhận mã PIN mới
+                      Xác nhận mật khẩu mới
                     </label>
                     <input
                       type="password"
-                      maxLength={6}
                       value={confirmPin}
                       onChange={(e) => setConfirmPin(e.target.value)}
-                      placeholder="Nhập lại mã PIN mới"
+                      placeholder="Nhập lại mật khẩu mới"
                       className="w-full px-3.5 py-2.5 bg-stone-100 dark:bg-[#16231A] dark:text-stone-100 rounded-xl text-xs border border-stone-200 dark:border-stone-700/60 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
                       required
                     />
@@ -3101,7 +3035,7 @@ export default function AdminPage() {
                   type="submit"
                   className="self-end px-6 py-2.5 rounded-full bg-[#2D4233] text-white text-xs font-bold hover:bg-[#1f2e23] transition-all shadow-md cursor-pointer"
                 >
-                  Xác Nhận Đổi Mã PIN
+                  Xác Nhận Đổi Mật Khẩu
                 </button>
               </form>
             </div>
@@ -3347,11 +3281,11 @@ export default function AdminPage() {
       />
 
       {/* Mobile Bottom Navigation Bar (Mobile-first, touch targets >= 44px) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#16231A]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 z-50 flex items-center justify-around px-1 shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#16231A]/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 z-50 flex items-center overflow-x-auto no-scrollbar px-2 gap-1 shadow-lg">
         <button
           type="button"
           onClick={() => setActiveTab("overview")}
-          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "overview"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
@@ -3362,8 +3296,44 @@ export default function AdminPage() {
         </button>
         <button
           type="button"
+          onClick={() => setActiveTab("analytics")}
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+            activeTab === "analytics"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <TrendingUp className="w-4 h-4 mb-0.5" />
+          <span>GA4</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("searchConsole")}
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+            activeTab === "searchConsole"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <Search className="w-4 h-4 mb-0.5" />
+          <span>GSC</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("integrations")}
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
+            activeTab === "integrations"
+              ? "text-[#3E5C46] dark:text-[#9DC183]"
+              : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
+          }`}
+        >
+          <Key className="w-4 h-4 mb-0.5" />
+          <span>Tích hợp</span>
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab("menu")}
-          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "menu"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
@@ -3375,7 +3345,7 @@ export default function AdminPage() {
         <button
           type="button"
           onClick={() => setActiveTab("gallery")}
-          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "gallery"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
@@ -3387,7 +3357,7 @@ export default function AdminPage() {
         <button
           type="button"
           onClick={() => setActiveTab("settings")}
-          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "settings"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
@@ -3399,7 +3369,7 @@ export default function AdminPage() {
         <button
           type="button"
           onClick={() => setActiveTab("content")}
-          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "content"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
@@ -3411,7 +3381,7 @@ export default function AdminPage() {
         <button
           type="button"
           onClick={() => setActiveTab("security")}
-          className={`flex flex-col items-center justify-center min-w-[50px] min-h-[44px] rounded-xl text-[9px] font-bold transition-all ${
+          className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] shrink-0 rounded-xl text-[9px] font-bold transition-all ${
             activeTab === "security"
               ? "text-[#3E5C46] dark:text-[#9DC183]"
               : "text-stone-500 hover:text-stone-800 dark:text-stone-400"
