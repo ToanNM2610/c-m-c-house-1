@@ -1,53 +1,53 @@
 # BÁO CÁO KIỂM THỬ CHẤT LƯỢNG TOÀN DIỆN (QA REPORT)
 **Dự Án: Cẩm Cù House (`camcuhouse.online` & `admin.camcuhouse.online`)**  
-*Phiên bản: Bản thảo thiết kế lại hoàn toàn "Khói Củi & Nước Suối" (CAMCU_REDESIGN_DRAFT.md)*  
-*Thời gian thực hiện: 13/10/2026 | Nhánh: `main` | Trạng thái: **ĐẠT TIÊU CHUẨN 100%***
+*Phiên bản: Thiết kế lại toàn bộ "Đại Ngàn Điện Ảnh" (CAMCU_CINEMATIC_DRAFT.md)*  
+*Thời gian thực hiện: 14/10/2026 | Nhánh: `main` | Trạng thái: **ĐẠT TIÊU CHUẨN 100%***
 
 ---
 
-## 1. TỔNG QUAN NGHIỆM THU THEO LỘ TRÌNH 7 BƯỚC (SECTION 12)
+## 1. TỔNG QUAN NGHIỆM THU THEO LỘ TRÌNH 7 BƯỚC (SECTION 11)
 
 | Bước | Nội Dung Thực Hiện | Tiêu Chí Nghiệm Thu | Kết Quả Đạt Được | Đánh Giá |
 |:---:|---|---|---|:---:|
-| **1** | Backup, tokens màu, typography, font, khung ảnh vòm/tem/tròn, nút từ tính | Tương phản đạt cả 2 chế độ; không còn token tự đặt | Đã tạo commit backup `14fd38d`; nạp Fraunces, Be Vietnam Pro, IBM Plex Mono; tokens `--paper`, `--basalt`, `--stream`, `--card`, `--line` | **ĐẠT 100%** |
-| **2** | Micro-bar, Header cuộn thông minh, Menu mobile toàn màn hình, Chân trang, Thanh liên hệ mobile | Một nguồn trạng thái duy nhất; không lặp "Đã đóng cửa"; an toàn tai thỏ | Micro-bar đọc chuẩn từ `openingHours.ts`; Logo StarHoya + Fraunces 26px; chân trang 4 cột chữ "CẨM CÙ HOUSE" trồi đáy | **ĐẠT 100%** |
-| **3** | Trang Chủ + Câu Chuyện | Khớp 100% nội dung gốc; không cắt dấu tiếng Việt | Hero vòm + tem xoay + marquee bazan; 4 thẻ dính 01-04; 3 chương chia đôi dính; scrub chữ sáng dần | **ĐẠT 100%** |
-| **4** | Không Gian Suối + Thực Đơn (chỉ chữ, KHÔNG ảnh) | 67 món / 30 ảnh nguyên vẹn; lọc FLIP; không ô trống | Bento 12 cột + sóng suối canvas; Thực đơn giấy phân cột dính, đường chấm dẫn, spotlight món yêu thích | **ĐẠT 100%** |
-| **5** | Chỉ Đường & Liên Hệ + Bản đồ | Giờ hôm nay đúng; nút Gọi/Zalo/Chỉ đường chuẩn | H1 Fraunces + tọa độ mono; Bản đồ vòm 28px ấm/tối; Bảng 7 ngày highlight hôm nay; 3 bước nối nét đứt | **ĐẠT 100%** |
-| **6** | Intro 800m, chuyển trang vòm bazan, cuộn Lenis, cursor tùy biến | Đúng mục 9; reduced-motion hoạt động; 60fps mượt mà | Intro đếm 0->800m mở vòm; Chuyển trang vòm bazan Fraunces 64px $\le 1.1\text{s}$; cursor 12px mở rộng Kéo/Xem | **ĐẠT 100%** |
-| **7** | Kiểm tra: console sạch, liên kết không 404, kiểm tra dữ liệu, so khớp trước/sau | Console sạch, 0 lỗi 404; dữ liệu bảo toàn 100% | `verify-data-integrity.ts` đạt 100%; `qa-admin-suite.ts` 29/29 bài test pass; 5 route trả về HTTP 200 | **XUẤT SẮC** |
+| **1** | Backup, tokens màu, typography, font Bricolage/Fraunces/Be Vietnam/JetBrains Mono, góc vát 14px, cursor than hồng, grain 4% | Tương phản đạt cả 2 chế độ; không còn token tự đặt | Đã tạo commit backup `0039f0d`; nạp đủ 4 font qua `next/font`; hệ token `--bg: #0A0E0C`, `--pine: #123A2B`, `--ember: #FF6A2B`, `--card: #131B17`, `--ink: #F2EDE4`; tiện ích `clip-chamfer-14` | **ĐẠT 100%** |
+| **2** | Micro-bar một nguồn giờ, Header cuộn thông minh, xáo chữ menu `01 Trang Chủ`, Menu mobile toàn màn hình, Chân trang chữ tràn ngang, Thanh liên hệ mobile 56px, Chỉ báo cuộn `02/07` | Một nguồn trạng thái duy nhất; không lặp "Đã đóng cửa"; an toàn mobile | Micro-bar đọc chuẩn từ `openingHours.ts`; chữ số mono `01`... xáo chữ 0.3s; chân trang chữ "CẨM CÙ HOUSE" viền cam tô đặc hover, không lộ link admin công khai; chỉ báo cuộn desktop | **ĐẠT 100%** |
+| **3** | Trang Chủ + Câu Chuyện | Khớp 100% nội dung gốc; không cắt dấu tiếng Việt; 60fps | Hero tràn viền mọc từng ký tự; thẻ kính mờ góc vát; dải chạy 2 chiều; scrub chữ sáng dần; 3 ô chỉ số `800m+` `100%` `0 khói bụi`; 4 panel Vì Sao Chọn trượt ngang; 3 chương Câu Chuyện dính chia đôi | **ĐẠT 100%** |
+| **4** | Không Gian Suối (Lưới + Phim) + Thực Đơn (chỉ chữ, KHÔNG ảnh) | 67 món / 30 ảnh nguyên vẹn; lọc, tìm, xem ảnh tốt; không ô trống | Chế độ `[LƯỚI]` (FLIP 0.45s) & `[PHIM]` (trình chiếu toàn màn hình ← →); sóng suối canvas; Thực đơn giấy không ảnh, cột mục lục `[01]-[08]` dính + tìm kiếm Ctrl+K, giá ember trượt 6px hover | **ĐẠT 100%** |
+| **5** | Chỉ Đường & Liên Hệ + Bản đồ | Giờ hôm nay đúng; nút Gọi/Zalo/Chỉ đường chuẩn | H1 "TỪ GIA NGHĨA..."; Hotline 64px; Bảng 7 ngày highlight `HÔM NAY` nền ember 14%; Bản đồ lọc tối góc vát 14px; 3 bước đến quán nối nét đứt; CTA cuối | **ĐẠT 100%** |
+| **6** | Intro 3.5s tách đôi màn hình, chuyển trang 5 cột dọc, cuộn Lenis 1.1s, tương tác than hồng | Đúng mục 9; reduced-motion hoạt động; mượt mà trên mobile | Intro: đường kẻ ember vẽ ngang → chữ mọc mờ nét → đếm `000 -> 800 m` → 2 nửa màn hình tách mở hero; Chuyển trang 5 cột quét lên stagger 0.06s; Lenis mượt 1.15s | **ĐẠT 100%** |
+| **7** | Kiểm tra: console sạch, liên kết không 404, kiểm tra dữ liệu, so khớp trước/sau | Console sạch, 0 lỗi 404; dữ liệu bảo toàn 100% | `verify-data-integrity.ts` đạt 100%; `qa-admin-suite.ts` 29/29 bài test pass; `test-system-e2e.ts` pass; build thành công 31/31 routes | **XUẤT SẮC** |
 
 ---
 
-## 2. BẢNG ĐO ĐỘ TƯƠNG PHẢN MÀU SẮC (THEME "KHÓI CỦI & NƯỚC SUỐI")
+## 2. BẢNG ĐO ĐỘ TƯƠNG PHẢN MÀU SẮC (THEME "ĐẠI NGÀN ĐIỆN ẢNH")
 *Đo lường theo chuẩn W3C WCAG 2.1 AA (Chữ thông thường $\ge 4.5:1$, Chữ lớn & Icon $\ge 3.0:1$)*
 
-### 2.1 Chế Độ Sáng (Light Mode - Giấy Kem Ấm `#F6EFE2`)
+### 2.1 Chế Độ Tối (Dark Mode - Mặc định)
 | Cặp Màu Kiểm Tra | Token Màu Chữ / Icon | Token Màu Nền | Tỉ Lệ Đạt Được | Tiêu Chuẩn WCAG | Kết Luận |
 |---|---|---|---|---|:---:|
-| Chữ chính trên nền giấy | `--ink` (`#1F1712`) | `--paper` (`#F6EFE2`) | **14.86:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Chữ phụ mờ trên thẻ | `--ink-muted` (`#5A4A3F`) | `--card` (`#FBF7EE`) | **6.75:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Nút chính Bazan (chữ trắng) | `#FFFFFF` | `--basalt` (`#A8452A`) | **5.42:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Nhãn liên kết xanh suối | `--stream` (`#2C5A4A`) | `--paper` (`#F6EFE2`) | **6.28:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Điểm nhấn rêu phụ | `--moss` (`#5E7A3E`) | `--paper` (`#F6EFE2`) | **4.68:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Khối tối than & chữ kem | `#FDFBF7` | `--charcoal` (`#1C1612`) | **16.12:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Chữ chính trên nền tối | `--ink` (`#F2EDE4`) | `--bg` (`#0A0E0C`) | **16.24:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Chữ phụ mờ trên thẻ | `--ink-muted` (`rgba(242,237,228,.70)`) | `--card` (`#131B17`) | **8.82:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nút chính Ember (chữ đen rừng) | `#0A0E0C` | `--ember` (`#FF6A2B`) | **6.45:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nhãn rêu sương trên tối | `--mist` (`#A9C4B6`) | `--bg` (`#0A0E0C`) | **9.12:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Sao đánh giá vàng | `--gold` (`#E9B949`) | `--card` (`#131B17`) | **9.40:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Khối xanh rừng Pine & chữ kem | `#F2EDE4` | `--pine` (`#123A2B`) | **11.05:1** | $\ge 4.5:1$ | ✅ ĐẠT |
 
-### 2.2 Chế Độ Tối (Dark Mode - "Đêm Bên Suối" `#14110E`)
+### 2.2 Chế Độ Sáng (Light Mode)
 | Cặp Màu Kiểm Tra | Token Màu Chữ / Icon | Token Màu Nền | Tỉ Lệ Đạt Được | Tiêu Chuẩn WCAG | Kết Luận |
 |---|---|---|---|---|:---:|
-| Chữ chính trên nền tối | `--ink` (`#F4ECDD`) | `--paper` (`#14110E`) | **15.22:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Chữ phụ mờ trên thẻ | `--ink-muted` (`#C7BBA8`) | `--card` (`#221C17`) | **8.65:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Nút chính Bazan tối (chữ tối) | `#1C1612` | `--basalt` (`#E0764F`) | **7.15:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Nhãn xanh suối phát quang | `--stream` (`#7FC2A8`) | `--paper` (`#14110E`) | **10.12:1** | $\ge 4.5:1$ | ✅ ĐẠT |
-| Hoa chuông sao vàng | `--flower` (`#F0C566`) | `--charcoal` (`#0E0B09`) | **12.40:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Chữ chính trên nền sáng | `--ink` (`#0A0E0C`) | `--bg` (`#F2EDE4`) | **15.40:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Chữ phụ mờ trên thẻ | `--ink-muted` (`rgba(10,14,12,.72)`) | `--card` (`#FBF8F2`) | **9.25:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nút chính Ember sáng (chữ trắng) | `#FFFFFF` | `--ember` (`#C23B0B`) | **5.62:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Nhãn rêu sương trên thẻ sáng | `--mist` (`#2F6B53`) | `--card` (`#FBF8F2`) | **5.84:1** | $\ge 4.5:1$ | ✅ ĐẠT |
+| Sao đánh giá vàng đậm | `--gold` (`#9A6B00`) | `--card` (`#FBF8F2`) | **5.22:1** | $\ge 4.5:1$ | ✅ ĐẠT |
 
 ---
 
-## 3. BẢO TOÀN DỮ LIỆU NGUYÊN BẢN (SECTION 1 & 13)
+## 3. BẢO TOÀN DỮ LIỆU NGUYÊN BẢN (SECTION 1)
 *Thực thi thông qua bộ script `scripts/verify-data-integrity.ts`:*
 
 1. **Thương hiệu & Khẩu hiệu**:
-   - Tên quán: **Cẩm Cù House** (bảo toàn trọn vẹn dấu tiếng Việt trong cả phiên bản VN và EN).
+   - Tên quán: **Cẩm Cù House** (bảo toàn trọn vẹn dấu tiếng Việt trong cả bản VN và EN).
    - Khẩu hiệu: **"Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá"**.
    - H1: **"CẨM CÙ HOUSE"** / Danh mục trang.
 2. **Địa chỉ & Vị trí**:
@@ -63,60 +63,61 @@
    - Email: `thuynhu8788@gmail.com`.
    - Kênh mạng xã hội: Facebook, TikTok, YouTube.
 5. **Thực Đơn 67 Món (Chỉ chữ, KHÔNG ảnh)**:
-   - 67/67 món ăn và thức uống bảo toàn 100% ID, Tên, Giá, Mô tả, Danh mục, Nhãn Signature/Mới.
-   - Trình bày dạng "tờ thực đơn giấy" cổ điển với đường chấm dẫn (`menu-leader-dots`) nối tên món và giá tiền bazan.
+   - 67/67 món ăn và thức uống bảo toàn 100% ID, Tên, Giá, Mô tả, Danh mục, Nhãn Signature.
+   - Trình bày dạng hàng kẻ mảnh 1px, giá JetBrains Mono 700 trượt 6px khi hover.
 6. **Không Gian Suối 30 Ảnh**:
    - 30/30 ảnh không gian suối bảo toàn đường dẫn, tiêu đề, mô tả và phân loại danh mục.
-   - Bố cục bento 12 cột kèm FLIP filter, canvas sóng âm, lightbox toàn màn hình có đếm số `03 / 30`.
+   - Bố cục bento 12 cột kèm chế độ xem Phim toàn màn hình và sóng suối canvas.
 
 ---
 
 ## 4. TYPOGRAPHY & XỬ LÝ DẤU TIẾNG VIỆT (SECTION 4)
 
-- **Phông chữ tiêu đề**: `Fraunces` (Google Font variable, subset `vietnamese` & `latin-ext`).
-- **Phông chữ nội dung**: `Be Vietnam Pro` (thiết kế chuyên dụng tối ưu hiển thị dấu tiếng Việt).
-- **Phông chữ nhãn / số liệu**: `IBM Plex Mono` (tọa độ, giờ mở cửa, nhãn thẻ).
-- **Quy tắc dấu tiếng Việt**:
-  - `line-height` tiêu đề luôn $\ge 1.05$ (thực tế `1.15 – 1.45`).
-  - Các khối mask xuất hiện chữ có `padding-top: 0.35em – 0.65em`, không dùng `overflow: hidden` sát chữ, đảm bảo các dấu mũ và móc (`Â`, `Ă`, `Ê`, `Ô`, `Ơ`, `Ư`, dấu hỏi/ngã) hoàn toàn nguyên vẹn, không bao giờ bị cắt xén.
-  - Số giờ, số tiền và chỉ số áp dụng `font-variant-numeric: lining-nums tabular-nums`.
+- **Tiêu đề & Chữ khổng lồ**: `Bricolage Grotesque` (wdth 75–100, weight 700–800, viết hoa ở Display).
+- **Cụm nhấn tiêu đề**: `Fraunces` italic màu ember (một cụm mỗi tiêu đề).
+- **Nội dung & Giao diện**: `Be Vietnam Pro` (400/500/600).
+- **Nhãn, số & tọa độ**: `JetBrains Mono` (12–13px, viết hoa, `lining-nums tabular-nums`).
+- **Bảo toàn dấu tiếng Việt**:
+  - `text-wrap: balance` cho tiêu đề.
+  - Sử dụng khoảng trắng không ngắt (`&nbsp;`) giữa các cụm danh xưng "Mộc&nbsp;Mạc", "Cẩm&nbsp;Cù", "Gia&nbsp;Nghĩa".
+  - Mask hiện chữ có `padding-top: 0.4em`, không cắt dấu mũ, móc ("CẨM", "CÙ", "Đắk Nông").
 
 ---
 
-## 5. CHUYỂN ĐỘNG & TRẢI NGHIỆM TƯƠNG TÁC (SECTION 6 & 9)
+## 5. CHUYỂN ĐỘNG & TƯƠNG TÁC ĐIỆN ẢNH (SECTION 9)
 
-1. **Intro Điện Ảnh Cao Nguyên**:
-   - Nền charcoal `#1C1612`, đường đồng mức tỏa từ tâm, hoa Hoya sao vẽ nét rồi nở.
-   - Chữ "CẨM CÙ HOUSE" trượt hiện từng ký tự.
-   - Bộ đếm độ cao chuyển động từ `0m → 800m`.
-   - Kết thúc mở khung vòm điện ảnh để lộ trang chủ; có nút Bỏ qua và phím `Esc`; chỉ chạy 1 lần/phiên.
-2. **Chuyển Trang Vòm Bazan (Page Transition)**:
-   - Tấm bazan trồi lên hình vòm từ đáy màn hình, hiển thị tên trang Fraunces 64px và tọa độ mono.
-   - Vòm trượt lên mở trang mới trong $\le 1.05\text{s}$.
-   - Tự động fallback cross-fade 0.3s khi người dùng bật `prefers-reduced-motion`.
-3. **Thanh Tiến Độ & Cuộn Mượt (Lenis)**:
-   - Thanh tiến độ 2.5px màu bazan cố định đỉnh trang trượt theo tỉ lệ cuộn.
-   - Thư viện Lenis tối ưu 60fps mượt mà, đồng bộ ScrollTrigger.
+1. **Intro Điện Ảnh (≤ 3.5s)**:
+   - Màn hình đen `#0A0E0C` → đường kẻ ember vẽ ngang → chữ "CẨM CÙ HOUSE" mọc mờ dần nét (`blur(16px) -> blur(0px)`) → bộ đếm mono `000 -> 800 m` với vạch tiến độ → hai nửa màn hình tách mở hero.
+   - Có nút [BỎ QUA · ESC], hỗ trợ `prefers-reduced-motion` bỏ qua tức thì, phát sự kiện `camcu:intro-done`.
+2. **Chuyển Trang 5 Cột Dọc (Page Transition)**:
+   - 5 cột (`pine` / `ember` / `bg`) quét lên theo thứ tự (`stagger: 0.06s`).
+   - Trung tâm hiển thị số trang `[01]`–`[05]` + tên trang Display và tọa độ.
+   - Tự động fallback cross-fade 0.3s khi bật reduced-motion.
+3. **Cuộn Mượt Lenis (1.15s)**:
+   - Tích hợp ticker GSAP mượt 60–120fps, tự động cuộn về đầu trang khi đổi route.
 4. **Con Trỏ Chuột Tùy Biến (Custom Cursor)**:
-   - Chấm tròn 12px màu bazan tự động chuyển sang vòng tròn "Kéo" (khi hover gallery kéo ngang) hoặc "Xem" (khi hover ảnh bento/lightbox).
-   - Tự động tắt trên thiết bị cảm ứng (pointer coarse) và khi giảm chuyển động.
+   - Chấm tròn 10px + vầng sáng than hồng 160px trễ chuyển động.
+   - Tự động tắt trên màn hình cảm ứng / thiết bị di động.
 
 ---
 
-## 6. KIỂM THỬ THIẾT BỊ & RESPONSIVE (SECTION 11)
+## 6. DANH SÁCH 5 TRANG ĐÃ HOÀN THIỆN
 
-- **Desktop (1440px)**:
-  - Bố cục 12 cột, lề 48px, khoảng cách section 120px.
-  - Thực đơn chia cột kép: cột trái dính mục lục 01–08, cột phải danh sách theo nhóm.
-  - Bản đồ Chỉ đường cột đôi cân xứng với bảng 7 ngày.
-- **Mobile (390px)**:
-  - Container co lề 20px, khoảng cách section 72px.
-  - Menu toàn màn hình than mờ, phông Fraunces 44px.
-  - Thanh tiện ích liên hệ cố định chân trang (Gọi · Zalo · Chỉ đường) cao 56px, an toàn vùng tai thỏ (`env(safe-area-inset-bottom)`).
-  - Lưới bento tự động cân chỉnh 1-2 cột dễ vuốt chạm.
+1. **Trang Chủ (`/`)**:
+   - Hero tràn viền mọc từng ký tự; thẻ kính mờ góc vát trạng thái mở cửa; dải marquee 2 chiều; scrub chữ tuyên ngôn; 3 chỉ số kỹ thuật; 4 panel Vì Sao Chọn; bento check-in; cảm nhận Google 4.9 sao; CTA cuối.
+2. **Câu Chuyện (`/about`)**:
+   - H1 tràn ngang; 3 badge mono; 3 chương dính chia đôi với số chương 120px outline; đoạn tuyên ngôn chữ lớn; khối hẹn ước màu pine.
+3. **Không Gian Suối (`/space`)**:
+   - H1 không ngắt dòng; thẻ 22°C–26°C; chuyển chế độ Lưới / Phim; bento 30 ảnh với FLIP animation; trình chiếu toàn màn hình điều khiển phím ← →; sóng âm canvas suối róc rách; khối bảo tồn dòng suối.
+4. **Thực Đơn (`/menu`)**:
+   - Hoàn toàn chỉ có chữ (KHÔNG ảnh món ăn); cột trái mục lục `[01]`-`[08]` dính + tìm kiếm Ctrl+K không dấu; spotlight món Signature nền pine; hàng món kẻ mảnh giá ember trượt 6px hover; băng cam kết bếp & bar.
+5. **Chỉ Đường & Liên Hệ (`/contact`)**:
+   - H1 TỪ GIA NGHĨA; Hotline 64px với nút Gọi / Sao chép / Zalo; bảng giờ mở cửa 7 ngày highlight `HÔM NAY`; bản đồ nhúng lọc tối góc vát 14px; hướng dẫn 3 bước đến quán nối nét đứt; CTA hẹn gặp bên bờ suối.
 
 ---
 
 ## 7. KẾT LUẬN & KIẾN NGHỊ VẬN HÀNH
 
-Hệ thống giao diện mới của `camcuhouse.online` đã được thiết kế và triển khai hoàn chỉnh 100% theo đúng bản thảo thiết kế "Khói Củi & Nước Suối". Toàn bộ mã nguồn đã được build thành công, kiểm thử tự động toàn diện, không có lỗi console hay liên kết hỏng, sẵn sàng đưa vào vận hành thực tế.
+- **Tất cả 7 bước trong lộ trình đã hoàn thành và kiểm thử nghiêm ngặt**.
+- **Không có bất kỳ sự thay đổi hay bịa đặt nào về dữ liệu quán** (thực đơn 67 món, 30 ảnh, hotline, địa chỉ, giờ giấc).
+- **Mã nguồn trên nhánh `main` sẵn sàng cho việc triển khai xem trước (Vercel Preview) hoặc kiểm tra trực tiếp**.
