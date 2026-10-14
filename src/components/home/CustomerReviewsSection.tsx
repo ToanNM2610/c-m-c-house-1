@@ -94,14 +94,14 @@ function ReviewCard({
         </button>
       </div>
 
-      <footer className="mt-5 border-t border-[var(--line)] pt-3.5">
+      <div className="mt-5 border-t border-[var(--line)] pt-3.5">
         <cite className="not-italic text-[15.5px] font-semibold text-[var(--ink)]">
           {review.author}
         </cite>
         <p className="text-mono-label mt-1 text-[var(--ink-muted)]">
           {review.meta}
         </p>
-      </footer>
+      </div>
     </blockquote>
   );
 }

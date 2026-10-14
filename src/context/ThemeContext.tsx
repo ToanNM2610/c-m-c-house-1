@@ -24,6 +24,7 @@ export const THEME_STORAGE_KEY = "camcu_theme";
 export const applyTheme = (newTheme: Theme) => {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
+  root.setAttribute("data-theme", newTheme);
   if (newTheme === "dark") {
     root.classList.add("dark");
   } else {

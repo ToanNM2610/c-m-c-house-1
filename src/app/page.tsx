@@ -50,7 +50,7 @@ const HOME_BENTO_PHOTOS = [
     col: "lg:col-span-6 aspect-[16/10]",
   },
   {
-    url: "/uploads/gallery/1788250253576-805177028.jpg",
+    url: "/uploads/gallery/1788250253576-148814823.jpg",
     title: "Hiên Trà Gỗ Rợp Bóng Mát Trưa Hè",
     code: "[05/30]",
     col: "lg:col-span-6 aspect-[16/10]",
@@ -126,11 +126,11 @@ function WordSpan({
   progress: any;
   range: [number, number];
 }) {
-  const opacity = useTransform(progress, range, [0.22, 1]);
-  const color = useTransform(progress, range, ["rgba(242,237,228,0.22)", "var(--ink)"]);
+  // Chữ chưa sáng vẫn >= 3:1 (kem .35), chữ đã sáng kem đặc / rõ (Mục C8)
+  const opacity = useTransform(progress, range, [0.55, 1]);
 
   return (
-    <motion.span style={{ opacity, color }} className="inline-block mr-[0.3em]">
+    <motion.span style={{ opacity }} className="inline-block mr-[0.3em] text-[var(--ink)]">
       {word}
     </motion.span>
   );
@@ -182,7 +182,7 @@ export default function HomePage() {
   const heroTitleLetters = "CẨM CÙ HOUSE".split("");
 
   return (
-    <div className="bg-[var(--bg)] text-[var(--ink)] min-h-screen selection:bg-[var(--ember)] selection:text-[#0A0E0C] transition-colors overflow-x-hidden">
+    <div className="bg-[var(--bg)] text-[var(--ink)] min-h-screen selection:bg-[var(--ember)] selection:text-[#0A0E0C] overflow-x-hidden">
       <main className="overflow-x-hidden">
         {/* =========================================================================
             1. HERO (TOÀN MÀN HÌNH - SECTION 8.1.1)
@@ -430,7 +430,7 @@ export default function HomePage() {
 
               {/* Chỉ số 3 */}
               <div className="flex flex-col gap-3 py-6 md:py-0 md:px-8 last:pr-0">
-                <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--mist)] font-bold">
+                <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--forest)] font-bold">
                   [MÔI TRƯỜNG SINH THÁI]
                 </span>
                 <span className="font-display font-black text-[clamp(72px,8vw,140px)] leading-none text-[var(--ink)]">
@@ -479,7 +479,7 @@ export default function HomePage() {
                         </span>
                         <span
                           className="font-mono text-[12px] uppercase tracking-widest font-bold"
-                          style={{ color: isPine ? "var(--mist-on-dark)" : "var(--mist)" }}
+                          style={{ color: isPine ? "var(--mist-on-dark)" : "var(--forest)" }}
                         >
                           {panel.tag}
                         </span>
@@ -591,7 +591,7 @@ export default function HomePage() {
         {/* =========================================================================
             8. CTA CUỐI: GHÉ CẨM CÙ HOUSE (SECTION 8.1.8)
            ========================================================================= */}
-        <section className="relative w-full py-32 sm:py-44 bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden text-center">
+        <section className="relative w-full py-32 sm:py-44 bg-[#0A0E0C] text-[#F4EEE2] overflow-hidden text-center border-t border-[var(--line-on-dark)]">
           <div className="absolute inset-0 pointer-events-none select-none z-0">
             <Image
               src="/uploads/gallery/1788250253557-29323827.jpg"
@@ -599,15 +599,16 @@ export default function HomePage() {
               fill
               className="object-cover opacity-25 filter brightness-75 contrast-125"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E0C] via-transparent to-[#0A0E0C]" />
+            <div className="absolute inset-0 bg-black/45" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E0C]/55 via-transparent to-[#0A0E0C]/55" />
           </div>
 
           <div className="w-full max-w-[1000px] mx-auto px-5 sm:px-10 relative z-10 flex flex-col items-center gap-6">
-            <div className="w-12 h-12 rounded-sm border border-[var(--line)] bg-[var(--card)] flex items-center justify-center text-[var(--ember)] mb-2">
+            <div className="w-12 h-12 rounded-sm border border-[var(--line-on-dark)] bg-[#131B17] flex items-center justify-center text-[var(--ember)] mb-2">
               <StarHoya size={24} strokeWidth={2} />
             </div>
 
-            <h2 className="font-display font-black text-[clamp(36px,8vw,96px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+            <h2 className="font-display font-black text-[clamp(36px,8vw,96px)] uppercase tracking-tight text-[#F4EEE2] leading-none">
               GHÉ CẨM CÙ HOUSE
             </h2>
 
@@ -615,7 +616,7 @@ export default function HomePage() {
               Thưởng thức cà phê bên bờ suối róc rách giữa đại ngàn Đắk Nông
             </p>
 
-            <p className="text-[15px] sm:text-[16px] text-[var(--ink-muted)] max-w-lg">
+            <p className="text-[15px] sm:text-[16px] text-[rgba(244,238,226,0.85)] max-w-lg">
               Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa · Độ cao 800m+
             </p>
 
@@ -634,7 +635,7 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("click_directions")}
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-[var(--ink)] text-[var(--ink)] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-all"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-[#F4EEE2] text-[#F4EEE2] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-[#F4EEE2]/15 hover:text-[#F4EEE2] transition-all"
               >
                 <Navigation className="w-4 h-4" />
                 <span>CHỈ ĐƯỜNG GOOGLE MAPS</span>

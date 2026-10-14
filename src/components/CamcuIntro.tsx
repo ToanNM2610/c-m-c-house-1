@@ -250,7 +250,11 @@ export default function CamcuIntro() {
 
         {/* Chữ "CẨM CÙ HOUSE" hiện ký tự mờ -> nét */}
         <div className="overflow-visible pt-4 pb-2 mb-3">
-          <h1 className="font-display text-[clamp(44px,9vw,110px)] font-black tracking-tight text-[#F2EDE4] flex justify-center flex-wrap leading-none uppercase">
+          <div
+            role="heading"
+            aria-level={2}
+            className="font-display text-[clamp(44px,9vw,110px)] font-black tracking-tight text-[#F2EDE4] flex justify-center flex-wrap leading-none uppercase"
+          >
             {titleString.split('').map((char, i) => (
               <span
                 key={i}
@@ -260,7 +264,7 @@ export default function CamcuIntro() {
                 {char}
               </span>
             ))}
-          </h1>
+          </div>
         </div>
 
         {/* Tagline */}

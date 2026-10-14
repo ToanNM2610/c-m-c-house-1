@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Image as ImageIcon } from "lucide-react";
 
 interface MaskRevealImageProps {
   src: string;
@@ -39,28 +39,40 @@ export default function MaskRevealImage({
         </div>
       )}
 
-      {/* 2. Ảnh với blur-up: Mờ dần sang rõ nét mượt mà, không giật màn đen */}
-      <motion.img
-        src={hasError ? "/images/og-home.jpg" : src}
-        alt={alt}
-        loading="lazy"
-        onLoad={() => setIsLoaded(true)}
-        onError={() => {
-          setHasError(true);
-          setIsLoaded(true);
-        }}
-        initial={shouldReduceMotion ? { opacity: 0 } : { scale: 1.08, opacity: 0 }}
-        whileInView={shouldReduceMotion ? { opacity: 1 } : { scale: 1, opacity: 1 }}
-        viewport={{ once: true, margin: "-20px" }}
-        transition={{
-          duration: shouldReduceMotion ? 0.2 : 0.8,
-          ease: [0.2, 0.7, 0.2, 1] as const,
-          delay: shouldReduceMotion ? 0 : Math.min(delay, 0.2),
-        }}
-        className={`w-full h-full object-cover transition-all duration-700 ease-out transform-gpu ${
-          shouldReduceMotion ? "" : "group-hover:scale-105"
-        } ${isLoaded ? "blur-0 opacity-100" : "blur-sm opacity-60"}`}
-      />
+      {/* 2. Khi ảnh lỗi: hiện nền --surface-2 + icon, KHÔNG hiện biểu tượng ảnh hỏng hay chữ alt (Mục B5) */}
+      {hasError ? (
+        <div
+          className="w-full h-full bg-[var(--surface-2)] flex flex-col items-center justify-center text-[var(--ink-muted)] p-4 select-none"
+          aria-hidden="true"
+        >
+          <ImageIcon className="w-8 h-8 opacity-40 mb-1.5 text-[var(--accent-green)]" />
+          <span className="font-mono text-[11px] opacity-50 uppercase tracking-wider">
+            Cẩm Cù House
+          </span>
+        </div>
+      ) : (
+        <motion.img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          onLoad={() => setIsLoaded(true)}
+          onError={() => {
+            setHasError(true);
+            setIsLoaded(true);
+          }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { scale: 1.08, opacity: 0 }}
+          whileInView={shouldReduceMotion ? { opacity: 1 } : { scale: 1, opacity: 1 }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{
+            duration: shouldReduceMotion ? 0.2 : 0.8,
+            ease: [0.2, 0.7, 0.2, 1] as const,
+            delay: shouldReduceMotion ? 0 : Math.min(delay, 0.2),
+          }}
+          className={`w-full h-full object-cover transition-all duration-700 ease-out transform-gpu ${
+            shouldReduceMotion ? "" : "group-hover:scale-105"
+          } ${isLoaded ? "blur-0 opacity-100" : "blur-sm opacity-60"}`}
+        />
+      )}
     </div>
   );
 }

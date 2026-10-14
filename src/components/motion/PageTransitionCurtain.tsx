@@ -49,7 +49,8 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
   return (
     <div
       key={`curtain-wrapper-${pathname}`}
-      className="fixed inset-0 z-[99998] pointer-events-none overflow-hidden select-none"
+      aria-hidden="true"
+      className="fixed inset-0 z-[99998] pointer-events-none overflow-hidden select-none bg-[#0A0E0C]"
     >
       {/* 5 Cột dọc (pine / ember / bg) quét lên theo thứ tự (stagger .06s) - Section 9 */}
       <div className="absolute inset-0 flex w-full h-full">

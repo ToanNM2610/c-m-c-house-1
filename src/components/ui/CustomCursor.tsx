@@ -4,150 +4,147 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
-  const [cursorState, setCursorState] = useState<{
+  const [hoverState, setHoverState] = useState<{
     text: string;
-    variant: "default" | "hover" | "view" | "drag";
-    visible: boolean;
+    showRing: boolean;
   }>({
     text: "",
-    variant: "default",
-    visible: false,
+    showRing: false,
   });
 
-  const mouseX = useMotionValue(-100);
-  const mouseY = useMotionValue(-100);
+  const [isTouchOrDisabled, setIsTouchOrDisabled] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // Chấm tâm theo nhanh
-  const dotSpringConfig = { damping: 30, stiffness: 450, mass: 0.3 };
-  const dotX = useSpring(mouseX, dotSpringConfig);
-  const dotY = useSpring(mouseY, dotSpringConfig);
+  const mouseX = useMotionValue(-200);
+  const mouseY = useMotionValue(-200);
 
-  // Vầng sáng ember 160px đi trễ nhẹ tạo cảm giác ánh lửa
-  const glowSpringConfig = { damping: 25, stiffness: 180, mass: 0.8 };
+  // Vầng sáng kem 120px bám sát chuột đúng vị trí, trễ < 80ms
+  const glowSpringConfig = { damping: 40, stiffness: 850, mass: 0.1 };
   const glowX = useSpring(mouseX, glowSpringConfig);
   const glowY = useSpring(mouseY, glowSpringConfig);
 
+  // Vòng Xem/Kéo bám sát chuột
+  const ringSpringConfig = { damping: 35, stiffness: 600, mass: 0.15 };
+  const ringX = useSpring(mouseX, ringSpringConfig);
+  const ringY = useSpring(mouseY, ringSpringConfig);
+
   useEffect(() => {
-    // Chỉ kích hoạt trên desktop có chuột (pointer: fine) và không bật reduced motion
     if (typeof window === "undefined") return;
-    const isFinePointer = window.matchMedia("(pointer: fine)").matches;
-    const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (!isFinePointer || isReduced) return;
+    // 1. Kiểm tra thiết bị cảm ứng hoặc prefers-reduced-motion
+    const checkDisabled = () => {
+      const isFinePointer = window.matchMedia("(pointer: fine)").matches;
+      const isHoverable = window.matchMedia("(hover: hover)").matches;
+      const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      return !isFinePointer || !isHoverable || isReduced;
+    };
 
+    if (checkDisabled()) {
+      setIsTouchOrDisabled(true);
+      return;
+    }
+
+    // 2. Theo dõi trạng thái Lightbox mở / đóng
+    const checkLightbox = () => {
+      const open =
+        document.body.classList.contains("lightbox-open") ||
+        document.body.getAttribute("data-lightbox-active") === "true";
+      setIsLightboxOpen(open);
+    };
+
+    const observer = new MutationObserver(() => {
+      checkLightbox();
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["class", "data-lightbox-active"],
+    });
+
+    // 3. Xử lý di chuyển chuột
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
 
-      if (!cursorState.visible) {
-        setCursorState((prev) => ({ ...prev, visible: true }));
-      }
+      if (!isVisible) setIsVisible(true);
 
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
+      // Chỉ hiện vòng Xem/Kéo khi rê chuột vào ảnh hoặc vùng xem ảnh
       const dragTarget = target.closest("[data-cursor='drag'], .cursor-drag");
-      const viewTarget = target.closest("[data-cursor='view'], .cursor-view, [data-lightbox], img");
-      const interactiveTarget = target.closest("button, a, input, select, textarea, [role='button']");
+      const viewTarget = target.closest(
+        "[data-cursor='view'], .cursor-view, [data-lightbox], img, figure"
+      );
 
       if (dragTarget) {
-        setCursorState({ text: "KÉO", variant: "drag", visible: true });
+        setHoverState({ text: "KÉO", showRing: true });
       } else if (viewTarget) {
-        setCursorState({ text: "XEM", variant: "view", visible: true });
-      } else if (interactiveTarget) {
-        setCursorState({ text: "", variant: "hover", visible: true });
+        setHoverState({ text: "XEM", showRing: true });
       } else {
-        setCursorState({ text: "", variant: "default", visible: true });
+        if (hoverState.showRing) {
+          setHoverState({ text: "", showRing: false });
+        }
       }
     };
 
     const handleMouseLeave = () => {
-      setCursorState((prev) => ({ ...prev, visible: false }));
+      setIsVisible(false);
+      setHoverState({ text: "", showRing: false });
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     document.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
+      observer.disconnect();
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [cursorState.visible, mouseX, mouseY]);
+  }, [isVisible, hoverState.showRing, mouseX, mouseY]);
+
+  // Tắt hoàn toàn trên cảm ứng, khi reduced motion hoặc khi mở lightbox
+  if (isTouchOrDisabled || isLightboxOpen || !isVisible) {
+    return null;
+  }
 
   return (
     <>
-      {/* 1. Màng hạt phim (Film Grain) 4% toàn trang */}
-      <div
-        className="fixed inset-0 pointer-events-none z-[99990] opacity-[0.04] select-none"
+      {/* 1. Vầng sáng kem rất nhẹ (tròn, 120px, độ mờ .10, z-index dưới nội dung, pointer-events: none) */}
+      <motion.div
+        className="fixed top-0 left-0 pointer-events-none z-[10] w-[120px] h-[120px] rounded-full select-none"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          x: glowX,
+          y: glowY,
+          translateX: "-50%",
+          translateY: "-50%",
+          background:
+            "radial-gradient(circle, rgba(250, 246, 238, 0.10) 0%, rgba(244, 238, 226, 0.05) 50%, transparent 75%)",
+          filter: "blur(14px)",
         }}
         aria-hidden="true"
       />
 
-      {/* 2. Vầng sáng ember 160px đi trễ */}
-      {cursorState.visible && (
+      {/* 2. Chỉ hiện vòng Xem/Kéo khi rê vào ảnh (không có dot hệ thống thay thế con trỏ) */}
+      {hoverState.showRing && (
         <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[99991] w-[160px] h-[160px] rounded-full blur-[20px] select-none"
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="fixed top-0 left-0 pointer-events-none z-[99999] flex items-center justify-center font-mono select-none w-16 h-16 rounded-full bg-[#121A15]/85 border border-[#FAF6EE]/40 text-[#FAF6EE] backdrop-blur-md shadow-xl"
           style={{
-            x: glowX,
-            y: glowY,
+            x: ringX,
+            y: ringY,
             translateX: "-50%",
             translateY: "-50%",
-            background:
-              "radial-gradient(circle, rgba(255, 106, 43, 0.24) 0%, rgba(255, 106, 43, 0.08) 45%, transparent 70%)",
           }}
           aria-hidden="true"
-        />
-      )}
-
-      {/* 3. Con trỏ chấm 10px / Vòng XEM / KÉO */}
-      {cursorState.visible && (
-        <motion.div
-          className="fixed top-0 left-0 pointer-events-none z-[99999] flex items-center justify-center font-mono select-none"
-          style={{
-            x: dotX,
-            y: dotY,
-            translateX: "-50%",
-            translateY: "-50%",
-          }}
-          animate={{
-            width:
-              cursorState.variant === "view" || cursorState.variant === "drag"
-                ? 72
-                : cursorState.variant === "hover"
-                ? 24
-                : 10,
-            height:
-              cursorState.variant === "view" || cursorState.variant === "drag"
-                ? 72
-                : cursorState.variant === "hover"
-                ? 24
-                : 10,
-            backgroundColor:
-              cursorState.variant === "view" || cursorState.variant === "drag"
-                ? "rgba(255, 106, 43, 0.92)"
-                : cursorState.variant === "hover"
-                ? "rgba(255, 106, 43, 0.25)"
-                : "var(--ember)",
-            border:
-              cursorState.variant === "view" || cursorState.variant === "drag"
-                ? "2px solid #FFFFFF"
-                : cursorState.variant === "hover"
-                ? "1.5px solid var(--ember)"
-                : "none",
-            backdropFilter:
-              cursorState.variant === "view" || cursorState.variant === "drag"
-                ? "blur(6px)"
-                : "none",
-          }}
-          transition={{ type: "spring", stiffness: 450, damping: 28 }}
         >
-          {(cursorState.variant === "view" || cursorState.variant === "drag") && (
-            <span className="text-[#0A0E0C] text-[12px] font-bold tracking-widest uppercase">
-              {cursorState.text}
-            </span>
-          )}
+          <span className="text-[11px] font-bold tracking-widest uppercase">
+            {hoverState.text}
+          </span>
         </motion.div>
       )}
     </>

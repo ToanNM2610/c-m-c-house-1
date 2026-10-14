@@ -131,7 +131,7 @@ export default function Footer() {
               [04] ĐỊA CHỈ & KẾT NỐI
             </span>
             <p className="text-[13.5px] leading-relaxed" style={{ color: "var(--ink-muted-on-dark)" }}>
-              Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
+              Hẻm 437 Hùng Vương, Phường Nghĩa Trung, Thành phố Gia Nghĩa, Tỉnh Đắk Nông
             </p>
 
             <a href="mailto:thuynhu8788@gmail.com" className="font-mono text-[12px] text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:underline flex items-center gap-1.5">

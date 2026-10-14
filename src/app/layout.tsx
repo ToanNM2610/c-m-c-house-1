@@ -116,8 +116,25 @@ export default async function RootLayout({
                   var theme = (cookieMatch ? cookieMatch[1] : null) || storedTheme;
                   if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
+                    document.documentElement.setAttribute('data-theme', 'dark');
                   } else {
                     document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-theme', 'light');
+                  }
+                  if (typeof MutationObserver !== 'undefined') {
+                    var observer = new MutationObserver(function(mutations) {
+                      for (var i = 0; i < mutations.length; i++) {
+                        if (mutations[i].attributeName === 'data-theme') {
+                          var dt = document.documentElement.getAttribute('data-theme');
+                          if (dt === 'light') {
+                            document.documentElement.classList.remove('dark');
+                          } else if (dt === 'dark') {
+                            document.documentElement.classList.add('dark');
+                          }
+                        }
+                      }
+                    });
+                    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
                   }
                   var seenIntro = sessionStorage.getItem('cc_intro') === '1';
                   var params = new URLSearchParams(location.search);
@@ -183,7 +200,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--basalt)] selection:text-white transition-colors duration-200">
+      <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--basalt)] selection:text-white">
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>

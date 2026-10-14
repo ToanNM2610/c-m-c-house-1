@@ -31,12 +31,12 @@ body:not(.dark) {
   --mist: #E6EDE4;
   --sage: #5E7F63;
   --forest: #2F4A3A;
-  --clay: #B5654A;
+  --clay: #8D361D;
   --clay-ink: #FFFFFF;
   --rose: #F1DCD0;
   --sun: #E8C77A;
   --ink: #2B2622;
-  --ink-muted: #675C54;
+  --ink-muted: #574C44;
   --card-surface: #FFFFFF;
   --line: rgba(43, 38, 34, 0.12);
   --soft-shadow: 0 12px 40px rgba(43, 38, 34, 0.08);
@@ -45,16 +45,16 @@ body:not(.dark) {
   --bg-2: #E6EDE4;
   --pine: #2F4A3A;
   --card: #FFFFFF;
-  --ember: #B5654A;
+  --ember: #8D361D;
   --ember-ink: #FFFFFF;
   --gold: #E8C77A;
 
   /* Token cố định cho mọi Hero tối & ảnh (Không bao giờ đổi sang chữ đen ở chế độ Sáng) */
-  --ink-on-dark: #F2EDE4;
-  --ink-muted-on-dark: rgba(242, 237, 228, 0.82);
-  --ember-on-dark: #FF6A2B;
+  --ink-on-dark: #F4EEE2;
+  --ink-muted-on-dark: rgba(244, 238, 226, 0.85);
+  --ember-on-dark: #FF7D47;
   --mist-on-dark: #A9C4B6;
-  --line-on-dark: rgba(242, 237, 228, 0.18);
+  --line-on-dark: rgba(244, 238, 226, 0.22);
 
   /* Unified Aliases for Components & Admin */
   --paper: var(--bg);
@@ -130,11 +130,11 @@ body.dark:not([data-theme="light"]) {
   --gold: #F0D58F;
 
   /* Token cố định cho mọi Hero tối & ảnh (Không bao giờ đổi sang chữ đen ở chế độ Sáng) */
-  --ink-on-dark: #F2EDE4;
-  --ink-muted-on-dark: rgba(242, 237, 228, 0.82);
+  --ink-on-dark: #F4EEE2;
+  --ink-muted-on-dark: rgba(244, 238, 226, 0.85);
   --ember-on-dark: #FF6A2B;
   --mist-on-dark: #A9C4B6;
-  --line-on-dark: rgba(242, 237, 228, 0.18);
+  --line-on-dark: rgba(244, 238, 226, 0.22);
 
   --paper: var(--bg);
   --paper-2: var(--bg-2);
@@ -259,7 +259,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  transition: background-color 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 h1, .font-h1 {
@@ -269,7 +268,7 @@ h1, .font-h1 {
   line-height: 1.02;
   letter-spacing: -0.02em;
   text-wrap: balance;
-  color: var(--text);
+  color: inherit;
   text-rendering: optimizeLegibility;
 }
 
@@ -280,7 +279,7 @@ h2, .font-h2 {
   line-height: 1.08;
   letter-spacing: -0.015em;
   text-wrap: balance;
-  color: var(--text);
+  color: inherit;
   text-rendering: optimizeLegibility;
 }
 
@@ -291,7 +290,7 @@ h3, .font-h3 {
   line-height: 1.15;
   letter-spacing: -0.01em;
   text-wrap: balance;
-  color: var(--text);
+  color: inherit;
   text-rendering: optimizeLegibility;
 }
 

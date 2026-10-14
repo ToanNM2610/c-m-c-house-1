@@ -23,9 +23,9 @@ function WordScrubSpan({
   range: [number, number];
   progress: MotionValue<number>;
 }) {
-  // Bắt đầu từ opacity 0.35 để đảm bảo độ tương phản tối thiểu >= 3:1 trên nền tối
+  // Chữ chưa sáng >= 3:1 (kem .35), chữ đã sáng kem đặc #F4EEE2 (Mục C7 & C8)
   const opacity = useTransform(progress, range, [0.35, 1]);
-  const color = useTransform(progress, range, ["rgba(242,237,228,0.35)", "var(--ink)"]);
+  const color = useTransform(progress, range, ["rgba(244, 238, 226, 0.35)", "#F4EEE2"]);
 
   return (
     <motion.span
@@ -53,25 +53,26 @@ function CinematicQuoteSection({ isEn }: { isEn: boolean }) {
   return (
     <section
       ref={containerRef}
-      className="relative w-full py-32 sm:py-44 bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden border-y border-[var(--line)]"
+      className="relative w-full py-32 sm:py-44 bg-[#0A0E0C] text-[#F4EEE2] overflow-hidden border-y border-[var(--line-on-dark)]"
     >
-      {/* Nền ảnh phủ tối */}
+      {/* Nền ảnh phủ tối gradient .35–.55 (Mục C7) */}
       <div className="absolute inset-0 pointer-events-none select-none z-0">
         <Image
           src="/uploads/gallery/1788250253557-29323827.jpg"
-          alt="Dưới bóng rừng Tây Nguyên"
+          alt={isEn ? "Under the forest canopy" : "Dưới bóng rừng Tây Nguyên"}
           fill
-          className="object-cover opacity-20 filter brightness-75 contrast-125"
+          className="object-cover opacity-25 filter brightness-75 contrast-125"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E0C] via-transparent to-[#0A0E0C]" />
+        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E0C]/55 via-black/35 to-[#0A0E0C]/55" />
       </div>
 
       <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
         <div className="max-w-4xl flex flex-col gap-8">
           <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
-            <span>[TUYÊN NGÔN ĐẠI NGÀN]</span>
+            <span>{isEn ? "[HIGHLAND MANIFESTO]" : "[TUYÊN NGÔN ĐẠI NGÀN]"}</span>
             <span>·</span>
-            <span>ĐỘ CAO 800M+</span>
+            <span>{isEn ? "ALTITUDE 800M+" : "ĐỘ CAO 800M+"}</span>
           </div>
 
           <div className="flex flex-wrap">
@@ -89,8 +90,10 @@ function CinematicQuoteSection({ isEn }: { isEn: boolean }) {
             })}
           </div>
 
-          <p className="font-mono text-xs text-[var(--ink-muted)] uppercase tracking-wider">
-            • CUỘN ĐỂ TỪNG TỪ BỪNG SÁNG THEO NHỊP THỞ NÚI RỪNG
+          <p className="font-mono text-xs text-[rgba(244,238,226,0.85)] uppercase tracking-wider">
+            {isEn
+              ? "• SCROLL TO REVEAL EACH WORD WITH THE MOUNTAIN'S BREATH"
+              : "• CUỘN ĐỂ TỪNG TỪ BỪNG SÁNG THEO NHỊP THỞ NÚI RỪNG"}
           </p>
         </div>
       </div>
@@ -234,7 +237,7 @@ export default function AboutPage() {
                   02
                 </span>
 
-                <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold">
+                <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
                   DÒNG NƯỚC MÁT LÀNH NGUYÊN SƠ
                 </span>
 

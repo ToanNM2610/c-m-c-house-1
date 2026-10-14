@@ -197,7 +197,7 @@ export default function ContactPage() {
 
                   <a
                     href="mailto:thuynhu8788@gmail.com"
-                    className="font-mono text-[12px] text-[var(--mist)] hover:underline flex items-center gap-1"
+                    className="font-mono text-[12px] text-[var(--ink-muted)] hover:underline flex items-center gap-1"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span>thuynhu8788@gmail.com</span>
@@ -208,11 +208,11 @@ export default function ContactPage() {
               {/* Card Giờ mở cửa: Bảng 7 ngày kẻ mảnh, hôm nay nền ember 14% + nhãn HÔM NAY (Section 8.5.2) */}
               <div className="p-6 sm:p-8 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 flex flex-col gap-4 shadow-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-sm bg-[var(--bg-2)] border border-[var(--line)] text-[var(--mist)] flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-sm bg-[var(--bg-2)] border border-[var(--line)] text-[var(--ember)] flex items-center justify-center shrink-0">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist)] block font-bold">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ember)] block font-bold">
                       LỊCH PHỤC VỤ TUẦN
                     </span>
                     <h2 className="font-display font-extrabold text-[20px] uppercase text-[var(--ink)]">
@@ -256,7 +256,7 @@ export default function ContactPage() {
               {/* Kênh truyền thông: Facebook, TikTok, YouTube (Section 8.5.2) */}
               <div className="p-6 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 flex items-center justify-between">
                 <div>
-                  <span className="font-mono text-[11px] text-[var(--mist)] uppercase font-bold block">
+                  <span className="font-mono text-[11px] text-[var(--ember)] uppercase font-bold block">
                     KÊNH TRUYỀN THÔNG
                   </span>
                   <span className="font-display font-bold text-[18px] uppercase text-[var(--ink)]">
@@ -318,7 +318,7 @@ export default function ContactPage() {
                 <span className="font-display font-black text-[32px] text-[var(--ember)] w-14 h-14 rounded-sm border border-[var(--line)] bg-[var(--bg-2)] flex items-center justify-center">
                   01
                 </span>
-                <span className="font-mono text-[12px] text-[var(--mist)] uppercase font-bold">
+                <span className="font-mono text-[12px] text-[var(--ember)] uppercase font-bold">
                   TỪ QUỐC LỘ 14
                 </span>
                 <h3 className="font-bold text-[18px] text-[var(--ink)]">
@@ -334,7 +334,7 @@ export default function ContactPage() {
                 <span className="font-display font-black text-[32px] text-[var(--ember)] w-14 h-14 rounded-sm border border-[var(--line)] bg-[var(--bg-2)] flex items-center justify-center">
                   02
                 </span>
-                <span className="font-mono text-[12px] text-[var(--mist)] uppercase font-bold">
+                <span className="font-mono text-[12px] text-[var(--ember)] uppercase font-bold">
                   300M ĐƯỜNG BÊ TÔNG
                 </span>
                 <h3 className="font-bold text-[18px] text-[var(--ink)]">
@@ -350,7 +350,7 @@ export default function ContactPage() {
                 <span className="font-display font-black text-[32px] text-[var(--ember)] w-14 h-14 rounded-sm border border-[var(--line)] bg-[var(--bg-2)] flex items-center justify-center">
                   03
                 </span>
-                <span className="font-mono text-[12px] text-[var(--mist)] uppercase font-bold">
+                <span className="font-mono text-[12px] text-[var(--ember)] uppercase font-bold">
                   BÃI ĐỖ RỘNG RÃI
                 </span>
                 <h3 className="font-bold text-[18px] text-[var(--ink)]">
