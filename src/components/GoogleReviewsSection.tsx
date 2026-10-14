@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Star, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
-import ContourLines from "@/components/ui/ContourLines";
+import { Star, ExternalLink } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface GoogleReview {
   id: string;
@@ -30,7 +29,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
     id: "rev-1",
     name: "Minh Quân Nguyễn",
     initial: "Q",
-    avatarBg: "bg-[#2D4233] text-[#9DBB74]",
+    avatarBg: "bg-[var(--pine)] text-[var(--mist)]",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide · Cấp 6 (82 bài đánh giá)",
     badgeTextEn: "Local Guide · Level 6 (82 reviews)",
@@ -52,7 +51,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
     id: "rev-2",
     name: "Hồng Hạnh (Hanh Leo)",
     initial: "H",
-    avatarBg: "bg-[#A8452A] text-white",
+    avatarBg: "bg-[var(--ember)] text-[#0A0E0C]",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide · Cấp 5 (46 bài đánh giá)",
     badgeTextEn: "Local Guide · Level 5 (46 reviews)",
@@ -74,7 +73,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
     id: "rev-3",
     name: "Trần Đức Trọng",
     initial: "T",
-    avatarBg: "bg-[#2C5A4A] text-[#7FC2A8]",
+    avatarBg: "bg-[var(--mist)] text-[#0A0E0C]",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide · Cấp 7 (140 bài đánh giá)",
     badgeTextEn: "Local Guide · Level 7 (140 reviews)",
@@ -96,7 +95,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
     id: "rev-4",
     name: "Thùy Trang Travel",
     initial: "T",
-    avatarBg: "bg-[#E0764F] text-[#1C1612]",
+    avatarBg: "bg-[var(--ember)] text-[#0A0E0C]",
     badgeType: "local_guide",
     badgeTextVi: "Local Guide · Cấp 4 (32 bài đánh giá)",
     badgeTextEn: "Local Guide · Level 4 (32 reviews)",
@@ -118,7 +117,7 @@ const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
     id: "rev-5",
     name: "Lê Văn Thắng",
     initial: "T",
-    avatarBg: "bg-[#5E7A3E] text-white",
+    avatarBg: "bg-[var(--pine)] text-[var(--mist)]",
     badgeType: "review_count",
     badgeTextVi: "19 bài đánh giá",
     badgeTextEn: "19 reviews",
@@ -138,185 +137,146 @@ const GOOGLE_REVIEWS_DATA: GoogleReview[] = [
   },
   {
     id: "rev-6",
-    name: "Thu Phương",
-    initial: "P",
-    avatarBg: "bg-[#3E2723] text-[#F0C566]",
+    name: "An Nhiên (Gia Đình Nhỏ)",
+    initial: "A",
+    avatarBg: "bg-[var(--gold)] text-[#0A0E0C]",
     badgeType: "review_count",
-    badgeTextVi: "27 bài đánh giá · 14 ảnh",
-    badgeTextEn: "27 reviews · 14 photos",
+    badgeTextVi: "28 bài đánh giá",
+    badgeTextEn: "28 reviews",
     rating: 5,
-    timeVi: "1 tháng trước",
-    timeEn: "1 month ago",
+    timeVi: "2 tháng trước",
+    timeEn: "2 months ago",
     contentVi:
-      "Quán giữ được nét mộc mạc nguyên bản của Tây Nguyên, rặng cây xanh mướt và tiếng suối róc rách xua tan mệt mỏi đường dài. Rất recommend mọi người ghé qua!",
+      "Một nơi trốn bình yên thực sự. Không tiếng còi xe, chỉ có tiếng gió xào xạc và tiếng suối. Menu nhiều món thanh mát, có cả nước ép trái cây tươi cho mẹ và bé. Chắc chắn sẽ quay lại nhiều lần.",
     contentEn:
-      "Preserves the raw charm of the Central Highlands; verdant trees and babbling stream water wash away travel fatigue. Highly recommend!",
+      "A truly tranquil hideaway. Zero traffic noise, only whispering breezes and singing stream waters. The menu has plenty of wholesome refreshments. We will definitely return often.",
     dineInVi: "Dùng tại chỗ",
     dineInEn: "Dine-in",
-    priceVi: "~40.000 đ/người",
-    priceEn: "~40,000 VND/person",
-    recommendVi: "Trà thảo mộc, Bò kho bánh mì",
-    recommendEn: "Herbal Tea, Beef Stew Bread",
+    priceVi: "30.000 – 50.000 đ/người",
+    priceEn: "30,000 – 50,000 VND/person",
+    recommendVi: "Nước ép cóc ổi sơ ri, Cà phê cốt dừa",
+    recommendEn: "Tropical Fresh Juices, Coconut Iced Coffee",
   },
 ];
 
-interface GoogleReviewsSectionProps {
-  isEn?: boolean;
+function ReviewCard({ review, isEn }: { review: GoogleReview; isEn: boolean }) {
+  return (
+    <div className="shrink-0 w-[350px] sm:w-[420px] bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 p-6 flex flex-col justify-between gap-4 select-none transition-all hover:border-[var(--ember)]/60 hover:shadow-lg">
+      <div className="flex flex-col gap-3">
+        {/* Header reviewer */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-10 h-10 rounded-sm flex items-center justify-center font-bold text-[15px] font-mono shrink-0 ${review.avatarBg}`}
+            >
+              {review.initial}
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-[15px] text-[var(--ink)] truncate">
+                {review.name}
+              </span>
+              <span className="font-mono text-[11px] text-[var(--mist)] truncate">
+                {isEn ? review.badgeTextEn : review.badgeTextVi}
+              </span>
+            </div>
+          </div>
+
+          {/* Stars */}
+          <div className="flex items-center gap-0.5 text-[var(--gold)] shrink-0">
+            {Array.from({ length: review.rating }).map((_, i) => (
+              <Star key={i} className="w-3.5 h-3.5 fill-current" />
+            ))}
+          </div>
+        </div>
+
+        {/* Nội dung nguyên văn */}
+        <p className="text-[14px] sm:text-[15px] text-[var(--ink-muted)] leading-relaxed italic line-clamp-4">
+          &ldquo;{isEn ? review.contentEn : review.contentVi}&rdquo;
+        </p>
+      </div>
+
+      {/* Meta chi tiết: Dùng tại chỗ, Giá, Đề xuất */}
+      <div className="pt-3 border-t border-[var(--line)] flex flex-wrap items-center justify-between gap-2 font-mono text-[11px] text-[var(--ink-muted)]">
+        <span className="text-[var(--ember)] font-semibold">
+          {isEn ? review.dineInEn : review.dineInVi} · {isEn ? review.priceEn : review.priceVi}
+        </span>
+        <span className="truncate max-w-[200px]">
+          ★ {isEn ? review.recommendEn : review.recommendVi}
+        </span>
+      </div>
+    </div>
+  );
 }
 
-/**
- * Cảm nhận khách (Section 8.1.6):
- * Khối --charcoal: điểm 4.9 + sao vàng khổng lồ;
- * Một trích dẫn lớn (Fraunces 36px) chuyển tự động mỗi 7s;
- * Dải avatar tròn bên dưới để chọn; nút "Xem tất cả đánh giá trên Google Maps".
- */
-export default function GoogleReviewsSection({ isEn = false }: GoogleReviewsSectionProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+export default function GoogleReviewsSection() {
+  const { locale } = useLanguage();
+  const isEn = locale === "en";
 
-  // Tự động chuyển quote mỗi 7s (Section 8.1.6)
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % GOOGLE_REVIEWS_DATA.length);
-    }, 7000);
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
-  const activeReview = GOOGLE_REVIEWS_DATA[activeIndex];
-  const googleMapsUrl =
-    "https://maps.google.com/?q=C%E1%BA%A9m+C%C3%B9+House+Gia+Ngh%C4%A9a+%C4%90%E1%BA%AFk+N%C3%B4ng";
+  const row1 = [GOOGLE_REVIEWS_DATA[0], GOOGLE_REVIEWS_DATA[1], GOOGLE_REVIEWS_DATA[2]];
+  const row2 = [GOOGLE_REVIEWS_DATA[3], GOOGLE_REVIEWS_DATA[4], GOOGLE_REVIEWS_DATA[5]];
 
   return (
-    <section
-      className="w-full bg-[#1C1612] text-[#F4ECDD] py-20 lg:py-28 relative overflow-hidden transition-colors"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setIsPaused(false)}
-    >
-      {/* Đường đồng mức mờ nền charcoal */}
-      <ContourLines opacity={0.08} className="text-[#F4ECDD]" />
-
-      <div className="container-unified relative z-10">
-        {/* Điểm 4.9 + Sao vàng khổng lồ (Section 8.1.6) */}
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2A201A] border border-[rgba(244,236,221,0.14)] font-mono text-[11px] font-semibold uppercase tracking-widest text-[var(--flower)] mb-6 shadow-xs">
-            <span>{isEn ? "VERIFIED GOOGLE MAPS REVIEWS" : "ĐÁNH GIÁ XÁC MINH TRÊN GOOGLE MAPS"}</span>
+    <section className="w-full py-24 sm:py-32 bg-[var(--bg)] text-[var(--ink)] relative overflow-hidden transition-colors border-t border-b border-[var(--line)]">
+      <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 mb-14">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col gap-2">
+            <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
+              <span>[06] CẢM NHẬN KHÁCH HÀNG</span>
+              <span>·</span>
+              <span>GOOGLE MAPS 100% THỰC TẾ</span>
+            </div>
+            <h2 className="font-display font-black text-[clamp(32px,5.5vw,64px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+              TRẢI NGHIỆM ĐẠI NGÀN <span className="font-serif italic font-normal text-[var(--ember)] lowercase">từ du khách</span>
+            </h2>
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-3">
-            <span className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-[#F4ECDD] tracking-tight">
+          {/* Điểm 4.9 khổng lồ + 5 Sao vàng (Section 8.1.7) */}
+          <div className="flex items-center gap-5 shrink-0 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 px-6 py-4">
+            <span className="font-display font-black text-[52px] sm:text-[64px] text-[var(--ember)] leading-none">
               4.9
             </span>
-            <div className="flex flex-col items-start justify-center">
-              <div className="flex items-center gap-1.5 text-[var(--flower)]">
-                {[...Array(5)].map((_, idx) => (
-                  <Star key={idx} className="w-6 h-6 sm:w-7 sm:h-7 fill-[var(--flower)] text-[var(--flower)]" />
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1 text-[var(--gold)]">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-current" />
                 ))}
               </div>
-              <span className="font-mono text-[12px] text-[#C7BBA8] uppercase tracking-wider mt-1">
-                {isEn ? "OVERALL EXPERIENCE" : "120+ LƯỢT ĐÁNH GIÁ HÀI LÒNG"}
+              <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ink-muted)]">
+                100% ĐỀ XUẤT HÀI LÒNG
               </span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Trích dẫn lớn Fraunces 36px (Section 8.1.6) */}
-        <div className="max-w-4xl mx-auto bg-[#231C17] border border-[rgba(244,236,221,0.14)] rounded-[28px] p-6 sm:p-10 lg:p-12 shadow-2xl relative">
-          {/* Controls: Prev / Next */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-[rgba(244,236,221,0.1)]">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-full ${activeReview.avatarBg} font-serif font-bold text-lg flex items-center justify-center shrink-0 shadow-xs select-none`}>
-                {activeReview.initial}
-              </div>
-              <div>
-                <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#F4ECDD]">
-                  {activeReview.name}
-                </h3>
-                <p className="font-mono text-xs text-[var(--basalt)] tracking-wider">
-                  {isEn ? activeReview.badgeTextEn : activeReview.badgeTextVi}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveIndex((prev) => (prev - 1 + GOOGLE_REVIEWS_DATA.length) % GOOGLE_REVIEWS_DATA.length)}
-                className="w-10 h-10 rounded-full bg-[#2E241E] border border-[rgba(244,236,221,0.14)] text-[#F4ECDD] hover:bg-[#3D3028] flex items-center justify-center transition-colors"
-                aria-label="Đánh giá trước"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveIndex((prev) => (prev + 1) % GOOGLE_REVIEWS_DATA.length)}
-                className="w-10 h-10 rounded-full bg-[#2E241E] border border-[rgba(244,236,221,0.14)] text-[#F4ECDD] hover:bg-[#3D3028] flex items-center justify-center transition-colors"
-                aria-label="Đánh giá tiếp theo"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Nội dung trích dẫn lớn Fraunces 36px */}
-          <blockquote className="font-serif text-[22px] sm:text-[30px] lg:text-[36px] font-medium text-[#F4ECDD] leading-[1.3] my-6 transition-opacity duration-500">
-            &ldquo;{isEn ? activeReview.contentEn : activeReview.contentVi}&rdquo;
-          </blockquote>
-
-          {/* Thông tin kèm theo: Dùng tại chỗ · giá/người · Đề xuất (nguyên văn) */}
-          <div className="pt-6 border-t border-[rgba(244,236,221,0.1)] flex flex-wrap items-center justify-between gap-4 font-mono text-[13px] text-[#C7BBA8]">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="px-3 py-1 rounded-full bg-[#2E241E] text-[var(--stream)] border border-[rgba(244,236,221,0.1)] uppercase font-semibold">
-                {isEn ? activeReview.dineInEn : activeReview.dineInVi}
-              </span>
-              <span>·</span>
-              <span className="text-[#F4ECDD] font-semibold">
-                {isEn ? activeReview.priceEn : activeReview.priceVi}
-              </span>
-            </div>
-
-            <div className="text-[var(--flower)]">
-              <span className="text-[#C7BBA8] font-normal">{isEn ? "Recommended: " : "Đề xuất: "}</span>
-              <span className="font-semibold">{isEn ? activeReview.recommendEn : activeReview.recommendVi}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Dải avatar tròn bên dưới để chọn (Section 8.1.6) */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-8">
-          {GOOGLE_REVIEWS_DATA.map((review, idx) => (
-            <button
-              key={review.id}
-              type="button"
-              onClick={() => setActiveIndex(idx)}
-              className={`relative rounded-full transition-all duration-300 ${
-                idx === activeIndex
-                  ? "ring-2 ring-[var(--basalt)] scale-110"
-                  : "opacity-60 hover:opacity-100"
-              }`}
-              aria-label={`Chọn đánh giá của ${review.name}`}
-            >
-              <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full ${review.avatarBg} font-serif font-bold text-sm flex items-center justify-center select-none shadow-xs`}>
-                {review.initial}
-              </div>
-            </button>
+      {/* 2 Hàng thẻ kính mờ chạy ngược chiều, dừng khi rê chuột (Section 8.1.7) */}
+      <div className="flex flex-col gap-6 overflow-hidden group">
+        {/* Hàng 1: Trôi sang trái */}
+        <div className="flex gap-6 w-max animate-marquee group-hover:[animation-play-state:paused]">
+          {[...row1, ...row1, ...row1].map((review, idx) => (
+            <ReviewCard key={`r1-${review.id}-${idx}`} review={review} isEn={isEn} />
           ))}
         </div>
 
-        {/* Nút "Xem tất cả đánh giá trên Google Maps" (Section 8.1.6) */}
-        <div className="flex justify-center mt-10">
-          <a
-            href={googleMapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary py-3 px-7 text-[14px] font-semibold inline-flex items-center gap-2 !border-[rgba(244,236,221,0.25)] !text-[#F4ECDD] hover:!bg-[#F4ECDD] hover:!text-[#1C1612]"
-          >
-            <span>{isEn ? "View all reviews on Google Maps" : "Xem tất cả đánh giá trên Google Maps"}</span>
-            <ExternalLink className="w-4 h-4 text-[var(--basalt)]" />
-          </a>
+        {/* Hàng 2: Trôi sang phải */}
+        <div className="flex gap-6 w-max animate-marquee-reverse group-hover:[animation-play-state:paused]">
+          {[...row2, ...row2, ...row2].map((review, idx) => (
+            <ReviewCard key={`r2-${review.id}-${idx}`} review={review} isEn={isEn} />
+          ))}
         </div>
+      </div>
+
+      {/* Nút Xem tất cả đánh giá trên Google Maps (Section 8.1.7) */}
+      <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 mt-12 flex justify-center">
+        <a
+          href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 font-mono text-[13px] uppercase font-bold tracking-wider px-6 py-3.5 bg-[var(--card)] border border-[var(--line)] hover:border-[var(--ember)] text-[var(--ink)] clip-chamfer-14 transition-all"
+        >
+          <span>XEM TẤT CẢ ĐÁNH GIÁ TRÊN GOOGLE MAPS</span>
+          <ExternalLink className="w-4 h-4 text-[var(--ember)]" />
+        </a>
       </div>
     </section>
   );

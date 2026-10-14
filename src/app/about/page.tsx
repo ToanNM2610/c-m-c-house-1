@@ -4,24 +4,17 @@ import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/components/Footer";
-import RotatingSeal from "@/components/ui/RotatingSeal";
 import StarHoya from "@/components/ui/StarHoya";
-import ContourLines from "@/components/ui/ContourLines";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import {
-  Flower2,
-  Droplets,
-  Coffee,
-  Trees,
-  Heart,
   PhoneCall,
   Navigation,
   ArrowRight,
-  ShieldCheck,
+  Compass
 } from "lucide-react";
 
-function ScrollWord({
+function WordScrubSpan({
   word,
   range,
   progress,
@@ -30,89 +23,75 @@ function ScrollWord({
   range: [number, number];
   progress: MotionValue<number>;
 }) {
-  // Bắt đầu từ opacity 0.42 để đảm bảo độ tương phản tối thiểu >= 3:1 trên nền than (charcoal #1C1612)
-  const opacity = useTransform(progress, range, [0.42, 1]);
+  // Bắt đầu từ opacity 0.35 để đảm bảo độ tương phản tối thiểu >= 3:1 trên nền tối
+  const opacity = useTransform(progress, range, [0.35, 1]);
+  const color = useTransform(progress, range, ["rgba(242,237,228,0.35)", "var(--ink)"]);
+
   return (
     <motion.span
-      style={{ opacity }}
-      className="inline-block transition-opacity font-serif font-bold text-2xl sm:text-3xl lg:text-4xl text-[#F4ECDD] mr-2.5 mb-2.5 leading-relaxed"
+      style={{ opacity, color }}
+      className="inline-block mr-[0.3em] font-display font-extrabold text-[clamp(28px,4.5vw,56px)] uppercase tracking-tight leading-[1.12]"
     >
       {word}
     </motion.span>
   );
 }
 
-function GoldenFlowerWordScrubSection({ isEn }: { isEn: boolean }) {
+function CinematicQuoteSection({ isEn }: { isEn: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 0.85", "end 0.25"],
+    offset: ["start 0.85", "end 0.3"],
   });
 
   const quote = isEn
-    ? "Under the Central Highlands forest canopy, each yellow blossom and Hoya cluster blooms quietly, listening to the stream, weaving serenity for all who return."
-    : "Dưới bóng rừng Tây Nguyên, từng khóm hoa chuông vàng rực rỡ và hoa Cẩm Cù kiên định nở son sắt bên bờ suối, dệt nên khoảng trời an yên cho mỗi bước chân dừng lại.";
+    ? "Under the Central Highlands forest canopy, each golden bloom and wild Hoya cluster flourishes by the rocky stream, crafting an enduring haven of peace for every traveler."
+    : "Dưới bóng rừng Tây Nguyên, từng khóm hoa chuông vàng rực rỡ và hoa Cẩm Cù kiên định nở son sắt bên bờ suối đá, dệt nên khoảng trời an yên cho mỗi bước chân dừng lại.";
 
   const words = quote.split(" ");
 
   return (
     <section
       ref={containerRef}
-      className="w-full bg-[#1C1612] text-[#F4ECDD] py-20 lg:py-28 relative overflow-hidden border-y border-[rgba(244,236,221,0.14)]"
+      className="relative w-full py-32 sm:py-44 bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden border-y border-[var(--line)]"
     >
-      <ContourLines opacity={0.08} className="text-[#F4ECDD]" />
+      {/* Nền ảnh phủ tối */}
+      <div className="absolute inset-0 pointer-events-none select-none z-0">
+        <Image
+          src="/uploads/gallery/1788250253557-29323827.jpg"
+          alt="Dưới bóng rừng Tây Nguyên"
+          fill
+          className="object-cover opacity-20 filter brightness-75 contrast-125"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0E0C] via-transparent to-[#0A0E0C]" />
+      </div>
 
-      <div className="container-unified relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Trái: Chữ 40px sáng dần từng từ */}
-          <div className="lg:col-span-7 flex flex-col gap-5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2A201A] text-[var(--flower)] font-mono text-[11px] font-semibold uppercase tracking-widest w-fit border border-[rgba(244,236,221,0.14)]">
-              <Flower2 className="w-3.5 h-3.5 text-[var(--flower)]" />
-              <span>{isEn ? "WORD-BY-WORD REVEAL" : "SẮC HOA & NHỊP THỞ NÚI RỪNG"}</span>
-            </div>
-
-            <div className="flex flex-wrap mt-2">
-              {words.map((word, i) => {
-                const start = i / words.length;
-                const end = Math.min((i + 1) / words.length, 1);
-                return (
-                  <ScrollWord
-                    key={i}
-                    word={word}
-                    range={[start, end]}
-                    progress={scrollYProgress}
-                  />
-                );
-              })}
-            </div>
-
-            <p className="font-mono text-xs text-[#C7BBA8] uppercase tracking-wider mt-2">
-              {isEn
-                ? "• Cuộn trang để màu chữ lan dần theo nhịp thở núi rừng"
-                : "• Cuộn trang để màu chữ lan dần theo nhịp thở núi rừng"}
-            </p>
+      <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
+        <div className="max-w-4xl flex flex-col gap-8">
+          <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
+            <span>[TUYÊN NGÔN ĐẠI NGÀN]</span>
+            <span>·</span>
+            <span>ĐỘ CAO 800M+</span>
           </div>
 
-          {/* Phải: Ảnh vòm hoa chuông vàng */}
-          <div className="lg:col-span-5 relative">
-            <div className="frame-arch aspect-[4/5] border-2 border-[rgba(244,236,221,0.16)] shadow-2xl relative overflow-hidden bg-[#2A201A]">
-              <Image
-                src="/uploads/gallery/1788250253557-29323827.jpg"
-                alt="Vườn hoa chuông vàng Cẩm Cù House"
-                fill
-                sizes="(max-width: 768px) 100vw, 420px"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1C1612]/85 via-transparent to-transparent flex flex-col justify-end p-6">
-                <span className="font-mono text-xs text-[var(--flower)] uppercase tracking-wider">
-                  ĐỘ CAO 800M+
-                </span>
-                <p className="font-serif text-lg font-bold text-[#F4ECDD] mt-1">
-                  Vườn Hoa Chuông Vàng Ven Triền Suối
-                </p>
-              </div>
-            </div>
+          <div className="flex flex-wrap">
+            {words.map((word, i) => {
+              const start = i / words.length;
+              const end = Math.min((i + 1) / words.length, 1);
+              return (
+                <WordScrubSpan
+                  key={i}
+                  word={word}
+                  range={[start, end]}
+                  progress={scrollYProgress}
+                />
+              );
+            })}
           </div>
+
+          <p className="font-mono text-xs text-[var(--ink-muted)] uppercase tracking-wider">
+            • CUỘN ĐỂ TỪNG TỪ BỪNG SÁNG THEO NHỊP THỞ NÚI RỪNG
+          </p>
         </div>
       </div>
     </section>
@@ -124,41 +103,45 @@ export default function AboutPage() {
   const isEn = locale === "en";
 
   return (
-    <div className="bg-[var(--paper)] min-h-screen text-[var(--ink)] selection:bg-[var(--basalt)] selection:text-white transition-colors overflow-x-hidden">
+    <div className="bg-[var(--bg)] min-h-screen text-[var(--ink)] selection:bg-[var(--ember)] selection:text-[#0A0E0C] transition-colors overflow-x-hidden">
       <main className="overflow-x-hidden">
         {/* =========================================================================
-            8.2.1 MỞ ĐẦU (NỀN GIẤY, ĐƯỜNG ĐỒNG MỨC, H1 CĂN TRÁI, 3 BADGE MONO GẠCH DƯỚI)
+            1. MỞ ĐẦU TỐI (SECTION 8.2.1)
            ========================================================================= */}
-        <section className="relative pt-32 sm:pt-40 pb-16 lg:pb-24 border-b border-[var(--line)] overflow-hidden">
-          <ContourLines opacity={0.07} className="text-[var(--ink)]" />
-
-          <div className="container-unified relative z-10">
-            <div className="max-w-4xl text-left flex flex-col gap-4">
+        <section className="relative pt-36 sm:pt-44 pb-20 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden">
+          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
+            <div className="flex flex-col gap-6 max-w-4xl">
               {/* Nhãn mono */}
-              <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--basalt)] font-semibold">
-                {isEn ? "HIGHLAND SENTIMENT" : "TÂM TÌNH TỪ CAO NGUYÊN"}
-              </span>
+              <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
+                <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
+                <span>[TÂM TÌNH CAO NGUYÊN · 11.99° N · 107.69° E]</span>
+              </div>
 
-              {/* H1 Căn lề trái */}
-              <h1 className="font-serif text-[clamp(36px,5.5vw,72px)] font-bold text-[var(--ink)] tracking-tight leading-[1.08] text-balance">
-                Câu Chuyện Cẩm Cù / <em className="italic text-[var(--basalt)]">Chốn Bình Yên</em> Giữa Đất Ngàn
-              </h1>
+              {/* H1 CÂU CHUYỆN CẨM CÙ tràn ngang + Chốn Bình Yên Giữa Đất Ngàn */}
+              <div className="flex flex-col gap-2">
+                <h1 className="font-display font-black text-[clamp(44px,9vw,110px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+                  CÂU CHUYỆN CẨM CÙ
+                </h1>
+                <p className="font-serif italic text-[clamp(24px,3.5vw,42px)] text-[var(--ember)]">
+                  Chốn Bình Yên Giữa Đất Ngàn
+                </p>
+              </div>
 
               {/* Mô tả */}
-              <p className="text-[17px] sm:text-[18px] text-[var(--ink-muted)] leading-[1.7] max-w-[62ch] mt-2">
+              <p className="text-[17px] sm:text-[18px] text-[var(--ink-muted)] leading-[1.7] max-w-[62ch]">
                 {dict.about.description}
               </p>
 
-              {/* 3 Badge dạng chữ mono có gạch dưới (Section 8.2.1) */}
-              <div className="flex flex-wrap items-center gap-6 mt-6 pt-4 border-t border-[var(--line)]">
-                <span className="font-mono text-[12px] uppercase tracking-wider text-[var(--ink)] font-semibold pb-1 border-b-2 border-[var(--basalt)]">
-                  HOA CẨM CÙ BỀN BỈ
+              {/* 3 Badge Mono */}
+              <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line)] font-mono text-[12px] uppercase tracking-wider text-[var(--mist)]">
+                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
+                  [01 HOA CẨM CÙ BỀN BỈ]
                 </span>
-                <span className="font-mono text-[12px] uppercase tracking-wider text-[var(--ink)] font-semibold pb-1 border-b-2 border-[var(--stream)]">
-                  SUỐI ĐÁ NGUYÊN BẢN
+                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
+                  [02 SUỐI ĐÁ NGUYÊN BẢN]
                 </span>
-                <span className="font-mono text-[12px] uppercase tracking-wider text-[var(--ink)] font-semibold pb-1 border-b-2 border-[var(--flower)]">
-                  ROBUSTA RANG CỦI MỘC
+                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
+                  [03 ROBUSTA RANG CỦI]
                 </span>
               </div>
             </div>
@@ -166,82 +149,114 @@ export default function AboutPage() {
         </section>
 
         {/* =========================================================================
-            8.2.2 CHƯƠNG 01: LOÀI HOA BỀN BỈ (LẺ: ẢNH VÒM TRÁI DÍNH, CHỮ PHẢI CUỘN)
+            2. CHƯƠNG 01: HOA CẨM CÙ & NGUỒN CỘI (ẢNH TRÁI, CHỮ PHẢI)
            ========================================================================= */}
-        <section className="container-unified section-unified border-b border-[var(--line)]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Ảnh vòm dính bên trái (Chương lẻ) */}
-            <div className="lg:col-span-5 lg:sticky lg:top-28">
-              <div className="relative w-full aspect-[4/5] frame-arch border-2 border-[var(--line)] shadow-xl overflow-hidden bg-[var(--paper-2)]">
-                <Image
-                  src="/uploads/gallery/1788250253557-29323827.jpg"
-                  alt="Hoa Cẩm Cù và không gian mộc mạc"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 440px"
-                  className="object-cover"
-                />
+        <section className="w-full py-28 sm:py-36 border-b border-[var(--line)] relative bg-[var(--bg)] transition-colors">
+          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              {/* Trái: Ảnh dính cắt chéo */}
+              <div className="lg:col-span-6 lg:sticky lg:top-28">
+                <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
+                  <Image
+                    src="/uploads/gallery/1788250253557-29323827.jpg"
+                    alt="Khóm hoa Cẩm Cù và hoa chuông vàng"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 font-mono text-[11px] text-white/90 bg-black/60 px-3 py-1 backdrop-blur-sm">
+                    [CHƯƠNG 01] VƯỜN HOA VEN SUỐI
+                  </div>
+                </div>
               </div>
 
-              {/* Điểm nhấn vẽ nét hoa Hoya sao */}
-              <div className="mt-4 flex items-center gap-3 text-[var(--basalt)]">
-                <StarHoya size={32} strokeWidth={1.6} />
-                <span className="font-mono text-xs uppercase tracking-widest text-[var(--ink-muted)]">
-                  HOYA CARNOSA · BIỂU TƯỢNG SỨC SỐNG
+              {/* Phải: Số outline Display + Chữ cuộn */}
+              <div className="lg:col-span-6 flex flex-col gap-6">
+                <span
+                  className="font-display font-black text-[96px] sm:text-[120px] leading-none select-none"
+                  style={{
+                    WebkitTextStroke: "1.5px var(--ember)",
+                    color: "transparent",
+                  }}
+                >
+                  01
                 </span>
+
+                <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
+                  SỨC SỐNG BỀN BỈ CỦA HOA CẨM CÙ
+                </span>
+
+                <h2 className="font-display font-black text-[32px] sm:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
+                  {dict.home.pillar1Title || (isEn ? "Resilient Hoya Blooms" : "Sức Sống Bền Bỉ Của Hoa Cẩm Cù")}
+                </h2>
+
+                {/* Câu trích italic 32px vạch ember */}
+                <blockquote className="border-l-2 border-[var(--ember)] pl-6 text-[clamp(20px,2.5vw,30px)] font-serif italic text-[var(--ink)] leading-snug">
+                  &ldquo;Loài hoa của sự kiên cường và tình cảm son sắt, vươn mình rực rỡ từ những vách đá cằn cỗi.&rdquo;
+                </blockquote>
+
+                <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
+                  {dict.about.hoyaFlower || dict.home.pillar1Desc}
+                </p>
+
+                <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
+                  Cẩm Cù House được đặt tên theo loài hoa leo bền bỉ ấy. Dù trải qua bao mùa nắng gió cao nguyên, từng chùm hoa hình ngôi sao năm cánh vẫn nhẫn nại bung tỏa hương thơm dịu ngọt, chở che cho những tâm hồn mỏi mệt tìm về.
+                </p>
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Chữ cuộn bên phải */}
-            <div className="lg:col-span-7 flex flex-col gap-6 relative">
-              {/* Số lớn "01" Fraunces 160px mờ */}
-              <span className="font-serif text-[120px] sm:text-[160px] font-bold text-[var(--line)] leading-none select-none pointer-events-none -mb-16">
-                01
-              </span>
+        {/* =========================================================================
+            3. CHƯƠNG 02: DÒNG SUỐI ĐÁ & NĂNG LƯỢNG MÁT LÀNH (CHỮ TRÁI, ẢNH PHẢI)
+           ========================================================================= */}
+        <section className="w-full py-28 sm:py-36 border-b border-[var(--line)] relative bg-[var(--bg-2)] transition-colors">
+          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              {/* Trái: Số outline Display + Chữ cuộn */}
+              <div className="lg:col-span-6 flex flex-col gap-6 order-2 lg:order-1">
+                <span
+                  className="font-display font-black text-[96px] sm:text-[120px] leading-none select-none"
+                  style={{
+                    WebkitTextStroke: "1.5px var(--ember)",
+                    color: "transparent",
+                  }}
+                >
+                  02
+                </span>
 
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-xs font-bold text-[var(--stream)] uppercase tracking-widest">
-                  CHƯƠNG 01
+                <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold">
+                  DÒNG NƯỚC MÁT LÀNH NGUYÊN SƠ
                 </span>
-                <span className="w-8 h-[1px] bg-[var(--line)]" />
-                <span className="font-mono text-xs text-[var(--ink-muted)] uppercase tracking-wider">
-                  SỰ KỲ DIỆU CỦA TỰ NHIÊN
-                </span>
+
+                <h2 className="font-display font-black text-[32px] sm:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
+                  {dict.home.pillar2Title || (isEn ? "Pristine Stream Water" : "Dòng Nước Mát Lành Nguyên Sơ")}
+                </h2>
+
+                <blockquote className="border-l-2 border-[var(--ember)] pl-6 text-[clamp(20px,2.5vw,30px)] font-serif italic text-[var(--ink)] leading-snug">
+                  &ldquo;Nước suối reo từ khe đá bazan, mang trọn hơi thở đại ngàn xoa dịu mọi âu lo.&rdquo;
+                </blockquote>
+
+                <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
+                  {dict.about.pureStream || dict.home.pillar2Desc}
+                </p>
+
+                <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
+                  Chúng tôi gìn giữ nguyên vẹn lòng suối tự nhiên với những tảng đá mộc phủ rêu. Ngồi trên sàn gỗ, thả lỏng đôi chân chạm vào dòng nước trong vắt, bạn sẽ cảm nhận rõ rệt nhịp đập của đất mẹ Tây Nguyên.
+                </p>
               </div>
 
-              <h2 className="font-serif text-[clamp(28px,3.8vw,44px)] font-bold text-[var(--ink)] leading-[1.15]">
-                {isEn
-                  ? "Resilient Blossoms & A Destiny Beside the Rock Stream"
-                  : "Loài Hoa Bền Bỉ & Mối Duyên Lành Bên Dòng Suối"}
-              </h2>
-
-              <div className="space-y-4 text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-[1.7]">
-                <p>
-                  {isEn ? (
-                    <>
-                      The name <strong className="font-semibold text-[var(--stream)]">&ldquo;Cẩm Cù&rdquo; (Hoya carnosa)</strong> originates from a modest native climbing vine thriving under the canopy of the Central Highlands forest. Rather than boasting loud colors, the Hoya flower patiently collects morning dew to blossom into spherical porcelain-like star clusters.
-                    </>
-                  ) : (
-                    <>
-                      Tên gọi <strong className="font-semibold text-[var(--stream)]">&ldquo;Cẩm Cù&rdquo; (Hoya carnosa)</strong> bắt nguồn từ một loài hoa dây leo mộc mạc nép mình dưới bóng rừng Tây Nguyên. Không ồn ào khoe sắc, hoa Cẩm Cù kiên định chắt chiu sương sớm qua từng năm tháng để nở thành từng chùm hình cầu lung linh tựa cánh sứ ngũ giác. Trong phong thủy và tâm thức người bản địa, chùm hoa hình tròn trọn vẹn là biểu tượng của sự gắn kết son sắt, ấm cúng và sự an yên thanh thản sâu trong tâm hồn.
-                    </>
-                  )}
-                </p>
-                <p>
-                  {isEn
-                    ? "Discovering this natural pebble stream in Gia Nghia felt like a destined promise. Instead of clearing or paving the terrain with harsh concrete, we embraced nature gently: moss-covered basalt boulders, shade-bearing forest trees, and the clear stream waters running through pebble crevices were all preserved intact."
-                    : "Cơ duyên tìm thấy khu đất nép bên khe suối tự nhiên tại Gia Nghĩa như một lời hẹn ước định mệnh. Thay vì san phẳng mặt bằng hay bê tông hóa thô bạo, chúng tôi chọn cách nương tựa vào mẹ thiên nhiên: từng phiến đá bazan phủ rêu xanh cổ kính, từng tán lộc vừng rợp bóng hay dòng nước róc rách luồn qua khe đá đều được bảo bọc nguyên vẹn."}
-                </p>
-
-                {/* Câu trích in nghiêng Fraunces 28px có vạch dọc bazan (Section 8.2.2) */}
-                <div className="pt-4 border-l-4 border-[var(--basalt)] pl-5 my-6">
-                  <p className="font-serif italic text-[22px] sm:text-[28px] text-[var(--ink)] leading-snug">
-                    {isEn
-                      ? "“To build is not to conquer, but to weave a sheltered terrace beneath the highland trees.”"
-                      : "“Xây dựng không phải là chiếm đoạt, mà là thêu dệt một mái hiên che mưa nắng giữa rừng cây.”"}
-                  </p>
-                  <span className="block font-mono text-[13px] text-[var(--basalt)] mt-2 uppercase tracking-wider not-italic">
-                    — Ngọc, Cẩm Cù House
-                  </span>
+              {/* Phải: Ảnh dính cắt chéo */}
+              <div className="lg:col-span-6 lg:sticky lg:top-28 order-1 lg:order-2">
+                <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
+                  <Image
+                    src="/uploads/gallery/1788250253562-580915883.jpg"
+                    alt="Dòng suối đá tự nhiên Cẩm Cù House"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 font-mono text-[11px] text-white/90 bg-black/60 px-3 py-1 backdrop-blur-sm">
+                    [CHƯƠNG 02] BỜ SUỐI ĐÁ TỰ NHIÊN
+                  </div>
                 </div>
               </div>
             </div>
@@ -249,210 +264,104 @@ export default function AboutPage() {
         </section>
 
         {/* =========================================================================
-            8.2.3 CHƯƠNG 02: CÀ PHÊ RANG CỦI MỘC (CHẴN: CHỮ TRÁI CUỘN, ẢNH VÒM PHẢI DÍNH)
+            4. CHƯƠNG 03: HƯƠNG CÀ PHÊ RANG CỦI & NGHỈ DƯỠNG (ẢNH TRÁI, CHỮ PHẢI)
            ========================================================================= */}
-        <section className="container-unified section-unified border-b border-[var(--line)]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Chữ cuộn bên trái */}
-            <div className="lg:col-span-7 flex flex-col gap-6 relative order-2 lg:order-1">
-              {/* Số lớn "02" Fraunces 160px mờ */}
-              <span className="font-serif text-[120px] sm:text-[160px] font-bold text-[var(--line)] leading-none select-none pointer-events-none -mb-16">
-                02
-              </span>
-
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-xs font-bold text-[var(--basalt)] uppercase tracking-widest">
-                  CHƯƠNG 02
-                </span>
-                <span className="w-8 h-[1px] bg-[var(--line)]" />
-                <span className="font-mono text-xs text-[var(--ink-muted)] uppercase tracking-wider">
-                  HỒN CỐT NÔNG SẢN CAO NGUYÊN
-                </span>
-              </div>
-
-              <h2 className="font-serif text-[clamp(28px,3.8vw,44px)] font-bold text-[var(--ink)] leading-[1.15]">
-                {isEn
-                  ? "Firewood-Roasted Robusta & Pure Local Mountain Produce"
-                  : "Cà Phê Robusta Rang Củi Mộc & Nông Sản Bản Địa"}
-              </h2>
-
-              <div className="space-y-4 text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-[1.7]">
-                <p>
-                  {isEn
-                    ? "Dak Nong is globally renowned as the capital of specialty Robusta. At Cẩm Cù House, we say no to chemical additives, butter coatings, or artificial flavorings. Each coffee cherry is harvested at peak 100% ripeness, honey-processed, and hand-roasted over seasoned coffee wood."
-                    : "Đắk Nông vốn là thủ phủ của những hạt Robusta phẩm chất cao nhất. Tại Cẩm Cù House, chúng tôi nói không với phụ gia, hương liệu bắp cau hay hóa chất. Từng quả cà phê chín mọng 100% được lên men tự nhiên và rang củi thủ công bằng than củi cà phê già."}
-                </p>
-                <p>
-                  {isEn
-                    ? "Besides artisanal coffee, our menu features local highland wellness sips like wild honey-soaked male papaya flower tea, 034 avocado smoothies, and hearty breakfasts that fuel adventurous travelers exploring the mountain passes."
-                    : "Bên cạnh cà phê, ấm trà hoa đu đủ đực ngâm mật ong rừng, ly sinh tố bơ sáp 034 béo ngậy hay tô bò kho bánh mì nóng hổi ban mai đều mang theo hơi thở trong lành của núi rừng cao nguyên."}
-                </p>
-
-                {/* Câu trích in nghiêng Fraunces 28px có vạch dọc bazan */}
-                <div className="pt-4 border-l-4 border-[var(--basalt)] pl-5 my-6">
-                  <p className="font-serif italic text-[22px] sm:text-[28px] text-[var(--ink)] leading-snug">
-                    “Vị cà phê nguyên bản không cần ồn ào; chỉ một ngụm thơm nồng củi khói cũng đủ giữ chân người qua đường.”
-                  </p>
-                  <span className="block font-mono text-[13px] text-[var(--basalt)] mt-2 uppercase tracking-wider not-italic">
-                    — Nghệ nhân rang củi Cẩm Cù
-                  </span>
+        <section className="w-full py-28 sm:py-36 border-b border-[var(--line)] relative bg-[var(--bg)] transition-colors">
+          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+              {/* Trái: Ảnh dính cắt chéo */}
+              <div className="lg:col-span-6 lg:sticky lg:top-28">
+                <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
+                  <Image
+                    src="/uploads/gallery/1788250253551-943009233.jpg"
+                    alt="Cà phê rang củi bên hiên suối"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 font-mono text-[11px] text-white/90 bg-black/60 px-3 py-1 backdrop-blur-sm">
+                    [CHƯƠNG 03] KHÓI CỦI & CÀ PHÊ MỘC
+                  </div>
                 </div>
               </div>
 
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/menu"
-                  className="btn-primary min-h-[48px] px-7 text-[15px] font-semibold"
+              {/* Phải: Số outline Display + Chữ cuộn */}
+              <div className="lg:col-span-6 flex flex-col gap-6">
+                <span
+                  className="font-display font-black text-[96px] sm:text-[120px] leading-none select-none"
+                  style={{
+                    WebkitTextStroke: "1.5px var(--ember)",
+                    color: "transparent",
+                  }}
                 >
-                  <span>{dict.common.viewMenu}</span>
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Ảnh vòm dính bên phải (Chương chẵn) */}
-            <div className="lg:col-span-5 lg:sticky lg:top-28 order-1 lg:order-2">
-              <div className="relative w-full aspect-[4/5] frame-arch border-2 border-[var(--line)] shadow-xl overflow-hidden bg-[var(--paper-2)]">
-                <Image
-                  src="/uploads/gallery/1788250253554-875120458.jpg"
-                  alt="Hiên gỗ ven suối và ly cà phê rang củi"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 440px"
-                  className="object-cover"
-                />
-              </div>
-
-              <div className="mt-4 flex items-center gap-3 text-[var(--basalt)]">
-                <Coffee className="w-6 h-6" />
-                <span className="font-mono text-xs uppercase tracking-widest text-[var(--ink-muted)]">
-                  ROBUSTA RANG CỦI · 100% MỘC
+                  03
                 </span>
+
+                <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
+                  HƯƠNG VỊ RANG CỦI NỒNG NÀN
+                </span>
+
+                <h2 className="font-display font-black text-[32px] sm:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
+                  {dict.home.pillar3Title || (isEn ? "Wood-Fired Roasted Coffee" : "Hương Vị Rang Củi Nồng Nàn")}
+                </h2>
+
+                <blockquote className="border-l-2 border-[var(--ember)] pl-6 text-[clamp(20px,2.5vw,30px)] font-serif italic text-[var(--ink)] leading-snug">
+                  &ldquo;Từng giọt cà phê mộc sánh đậm hòa vào làn khói củi sớm, đượm sâu vị đất trời.&rdquo;
+                </blockquote>
+
+                <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
+                  {dict.home.pillar3Desc}
+                </p>
+
+                <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
+                  Không hương liệu công nghiệp, không phụ gia. Từng hạt Robusta Đắk Nông được chế biến cẩn trọng, giữ trọn hậu vị ngọt thanh và hương thơm đặc trưng của ngọn lửa rừng.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
         {/* =========================================================================
-            8.2.4 CHƯƠNG 03: KHỞI SINH KHÔNG GIAN SINH THÁI (LẺ: ẢNH VÒM TRÁI DÍNH)
+            5. CẢNH CHỮ LỚN: DƯỚI BÓNG RỪNG TÂY NGUYÊN (SECTION 8.2.3)
            ========================================================================= */}
-        <section className="container-unified section-unified border-b border-[var(--line)]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Ảnh vòm dính bên trái */}
-            <div className="lg:col-span-5 lg:sticky lg:top-28">
-              <div className="relative w-full aspect-[4/5] frame-arch border-2 border-[var(--line)] shadow-xl overflow-hidden bg-[var(--paper-2)]">
-                <Image
-                  src="/uploads/gallery/1788250253562-580915883.jpg"
-                  alt="Dòng suối đá tự nhiên Cẩm Cù House"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 440px"
-                  className="object-cover"
-                />
-              </div>
-
-              <div className="mt-4 flex items-center gap-3 text-[var(--stream)]">
-                <ShieldCheck className="w-6 h-6" />
-                <span className="font-mono text-xs uppercase tracking-widest text-[var(--ink-muted)]">
-                  BẢO TỒN NGUYÊN VẸN ĐÁ BAZAN CỔ
-                </span>
-              </div>
-            </div>
-
-            {/* Chữ cuộn bên phải */}
-            <div className="lg:col-span-7 flex flex-col gap-6 relative">
-              {/* Số lớn "03" Fraunces 160px mờ */}
-              <span className="font-serif text-[120px] sm:text-[160px] font-bold text-[var(--line)] leading-none select-none pointer-events-none -mb-16">
-                03
-              </span>
-
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-xs font-bold text-[var(--stream)] uppercase tracking-widest">
-                  CHƯƠNG 03
-                </span>
-                <span className="w-8 h-[1px] bg-[var(--line)]" />
-                <span className="font-mono text-xs text-[var(--ink-muted)] uppercase tracking-wider">
-                  BẢO TỒN DÒNG NƯỚC SUỐI
-                </span>
-              </div>
-
-              <h2 className="font-serif text-[clamp(28px,3.8vw,44px)] font-bold text-[var(--ink)] leading-[1.15]">
-                {isEn
-                  ? "Eco Architecture & Living with the Natural Stream"
-                  : "Khởi Sinh Không Gian Sinh Thái Bên Khe Suối Đá"}
-              </h2>
-
-              <div className="space-y-4 text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-[1.7]">
-                <p>
-                  Từng mét vuông tại Cẩm Cù House đều tuân thủ nguyên tắc tôn trọng địa hình cao nguyên. Chúng tôi không đắp đập ngăn suối, không dùng chất tẩy rửa xả thẳng ra nguồn nước, và tận dụng triệt để vật liệu mộc như gỗ thông, tre nứa, đá bazan nhặt từ lòng suối cạn.
-                </p>
-                <p>
-                  Đến với Cẩm Cù House, bạn không chỉ thưởng thức ly cà phê, mà là hòa mình vào bản giao hưởng của tiếng nước chảy, tiếng gió xào xạc qua kẽ lá, và hít hà luồng không khí trong lành ở độ cao hơn 800m.
-                </p>
-
-                {/* Câu trích in nghiêng Fraunces 28px có vạch dọc bazan */}
-                <div className="pt-4 border-l-4 border-[var(--basalt)] pl-5 my-6">
-                  <p className="font-serif italic text-[22px] sm:text-[28px] text-[var(--ink)] leading-snug">
-                    “Dòng suối mát lạnh nuôi dưỡng tâm hồn; hãy để thiên nhiên chữa lành những mỏi mệt sau chuỗi ngày bận rộn.”
-                  </p>
-                  <span className="block font-mono text-[13px] text-[var(--basalt)] mt-2 uppercase tracking-wider not-italic">
-                    — Lời ngỏ Cẩm Cù House
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <CinematicQuoteSection isEn={isEn} />
 
         {/* =========================================================================
-            8.2.5 ĐOẠN CHỮ LỚN: "DƯỚI BÓNG RỪNG TÂY NGUYÊN..." (WORD SCRUB 40PX)
+            6. LỜI HẸN ƯỚC: NỀN --PINE (SECTION 8.2.4)
            ========================================================================= */}
-        <GoldenFlowerWordScrubSection isEn={isEn} />
+        <section className="w-full py-28 sm:py-36 bg-[var(--pine)] text-[#F2EDE4] relative overflow-hidden text-center">
+          <div className="w-full max-w-[1000px] mx-auto px-5 sm:px-10 relative z-10 flex flex-col items-center gap-6">
+            <div className="w-12 h-12 rounded-sm border border-white/20 bg-black/20 flex items-center justify-center text-[var(--ember)] mb-2">
+              <StarHoya size={24} strokeWidth={2} />
+            </div>
 
-        {/* =========================================================================
-            8.2.6 LỜI HẸN ƯỚC (CHỮ DISPLAY, HAI NÚT, TEM TRÒN XOAY)
-           ========================================================================= */}
-        <section className="container-unified section-unified">
-          <div className="card-accent rounded-[32px] p-8 sm:p-14 lg:p-16 text-center flex flex-col items-center relative overflow-hidden border border-[var(--line)] shadow-xl bg-[var(--paper-2)]">
-            <ContourLines opacity={0.06} className="text-[var(--ink)]" />
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold">
+              [LỜI HẸN ƯỚC TỪ CẨM CÙ HOUSE]
+            </span>
 
-            <div className="relative z-10 flex flex-col items-center max-w-2xl">
-              {/* Tem tròn xoay */}
-              <div className="mb-6">
-                <RotatingSeal size={120} className="text-[var(--ink)]" />
-              </div>
+            <h2 className="font-display font-black text-[clamp(32px,6vw,72px)] uppercase tracking-tight leading-tight">
+              HẸN BẠN MỘT NGÀY THẢNH THƠI BÊN SUỐI
+            </h2>
 
-              <span className="font-mono text-xs uppercase tracking-widest text-[var(--basalt)] font-bold mb-3">
-                {isEn ? "HIGHLAND PROMISE" : "LỜI HẸN ƯỚC BÊN SUỐI"}
-              </span>
+            <p className="text-[16px] sm:text-[18px] text-white/80 max-w-xl leading-relaxed">
+              Cẩm Cù House luôn sẵn sàng đón chào bạn cùng gia đình ghé chơi, thưởng thức tách cà phê rang củi và hít thở bầu không khí tinh khôi nơi đại ngàn.
+            </p>
 
-              <h2 className="font-serif text-[clamp(28px,4.5vw,48px)] font-bold text-[var(--ink)] leading-tight mb-4 text-balance">
-                {isEn
-                  ? "Cẩm Cù House Awaits Your Arrival Beside the Stream"
-                  : "Cẩm Cù House Chờ Đón Bạn Bên Bờ Suối Mát"}
-              </h2>
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+              <a
+                href="tel:0382851688"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--ember)] text-[#0A0E0C] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-xl"
+              >
+                <PhoneCall className="w-4 h-4" />
+                <span>GỌI HOTLINE 038 285 1688</span>
+              </a>
 
-              <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] mb-8 leading-relaxed max-w-xl">
-                {dict.common.addressFull}. {isEn ? "Mon – Thu: 07:00 – 18:00 | Fri – Sun: 07:00 – 22:00" : "Thứ 2 – 5: 07:00 – 18:00 | Thứ 6 – CN: 07:00 – 22:00"}.
-              </p>
-
-              {/* Hai nút */}
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <a
-                  href="tel:0382851688"
-                  className="btn-primary min-h-[48px] px-8 text-[15px] font-semibold"
-                >
-                  <PhoneCall className="w-4 h-4" />
-                  <span>Gọi Hotline: 038 285 1688</span>
-                </a>
-                <a
-                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary min-h-[48px] px-8 text-[15px] font-semibold"
-                >
-                  <Navigation className="w-4 h-4 text-[var(--stream)]" />
-                  <span>{dict.common.openGoogleMaps}</span>
-                </a>
-              </div>
+              <Link
+                href="/space"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-white text-white font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
+              >
+                <span>XEM KHÔNG GIAN SUỐI</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </section>
