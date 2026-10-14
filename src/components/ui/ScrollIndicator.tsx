@@ -29,7 +29,7 @@ export default function ScrollIndicator() {
 
   return (
     <aside
-      className="hidden xl:flex fixed right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3 select-none pointer-events-none"
+      className="hidden xl:flex fixed right-6 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3 select-none pointer-events-none bg-[var(--card)]/90 backdrop-blur-md border border-[var(--line)] py-4 px-2 rounded-full shadow-lg"
       aria-label="Chỉ báo vị trí cuộn"
     >
       {/* Số mục 02/07 */}

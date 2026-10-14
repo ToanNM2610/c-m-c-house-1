@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
-import GoogleReviewsSection from "@/components/GoogleReviewsSection";
+import CustomerReviewsSection from "@/components/home/CustomerReviewsSection";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
 import StarHoya from "@/components/ui/StarHoya";
@@ -187,7 +187,17 @@ export default function HomePage() {
         {/* =========================================================================
             1. HERO (TOÀN MÀN HÌNH - SECTION 8.1.1)
            ========================================================================= */}
-        <section className="relative min-h-screen flex flex-col justify-between pt-28 sm:pt-36 pb-12 sm:pb-16 overflow-hidden bg-[#0A0E0C] text-[#F2EDE4]">
+        <section className="hero-dark-surface relative min-h-screen flex flex-col justify-between pt-28 sm:pt-36 pb-12 sm:pb-16 overflow-hidden bg-[#0A0E0C] text-[#F2EDE4]">
+          {/* Chữ ghost CẨM CÙ HOUSE độ mờ .16 */}
+          <div
+            aria-hidden="true"
+            className="hero-ghost-text absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[1200px] flex justify-center pointer-events-none select-none"
+          >
+            <svg viewBox="0 0 1200 120" className="w-full h-auto max-h-[160px] overflow-visible" fill="currentColor">
+              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontWeight="800">CẨM{"\u00A0"}CÙ HOUSE</text>
+            </svg>
+          </div>
+
           {/* Ảnh nền phủ tối + Ken Burns sương mờ */}
           <div className="absolute inset-0 pointer-events-none select-none z-0">
             <Image
@@ -212,21 +222,21 @@ export default function HomePage() {
               {/* Cột trái (7 cols): Tọa độ + Khẩu hiệu + 2 Nút */}
               <div className="lg:col-span-8 flex flex-col gap-6 text-left">
                 {/* Nhãn tọa độ mono */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)] font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[var(--ember)] w-fit">
-                  <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0A0E0C]/80 border border-[var(--line-on-dark)] font-mono text-[11px] sm:text-[12px] uppercase tracking-widest text-[var(--ink-on-dark)] w-fit">
+                  <Compass className="w-3.5 h-3.5 text-[var(--ember-on-dark)]" />
                   <span>[11.99° N · 107.69° E · ĐỘ CAO 800M+]</span>
                 </div>
 
                 {/* Slogan với cụm cuối Fraunces italic ember */}
                 <div className="flex flex-col gap-3">
-                  <h2 className="font-display font-extrabold text-[clamp(28px,5vw,56px)] uppercase tracking-tight text-[var(--ink)] leading-[1.1] text-balance">
+                  <h2 className="font-display font-extrabold text-[clamp(28px,5vw,56px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.1] text-balance">
                     Chốn Dừng Chân Mộc Mạc{" "}
-                    <span className="font-serif italic font-normal text-[var(--ember)] lowercase">
+                    <span className="font-serif italic font-normal text-[var(--ember-on-dark)] text-accent-ember lowercase" style={{ color: "#FF6A2B" }}>
                       bên bờ suối đá
                     </span>
                   </h2>
 
-                  <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] max-w-[55ch] leading-relaxed">
+                  <p className="text-[16px] sm:text-[18px] max-w-[55ch] leading-relaxed" style={{ color: "var(--ink-muted-on-dark)" }}>
                     {isEn
                       ? "Immerse in pure highland tranquility by the cool mossy boulders, wood-fired Robusta coffee, and whispering forest stream."
                       : "Thả mình giữa tiếng suối reo róc rách, hương cà phê Robusta rang củi nồng nàn và làn sương sớm tinh khôi của đại ngàn Đắk Nông."}
@@ -237,15 +247,15 @@ export default function HomePage() {
                 <div className="flex flex-wrap items-center gap-4 pt-2">
                   <Link
                     href="/space"
-                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--ember)] text-[var(--btn-primary-text)] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-lg"
+                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-lg"
                   >
-                    <span>{isEn ? "EXPLORE STREAM SANCTUARY" : "KHÁM PHÁ GÓC SUỐI"}</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <span style={{ color: "#0A0E0C" }}>{isEn ? "EXPLORE STREAM SANCTUARY" : "KHÁM PHÁ GÓC SUỐI"}</span>
+                    <ArrowRight className="w-4 h-4 text-[#0A0E0C]" />
                   </Link>
 
                   <Link
                     href="/menu"
-                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-[var(--ink)] text-[var(--ink)] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-[var(--ink)] hover:text-[var(--bg)] transition-all"
+                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-[var(--line-on-dark)] text-[var(--ink-on-dark)] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-[#F2EDE4]/10 transition-all"
                   >
                     <span>{isEn ? "VIEW 50+ MENU ITEMS" : "XEM THỰC ĐƠN 50+ MÓN"}</span>
                   </Link>
@@ -254,30 +264,30 @@ export default function HomePage() {
 
               {/* Cột phải (4 cols): Thẻ kính mờ góc vát (Trạng thái, Giờ hôm nay, Nhiệt độ, Gọi + Chỉ đường) */}
               <div className="lg:col-span-4 flex flex-col gap-4">
-                <div className="bg-[var(--card)]/80 backdrop-blur-md border border-[var(--line)] clip-chamfer-14 p-6 flex flex-col gap-5 shadow-2xl">
+                <div className="bg-[#131B17]/90 backdrop-blur-md border border-[var(--line-on-dark)] clip-chamfer-14 p-6 flex flex-col gap-5 shadow-2xl">
                   {/* Trạng thái mở cửa + Nhiệt độ */}
-                  <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
+                  <div className="flex items-center justify-between pb-4 border-b border-[var(--line-on-dark)]">
                     <div className="flex items-center gap-2">
                       <span
                         className={`w-2 h-2 rounded-full ${
-                          storeStatus.isOpen ? "bg-[var(--ember)] animate-pulse" : "bg-[#F28B82]"
+                          storeStatus.isOpen ? "bg-[var(--ember-on-dark)] animate-pulse" : "bg-[#F28B82]"
                         }`}
                       />
-                      <span className="font-mono text-[12px] uppercase font-bold text-[var(--ink)]">
+                      <span className="font-mono text-[12px] uppercase font-bold text-[var(--ink-on-dark)]">
                         {storeStatus.isOpen ? "ĐANG MỞ CỬA" : "ĐÃ ĐÓNG CỬA"}
                       </span>
                     </div>
-                    <span className="font-mono text-[12px] text-[var(--ember)] font-bold">
+                    <span className="font-mono text-[12px] text-[var(--ember-on-dark)] font-bold">
                       23°C · ĐẮK NÔNG
                     </span>
                   </div>
 
                   {/* Giờ phục vụ hôm nay */}
                   <div className="flex flex-col gap-1">
-                    <span className="font-mono text-[11px] text-[var(--ink-muted)] uppercase tracking-wider">
+                    <span className="font-mono text-[11px] uppercase tracking-wider" style={{ color: "var(--ink-muted-on-dark)" }}>
                       LỊCH ĐÓN KHÁCH HÔM NAY:
                     </span>
-                    <span className="font-display font-extrabold text-[24px] text-[var(--ink)]">
+                    <span className="font-display font-extrabold text-[24px] text-[var(--ink-on-dark)]">
                       07:00 – {storeStatus.closingTime || "18:00"}
                     </span>
                   </div>
@@ -287,10 +297,10 @@ export default function HomePage() {
                     <a
                       href="tel:0382851688"
                       onClick={() => trackEvent("click_call")}
-                      className="py-3 px-3 bg-[var(--ember)] text-[var(--btn-primary-text)] font-mono text-[11px] font-bold uppercase rounded-sm flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
+                      className="py-3 px-3 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-mono text-[11px] font-bold uppercase rounded-sm flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity"
                     >
-                      <PhoneCall className="w-3.5 h-3.5" />
-                      <span>GỌI NGAY</span>
+                      <PhoneCall className="w-3.5 h-3.5 text-[#0A0E0C]" />
+                      <span style={{ color: "#0A0E0C" }}>GỌI NGAY</span>
                     </a>
 
                     <a
@@ -298,9 +308,9 @@ export default function HomePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => trackEvent("click_directions")}
-                      className="py-3 px-3 bg-[var(--bg-2)] border border-[var(--line)] hover:border-[var(--ember)] text-[var(--ink)] font-mono text-[11px] font-bold uppercase rounded-sm flex items-center justify-center gap-1.5 transition-colors"
+                      className="py-3 px-3 bg-[#0A0E0C]/70 border border-[var(--line-on-dark)] hover:border-[var(--ember-on-dark)] text-[var(--ink-on-dark)] font-mono text-[11px] font-bold uppercase rounded-sm flex items-center justify-center gap-1.5 transition-colors"
                     >
-                      <Navigation className="w-3.5 h-3.5 text-[var(--mist)]" />
+                      <Navigation className="w-3.5 h-3.5 text-[var(--mist-on-dark)]" />
                       <span>CHỈ ĐƯỜNG</span>
                     </a>
                   </div>
@@ -311,7 +321,7 @@ export default function HomePage() {
 
           {/* Chữ Display "CẨM CÙ HOUSE" khổng lồ tràn ngang đáy màn hình (Section 8.1.1) */}
           <div className="w-full relative z-10 pt-8 border-t border-[var(--line)] overflow-hidden select-none">
-            <h1 className="font-display font-black text-[clamp(44px,12.5vw,180px)] uppercase tracking-tighter leading-none text-center whitespace-nowrap text-[var(--ink)] opacity-90">
+            <h1 className="font-display font-black text-[clamp(44px,12.5vw,180px)] uppercase tracking-tighter leading-none text-center whitespace-nowrap text-[var(--ink-on-dark)] opacity-90">
               {heroTitleLetters.map((char, index) => (
                 <motion.span
                   key={index}
@@ -330,7 +340,7 @@ export default function HomePage() {
         {/* =========================================================================
             2. DẢI CHỮ CHẠY MARQUEE HAI CHIỀU NGƯỢC NHAU (SECTION 8.1.2)
            ========================================================================= */}
-        <section className="w-full bg-[var(--ember)] text-[#0A0E0C] py-4 overflow-hidden select-none font-mono text-[13px] sm:text-[14px] font-black uppercase tracking-widest border-y border-[#0A0E0C]">
+        <section className="w-full bg-[var(--ember)] text-[var(--ember-ink)] py-4 overflow-hidden select-none font-mono text-[13px] sm:text-[14px] font-black uppercase tracking-widest border-y border-[var(--line)]">
           {/* Hàng 1: Trôi sang trái */}
           <div className="flex gap-6 w-max animate-marquee">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -452,29 +462,43 @@ export default function HomePage() {
           {/* 4 Panel xếp trượt ngang / ghim (Section 8.1.5) */}
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {WHY_CHOOSE_PANELS.map((panel, idx) => (
-                <div
-                  key={panel.num}
-                  className={`p-8 sm:p-12 border border-[var(--line)] clip-chamfer-14 flex flex-col justify-between gap-8 ${panel.bg} transition-all hover:border-[var(--ember)]/60`}
-                >
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center justify-between">
-                      <span className="font-display font-black text-[64px] sm:text-[80px] leading-none text-[var(--ember)]">
-                        {panel.num}
-                      </span>
-                      <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold">
-                        {panel.tag}
-                      </span>
+              {WHY_CHOOSE_PANELS.map((panel, idx) => {
+                const isPine = panel.bg.includes("pine");
+                return (
+                  <div
+                    key={panel.num}
+                    className={`p-8 sm:p-12 border border-[var(--line)] clip-chamfer-14 flex flex-col justify-between gap-8 ${panel.bg} transition-all hover:border-[var(--ember)]/60`}
+                  >
+                    <div className="flex flex-col gap-6">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className="font-display font-black text-[64px] sm:text-[80px] leading-none"
+                          style={{ color: isPine ? "var(--ember-on-dark)" : "var(--ember)" }}
+                        >
+                          {panel.num}
+                        </span>
+                        <span
+                          className="font-mono text-[12px] uppercase tracking-widest font-bold"
+                          style={{ color: isPine ? "var(--mist-on-dark)" : "var(--mist)" }}
+                        >
+                          {panel.tag}
+                        </span>
+                      </div>
+
+                      <h3
+                        className="font-display font-bold text-[26px] sm:text-[32px] uppercase leading-tight"
+                        style={{ color: isPine ? "#F2EDE4" : "var(--ink)" }}
+                      >
+                        {panel.title}
+                      </h3>
+
+                      <p
+                        className="text-[15px] sm:text-[16px] leading-relaxed"
+                        style={{ color: isPine ? "#F2EDE4" : "var(--ink-muted)" }}
+                      >
+                        {panel.desc}
+                      </p>
                     </div>
-
-                    <h3 className="font-display font-bold text-[26px] sm:text-[32px] uppercase leading-tight text-[var(--ink)]">
-                      {panel.title}
-                    </h3>
-
-                    <p className="text-[15px] sm:text-[16px] text-[var(--ink-muted)] leading-relaxed">
-                      {panel.desc}
-                    </p>
-                  </div>
 
                   {/* Ảnh minh họa cắt chéo */}
                   <div className="relative aspect-[16/9] w-full overflow-hidden clip-chamfer-14 border border-[var(--line)]">
@@ -486,7 +510,8 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-              ))}
+              );
+            })}
             </div>
           </div>
         </section>
@@ -561,7 +586,7 @@ export default function HomePage() {
         {/* =========================================================================
             7. CẢM NHẬN KHÁCH HÀNG (SECTION 8.1.7)
            ========================================================================= */}
-        <GoogleReviewsSection />
+        <CustomerReviewsSection lang={isEn ? "EN" : "VN"} />
 
         {/* =========================================================================
             8. CTA CUỐI: GHÉ CẨM CÙ HOUSE (SECTION 8.1.8)

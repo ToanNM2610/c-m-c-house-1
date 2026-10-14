@@ -31,7 +31,10 @@ export default function CamcuIntro() {
 
     const seen = (): boolean => {
       try {
-        return sessionStorage.getItem(STORAGE_KEY) === '1';
+        return (
+          sessionStorage.getItem(STORAGE_KEY) === '1' ||
+          sessionStorage.getItem('camcu_intro_seen') === '1'
+        );
       } catch (_) {
         return false;
       }
@@ -271,7 +274,7 @@ export default function CamcuIntro() {
             <span>ĐỘ CAO</span>
             <span
               id="elevation-num"
-              className="text-[18px] font-bold text-[var(--ember)] tabular-nums"
+              className="text-[18px] font-bold text-[var(--ember-on-dark,#FF6A2B)] tabular-nums"
             >
               000 m
             </span>
@@ -279,7 +282,7 @@ export default function CamcuIntro() {
           <div className="w-full h-[2px] bg-[rgba(242,237,228,0.15)] overflow-hidden">
             <div
               id="elevation-progress"
-              className="w-full h-full bg-[var(--ember)]"
+              className="w-full h-full bg-[var(--ember-on-dark,#FF6A2B)]"
             />
           </div>
         </div>

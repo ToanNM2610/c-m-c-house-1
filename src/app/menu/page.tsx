@@ -15,6 +15,7 @@ import {
 import { trackEvent } from "@/lib/analytics";
 import { getSharedData, KEYS } from "@/lib/syncStore";
 import { CAMCU_MENU_OVERRIDES_KEY, getStoredData } from "@/utils/storage";
+import PageDarkHero from "@/components/layout/PageDarkHero";
 
 export default function MenuPage() {
   const { locale, dict } = useLanguage();
@@ -114,62 +115,41 @@ export default function MenuPage() {
     <div className="bg-[var(--bg)] min-h-screen text-[var(--ink)] selection:bg-[var(--ember)] selection:text-[#0A0E0C] transition-colors overflow-x-hidden">
       <main className="overflow-x-hidden">
         {/* =========================================================================
-            1. ĐẦU TRANG: H1 + 3 BADGE MONO (SECTION 8.4.1)
+            1. ĐẦU TRANG: HERO TỐI (SECTION 8.4.1)
            ========================================================================= */}
-        <section className="relative pt-36 sm:pt-44 pb-14 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4]">
-          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
-            <div className="flex flex-col gap-4 max-w-4xl">
-              <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
-                <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
-                <span>[04] THỰC ĐƠN ĐẠI NGÀN · 67 MÓN NGUYÊN BẢN</span>
-              </div>
-
-              {/* H1 Không dấu chấm đầu dòng */}
-              <h1 className="font-display font-black text-[clamp(36px,6vw,84px)] uppercase tracking-tight text-[var(--ink)] leading-none text-balance">
-                THỰC ĐƠN MỘC MẠC, <span className="font-serif italic font-normal text-[var(--ember)] lowercase">thức uống xanh &amp; món ăn lành</span>
-              </h1>
-
-              <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] max-w-2xl leading-relaxed">
-                {dict.menu.subtitle}
-              </p>
-
-              {/* 3 Badge Mono */}
-              <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line)] font-mono text-[12px] uppercase tracking-wider text-[var(--mist)]">
-                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
-                  [100% NƯỚC SUỐI NGUỒN TỰ NHIÊN]
-                </span>
-                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
-                  [NGUYÊN LIỆU TƯƠI MỖI NGÀY]
-                </span>
-                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
-                  [KHÔNG HƯƠNG LIỆU CÔNG NGHIỆP]
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PageDarkHero
+          badges={[
+            "[67 MÓN CHỌN LỌC]",
+            "[GIÁ BÌNH DÂN 20K–45K]",
+            "[NGUYÊN LIỆU XANH SẠCH]",
+          ]}
+          h1Main="THỰC ĐƠN MỘC MẠC,"
+          h1Accent="Thức Uống Xanh & Món Ăn Lành"
+          subtitle="67 món cà phê mộc Tây Nguyên, trà thảo mộc, sinh tố, nước ép nguyên chất và điểm tâm lành mạnh bên bờ suối đá Gia Nghĩa."
+          backgroundImage="/uploads/gallery/1788250253551-943009233.jpg"
+        />
 
         {/* =========================================================================
             2. MÓN ĐƯỢC YÊU THÍCH NHẤT: KHUNG --PINE GÓC VÁT (SECTION 8.4.3)
            ========================================================================= */}
         {signatureItem && (
           <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 py-12">
-            <div className="p-8 sm:p-12 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line)] clip-chamfer-14 flex flex-col lg:flex-row lg:items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
+            <div className="p-8 sm:p-12 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line-on-dark)] clip-chamfer-14 flex flex-col lg:flex-row lg:items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
               <div className="flex flex-col gap-4 max-w-2xl relative z-10">
-                <span className="font-mono text-[12px] text-[var(--ember)] font-bold uppercase tracking-widest">
+                <span className="font-mono text-[12px] font-bold uppercase tracking-widest" style={{ color: "var(--mist-on-dark)" }}>
                   [SIGNATURE MÓN YÊU THÍCH NHẤT TẠI CẨM CÙ]
                 </span>
 
-                <h2 className="font-display font-black text-[clamp(36px,5.5vw,64px)] uppercase tracking-tight text-white leading-tight">
+                <h2 className="font-display font-black text-[clamp(36px,5.5vw,64px)] uppercase tracking-tight leading-tight" style={{ color: "#F2EDE4" }}>
                   {signatureItem.name}
                 </h2>
 
-                <p className="text-[16px] text-white/80 leading-relaxed">
+                <p className="text-[16px] leading-relaxed" style={{ color: "rgba(242, 237, 228, 0.85)" }}>
                   {signatureItem.description}
                 </p>
 
                 <div className="flex items-center gap-4 pt-2">
-                  <span className="font-mono font-bold text-[28px] sm:text-[34px] text-[var(--ember)] tabular-nums">
+                  <span className="font-mono font-bold text-[28px] sm:text-[34px] tabular-nums" style={{ color: "#F2EDE4" }}>
                     {signatureItem.price.toLocaleString("vi-VN")}đ
                   </span>
                   {signatureItem.inStock === false && (
@@ -183,10 +163,10 @@ export default function MenuPage() {
               <div className="shrink-0 relative z-10">
                 <a
                   href="tel:0382851688"
-                  className="px-8 py-4 bg-[var(--ember)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity inline-flex items-center gap-2"
+                  className="px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity inline-flex items-center gap-2"
                 >
-                  <PhoneCall className="w-4 h-4" />
-                  <span>GỌI HOTLINE ĐÓN TIẾP</span>
+                  <PhoneCall className="w-4 h-4 text-[#0A0E0C]" />
+                  <span style={{ color: "#0A0E0C" }}>GỌI HOTLINE ĐÓN TIẾP</span>
                 </a>
               </div>
             </div>
@@ -240,7 +220,7 @@ export default function MenuPage() {
                   onClick={() => setActiveCategory("all")}
                   className={`w-full py-2.5 px-3 flex items-center justify-between font-mono text-[13px] uppercase tracking-wider transition-colors text-left rounded-sm ${
                     activeCategory === "all"
-                      ? "bg-[var(--ember)] text-[#0A0E0C] font-bold"
+                      ? "bg-[var(--ember)] text-[var(--ember-ink)] font-bold"
                       : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--bg-2)]"
                   }`}
                 >
@@ -260,7 +240,7 @@ export default function MenuPage() {
                       onClick={() => scrollToCategory(cat.id)}
                       className={`w-full py-2.5 px-3 flex items-center justify-between font-mono text-[13px] uppercase tracking-wider transition-colors text-left rounded-sm ${
                         isCatActive
-                          ? "bg-[var(--ember)] text-[#0A0E0C] font-bold"
+                          ? "bg-[var(--ember)] text-[var(--ember-ink)] font-bold"
                           : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--bg-2)]"
                       }`}
                     >
@@ -278,7 +258,7 @@ export default function MenuPage() {
             <div className="lg:col-span-8 flex flex-col gap-14">
               <div className="flex items-center justify-between pb-2 border-b border-[var(--line)] font-mono text-[12px] uppercase text-[var(--ink-muted)]">
                 <span className="font-bold text-[var(--ember)]">HIỂN THỊ: {filteredItems.length} / {menuItems.length} MÓN</span>
-                <span>GIÁ ĐÃ BAO GỒM PHỤC VỤ</span>
+                <span>[THỰC ĐƠN CHỌN LỌC]</span>
               </div>
 
               {validCategories.map((cat, catIdx) => {
@@ -312,38 +292,46 @@ export default function MenuPage() {
                         return (
                           <article
                             key={item.id}
-                            className={`group py-4 px-2 flex flex-col gap-1.5 transition-all hover:bg-[var(--card)]/50 rounded-sm ${
+                            className={`group relative overflow-hidden px-3 py-5 transition-colors duration-200 hover:bg-[var(--card)]/70 ${
                               isOutOfStock ? "opacity-45" : ""
                             }`}
                           >
-                            {/* Dòng 1: Tên món · Khoảng trống · Giá tiền */}
-                            <div className="flex items-baseline justify-between gap-4">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`text-[17px] sm:text-[19px] font-semibold tracking-tight text-[var(--ink)] ${
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-y-0 left-0 w-0 bg-gradient-to-r from-[var(--ember)]/10 to-transparent transition-all duration-300 group-hover:w-full"
+                            />
+
+                            {/* Hàng trên: Tên món 20px/600 + Đường chấm dẫn + Giá 18px/700 ember */}
+                            <div className="relative z-10 flex items-baseline justify-between">
+                              <div className="flex flex-wrap items-center gap-2.5 pr-2">
+                                <h3
+                                  className={`text-[20px] font-semibold leading-snug text-[var(--ink)] ${
                                     isOutOfStock ? "line-through text-[var(--ink-muted)]" : ""
                                   }`}
                                 >
                                   {item.name}
-                                </span>
+                                </h3>
 
                                 {/* Tag */}
-                                {item.tag && (
-                                  <span className="font-mono text-[10px] text-[var(--ember)] uppercase font-bold tracking-wider px-1.5 py-0.5 bg-[var(--ember)]/15 border border-[var(--ember)]/30 rounded-xs">
-                                    {item.tag}
+                                {item.tag && !isOutOfStock && (
+                                  <span className="text-mono-label border border-[var(--ember)] px-2 py-0.5 text-[var(--ember)]">
+                                    [{item.tag}]
                                   </span>
                                 )}
                                 {isOutOfStock && (
-                                  <span className="font-mono text-[10px] text-red-400 uppercase font-bold tracking-wider px-1.5 py-0.5 bg-red-950/40 border border-red-500/30 rounded-xs">
-                                    TẠM HẾT
+                                  <span className="text-mono-label border border-[var(--line)] px-2 py-0.5">
+                                    [TẠM HẾT]
                                   </span>
                                 )}
                               </div>
 
-                              {/* Giá tiền: JetBrains Mono 700 18px ember, trượt 6px khi hover */}
-                              <div className="shrink-0 font-mono font-bold text-[17px] sm:text-[18px] text-[var(--ember)] tabular-nums group-hover:translate-x-1.5 transition-transform duration-300">
+                              {/* Đường chấm dẫn giữa tên món và giá */}
+                              <span aria-hidden="true" className="menu-dotted-leader" />
+
+                              {/* Giá tiền: JetBrains Mono 700 18px ember, trượt -6px khi hover */}
+                              <span className="shrink-0 font-[var(--font-mono)] text-[18px] font-bold tabular-nums text-[var(--ember)] transition-transform duration-200 group-hover:-translate-x-[6px]">
                                 {item.price.toLocaleString("vi-VN")}đ
-                              </div>
+                              </span>
                             </div>
 
                             {/* Dòng 2: Mô tả món 15px */}
@@ -384,16 +372,16 @@ export default function MenuPage() {
         {/* =========================================================================
             4. CAM KẾT TỪ BẾP & QUẦY BAR CẨM CÙ: BĂNG NGANG EMBER (SECTION 8.4.5)
            ========================================================================= */}
-        <section className="w-full bg-[var(--ember)] text-[#0A0E0C] py-16 px-5 sm:px-10 border-t border-[#0A0E0C]">
+        <section className="w-full bg-[var(--ember)] text-[var(--ember-ink)] py-16 px-5 sm:px-10 border-t border-[var(--line)]">
           <div className="w-full max-w-[1360px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex flex-col gap-2 max-w-2xl">
-              <span className="font-mono text-[12px] uppercase tracking-widest font-bold">
+              <span className="font-mono text-[12px] uppercase tracking-widest font-bold" style={{ color: "var(--ember-ink)" }}>
                 [CAM KẾT TỪ BẾP &amp; QUẦY BAR CẨM CÙ]
               </span>
-              <h3 className="font-display font-black text-[28px] sm:text-[38px] uppercase tracking-tight leading-tight">
+              <h3 className="font-display font-black text-[28px] sm:text-[38px] uppercase tracking-tight leading-tight" style={{ color: "var(--ember-ink)" }}>
                 NGUYÊN LIỆU XANH TƯƠI MỖI NGÀY
               </h3>
-              <p className="text-[15px] sm:text-[16px] font-medium leading-relaxed">
+              <p className="text-[15px] sm:text-[16px] font-medium leading-relaxed" style={{ color: "var(--ember-ink)" }}>
                 Chúng tôi không sử dụng chất bảo quản hay hương liệu công nghiệp. Cà phê rang củi mộc, trà hái sớm và điểm tâm nóng hổi phục vụ tận tâm.
               </p>
             </div>
@@ -403,7 +391,7 @@ export default function MenuPage() {
                 href="tel:0382851688"
                 className="px-6 py-3.5 bg-[#0A0E0C] text-[#F2EDE4] font-mono text-[12px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity flex items-center gap-2"
               >
-                <PhoneCall className="w-4 h-4 text-[var(--ember)]" />
+                <PhoneCall className="w-4 h-4 text-[var(--ember-on-dark,#FF6A2B)]" />
                 <span>GỌI HOTLINE ĐÓN TIẾP</span>
               </a>
 
@@ -411,7 +399,7 @@ export default function MenuPage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3.5 bg-transparent border-2 border-[#0A0E0C] text-[#0A0E0C] font-mono text-[12px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-[#0A0E0C] hover:text-[#F2EDE4] transition-all flex items-center gap-2"
+                className="px-6 py-3.5 bg-transparent border-2 border-current text-[var(--ember-ink)] font-mono text-[12px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-[#0A0E0C] hover:text-[#F2EDE4] transition-all flex items-center gap-2"
               >
                 <Navigation className="w-4 h-4" />
                 <span>CHỈ ĐƯỜNG TỚI QUÁN</span>

@@ -23,19 +23,27 @@
   --color-line: var(--line);
 }
 
-:root {
+:root,
+[data-theme="dark"] {
   /* Design Tokens - Tối (mặc định) - CAMCU_CINEMATIC_DRAFT.md Section 3 */
   --bg: #0A0E0C;
   --bg-2: #101714;
   --pine: #123A2B;
   --card: #131B17;
   --ink: #F2EDE4;
-  --ink-muted: rgba(242, 237, 228, 0.70);
+  --ink-muted: rgba(242, 237, 228, 0.74);
   --ember: #FF6A2B;
   --ember-ink: #0A0E0C;
   --mist: #A9C4B6;
   --gold: #E9B949;
   --line: rgba(242, 237, 228, 0.14);
+
+  /* Token cố định cho mọi Hero tối & ảnh (Không bao giờ đổi sang chữ đen ở chế độ Sáng) */
+  --ink-on-dark: #F2EDE4;
+  --ink-muted-on-dark: rgba(242, 237, 228, 0.82);
+  --ember-on-dark: #FF6A2B;
+  --mist-on-dark: #A9C4B6;
+  --line-on-dark: rgba(242, 237, 228, 0.18);
 
   /* Unified Aliases for Components & Admin */
   --paper: var(--bg);
@@ -86,6 +94,7 @@
   --foreground: var(--ink);
 }
 
+[data-theme="light"],
 html:not(.dark),
 body:not(.dark) {
   /* Design Tokens - Sáng (Light Mode) - Section 3 & 10 */
@@ -94,12 +103,19 @@ body:not(.dark) {
   --pine: #1C4A38;
   --card: #FBF8F2;
   --ink: #0A0E0C;
-  --ink-muted: rgba(10, 14, 12, 0.72);
-  --ember: #C23B0B;
+  --ink-muted: #4A4E4C;
+  --ember: #9E2B03;
   --ember-ink: #FFFFFF;
   --mist: #2F6B53;
   --gold: #9A6B00;
   --line: rgba(10, 14, 12, 0.16);
+
+  /* Giữ nguyên chữ kem #F2EDE4 trên mọi Hero tối ở chế độ Sáng (Yêu cầu 1) */
+  --ink-on-dark: #F2EDE4;
+  --ink-muted-on-dark: rgba(242, 237, 228, 0.82);
+  --ember-on-dark: #FF6A2B;
+  --mist-on-dark: #A9C4B6;
+  --line-on-dark: rgba(242, 237, 228, 0.18);
 
   --paper: var(--bg);
   --paper-2: var(--bg-2);
@@ -140,20 +156,27 @@ body:not(.dark) {
   --foreground: var(--ink);
 }
 
-html.dark,
-body.dark {
+html.dark:not([data-theme="light"]),
+body.dark:not([data-theme="light"]),
+[data-theme="dark"] {
   /* Explicit Dark Override */
   --bg: #0A0E0C;
   --bg-2: #101714;
   --pine: #123A2B;
   --card: #131B17;
   --ink: #F2EDE4;
-  --ink-muted: rgba(242, 237, 228, 0.70);
+  --ink-muted: rgba(242, 237, 228, 0.74);
   --ember: #FF6A2B;
   --ember-ink: #0A0E0C;
   --mist: #A9C4B6;
   --gold: #E9B949;
   --line: rgba(242, 237, 228, 0.14);
+
+  --ink-on-dark: #F2EDE4;
+  --ink-muted-on-dark: rgba(242, 237, 228, 0.82);
+  --ember-on-dark: #FF6A2B;
+  --mist-on-dark: #A9C4B6;
+  --line-on-dark: rgba(242, 237, 228, 0.18);
 
   --paper: var(--bg);
   --paper-2: var(--bg-2);
@@ -1137,7 +1160,7 @@ html.dark .nav-hover-line::after {
 }
 
 /* ==========================================================================
-   CINEMATIC & ADMIN UTILITIES (MỤC 3, 4, 11 & 13)
+   CINEMATIC & ADMIN UTILITIES (MỤC 1, 2, 3, 4, 5, 6, 7, 8, 11 & 13)
    ========================================================================== */
 .chamfer-14,
 .clip-chamfer-14 {
@@ -1153,12 +1176,96 @@ html.dark .nav-hover-line::after {
   );
 }
 
-.text-mono-label {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 12px;
+/* 1. Khối Hero tối dùng chung cho cả 5 trang: luôn dùng chữ kem #F2EDE4, tương phản >= 4.5:1 */
+.hero-dark-surface {
+  background-color: #0A0E0C;
+  color: var(--ink-on-dark);
+}
+
+.hero-dark-surface h1,
+.hero-dark-surface h2,
+.hero-dark-surface p,
+.hero-dark-surface span:not(.text-accent-ember) {
+  color: var(--ink-on-dark);
+}
+
+/* 8. Chữ ghost "CẨM CÙ HOUSE" tăng độ mờ lên .16 */
+.hero-ghost-text {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(72px, 18vw, 290px);
+  font-weight: 800;
+  line-height: 0.9;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 600;
+  color: var(--ink-on-dark);
+  opacity: 0.16;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* 2. Lớp gradient đen đáy ảnh .65+, chữ kem 16px+, tối đa 2 dòng */
+.photo-caption-overlay {
+  background: linear-gradient(
+    to top,
+    rgba(10, 14, 12, 0.88) 0%,
+    rgba(10, 14, 12, 0.65) 65%,
+    rgba(10, 14, 12, 0) 100%
+  );
+  color: var(--ink-on-dark);
+}
+
+.photo-caption-title {
+  color: var(--ink-on-dark);
+  font-size: 16px;
+  line-height: 1.45;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 5. Đường chấm dẫn (dotted leader) giữa tên món và giá trong Thực Đơn */
+.menu-dotted-leader {
+  flex: 1 1 auto;
+  border-bottom: 1.5px dotted var(--ink-muted);
+  opacity: 0.45;
+  margin: 0 12px;
+  transform: translateY(-5px);
+}
+
+/* 6. Nhãn mono >= 12px & chữ liên kết Header/Footer >= 15px, tương phản >= 4.5:1 */
+.text-mono-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 12.5px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+.nav-footer-link {
+  font-size: 15.5px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* 7. Tiêu đề card trang Liên Hệ tối đa 28px & Bản đồ lọc tối/ấm đồng bộ chế độ */
+.contact-card-title {
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(22px, 2.5vw, 28px);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+[data-theme="dark"] .map-theme-filter,
+.dark .map-theme-filter {
+  filter: invert(90%) hue-rotate(175deg) sepia(18%) saturate(135%) brightness(92%) contrast(108%);
+}
+
+[data-theme="light"] .map-theme-filter,
+:not(.dark) .map-theme-filter {
+  filter: sepia(16%) saturate(115%) brightness(98%) contrast(102%);
 }
 
 .text-h2 {
@@ -1189,3 +1296,37 @@ html.dark .nav-hover-line::after {
 .btn-ember:hover {
   opacity: 0.92;
 }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  background-color: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.85rem 1.5rem;
+  min-height: 48px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  border-color: var(--ember);
+  color: var(--ember);
+}
+
+@keyframes marqueeLeft {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marqueeRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+

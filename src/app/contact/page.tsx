@@ -18,6 +18,7 @@ import {
   Share2
 } from "lucide-react";
 import { getVietnamTime } from "@/lib/openingHours";
+import PageDarkHero from "@/components/layout/PageDarkHero";
 
 interface DaySchedule {
   dayId: number; // 0 = Sun, 1 = Mon, ..., 6 = Sat
@@ -61,32 +62,18 @@ export default function ContactPage() {
     <div className="bg-[var(--bg)] min-h-screen text-[var(--ink)] font-sans selection:bg-[var(--ember)] selection:text-[#0A0E0C] transition-colors overflow-x-hidden">
       <main className="overflow-x-hidden">
         {/* =========================================================================
-            1. ĐẦU TRANG: H1 + ĐỊA CHỈ H3 + TỌA ĐỘ MONO (SECTION 8.5.1)
+            1. ĐẦU TRANG: HERO TỐI (SECTION 8.5.1)
            ========================================================================= */}
-        <section className="relative pt-36 sm:pt-44 pb-14 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4]">
-          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
-            <div className="flex flex-col gap-4 max-w-4xl">
-              {/* Tọa độ mono */}
-              <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
-                <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
-                <span>[11.99° N · 107.69° E · ĐỘ CAO 800M+]</span>
-              </div>
-
-              {/* H1: TỪ GIA NGHĨA, CẨM CÙ HOUSE Chờ Đón Bạn */}
-              <h1 className="font-display font-black text-[clamp(36px,6vw,84px)] uppercase tracking-tight text-[var(--ink)] leading-none text-balance">
-                TỪ GIA NGHĨA, CẨM CÙ HOUSE{" "}
-                <span className="font-serif italic font-normal text-[var(--ember)] lowercase">
-                  chờ đón bạn
-                </span>
-              </h1>
-
-              {/* Địa chỉ đầy đủ cỡ H3 */}
-              <p className="font-display font-bold text-[clamp(18px,2.5vw,28px)] text-[var(--ink)] leading-snug">
-                {dict.common.addressFull}
-              </p>
-            </div>
-          </div>
-        </section>
+        <PageDarkHero
+          badges={[
+            "[05 · 11.99° N · 107.69° E]",
+            "[CAO ĐỘ 800M+]",
+          ]}
+          h1Main="TỪ GIA NGHĨA, CẨM CÙ HOUSE"
+          h1Accent="Chờ Đón Bạn"
+          subtitle={dict.common.addressFull}
+          backgroundImage="/uploads/gallery/1788250253557-29323827.jpg"
+        />
 
         {/* =========================================================================
             2. BỐ CỤC 2 CỘT: TRÁI BẢN ĐỒ / PHẢI HOTLINE & GIỜ (SECTION 8.5.2)
@@ -105,7 +92,7 @@ export default function ContactPage() {
                       <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ember)] block font-bold">
                         BẢN ĐỒ GOOGLE MAPS
                       </span>
-                      <h2 className="font-display font-extrabold text-[22px] uppercase text-[var(--ink)]">
+                      <h2 className="contact-card-title uppercase text-[var(--ink)]">
                         ĐỊNH VỊ TRỰC TUYẾN
                       </h2>
                     </div>
@@ -126,7 +113,7 @@ export default function ContactPage() {
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full dark:invert-[0.92] dark:hue-rotate-180 dark:contrast-[0.9] dark:brightness-[0.85] dark:grayscale-[0.15] transition-all duration-300"
+                    className="map-theme-filter w-full h-full transition-all duration-300"
                   />
                 </div>
 
@@ -136,7 +123,7 @@ export default function ContactPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("click_directions")}
-                  className="w-full py-4 bg-[var(--ember)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 flex items-center justify-center gap-2 transition-opacity"
+                  className="w-full py-4 bg-[var(--ember)] text-[var(--ember-ink)] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 flex items-center justify-center gap-2 transition-opacity"
                 >
                   <Navigation className="w-4 h-4" />
                   <span>MỞ GOOGLE MAPS DẪN ĐƯỜNG</span>
@@ -169,7 +156,7 @@ export default function ContactPage() {
                 <div className="flex items-center gap-2 pt-2">
                   <a
                     href="tel:0382851688"
-                    className="flex-1 py-3 px-3 bg-[var(--ember)] text-[#0A0E0C] font-mono text-[12px] font-bold uppercase text-center clip-chamfer-14 hover:opacity-90 flex items-center justify-center gap-1.5"
+                    className="flex-1 py-3 px-3 bg-[var(--ember)] text-[var(--ember-ink)] font-mono text-[12px] font-bold uppercase text-center clip-chamfer-14 hover:opacity-90 flex items-center justify-center gap-1.5"
                   >
                     <PhoneCall className="w-3.5 h-3.5" />
                     <span>GỌI NGAY</span>
@@ -252,12 +239,12 @@ export default function ContactPage() {
                             {isEn ? item.nameEn : item.nameVn}
                           </span>
                           {isToday && (
-                            <span className="font-mono text-[10px] px-2 py-0.5 bg-[var(--ember)] text-[#0A0E0C] font-bold uppercase rounded-xs">
+                            <span className="font-mono text-[10px] px-2 py-0.5 bg-[var(--ember)] text-[var(--ember-ink)] font-bold uppercase rounded-xs">
                               HÔM NAY
                             </span>
                           )}
                         </div>
-                        <span className={`font-mono ${isToday ? "text-[var(--ember)] font-bold" : "text-[var(--ink)]"}`}>
+                        <span className={`font-mono font-bold ${isToday ? "text-[var(--ink)]" : "text-[var(--ink)]"}`}>
                           {item.hours}
                         </span>
                       </div>
@@ -382,7 +369,7 @@ export default function ContactPage() {
            ========================================================================= */}
         <section className="w-full bg-[#0A0E0C] text-[#F2EDE4] py-24 border-t border-[var(--line)] text-center relative overflow-hidden">
           <div className="w-full max-w-[1000px] mx-auto px-5 sm:px-10 flex flex-col items-center gap-6 relative z-10">
-            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember-on-dark,#FF6A2B)] font-bold">
               [LỜI CHÀO TỪ CAO NGUYÊN]
             </span>
 
@@ -390,7 +377,7 @@ export default function ContactPage() {
               HẸN GẶP BẠN BÊN BỜ SUỐI
             </h2>
 
-            <p className="text-[16px] sm:text-[18px] text-white/70 max-w-xl">
+            <p className="text-[16px] sm:text-[18px] max-w-xl" style={{ color: "var(--ink-muted-on-dark)" }}>
               {dict.common.addressFull}
             </p>
 
@@ -398,7 +385,7 @@ export default function ContactPage() {
               <a
                 href="tel:0382851688"
                 onClick={() => trackEvent("click_call")}
-                className="px-8 py-4 bg-[var(--ember)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity flex items-center gap-2"
+                className="px-8 py-4 bg-[var(--ember-on-dark,#FF6A2B)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity flex items-center gap-2"
               >
                 <PhoneCall className="w-4 h-4" />
                 <span>GỌI HOTLINE 038 285 1688</span>

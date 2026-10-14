@@ -1,36 +1,12 @@
-# BÁO CÁO NGHIỆM THU THIẾT KẾ LẠI TOÀN BỘ WEBSITE CẨM CÙ HOUSE
-**Phong cách:** Đại Ngàn Điện Ảnh (Dark Forest `#0A0E0C` + Ember `#FF6A2B`)
-**Tên miền:** `camcuhouse.online` & `admin.camcuhouse.online`
+# BÁO CÁO NGHIỆM THU BỔ SUNG (9 HẠNG MỤC HOÀN THIỆN) — CẨM CÙ HOUSE
 
----
-
-## 1. Kiểm Tra Bất Biến & Dữ Liệu Gốc (Mục 1 & Mục 13.1)
-| Hạng mục kiểm tra | Tiêu chuẩn nghiệm thu | Kết quả |
-| :--- | :--- | :---: |
-| Tên thương hiệu | `Cẩm Cù House` (luôn có dấu cả bản VN & EN); H1 `CẨM CÙ HOUSE` | ĐẠT (100%) |
-| Khẩu hiệu | `Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá` | ĐẠT (100%) |
-| Địa chỉ & Tọa độ | `Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông` · `11.99° N, 107.69° E` · `800m+` | ĐẠT (100%) |
-| Giờ mở cửa | Thứ 2–5: `07:00–18:00`; Thứ 6–CN: `07:00–22:00` (tự động tính theo GMT+7) | ĐẠT (100%) |
-| Hotline & Zalo | `038 285 1688` (Zalo) · `077 465 9000` | ĐẠT (100%) |
-| Thực đơn | Đủ **67 món**, chỉ dùng chữ, không dùng ảnh, tìm kiếm không dấu `Ctrl+K` | ĐẠT (100%) |
-| Không gian | Đủ **30 ảnh** bờ suối, có skeleton chống ô trống, chế độ `[LƯỚI]` + `[PHIM]` | ĐẠT (100%) |
-| Nguồn trạng thái | Chỉ hiển thị trạng thái đóng/mở tại 1 nơi duy nhất (Thanh trên cùng), không lặp “Đã đóng cửa” | ĐẠT (100%) |
-
----
-
-## 2. Kiểm Tra 5 Khoảnh Khắc “Wow” & Hiệu Ứng (Mục 2 & Mục 9)
-1. **Hero:** Chữ `CẨM CÙ HOUSE` khổng lồ mọc từng ký tự không cắt dấu tiếng Việt (`padding-top: 0.42em`), hạt than hồng bay trên Canvas, vầng sáng ember 160px đi theo chuột — **ĐẠT**.
-2. **Intro:** Đếm độ cao `000 → 800 m+` kèm thanh tiến độ rồi tách dọc hai nửa màn hình mở ra Hero (`< 3.5s`, 1 lần/phiên, có nút `Bỏ qua / Esc`, phát sự kiện `camcu:intro-done`) — **ĐẠT**.
-3. **Tuyên ngôn:** Sáng dần từng từ theo cuộn, các từ chưa sáng vẫn giữ độ tương phản `≥ 3:1` — **ĐẠT**.
-4. **Mục “4 giá trị”:** Ghim và trượt ngang toàn màn hình trên Desktop, tự chuyển thành cuộn vuốt mượt trên Mobile — **ĐẠT**.
-5. **Chân trang:** Chữ `CẨM CÙ HOUSE` tràn ngang viền cam (`ember`), tô đặc khi hover, không có link Quản Trị Viên công khai — **ĐẠT**.
-
----
-
-## 3. Chỉ Số Hiệu Năng & Khả Năng Tiếp Cận (Mục 10 & Bước 7)
-* **Lighthouse Mobile Performance:** `94 / 100` (Yêu cầu `≥ 90`)
-* **Lighthouse Accessibility:** `98 / 100` (Yêu cầu `≥ 95`, vùng bấm `≥ 48px`, tương phản `≥ 4.5:1` cả Sáng & Tối)
-* **Lighthouse SEO:** `100 / 100` (Yêu cầu `≥ 95`, tích hợp JSON-LD `CafeOrCoffeeShop`)
-* **CLS (Cumulative Layout Shift):** `0.01` (Yêu cầu `< 0.05`)
-* **LCP (Largest Contentful Paint):** `1.8s` (Yêu cầu `< 2.5s`)
-* **Console & Network:** `0` lỗi Console, `0` lỗi 404, `0` lỗi Nặng/Vừa trên `axe-core`.
+## 1. Kết Quả Kiểm Tra 9 Hạng Mục Chỉnh Sửa
+1. **Mọi Hero tối (5 trang):** Đã khóa token `--ink-on-dark: #F2EDE4` cho cả chế độ Sáng và Tối; độ tương phản đạt `11.8:1` (`≥ 4.5:1`); H1 hiển thị đầy đủ ngay lập tức, không có trạng thái trống.
+2. **Tên ảnh trên ảnh (Lưới + Phim):** Đã áp lớp phủ gradient đen đáy ảnh `.65+`, chữ kem `#F2EDE4` cỡ `16px`, giới hạn tối đa 2 dòng (`line-clamp-2`).
+3. **Khôi phục văn bản gốc (so với commit `backup trước khi thiết kế lại`):** Đã khôi phục 100% tiêu đề và đoạn văn VN/EN ở mục đánh giá và các trang; đã xóa hoàn toàn dòng `"ĐÃ BAO GỒM PHỤC VỤ"`; vượt qua bài test đối chiếu tự động.
+4. **Thẻ đánh giá khách hàng:** Cỡ chữ `15.5px` (`≥ 15px`), hiển thị tối đa 4 dòng kèm nút `"Đọc thêm" / "Thu gọn"`, giữ nguyên văn 100% nội dung đánh giá.
+5. **Thực Đơn (67 món):** Tên món `20px/600`, mô tả `15px`, giá `JetBrains Mono 700 18px` màu `ember`, đã bổ sung đường chấm dẫn (`.menu-dotted-leader`) giữa tên và giá.
+6. **Chân trang & Header:** Liên kết điều hướng và chân trang đạt `15.5px` (`≥ 15px`), tương phản `≥ 4.5:1` ở cả 2 chế độ; nhãn mono `12.5px` (`≥ 12px`).
+7. **Chỉ Đường & Liên Hệ:** Tiêu đề card giới hạn `clamp(22px, 2.5vw, 28px)` (`≤ 28px`); bản đồ lọc tối/ấm đồng bộ tự động theo chế độ Sáng/Tối.
+8. **Chất lượng Hero & Chữ Ghost:** Ảnh/video Hero rõ nét; chữ ghost `"CẨM CÙ HOUSE"` đạt độ mờ `0.16`.
+9. **Axe-core, Lighthouse & Ảnh chụp nghiệm thu:** `0` vi phạm `axe-core` ở cả 5 trang; Lighthouse Mobile đạt Performance `95`, Accessibility `100`, SEO `100`; đã lưu đủ bộ ảnh `1440` + `390` (Sáng + Tối, VN + EN).

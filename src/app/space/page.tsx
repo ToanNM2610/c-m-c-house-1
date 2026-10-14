@@ -188,8 +188,18 @@ export default function SpacePage() {
         {/* =========================================================================
             1. ĐẦU TRANG: H1 KHÔNG GIAN SINH THÁI + CHỈ SỐ (SECTION 8.3.1)
            ========================================================================= */}
-        <section className="relative pt-36 sm:pt-44 pb-14 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4]">
-          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
+        <section className="hero-dark-surface relative pt-36 sm:pt-44 pb-14 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden">
+          {/* Chữ ghost CẨM CÙ HOUSE độ mờ .16 */}
+          <div
+            aria-hidden="true"
+            className="hero-ghost-text absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[1200px] flex justify-center pointer-events-none select-none"
+          >
+            <svg viewBox="0 0 1200 120" className="w-full h-auto max-h-[160px] overflow-visible" fill="currentColor">
+              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontWeight="800">CẨM{"\u00A0"}CÙ HOUSE</text>
+            </svg>
+          </div>
+
+          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
               <div className="max-w-4xl flex flex-col gap-4">
                 <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
@@ -198,7 +208,7 @@ export default function SpacePage() {
                 </div>
 
                 {/* H1 Một khối, không ngắt giữa cụm */}
-                <h1 className="font-display font-black text-[clamp(36px,6vw,84px)] uppercase tracking-tight text-[var(--ink)] leading-none text-balance">
+                <h1 className="font-display font-black text-[clamp(36px,6vw,84px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-none text-balance">
                   KHÔNG GIAN SINH THÁI, BÊN BỜ SUỐI ĐÁ
                 </h1>
 
@@ -208,29 +218,29 @@ export default function SpacePage() {
               </div>
 
               {/* Khối chỉ số bên phải: 22°C–26°C · Đá Bazan Cổ (Section 8.3.1) */}
-              <div className="flex items-center gap-6 shrink-0 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 p-5 shadow-xl">
+              <div className="flex items-center gap-6 shrink-0 bg-[#131B17] border border-[var(--line-on-dark)] clip-chamfer-14 p-5 shadow-xl">
                 <div className="flex flex-col">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist)] font-bold">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist-on-dark)] font-bold">
                     NHIỆT ĐỘ KHÍ HẬU
                   </span>
-                  <span className="font-display font-black text-[28px] text-[var(--ember)] leading-none mt-1">
+                  <span className="font-display font-black text-[28px] text-[var(--ember-on-dark)] leading-none mt-1">
                     22°C – 26°C
                   </span>
-                  <span className="font-mono text-[11px] text-[var(--ink-muted)] mt-0.5">
+                  <span className="font-mono text-[11px] text-[var(--ink-muted-on-dark)] mt-0.5">
                     Mát mẻ quanh năm
                   </span>
                 </div>
 
-                <div className="w-[1px] h-12 bg-[var(--line)]" />
+                <div className="w-[1px] h-12 bg-[var(--line-on-dark)]" />
 
                 <div className="flex flex-col">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist)] font-bold">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist-on-dark)] font-bold">
                     ĐỊA CHẤT TỰ NHIÊN
                   </span>
-                  <span className="font-display font-black text-[28px] text-[var(--ink)] leading-none mt-1">
+                  <span className="font-display font-black text-[28px] text-[var(--ink-on-dark)] leading-none mt-1">
                     ĐÁ BAZAN CỔ
                   </span>
-                  <span className="font-mono text-[11px] text-[var(--ink-muted)] mt-0.5">
+                  <span className="font-mono text-[11px] text-[var(--ink-muted-on-dark)] mt-0.5">
                     Hàng triệu năm tuổi
                   </span>
                 </div>
@@ -251,7 +261,7 @@ export default function SpacePage() {
                 onClick={() => setViewMode("grid")}
                 className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[12px] font-bold uppercase transition-colors ${
                   viewMode === "grid"
-                    ? "bg-[var(--ember)] text-[#0A0E0C]"
+                    ? "bg-[var(--ember)] text-[var(--ember-ink)]"
                     : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
                 }`}
               >
@@ -264,7 +274,7 @@ export default function SpacePage() {
                 onClick={() => setViewMode("film")}
                 className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[12px] font-bold uppercase transition-colors ${
                   viewMode === "film"
-                    ? "bg-[var(--ember)] text-[#0A0E0C]"
+                    ? "bg-[var(--ember)] text-[var(--ember-ink)]"
                     : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
                 }`}
               >
@@ -348,7 +358,7 @@ export default function SpacePage() {
                     <button
                       type="button"
                       onClick={() => setViewMode("grid")}
-                      className="p-3 bg-[var(--ember)] text-[#0A0E0C] font-mono text-xs font-bold uppercase clip-chamfer-14"
+                      className="p-3 bg-[var(--ember)] text-[var(--ember-ink)] font-mono text-xs font-bold uppercase clip-chamfer-14"
                       aria-label="Quay lại dạng lưới (Esc)"
                     >
                       THOÁT (ESC)
@@ -397,18 +407,16 @@ export default function SpacePage() {
                       <div className="absolute inset-0 bg-[var(--ember)]/0 group-hover:bg-[var(--ember)]/15 transition-colors duration-300" />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E0C]/90 via-[#0A0E0C]/25 to-transparent flex flex-col justify-end p-5 sm:p-6 text-[#F2EDE4]" />
 
-                      {/* Thông tin đáy ảnh */}
-                      <div className="absolute bottom-5 left-5 right-5 z-10 flex flex-col text-white">
-                        <span className="font-mono text-[11px] text-[var(--ember)] uppercase tracking-wider font-bold mb-1">
-                          [{String(idx + 1).padStart(2, "0")}/30] · {item.subtitle}
+                      {/* Figcaption chuẩn hóa cho mọi thẻ ảnh Bento & Không Gian Suối (Yêu cầu 2) */}
+                      <figcaption className="photo-caption-overlay absolute inset-x-0 bottom-0 p-5 z-10 flex flex-col">
+                        <span
+                          className="text-mono-label font-bold"
+                          style={{ color: "var(--ember-on-dark)" }}
+                        >
+                          [{String(idx + 1).padStart(2, "0")}/30]
                         </span>
-                        <h3 className="font-bold text-[18px] sm:text-[20px] leading-snug line-clamp-2">
-                          {item.title}
-                        </h3>
-                        <p className="font-mono text-[11px] text-white/70 line-clamp-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {item.description}
-                        </p>
-                      </div>
+                        <p className="photo-caption-title mt-1">{item.title}</p>
+                      </figcaption>
 
                       {/* Nút Maximize */}
                       <div className="absolute top-4 right-4 z-20 w-8 h-8 bg-black/40 border border-white/20 text-white rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -431,7 +439,7 @@ export default function SpacePage() {
               <button
                 type="button"
                 onClick={toggleAudio}
-                className="w-14 h-14 bg-[var(--ember)] text-[#0A0E0C] hover:opacity-90 flex items-center justify-center clip-chamfer-14 transition-transform active:scale-95 shadow-lg shrink-0"
+                className="w-14 h-14 bg-[var(--ember)] text-[var(--ember-ink)] hover:opacity-90 flex items-center justify-center clip-chamfer-14 transition-transform active:scale-95 shadow-lg shrink-0"
                 aria-label={isPlayingAudio ? "Tắt thanh âm suối" : "Bật thanh âm suối"}
               >
                 {isPlayingAudio ? (
@@ -472,37 +480,37 @@ export default function SpacePage() {
             5. BẢO TỒN DÒNG NƯỚC SUỐI: KHỐI --PINE (SECTION 8.3.6)
            ========================================================================= */}
         <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 pb-28">
-          <div className="p-8 sm:p-14 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line)] clip-chamfer-14 shadow-2xl">
-            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold mb-3 block">
+          <div className="p-8 sm:p-14 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line-on-dark)] clip-chamfer-14 shadow-2xl">
+            <span className="font-mono text-[12px] uppercase tracking-widest font-bold mb-3 block" style={{ color: "var(--mist-on-dark)" }}>
               [CAM KẾT BẢO TỒN NGUỒN NƯỚC SUỐI ĐẮK NÔNG]
             </span>
 
-            <h2 className="font-display font-black text-[clamp(28px,4.5vw,52px)] uppercase tracking-tight text-white leading-tight mb-4 text-balance">
+            <h2 className="font-display font-black text-[clamp(28px,4.5vw,52px)] uppercase tracking-tight leading-tight mb-4 text-balance" style={{ color: "#F2EDE4" }}>
               Gìn Giữ Mạch Nước Trong Lành &amp; Không Nhựa Một Lần
             </h2>
 
-            <p className="text-[16px] text-white/80 leading-relaxed max-w-3xl mb-8">
+            <p className="text-[16px] leading-relaxed max-w-3xl mb-8" style={{ color: "rgba(242, 237, 228, 0.85)" }}>
               Chúng tôi trân trọng từng viên sỏi và mạch nước ngầm cao nguyên. Cẩm Cù House cam kết 100% không xả thải hóa chất, sử dụng ống hút thiên nhiên và cùng du khách gìn giữ bờ suối sạch sẽ, an lành.
             </p>
 
             {/* 3 Cam kết dạng cột kẻ lưới */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-white/20 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-[var(--line-on-dark)] mb-10">
               <div className="flex flex-col gap-2">
-                <span className="font-mono text-[11px] text-[var(--ember)] font-bold">[CAM KẾT 01]</span>
-                <h4 className="font-bold text-[18px] text-white">Không Nhựa Một Lần</h4>
-                <p className="font-mono text-xs text-white/70">100% ống hút sậy &amp; ly sứ mộc</p>
+                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>[CAM KẾT 01]</span>
+                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>Không Nhựa Một Lần</h4>
+                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>100% ống hút sậy &amp; ly sứ mộc</p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="font-mono text-[11px] text-[var(--ember)] font-bold">[CAM KẾT 02]</span>
-                <h4 className="font-bold text-[18px] text-white">Bảo Vệ Mạch Nước</h4>
-                <p className="font-mono text-xs text-white/70">Không ngăn đập phá vỡ dòng chảy tự nhiên</p>
+                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>[CAM KẾT 02]</span>
+                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>Bảo Vệ Mạch Nước</h4>
+                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>Không ngăn đập phá vỡ dòng chảy tự nhiên</p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="font-mono text-[11px] text-[var(--ember)] font-bold">[CAM KẾT 03]</span>
-                <h4 className="font-bold text-[18px] text-white">Đá Bazan Nguyên Vẹn</h4>
-                <p className="font-mono text-xs text-white/70">Giữ trọn vẹn thảm rêu xanh cổ kính</p>
+                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>[CAM KẾT 03]</span>
+                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>Đá Bazan Nguyên Vẹn</h4>
+                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>Giữ trọn vẹn thảm rêu xanh cổ kính</p>
               </div>
             </div>
 
@@ -510,7 +518,7 @@ export default function SpacePage() {
             <div className="flex flex-wrap items-center gap-4">
               <a
                 href="tel:0382851688"
-                className="px-8 py-4 bg-[var(--ember)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity"
+                className="px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity"
               >
                 GỌI HOTLINE: 038 285 1688
               </a>
@@ -519,7 +527,7 @@ export default function SpacePage() {
                 href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 bg-transparent border border-white text-white font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
+                className="px-8 py-4 bg-transparent border border-[var(--line-on-dark)] text-[var(--ink-on-dark)] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
               >
                 CHỈ ĐƯỜNG TỚI BỜ SUỐI
               </a>

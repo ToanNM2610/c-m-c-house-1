@@ -214,7 +214,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
       noAdditives: "Không Phụ Gia Hóa Học",
       searchPlaceholder: "Tìm món nhanh...",
       menuListHeading: "Danh Sách Món",
-      menuListSubheading: "Giá niêm yết đã bao gồm phục vụ tại bàn sát bờ suối",
+      menuListSubheading: "Giá niêm yết rõ ràng tại bàn sát bờ suối",
       signatureTag: "Món Được Yêu Thích Nhất",
       signatureTitle: "Signature: Cà Phê Muối Đắk Nông",
       signatureHeading: "Cà Phê Muối Gia Nghĩa & Trà Hoa Đu Đủ Rừng",

@@ -108,7 +108,17 @@ export default function AboutPage() {
         {/* =========================================================================
             1. MỞ ĐẦU TỐI (SECTION 8.2.1)
            ========================================================================= */}
-        <section className="relative pt-36 sm:pt-44 pb-20 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden">
+        <section className="hero-dark-surface relative pt-36 sm:pt-44 pb-20 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden">
+          {/* Chữ ghost CẨM CÙ HOUSE độ mờ .16 */}
+          <div
+            aria-hidden="true"
+            className="hero-ghost-text absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[1200px] flex justify-center pointer-events-none select-none"
+          >
+            <svg viewBox="0 0 1200 120" className="w-full h-auto max-h-[160px] overflow-visible" fill="currentColor">
+              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontWeight="800">CẨM{"\u00A0"}CÙ HOUSE</text>
+            </svg>
+          </div>
+
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
             <div className="flex flex-col gap-6 max-w-4xl">
               {/* Nhãn mono */}
@@ -119,7 +129,7 @@ export default function AboutPage() {
 
               {/* H1 CÂU CHUYỆN CẨM CÙ tràn ngang + Chốn Bình Yên Giữa Đất Ngàn */}
               <div className="flex flex-col gap-2">
-                <h1 className="font-display font-black text-[clamp(44px,9vw,110px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+                <h1 className="font-display font-black text-[clamp(44px,9vw,110px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-none">
                   CÂU CHUYỆN CẨM CÙ
                 </h1>
                 <p className="font-serif italic text-[clamp(24px,3.5vw,42px)] text-[var(--ember)]">
@@ -133,14 +143,14 @@ export default function AboutPage() {
               </p>
 
               {/* 3 Badge Mono */}
-              <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line)] font-mono text-[12px] uppercase tracking-wider text-[var(--mist)]">
-                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
+              <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line-on-dark)] font-mono text-[12.5px] uppercase tracking-wider text-[var(--ink-on-dark)]">
+                <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
                   [01 HOA CẨM CÙ BỀN BỈ]
                 </span>
-                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
+                <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
                   [02 SUỐI ĐÁ NGUYÊN BẢN]
                 </span>
-                <span className="px-3 py-1 bg-[var(--bg-2)] border border-[var(--line)]">
+                <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
                   [03 ROBUSTA RANG CỦI]
                 </span>
               </div>
@@ -330,34 +340,34 @@ export default function AboutPage() {
            ========================================================================= */}
         <section className="w-full py-28 sm:py-36 bg-[var(--pine)] text-[#F2EDE4] relative overflow-hidden text-center">
           <div className="w-full max-w-[1000px] mx-auto px-5 sm:px-10 relative z-10 flex flex-col items-center gap-6">
-            <div className="w-12 h-12 rounded-sm border border-white/20 bg-black/20 flex items-center justify-center text-[var(--ember)] mb-2">
+            <div className="w-12 h-12 rounded-sm border border-white/20 bg-black/20 flex items-center justify-center text-[var(--ember-on-dark)] mb-2">
               <StarHoya size={24} strokeWidth={2} />
             </div>
 
-            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold">
+            <span className="font-mono text-[12.5px] uppercase tracking-widest font-bold" style={{ color: "var(--mist-on-dark)" }}>
               [LỜI HẸN ƯỚC TỪ CẨM CÙ HOUSE]
             </span>
 
-            <h2 className="font-display font-black text-[clamp(32px,6vw,72px)] uppercase tracking-tight leading-tight">
+            <h2 className="font-display font-black text-[clamp(32px,6vw,72px)] uppercase tracking-tight leading-tight" style={{ color: "#F2EDE4" }}>
               HẸN BẠN MỘT NGÀY THẢNH THƠI BÊN SUỐI
             </h2>
 
-            <p className="text-[16px] sm:text-[18px] text-white/80 max-w-xl leading-relaxed">
+            <p className="text-[16px] sm:text-[18px] max-w-xl leading-relaxed" style={{ color: "rgba(242, 237, 228, 0.85)" }}>
               Cẩm Cù House luôn sẵn sàng đón chào bạn cùng gia đình ghé chơi, thưởng thức tách cà phê rang củi và hít thở bầu không khí tinh khôi nơi đại ngàn.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
               <a
                 href="tel:0382851688"
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--ember)] text-[#0A0E0C] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-xl"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-xl"
               >
-                <PhoneCall className="w-4 h-4" />
-                <span>GỌI HOTLINE 038 285 1688</span>
+                <PhoneCall className="w-4 h-4 text-[#0A0E0C]" />
+                <span style={{ color: "#0A0E0C" }}>GỌI HOTLINE 038 285 1688</span>
               </a>
 
               <Link
                 href="/space"
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-white text-white font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-[var(--line-on-dark)] text-[var(--ink-on-dark)] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
               >
                 <span>XEM KHÔNG GIAN SUỐI</span>
                 <ArrowRight className="w-4 h-4" />

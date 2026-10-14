@@ -78,11 +78,11 @@ function ScrambleNavLink({
     <Link
       href={href}
       onMouseEnter={handleMouseEnter}
-      className={`group relative py-2 flex items-center gap-1.5 font-mono text-[13px] tracking-wider uppercase transition-colors ${
-        isActive ? "text-[var(--ember)] font-bold" : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+      className={`nav-footer-link group relative py-2 flex items-center gap-1.5 font-mono text-[15.5px] tracking-wider uppercase transition-colors ${
+        isActive ? "text-[var(--ember)] font-bold" : "text-[var(--ink)] hover:text-[var(--ember)]"
       }`}
     >
-      <span className="text-[10px] text-[var(--ember)] opacity-70 group-hover:opacity-100">
+      <span className="text-[12.5px] font-bold text-[var(--ember)]" aria-hidden="true">
         [{num}]
       </span>
       <span className="font-sans font-semibold tracking-wide">{displayText}</span>
@@ -187,10 +187,8 @@ export default function Navbar() {
 
         {/* 2. Header Content Bar */}
         <div
-          className={`w-full transition-all duration-300 ${
-            isScrolled
-              ? "bg-[var(--bg)]/90 backdrop-blur-md border-b border-[var(--line)] shadow-lg"
-              : "bg-transparent border-b border-[var(--line)]/40"
+          className={`w-full transition-all duration-300 bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--line)] ${
+            isScrolled ? "shadow-lg" : ""
           }`}
         >
           <div
