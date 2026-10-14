@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
-import ContourLines from "@/components/ui/ContourLines";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
 import { useLanguage } from "@/context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,15 +20,21 @@ import {
   CheckCircle2,
   Maximize2,
   Thermometer,
-  ShieldCheck,
+  Compass,
+  LayoutGrid,
+  Film,
+  ChevronLeft,
+  ChevronRight,
+  X,
   Droplets,
-  Trees,
+  Trees
 } from "lucide-react";
 
 export default function SpacePage() {
   const { locale, dict } = useLanguage();
   const isEn = locale === "en";
 
+  const [viewMode, setViewMode] = useState<"grid" | "film">("grid");
   const [activeFilter, setActiveFilter] = useState("all");
   const [isFiltering, setIsFiltering] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -37,10 +42,13 @@ export default function SpacePage() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
+  // Film mode index
+  const [filmIndex, setFilmIndex] = useState(0);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Audio wave canvas visualizer
+  // Audio wave visualizer canvas
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -65,7 +73,7 @@ export default function SpacePage() {
         const x = i * (barWidth + spacing);
         const y = (height - barHeight) / 2;
 
-        ctx.fillStyle = isPlayingAudio ? "#E0764F" : "rgba(244,236,221,0.3)";
+        ctx.fillStyle = isPlayingAudio ? "#FF6A2B" : "rgba(242,237,228,0.25)";
         ctx.beginPath();
         ctx.roundRect(x, y, barWidth, barHeight, 2);
         ctx.fill();
@@ -86,7 +94,6 @@ export default function SpacePage() {
     };
   }, [isPlayingAudio]);
 
-  // Audio playback state remembered in localStorage
   useEffect(() => {
     try {
       const savedAudioState = localStorage.getItem("camcu_stream_audio");
@@ -97,10 +104,10 @@ export default function SpacePage() {
   }, []);
 
   const toggleAudio = () => {
-    const nextState = !isPlayingAudio;
-    setIsPlayingAudio(nextState);
+    const next = !isPlayingAudio;
+    setIsPlayingAudio(next);
     try {
-      localStorage.setItem("camcu_stream_audio", String(nextState));
+      localStorage.setItem("camcu_stream_audio", String(next));
     } catch {}
   };
 
@@ -114,136 +121,42 @@ export default function SpacePage() {
   };
 
   useEffect(() => {
-    // 1. Hydrate shared gallery from storage & cookie
     const stored = getSharedData<SharedGalleryItem[]>(KEYS.GALLERY, []);
     setGalleryPhotos(stored);
 
-    // 2. Real-time synchronization listener across tabs & windows
     const handleSync = (e: Event) => {
       const custom = e as CustomEvent;
       if (custom.detail?.key === KEYS.GALLERY) {
         setGalleryPhotos(custom.detail.value || []);
       }
     };
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === KEYS.GALLERY) {
-        const next = getSharedData<SharedGalleryItem[]>(KEYS.GALLERY, []);
-        setGalleryPhotos(next);
-      }
-    };
-
     window.addEventListener("camcu_sync_update", handleSync);
-    window.addEventListener("storage", handleStorage);
-
-    // 3. Background server fetch
-    fetch("/api/admin/gallery")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && Array.isArray(data.photos) && data.photos.length > 0) {
-          const current = getSharedData<SharedGalleryItem[] | null>(KEYS.GALLERY, null);
-          if (current === null || current.length === 0) {
-            setGalleryPhotos(data.photos);
-          }
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      window.removeEventListener("camcu_sync_update", handleSync);
-      window.removeEventListener("storage", handleStorage);
-    };
+    return () => window.removeEventListener("camcu_sync_update", handleSync);
   }, []);
 
-  // Map admin category to space category list
-  const mapAdminCategoryToSpace = (cat: string): string[] => {
-    switch (cat) {
-      case "stream":
-      case "suoi":
-      case "bo-suoi":
-        return ["stream", "bo-suoi"];
-      case "wooden-terrace":
-      case "hien-go":
-        return ["wooden-terrace", "hien-go"];
-      case "checkin":
-      case "check-in":
-        return ["checkin", "check-in"];
-      case "workspace":
-      case "chill-work":
-        return ["workspace", "chill-work"];
-      default:
-        return [cat];
+  // Map items to display
+  const allItems: SpaceItem[] = SPACE_ITEMS.map((item) => {
+    const custom = galleryPhotos.find((p) => p.id === item.id);
+    if (custom) {
+      return {
+        ...item,
+        title: custom.title || item.title,
+        image: custom.url || item.image,
+      };
     }
-  };
+    return item;
+  });
 
-  const getCategorySubtitle = (cat: string): string => {
-    switch (cat) {
-      case "stream":
-      case "suoi":
-      case "bo-suoi":
-        return isEn ? "Natural Stream" : "Bờ Suối Tự Nhiên";
-      case "wooden-terrace":
-      case "hien-go":
-        return isEn ? "Wooden Terrace & Pavilions" : "Hiên Gỗ & Chòi Mộc";
-      case "checkin":
-      case "check-in":
-        return isEn ? "Scenic Check-in Spot" : "Góc Check-in & Cảnh Quan";
-      case "workspace":
-      case "chill-work":
-        return isEn ? "Co-working / Reading Nook" : "Bàn Ghế Làm Việc / Đọc Sách";
-      default:
-        return isEn ? "Sanctuary Corner" : "Không Gian Quán";
-    }
-  };
-
-  const dynamicItems: SpaceItem[] = galleryPhotos
-    .filter((g) => {
-      return [
-        "stream",
-        "suoi",
-        "bo-suoi",
-        "wooden-terrace",
-        "hien-go",
-        "checkin",
-        "check-in",
-        "workspace",
-        "chill-work",
-        "khong-gian",
-        "hero",
-      ].includes(g.category);
-    })
-    .map((g, idx) => ({
-      id: g.id || `dyn_${idx}`,
-      title: g.title || (isEn ? "Cam Cu House Stream Corner" : "Góc Không Gian Cẩm Cù House"),
-      subtitle: getCategorySubtitle(g.category),
-      description:
-        (g as { caption?: string }).caption ||
-        (isEn
-          ? "A serene rustic moment by the Dak Nong rock stream."
-          : "Khoảnh khắc mộc mạc bên dòng suối Đắk Nông."),
-      image: g.url,
-      category: mapAdminCategoryToSpace(g.category),
-      tag: getCategorySubtitle(g.category),
-    }));
-
-  const allDisplayItems =
-    dynamicItems.length > 0
-      ? [
-          ...dynamicItems,
-          ...SPACE_ITEMS.filter((item) => !dynamicItems.some((d) => d.image === item.image)),
-        ]
-      : SPACE_ITEMS;
-
-  const filteredItems =
-    activeFilter === "all"
-      ? allDisplayItems
-      : allDisplayItems.filter((item) => item.category.includes(activeFilter));
+  const filteredItems = activeFilter === "all"
+    ? allItems
+    : allItems.filter((i) => Array.isArray(i.category) && i.category.includes(activeFilter));
 
   const lightboxPhotos = filteredItems.map((item) => ({
     url: item.image,
     title: item.title,
     caption: item.description,
-    category: item.tag,
     subtitle: item.subtitle,
+    category: Array.isArray(item.category) ? item.category.join(", ") : String(item.category),
   }));
 
   const handleOpenLightbox = (index: number) => {
@@ -251,51 +164,74 @@ export default function SpacePage() {
     setLightboxOpen(true);
   };
 
+  // Keyboard navigation for Film mode
+  useEffect(() => {
+    if (viewMode !== "film") return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setViewMode("grid");
+      } else if (e.key === "ArrowRight") {
+        setFilmIndex((prev) => (prev + 1) % filteredItems.length);
+      } else if (e.key === "ArrowLeft") {
+        setFilmIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [viewMode, filteredItems.length]);
+
   return (
-    <div className="bg-[var(--paper)] text-[var(--ink)] min-h-screen selection:bg-[var(--basalt)] selection:text-white transition-colors overflow-x-hidden">
+    <div className="bg-[var(--bg)] min-h-screen text-[var(--ink)] selection:bg-[var(--ember)] selection:text-[#0A0E0C] transition-colors overflow-x-hidden">
       <main className="overflow-x-hidden">
         {/* =========================================================================
-            8.3.1 ĐẦU TRANG (H1 MỘT KHỐI + THẺ THÔNG TIN CHỈ SỐ: 22°C–26°C, ĐÁ BAZAN CỔ)
+            1. ĐẦU TRANG: H1 KHÔNG GIAN SINH THÁI + CHỈ SỐ (SECTION 8.3.1)
            ========================================================================= */}
-        <section className="relative pt-32 sm:pt-40 pb-12 sm:pb-16 border-b border-[var(--line)] overflow-hidden">
-          <ContourLines opacity={0.07} className="text-[var(--ink)]" />
-
-          <div className="container-unified relative z-10">
+        <section className="relative pt-36 sm:pt-44 pb-14 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4]">
+          <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-              {/* Trái: H1 một khối không ngắt giữa cụm */}
-              <div className="max-w-3xl flex flex-col gap-3">
-                <span className="font-mono text-xs uppercase tracking-widest text-[var(--stream)] font-bold">
-                  {isEn ? "NATURAL ECO SANCTUARY" : "KHÔNG GIAN NGUYÊN BẢN"}
-                </span>
-                <h1 className="font-serif text-[clamp(34px,5.5vw,68px)] font-bold text-[var(--ink)] tracking-tight leading-[1.08] text-balance">
-                  Không Gian Sinh Thái, Bên Bờ Suối Đá
+              <div className="max-w-4xl flex flex-col gap-4">
+                <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
+                  <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
+                  <span>[03] KHÔNG GIAN SINH THÁI ĐẮK NÔNG · 30 GÓC ẢNH THỰC TẾ</span>
+                </div>
+
+                {/* H1 Một khối, không ngắt giữa cụm */}
+                <h1 className="font-display font-black text-[clamp(36px,6vw,84px)] uppercase tracking-tight text-[var(--ink)] leading-none text-balance">
+                  KHÔNG GIAN SINH THÁI, BÊN BỜ SUỐI ĐÁ
                 </h1>
-                <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] leading-[1.7] max-w-[60ch] mt-1">
+
+                <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] max-w-2xl leading-relaxed">
                   {dict.space.subtitle}
                 </p>
               </div>
 
-              {/* Phải: Thẻ thông tin chỉ số (Section 8.3.1) */}
-              <div className="card-accent rounded-[24px] p-5 sm:p-6 flex items-center gap-5 sm:gap-6 border border-[var(--line)] shadow-xs shrink-0 bg-[var(--paper-2)]">
+              {/* Khối chỉ số bên phải: 22°C–26°C · Đá Bazan Cổ (Section 8.3.1) */}
+              <div className="flex items-center gap-6 shrink-0 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 p-5 shadow-xl">
                 <div className="flex flex-col">
-                  <div className="flex items-center gap-1.5 text-[var(--stream)] font-bold font-mono text-xs uppercase tracking-wider mb-1">
-                    <Thermometer className="w-3.5 h-3.5" />
-                    <span>NHIỆT ĐỘ SUỐI</span>
-                  </div>
-                  <span className="font-serif text-2xl sm:text-3xl font-bold text-[var(--ink)] leading-none">
-                    22°C–26°C
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist)] font-bold">
+                    NHIỆT ĐỘ KHÍ HẬU
+                  </span>
+                  <span className="font-display font-black text-[28px] text-[var(--ember)] leading-none mt-1">
+                    22°C – 26°C
+                  </span>
+                  <span className="font-mono text-[11px] text-[var(--ink-muted)] mt-0.5">
+                    Mát mẻ quanh năm
                   </span>
                 </div>
 
-                <div className="w-[1px] h-10 bg-[var(--line)]" />
+                <div className="w-[1px] h-12 bg-[var(--line)]" />
 
                 <div className="flex flex-col">
-                  <div className="flex items-center gap-1.5 text-[var(--basalt)] font-bold font-mono text-xs uppercase tracking-wider mb-1">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>ĐỊA CHẤT</span>
-                  </div>
-                  <span className="font-serif text-2xl sm:text-3xl font-bold text-[var(--ink)] leading-none">
-                    Đá Bazan Cổ
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist)] font-bold">
+                    ĐỊA CHẤT TỰ NHIÊN
+                  </span>
+                  <span className="font-display font-black text-[28px] text-[var(--ink)] leading-none mt-1">
+                    ĐÁ BAZAN CỔ
+                  </span>
+                  <span className="font-mono text-[11px] text-[var(--ink-muted)] mt-0.5">
+                    Hàng triệu năm tuổi
                   </span>
                 </div>
               </div>
@@ -304,79 +240,137 @@ export default function SpacePage() {
         </section>
 
         {/* =========================================================================
-            8.3.2 THANH LỌC DÍNH (5 CHIP MONO, ĐANG CHỌN: NỀN INK CHỮ PAPER)
+            2. THANH ĐIỀU KHIỂN DÍNH: [LƯỚI] [PHIM] + 5 CHIP LỌC (SECTION 8.3.2)
            ========================================================================= */}
-        <div className="sticky top-16 z-30 w-full bg-[var(--paper)]/95 backdrop-blur-md border-b border-[var(--line)] py-3 transition-colors shadow-xs">
-          <div className="container-unified overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-max">
+        <section className="sticky top-16 sm:top-20 z-30 w-full bg-[var(--bg)]/95 backdrop-blur-md border-b border-[var(--line)] py-3 px-5 sm:px-10">
+          <div className="w-full max-w-[1360px] mx-auto flex flex-wrap items-center justify-between gap-4">
+            {/* Chuyển chế độ [LƯỚI] [PHIM] */}
+            <div className="flex items-center gap-1 bg-[var(--bg-2)] p-1 border border-[var(--line)] clip-chamfer-14">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[12px] font-bold uppercase transition-colors ${
+                  viewMode === "grid"
+                    ? "bg-[var(--ember)] text-[#0A0E0C]"
+                    : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>[LƯỚI]</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode("film")}
+                className={`flex items-center gap-2 px-3 py-1.5 font-mono text-[12px] font-bold uppercase transition-colors ${
+                  viewMode === "film"
+                    ? "bg-[var(--ember)] text-[#0A0E0C]"
+                    : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                }`}
+              >
+                <Film className="w-3.5 h-3.5" />
+                <span>[PHIM]</span>
+              </button>
+            </div>
+
+            {/* 5 Chip lọc mono */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
               {SPACE_CATEGORIES.map((cat) => {
                 const isSelected = activeFilter === cat.id;
-                const label =
-                  cat.id === "all"
-                    ? isEn
-                      ? `All (${allDisplayItems.length})`
-                      : `Tất Cả (${allDisplayItems.length})`
-                    : cat.name;
-
                 return (
                   <button
                     key={cat.id}
                     type="button"
                     onClick={() => handleFilterChange(cat.id)}
-                    className={`btn-press-sm px-4 py-2 rounded-full font-mono text-[12px] uppercase tracking-wider transition-all duration-200 select-none ${
+                    className={`font-mono text-[12px] uppercase tracking-wider px-3.5 py-1.5 rounded-sm border whitespace-nowrap transition-all ${
                       isSelected
-                        ? "bg-[var(--ink)] text-[var(--paper)] font-bold shadow-xs scale-102"
-                        : "bg-[var(--card)] text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)] border border-[var(--line)] font-medium"
+                        ? "bg-[var(--ink)] text-[var(--bg)] border-[var(--ink)] font-bold shadow-sm"
+                        : "bg-[var(--card)] text-[var(--ink-muted)] border-[var(--line)] hover:border-[var(--ember)] hover:text-[var(--ink)]"
                     }`}
                   >
-                    {label}
+                    [{isEn && dict.space.categories?.[cat.id] ? dict.space.categories[cat.id] : cat.name}]
                   </button>
                 );
               })}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* =========================================================================
-            8.3.3 LƯỚI ẢNH BENTO 12 CỘT (HOVER PHÓNG 1.04, GRADIENT ĐÁY ẢNH, FLIP .45S)
+            3. NỘI DUNG: CHẾ ĐỘ LƯỚI BENTO HOẶC CHẾ ĐỘ PHIM
            ========================================================================= */}
-        <section className="container-unified section-unified min-h-[500px]">
-          {isFiltering ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 w-full">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="lg:col-span-4 rounded-[28px] aspect-[4/3] bg-[var(--paper-2)] animate-pulse border border-[var(--line)]"
+        {viewMode === "film" ? (
+          /* CHẾ ĐỘ PHIM: Trình chiếu toàn màn hình tràn viền (Section 8.3.4) */
+          <section className="relative w-full h-[85vh] bg-[#0A0E0C] text-[#F2EDE4] flex items-center justify-center overflow-hidden">
+            {filteredItems.length > 0 && (
+              <div className="relative w-full h-full">
+                <Image
+                  src={filteredItems[filmIndex]?.image}
+                  alt={filteredItems[filmIndex]?.title}
+                  fill
+                  priority
+                  className="object-cover"
                 />
-              ))}
-            </div>
-          ) : (
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 w-full items-start">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E0C]/90 via-transparent to-[#0A0E0C]/60" />
+
+                {/* Info Bar ở đáy */}
+                <div className="absolute bottom-10 left-6 sm:left-12 right-6 sm:right-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-20">
+                  <div className="flex flex-col gap-1 max-w-xl">
+                    <span className="font-mono text-[12px] text-[var(--ember)] uppercase tracking-widest font-bold">
+                      [{String(filmIndex + 1).padStart(2, "0")}/{String(filteredItems.length).padStart(2, "0")}] · {filteredItems[filmIndex]?.subtitle}
+                    </span>
+                    <h2 className="font-display font-black text-[28px] sm:text-[40px] uppercase tracking-tight text-white leading-tight">
+                      {filteredItems[filmIndex]?.title}
+                    </h2>
+                    <p className="text-[14px] sm:text-[15px] text-white/80 leading-relaxed">
+                      {filteredItems[filmIndex]?.description}
+                    </p>
+                  </div>
+
+                  {/* Navigation controls */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setFilmIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length)}
+                      className="p-3 bg-black/60 border border-white/20 hover:border-[var(--ember)] text-white clip-chamfer-14 backdrop-blur-md"
+                      aria-label="Ảnh trước"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilmIndex((prev) => (prev + 1) % filteredItems.length)}
+                      className="p-3 bg-black/60 border border-white/20 hover:border-[var(--ember)] text-white clip-chamfer-14 backdrop-blur-md"
+                      aria-label="Ảnh tiếp theo"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("grid")}
+                      className="p-3 bg-[var(--ember)] text-[#0A0E0C] font-mono text-xs font-bold uppercase clip-chamfer-14"
+                      aria-label="Quay lại dạng lưới (Esc)"
+                    >
+                      THOÁT (ESC)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        ) : (
+          /* CHẾ ĐỘ LƯỚI: Bento 12 Cột với FLIP Filter .45s (Section 8.3.3) */
+          <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 py-16">
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
               <AnimatePresence mode="popLayout">
                 {filteredItems.map((item, idx) => {
-                  // Bento 12-column pattern: alternate 1x1, 2x1, 1x2, 2x2
                   let colSpan = "lg:col-span-4";
                   let aspect = "aspect-[4/3]";
 
                   if (idx % 7 === 0) {
                     colSpan = "lg:col-span-8";
                     aspect = "aspect-[16/10]";
-                  } else if (idx % 7 === 1) {
-                    colSpan = "lg:col-span-4";
-                    aspect = "aspect-[4/5]";
-                  } else if (idx % 7 === 2) {
-                    colSpan = "lg:col-span-4";
-                    aspect = "aspect-[4/5]";
-                  } else if (idx % 7 === 3) {
-                    colSpan = "lg:col-span-4";
-                    aspect = "aspect-[4/5]";
-                  } else if (idx % 7 === 4) {
-                    colSpan = "lg:col-span-4";
-                    aspect = "aspect-[4/5]";
-                  } else if (idx % 7 === 5) {
-                    colSpan = "lg:col-span-6";
-                    aspect = "aspect-[16/10]";
-                  } else {
+                  } else if (idx % 7 === 5 || idx % 7 === 6) {
                     colSpan = "lg:col-span-6";
                     aspect = "aspect-[16/10]";
                   }
@@ -388,41 +382,36 @@ export default function SpacePage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{
-                        duration: 0.45, // FLIP .45s per spec
-                        layout: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
-                      }}
+                      transition={{ duration: 0.45 }}
                       onClick={() => handleOpenLightbox(idx)}
-                      className={`group relative cursor-pointer ${colSpan} rounded-[28px] overflow-hidden ${aspect} bg-[var(--paper-2)] border border-[var(--line)] shadow-sm hover:shadow-2xl transition-all duration-500 transform-gpu select-none`}
+                      className={`group relative cursor-pointer overflow-hidden clip-chamfer-14 border border-[var(--line)] bg-[var(--card)] ${colSpan} ${aspect} select-none`}
                     >
-                      {/* Ảnh phóng 1.04 khi hover */}
                       <Image
                         src={item.image}
                         alt={item.title}
                         fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-600 ease-out group-hover:scale-[1.04]"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                       />
 
-                      {/* Lớp gradient tối đáy ảnh */}
-                      <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#1C1612]/92 via-[#1C1612]/35 to-transparent flex flex-col justify-end p-5 sm:p-6 text-[#F4ECDD] transition-all">
-                        {/* Nhãn danh mục hiện rõ khi hover */}
-                        <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--flower)] mb-1 opacity-90 group-hover:opacity-100 transition-opacity">
-                          {item.subtitle}
-                        </span>
+                      {/* Phủ ember 15% khi hover */}
+                      <div className="absolute inset-0 bg-[var(--ember)]/0 group-hover:bg-[var(--ember)]/15 transition-colors duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E0C]/90 via-[#0A0E0C]/25 to-transparent flex flex-col justify-end p-5 sm:p-6 text-[#F2EDE4]" />
 
-                        {/* Tên ảnh tối đa 2 dòng */}
-                        <h3 className="font-serif text-[17px] sm:text-[20px] font-bold text-[#F4ECDD] leading-snug line-clamp-2 group-hover:text-[var(--flower)] transition-colors">
+                      {/* Thông tin đáy ảnh */}
+                      <div className="absolute bottom-5 left-5 right-5 z-10 flex flex-col text-white">
+                        <span className="font-mono text-[11px] text-[var(--ember)] uppercase tracking-wider font-bold mb-1">
+                          [{String(idx + 1).padStart(2, "0")}/30] · {item.subtitle}
+                        </span>
+                        <h3 className="font-bold text-[18px] sm:text-[20px] leading-snug line-clamp-2">
                           {item.title}
                         </h3>
-
-                        <p className="font-mono text-[11px] text-[#C7BBA8] line-clamp-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <p className="font-mono text-[11px] text-white/70 line-clamp-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           {item.description}
                         </p>
                       </div>
 
-                      {/* Nút phóng to ở góc */}
-                      <div className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md text-white/90 group-hover:bg-[var(--basalt)] group-hover:text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 shadow-md">
+                      {/* Nút Maximize */}
+                      <div className="absolute top-4 right-4 z-20 w-8 h-8 bg-black/40 border border-white/20 text-white rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Maximize2 className="w-3.5 h-3.5" />
                       </div>
                     </motion.div>
@@ -430,22 +419,19 @@ export default function SpacePage() {
                 })}
               </AnimatePresence>
             </motion.div>
-          )}
-        </section>
+          </section>
+        )}
 
         {/* =========================================================================
-            8.3.5 THANH ÂM SUỐI (THANH NỔI DƯỚI MÀN HÌNH, NÚT BAZAN, SÓNG CANVAS)
+            4. THANH ÂM SUỐI: NÚT EMBER + SÓNG CANVAS (SECTION 8.3.5)
            ========================================================================= */}
-        <section className="container-unified pb-16">
-          <div className="rounded-[28px] p-6 sm:p-8 bg-[#1C1612] text-[#F4ECDD] border border-[rgba(244,236,221,0.14)] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-            <ContourLines opacity={0.08} className="text-[#F4ECDD]" />
-
-            <div className="flex items-center gap-4 relative z-10">
-              {/* Nút phát tròn bazan */}
+        <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 pb-20">
+          <div className="p-6 sm:p-8 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+            <div className="flex items-center gap-5">
               <button
                 type="button"
                 onClick={toggleAudio}
-                className="w-14 h-14 rounded-full bg-[var(--basalt)] text-white hover:opacity-95 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg shrink-0"
+                className="w-14 h-14 bg-[var(--ember)] text-[#0A0E0C] hover:opacity-90 flex items-center justify-center clip-chamfer-14 transition-transform active:scale-95 shadow-lg shrink-0"
                 aria-label={isPlayingAudio ? "Tắt thanh âm suối" : "Bật thanh âm suối"}
               >
                 {isPlayingAudio ? (
@@ -456,26 +442,26 @@ export default function SpacePage() {
               </button>
 
               <div className="flex flex-col">
-                <span className="font-serif text-lg sm:text-xl font-bold text-[#F4ECDD]">
+                <span className="font-display font-extrabold text-[20px] uppercase text-[var(--ink)]">
                   {isEn ? "Highland Rock Stream Ambience" : "Thanh Âm Suối Đá · Cao Nguyên"}
                 </span>
-                <span className="font-mono text-xs text-[#C7BBA8] mt-0.5">
+                <span className="font-mono text-xs text-[var(--ink-muted)] mt-0.5">
                   {isPlayingAudio
-                    ? isEn ? "Playing: Live natural stream echo" : "Đang phát: Tiếng suối reo tự nhiên"
+                    ? isEn ? "Playing: Live natural stream babble" : "Đang phát: Tiếng suối reo tự nhiên"
                     : isEn ? "Click to play soothing stream audio" : "Bấm để nghe tiếng suối róc rách thư thái"}
                 </span>
               </div>
             </div>
 
-            {/* Sóng âm vẽ bằng Canvas */}
-            <div className="relative z-10 flex items-center gap-4">
+            {/* Sóng âm canvas */}
+            <div className="flex items-center gap-4">
               <canvas
                 ref={canvasRef}
                 width={160}
                 height={36}
                 className="w-[160px] h-[36px]"
               />
-              <span className="font-mono text-[11px] text-[var(--flower)] uppercase tracking-wider hidden sm:inline">
+              <span className="font-mono text-[11px] text-[var(--ember)] font-bold uppercase tracking-wider hidden sm:inline">
                 {isPlayingAudio ? "24 BARS LIVE" : "MẶC ĐỊNH TẮT"}
               </span>
             </div>
@@ -483,88 +469,60 @@ export default function SpacePage() {
         </section>
 
         {/* =========================================================================
-            8.3.6 BẢO TỒN DÒNG NƯỚC SUỐI (KHỐI NỀN --STREAM TỐI, 3 CAM KẾT, 2 NÚT)
+            5. BẢO TỒN DÒNG NƯỚC SUỐI: KHỐI --PINE (SECTION 8.3.6)
            ========================================================================= */}
-        <section className="container-unified section-unified">
-          <div className="rounded-[32px] p-8 sm:p-12 lg:p-16 bg-[var(--stream)] text-white border border-[rgba(255,255,255,0.15)] shadow-2xl relative overflow-hidden">
-            <div className="relative z-10 max-w-4xl">
-              <span className="font-mono text-xs uppercase tracking-widest text-emerald-200 font-bold mb-3 block">
-                {isEn ? "ECO PRESERVATION COMMITMENT" : "CAM KẾT BẢO TỒN NGUỒN NƯỚC"}
-              </span>
+        <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 pb-28">
+          <div className="p-8 sm:p-14 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line)] clip-chamfer-14 shadow-2xl">
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--mist)] font-bold mb-3 block">
+              [CAM KẾT BẢO TỒN NGUỒN NƯỚC SUỐI ĐẮK NÔNG]
+            </span>
 
-              <h2 className="font-serif text-[clamp(26px,3.8vw,44px)] font-bold text-white tracking-tight leading-tight mb-4 text-balance">
-                Bảo Tồn Dòng Nước Suối &amp; Giảm Thiểu Nhựa Một Lần
-              </h2>
+            <h2 className="font-display font-black text-[clamp(28px,4.5vw,52px)] uppercase tracking-tight text-white leading-tight mb-4 text-balance">
+              Gìn Giữ Mạch Nước Trong Lành &amp; Không Nhựa Một Lần
+            </h2>
 
-              <p className="text-[16px] sm:text-[17px] text-emerald-100/90 leading-relaxed max-w-3xl mb-8">
-                Chúng tôi trân trọng từng viên sỏi và mạch nước ngầm cao nguyên. Cẩm Cù House cam kết 100% không xả thải hóa chất, sử dụng ống hút thiên nhiên và cùng du khách gìn giữ bờ suối sạch sẽ, an lành.
-              </p>
+            <p className="text-[16px] text-white/80 leading-relaxed max-w-3xl mb-8">
+              Chúng tôi trân trọng từng viên sỏi và mạch nước ngầm cao nguyên. Cẩm Cù House cam kết 100% không xả thải hóa chất, sử dụng ống hút thiên nhiên và cùng du khách gìn giữ bờ suối sạch sẽ, an lành.
+            </p>
 
-              {/* 3 Cam kết dạng cột có icon nét mảnh */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-white/20 mb-10">
-                <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20">
-                    <CheckCircle2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-[17px] font-bold text-white">
-                      Không Nhựa 1 Lần
-                    </h4>
-                    <p className="font-mono text-xs text-emerald-200 mt-1">
-                      100% ống hút sậy &amp; ly sứ
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20">
-                    <Droplets className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-[17px] font-bold text-white">
-                      Bảo Vệ Mạch Nước
-                    </h4>
-                    <p className="font-mono text-xs text-emerald-200 mt-1">
-                      Không ngăn đập phá vỡ dòng
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center shrink-0 border border-white/20">
-                    <Trees className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-[17px] font-bold text-white">
-                      Đá Bazan Nguyên Vẹn
-                    </h4>
-                    <p className="font-mono text-xs text-emerald-200 mt-1">
-                      Giữ trọn thảm rêu cổ kính
-                    </p>
-                  </div>
-                </div>
+            {/* 3 Cam kết dạng cột kẻ lưới */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-white/20 mb-10">
+              <div className="flex flex-col gap-2">
+                <span className="font-mono text-[11px] text-[var(--ember)] font-bold">[CAM KẾT 01]</span>
+                <h4 className="font-bold text-[18px] text-white">Không Nhựa Một Lần</h4>
+                <p className="font-mono text-xs text-white/70">100% ống hút sậy &amp; ly sứ mộc</p>
               </div>
 
-              {/* 2 Nút */}
-              <div className="flex flex-wrap items-center gap-4">
-                <a
-                  href="tel:0382851688"
-                  className="btn-primary min-h-[48px] px-8 text-[15px] font-semibold !bg-[var(--basalt)]"
-                >
-                  <PhoneCall className="w-4 h-4" />
-                  <span>Gọi Hotline: 038 285 1688</span>
-                </a>
-
-                <a
-                  href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary min-h-[48px] px-8 text-[15px] font-semibold !border-white/40 !text-white hover:!bg-white hover:!text-[#1C1612]"
-                >
-                  <Navigation className="w-4 h-4" />
-                  <span>Chỉ đường tới bờ suối</span>
-                </a>
+              <div className="flex flex-col gap-2">
+                <span className="font-mono text-[11px] text-[var(--ember)] font-bold">[CAM KẾT 02]</span>
+                <h4 className="font-bold text-[18px] text-white">Bảo Vệ Mạch Nước</h4>
+                <p className="font-mono text-xs text-white/70">Không ngăn đập phá vỡ dòng chảy tự nhiên</p>
               </div>
+
+              <div className="flex flex-col gap-2">
+                <span className="font-mono text-[11px] text-[var(--ember)] font-bold">[CAM KẾT 03]</span>
+                <h4 className="font-bold text-[18px] text-white">Đá Bazan Nguyên Vẹn</h4>
+                <p className="font-mono text-xs text-white/70">Giữ trọn vẹn thảm rêu xanh cổ kính</p>
+              </div>
+            </div>
+
+            {/* 2 Nút */}
+            <div className="flex flex-wrap items-center gap-4">
+              <a
+                href="tel:0382851688"
+                className="px-8 py-4 bg-[var(--ember)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity"
+              >
+                GỌI HOTLINE: 038 285 1688
+              </a>
+
+              <a
+                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 bg-transparent border border-white text-white font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
+              >
+                CHỈ ĐƯỜNG TỚI BỜ SUỐI
+              </a>
             </div>
           </div>
         </section>
