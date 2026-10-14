@@ -6,124 +6,188 @@
 @theme {
   --font-serif: var(--font-fraunces), "Fraunces", Georgia, serif;
   --font-sans: var(--font-be-vietnam), "Be Vietnam Pro", system-ui, sans-serif;
-  --font-mono: var(--font-ibm-mono), "IBM Plex Mono", monospace;
-  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
-  --font-headline: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  --font-display: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-bricolage: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-headline: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
 
-  --color-paper: var(--paper);
-  --color-paper-2: var(--paper-2);
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-pine: var(--pine);
   --color-card: var(--card);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
-  --color-basalt: var(--basalt);
-  --color-stream: var(--stream);
-  --color-moss: var(--moss);
-  --color-flower: var(--flower);
-  --color-charcoal: var(--charcoal);
+  --color-ember: var(--ember);
+  --color-mist: var(--mist);
+  --color-gold: var(--gold);
   --color-line: var(--line);
 }
 
 :root {
-  /* Design Tokens - Sáng (mặc định) - CAMCU_REDESIGN_DRAFT.md Section 3 */
-  --paper: #F6EFE2;
-  --paper-2: #EDE3D0;
-  --card: #FBF7EE;
-  --ink: #1F1712;
-  --ink-muted: #5A4A3F;
-  --basalt: #A8452A;
-  --stream: #2C5A4A;
-  --moss: #5E7A3E;
-  --flower: #E2AE3B;
-  --charcoal: #1C1612;
-  --line: rgba(31, 23, 18, 0.14);
+  /* Design Tokens - Tối (mặc định) - CAMCU_CINEMATIC_DRAFT.md Section 3 */
+  --bg: #0A0E0C;
+  --bg-2: #101714;
+  --pine: #123A2B;
+  --card: #131B17;
+  --ink: #F2EDE4;
+  --ink-muted: rgba(242, 237, 228, 0.70);
+  --ember: #FF6A2B;
+  --mist: #A9C4B6;
+  --gold: #E9B949;
+  --line: rgba(242, 237, 228, 0.14);
 
   /* Unified Aliases for Components & Admin */
-  --bg: var(--paper);
+  --paper: var(--bg);
+  --paper-2: var(--bg-2);
+  --basalt: var(--ember);
+  --stream: var(--mist);
+  --moss: var(--pine);
+  --flower: var(--gold);
+  --charcoal: var(--bg-2);
+
   --surface: var(--card);
-  --surface-2: var(--paper-2);
+  --surface-2: var(--bg-2);
   --border: var(--line);
   --text: var(--ink);
   --text-muted: var(--ink-muted);
-  --text-subtle: #6B5A52;
-  --accent: var(--basalt);
-  --accent-green: var(--stream);
-  --accent-clay: var(--basalt);
-  --btn-primary: var(--basalt);
-  --btn-primary-text: #FFFFFF;
-  --clay: var(--basalt);
-  --warn: #8A5A00;
-  --warn-bg: #FFF1CC;
-  --danger: #A8321F;
-  --success: #1F7A44;
-  --gold: var(--flower);
+  --text-subtle: #A7A18F;
+  --accent: var(--ember);
+  --accent-green: var(--mist);
+  --accent-clay: var(--ember);
+  --btn-primary: var(--ember);
+  --btn-primary-text: #0A0E0C;
+  --clay: var(--ember);
+  --warn: #F0C36B;
+  --warn-bg: rgba(240, 195, 107, 0.15);
+  --danger: #F28B82;
+  --success: #7FD19B;
 
-  --color-bg-base: var(--paper);
+  --color-bg-base: var(--bg);
   --color-bg-card: var(--card);
-  --color-bg-elevated: var(--paper-2);
+  --color-bg-elevated: var(--bg-2);
   --color-text-main: var(--ink);
   --color-text-muted: var(--ink-muted);
-  --color-accent: var(--basalt);
-  --color-sage: var(--stream);
+  --color-accent: var(--ember);
+  --color-sage: var(--mist);
   --color-border-card: var(--line);
-  --color-border-hover: rgba(168, 69, 42, 0.35);
+  --color-border-hover: rgba(255, 106, 43, 0.45);
 
-  --font-display-xxl: clamp(72px, 16vw, 240px);
-  --font-h1: clamp(44px, 7vw, 104px);
-  --font-h2: clamp(32px, 4.5vw, 64px);
-  --font-h3: clamp(24px, 3vw, 30px);
+  --font-display-xxl: clamp(64px, 17vw, 280px);
+  --font-h1: clamp(44px, 8vw, 120px);
+  --font-h2: clamp(32px, 5vw, 72px);
+  --font-h3: clamp(24px, 3.5vw, 32px);
   --font-body: 17px;
   --font-body-line: 1.7;
   --font-sub: 15px;
   --font-badge: 12px;
 
-  --background: var(--paper);
+  --background: var(--bg);
   --foreground: var(--ink);
 }
 
-html.dark {
-  /* Design Tokens - Tối ("Đêm bên suối") - Section 3 & 10 */
-  --paper: #14110E;
-  --paper-2: #1D1814;
-  --card: #221C17;
-  --ink: #F4ECDD;
-  --ink-muted: #C7BBA8;
-  --basalt: #E0764F;
-  --stream: #7FC2A8;
-  --moss: #9DBB74;
-  --flower: #F0C566;
-  --charcoal: #0E0B09;
-  --line: rgba(244, 236, 221, 0.14);
+html:not(.dark),
+body:not(.dark) {
+  /* Design Tokens - Sáng (Light Mode) - Section 3 & 10 */
+  --bg: #F2EDE4;
+  --bg-2: #E8E1D4;
+  --pine: #1C4A38;
+  --card: #FBF8F2;
+  --ink: #0A0E0C;
+  --ink-muted: rgba(10, 14, 12, 0.72);
+  --ember: #C23B0B;
+  --mist: #2F6B53;
+  --gold: #9A6B00;
+  --line: rgba(10, 14, 12, 0.16);
 
-  --bg: var(--paper);
+  --paper: var(--bg);
+  --paper-2: var(--bg-2);
+  --basalt: var(--ember);
+  --stream: var(--mist);
+  --moss: var(--pine);
+  --flower: var(--gold);
+  --charcoal: var(--bg-2);
+
   --surface: var(--card);
-  --surface-2: var(--paper-2);
+  --surface-2: var(--bg-2);
+  --border: var(--line);
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --text-subtle: #6B5A52;
+  --accent: var(--ember);
+  --accent-green: var(--mist);
+  --accent-clay: var(--ember);
+  --btn-primary: var(--ember);
+  --btn-primary-text: #FFFFFF;
+  --clay: var(--ember);
+  --warn: #8A5A00;
+  --warn-bg: #FFF1CC;
+  --danger: #A8321F;
+  --success: #1F7A44;
+
+  --color-bg-base: var(--bg);
+  --color-bg-card: var(--card);
+  --color-bg-elevated: var(--bg-2);
+  --color-text-main: var(--ink);
+  --color-text-muted: var(--ink-muted);
+  --color-accent: var(--ember);
+  --color-sage: var(--mist);
+  --color-border-card: var(--line);
+  --color-border-hover: rgba(194, 59, 11, 0.4);
+
+  --background: var(--bg);
+  --foreground: var(--ink);
+}
+
+html.dark,
+body.dark {
+  /* Explicit Dark Override */
+  --bg: #0A0E0C;
+  --bg-2: #101714;
+  --pine: #123A2B;
+  --card: #131B17;
+  --ink: #F2EDE4;
+  --ink-muted: rgba(242, 237, 228, 0.70);
+  --ember: #FF6A2B;
+  --mist: #A9C4B6;
+  --gold: #E9B949;
+  --line: rgba(242, 237, 228, 0.14);
+
+  --paper: var(--bg);
+  --paper-2: var(--bg-2);
+  --basalt: var(--ember);
+  --stream: var(--mist);
+  --moss: var(--pine);
+  --flower: var(--gold);
+  --charcoal: var(--bg-2);
+
+  --surface: var(--card);
+  --surface-2: var(--bg-2);
   --border: var(--line);
   --text: var(--ink);
   --text-muted: var(--ink-muted);
   --text-subtle: #A7A18F;
-  --accent: var(--basalt);
-  --accent-green: var(--stream);
-  --accent-clay: var(--basalt);
-  --btn-primary: var(--basalt);
-  --btn-primary-text: #1C1612;
-  --clay: var(--basalt);
+  --accent: var(--ember);
+  --accent-green: var(--mist);
+  --accent-clay: var(--ember);
+  --btn-primary: var(--ember);
+  --btn-primary-text: #0A0E0C;
+  --clay: var(--ember);
   --warn: #F0C36B;
   --warn-bg: rgba(240, 195, 107, 0.15);
   --danger: #F28B82;
   --success: #7FD19B;
-  --gold: var(--flower);
 
-  --color-bg-base: var(--paper);
+  --color-bg-base: var(--bg);
   --color-bg-card: var(--card);
-  --color-bg-elevated: var(--paper-2);
+  --color-bg-elevated: var(--bg-2);
   --color-text-main: var(--ink);
   --color-text-muted: var(--ink-muted);
-  --color-accent: var(--basalt);
-  --color-sage: var(--stream);
+  --color-accent: var(--ember);
+  --color-sage: var(--mist);
   --color-border-card: var(--line);
-  --color-border-hover: rgba(224, 118, 79, 0.4);
+  --color-border-hover: rgba(255, 106, 43, 0.45);
 
-  --background: var(--paper);
+  --background: var(--bg);
   --foreground: var(--ink);
 }
 
@@ -145,10 +209,10 @@ body {
 }
 
 h1, .font-h1 {
-  font-family: var(--font-fraunces), "Fraunces", Georgia, serif;
+  font-family: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
   font-size: var(--font-h1);
-  font-weight: 700;
-  line-height: 1.05;
+  font-weight: 800;
+  line-height: 1.02;
   letter-spacing: -0.02em;
   text-wrap: balance;
   color: var(--text);
@@ -156,31 +220,169 @@ h1, .font-h1 {
 }
 
 h2, .font-h2 {
-  font-family: var(--font-fraunces), "Fraunces", Georgia, serif;
+  font-family: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
   font-size: var(--font-h2);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-weight: 750;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
   text-wrap: balance;
   color: var(--text);
   text-rendering: optimizeLegibility;
 }
 
 h3, .font-h3 {
-  font-family: var(--font-fraunces), "Fraunces", Georgia, serif;
+  font-family: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
   font-size: var(--font-h3);
-  font-weight: 600;
-  line-height: 1.2;
+  font-weight: 700;
+  line-height: 1.15;
   letter-spacing: -0.01em;
   text-wrap: balance;
   color: var(--text);
   text-rendering: optimizeLegibility;
 }
 
+.font-display {
+  font-family: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
 h1 em, h1 i, h2 em, h2 i, h3 em, h3 i, .accent-italic {
+  font-family: var(--font-fraunces), "Fraunces", Georgia, serif;
   font-style: italic;
-  color: var(--basalt);
-  font-weight: inherit;
+  color: var(--ember);
+  font-weight: 600;
+}
+
+/* Chamfer (Góc vát 14px) & Cinematic Components */
+.chamfer-14 {
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 calc(100% - 14px),
+    0 14px
+  );
+}
+
+.chamfer-card {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  padding: 32px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 calc(100% - 14px),
+    0 14px
+  );
+}
+
+.chamfer-card:hover {
+  border-color: var(--ember);
+  box-shadow: 0 0 35px -8px rgba(255, 106, 43, 0.28);
+}
+
+/* Nút góc vát cao >= 52px */
+.btn-ember {
+  min-height: 52px;
+  padding: 0 28px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  background-color: var(--ember);
+  color: var(--btn-primary-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  clip-path: polygon(
+    12px 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px),
+    0 12px
+  );
+  transition: all 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  cursor: pointer;
+}
+
+.btn-ember:hover {
+  opacity: 0.94;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -6px rgba(255, 106, 43, 0.45);
+}
+
+.btn-ghost-cinema {
+  min-height: 52px;
+  padding: 0 28px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(
+    12px 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% calc(100% - 12px),
+    calc(100% - 12px) 100%,
+    12px 100%,
+    0 calc(100% - 12px),
+    0 12px
+  );
+  transition: color 0.3s ease;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.btn-ghost-cinema::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--ink);
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+  z-index: -1;
+}
+
+.btn-ghost-cinema:hover {
+  color: var(--bg);
+}
+
+.btn-ghost-cinema:hover::before {
+  transform: translateX(0);
+}
+
+/* Lưới kỹ thuật blueprint có dấu + */
+.grid-blueprint {
+  background-size: 64px 64px;
+  background-image: 
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
 }
 
 /* Lining & Tabular Numerals (Section B) */

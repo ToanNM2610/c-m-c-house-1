@@ -17,9 +17,15 @@ export default function CustomCursor() {
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  const springConfig = { damping: 28, stiffness: 350, mass: 0.5 };
-  const cursorX = useSpring(mouseX, springConfig);
-  const cursorY = useSpring(mouseY, springConfig);
+  // Chấm tâm theo nhanh
+  const dotSpringConfig = { damping: 30, stiffness: 450, mass: 0.3 };
+  const dotX = useSpring(mouseX, dotSpringConfig);
+  const dotY = useSpring(mouseY, dotSpringConfig);
+
+  // Vầng sáng ember 160px đi trễ nhẹ tạo cảm giác ánh lửa
+  const glowSpringConfig = { damping: 25, stiffness: 180, mass: 0.8 };
+  const glowX = useSpring(mouseX, glowSpringConfig);
+  const glowY = useSpring(mouseY, glowSpringConfig);
 
   useEffect(() => {
     // Chỉ kích hoạt trên desktop có chuột (pointer: fine) và không bật reduced motion
@@ -37,7 +43,6 @@ export default function CustomCursor() {
         setCursorState((prev) => ({ ...prev, visible: true }));
       }
 
-      // Kiểm tra mục tiêu hover
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
@@ -46,9 +51,9 @@ export default function CustomCursor() {
       const interactiveTarget = target.closest("button, a, input, select, textarea, [role='button']");
 
       if (dragTarget) {
-        setCursorState({ text: "Kéo", variant: "drag", visible: true });
+        setCursorState({ text: "KÉO", variant: "drag", visible: true });
       } else if (viewTarget) {
-        setCursorState({ text: "Xem", variant: "view", visible: true });
+        setCursorState({ text: "XEM", variant: "view", visible: true });
       } else if (interactiveTarget) {
         setCursorState({ text: "", variant: "hover", visible: true });
       } else {
@@ -69,41 +74,82 @@ export default function CustomCursor() {
     };
   }, [cursorState.visible, mouseX, mouseY]);
 
-  if (!cursorState.visible) return null;
-
-  const isExpanded = cursorState.variant === "view" || cursorState.variant === "drag";
-
   return (
-    <motion.div
-      className="fixed top-0 left-0 pointer-events-none z-[99999] flex items-center justify-center font-mono select-none"
-      style={{
-        x: cursorX,
-        y: cursorY,
-        translateX: "-50%",
-        translateY: "-50%",
-      }}
-      animate={{
-        width: isExpanded ? 68 : cursorState.variant === "hover" ? 28 : 12,
-        height: isExpanded ? 68 : cursorState.variant === "hover" ? 28 : 12,
-        backgroundColor: isExpanded
-          ? "rgba(168, 69, 42, 0.90)" // basalt fill
-          : cursorState.variant === "hover"
-          ? "rgba(168, 69, 42, 0.25)"
-          : "var(--basalt)",
-        border: isExpanded
-          ? "2px solid rgba(253, 251, 247, 0.8)"
-          : cursorState.variant === "hover"
-          ? "1.5px solid var(--basalt)"
-          : "none",
-        backdropFilter: isExpanded ? "blur(4px)" : "none",
-      }}
-      transition={{ type: "spring", stiffness: 400, damping: 28 }}
-    >
-      {isExpanded && (
-        <span className="text-white text-[12px] font-bold uppercase tracking-wider">
-          {cursorState.text}
-        </span>
+    <>
+      {/* 1. Màng hạt phim (Film Grain) 4% toàn trang */}
+      <div
+        className="fixed inset-0 pointer-events-none z-[99990] opacity-[0.04] select-none"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+        aria-hidden="true"
+      />
+
+      {/* 2. Vầng sáng ember 160px đi trễ */}
+      {cursorState.visible && (
+        <motion.div
+          className="fixed top-0 left-0 pointer-events-none z-[99991] w-[160px] h-[160px] rounded-full blur-[20px] select-none"
+          style={{
+            x: glowX,
+            y: glowY,
+            translateX: "-50%",
+            translateY: "-50%",
+            background:
+              "radial-gradient(circle, rgba(255, 106, 43, 0.24) 0%, rgba(255, 106, 43, 0.08) 45%, transparent 70%)",
+          }}
+          aria-hidden="true"
+        />
       )}
-    </motion.div>
+
+      {/* 3. Con trỏ chấm 10px / Vòng XEM / KÉO */}
+      {cursorState.visible && (
+        <motion.div
+          className="fixed top-0 left-0 pointer-events-none z-[99999] flex items-center justify-center font-mono select-none"
+          style={{
+            x: dotX,
+            y: dotY,
+            translateX: "-50%",
+            translateY: "-50%",
+          }}
+          animate={{
+            width:
+              cursorState.variant === "view" || cursorState.variant === "drag"
+                ? 72
+                : cursorState.variant === "hover"
+                ? 24
+                : 10,
+            height:
+              cursorState.variant === "view" || cursorState.variant === "drag"
+                ? 72
+                : cursorState.variant === "hover"
+                ? 24
+                : 10,
+            backgroundColor:
+              cursorState.variant === "view" || cursorState.variant === "drag"
+                ? "rgba(255, 106, 43, 0.92)"
+                : cursorState.variant === "hover"
+                ? "rgba(255, 106, 43, 0.25)"
+                : "var(--ember)",
+            border:
+              cursorState.variant === "view" || cursorState.variant === "drag"
+                ? "2px solid #FFFFFF"
+                : cursorState.variant === "hover"
+                ? "1.5px solid var(--ember)"
+                : "none",
+            backdropFilter:
+              cursorState.variant === "view" || cursorState.variant === "drag"
+                ? "blur(6px)"
+                : "none",
+          }}
+          transition={{ type: "spring", stiffness: 450, damping: 28 }}
+        >
+          {(cursorState.variant === "view" || cursorState.variant === "drag") && (
+            <span className="text-[#0A0E0C] text-[12px] font-bold tracking-widest uppercase">
+              {cursorState.text}
+            </span>
+          )}
+        </motion.div>
+      )}
+    </>
   );
 }

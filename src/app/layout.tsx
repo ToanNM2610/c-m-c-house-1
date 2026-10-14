@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Be_Vietnam_Pro, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Fraunces, Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
@@ -8,6 +8,13 @@ import PublicShell from "@/components/PublicShell";
 import Script from "next/script";
 import { getPublicIntegrations } from "@/lib/integrations";
 import "lenis/dist/lenis.css";
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["600", "700", "800"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
 
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext", "vietnamese"],
@@ -24,10 +31,10 @@ const beVietnamPro = Be_Vietnam_Pro({
   display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ibm-mono",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -36,8 +43,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6EFE2" },
-    { media: "(prefers-color-scheme: dark)", color: "#14110E" },
+    { media: "(prefers-color-scheme: light)", color: "#F2EDE4" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0E0C" },
   ],
 };
 
@@ -87,7 +94,7 @@ export default async function RootLayout({
   const integrations = await getPublicIntegrations();
 
   return (
-    <html lang="vi" suppressHydrationWarning className={`${fraunces.variable} ${beVietnamPro.variable} ${ibmPlexMono.variable} font-sans`}>
+    <html lang="vi" suppressHydrationWarning className={`${bricolage.variable} ${fraunces.variable} ${beVietnamPro.variable} ${jetbrainsMono.variable} font-sans`}>
       <head>
         {integrations.searchConsoleVerification && (
           <meta

@@ -32,22 +32,20 @@ export const applyTheme = (newTheme: Theme) => {
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Read theme from cookie, localStorage, or system preference (Section 3 & 10)
+    // Read theme from cookie, localStorage, or default to dark (Section 3)
     const cookieTheme = getSharedCookie(THEME_STORAGE_KEY) as Theme | null;
     const localTheme = (typeof window !== "undefined" ? localStorage.getItem(THEME_STORAGE_KEY) : null) as Theme | null;
     
-    let activeTheme: Theme = "light";
+    let activeTheme: Theme = "dark";
     if (cookieTheme === "light" || cookieTheme === "dark") {
       activeTheme = cookieTheme;
     } else if (localTheme === "light" || localTheme === "dark") {
       activeTheme = localTheme;
-    } else if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      activeTheme = "dark";
     }
 
     setThemeState(activeTheme);
