@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Fraunces, Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
+import { fraunces, beVietnamPro } from "./fonts";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
@@ -13,21 +14,6 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin", "latin-ext", "vietnamese"],
   weight: ["600", "700", "800"],
   variable: "--font-bricolage",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["500", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const beVietnamPro = Be_Vietnam_Pro({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-be-vietnam",
   display: "swap",
 });
 
