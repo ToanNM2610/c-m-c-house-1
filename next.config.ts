@@ -12,13 +12,12 @@ const nextConfig: NextConfig = {
 
   turbopack: {},
 
-  async redirects() {
+  async rewrites() {
     return [
-      {
-        source: '/cau-chuyen',
-        destination: '/about',
-        permanent: true,
-      },
+      { source: '/cau-chuyen', destination: '/about' },
+      { source: '/khong-gian', destination: '/space' },
+      { source: '/thuc-don', destination: '/menu' },
+      { source: '/lien-he', destination: '/contact' },
     ];
   },
 

@@ -376,7 +376,7 @@ export default function SpacePage() {
                   }
 
                   return (
-                    <motion.div
+                    <motion.figure
                       layout
                       key={item.id}
                       initial={{ opacity: 0, scale: 0.95 }}
@@ -414,7 +414,7 @@ export default function SpacePage() {
                       <div className="absolute top-4 right-4 z-20 w-8 h-8 bg-black/40 border border-white/20 text-white rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Maximize2 className="w-3.5 h-3.5" />
                       </div>
-                    </motion.div>
+                    </motion.figure>
                   );
                 })}
               </AnimatePresence>

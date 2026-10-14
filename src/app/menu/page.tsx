@@ -276,6 +276,11 @@ export default function MenuPage() {
 
             {/* CỘT PHẢI (8 cols): Danh sách món theo nhóm (SECTION 8.4.4) */}
             <div className="lg:col-span-8 flex flex-col gap-14">
+              <div className="flex items-center justify-between pb-2 border-b border-[var(--line)] font-mono text-[12px] uppercase text-[var(--ink-muted)]">
+                <span className="font-bold text-[var(--ember)]">HIỂN THỊ: {filteredItems.length} / {menuItems.length} MÓN</span>
+                <span>GIÁ ĐÃ BAO GỒM PHỤC VỤ</span>
+              </div>
+
               {validCategories.map((cat, catIdx) => {
                 const groupItems = filteredItems.filter((i) => i.category === cat.id);
                 if (groupItems.length === 0) return null;
@@ -305,7 +310,7 @@ export default function MenuPage() {
                         const isOutOfStock = item.inStock === false;
 
                         return (
-                          <div
+                          <article
                             key={item.id}
                             className={`group py-4 px-2 flex flex-col gap-1.5 transition-all hover:bg-[var(--card)]/50 rounded-sm ${
                               isOutOfStock ? "opacity-45" : ""
@@ -347,7 +352,7 @@ export default function MenuPage() {
                                 {item.description}
                               </p>
                             )}
-                          </div>
+                          </article>
                         );
                       })}
                     </div>
