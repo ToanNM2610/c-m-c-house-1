@@ -2,30 +2,37 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import StarHoya from "@/components/ui/StarHoya";
 
 interface PageTransitionCurtainProps {
   onComplete?: () => void;
 }
 
+const COLUMNS = [
+  { id: 0, color: "bg-[#123A2B]" }, // pine
+  { id: 1, color: "bg-[var(--ember)]" }, // ember
+  { id: 2, color: "bg-[#0A0E0C]" }, // bg
+  { id: 3, color: "bg-[#123A2B]" }, // pine
+  { id: 4, color: "bg-[#101714]" }, // bg-2
+];
+
 export default function PageTransitionCurtain({ onComplete }: PageTransitionCurtainProps) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
 
-  // Xác định tên trang mục tiêu
-  const getPageTitle = (path: string) => {
-    if (!path || path === "/") return "TRANG CHỦ";
-    if (path.startsWith("/about")) return "CÂU CHUYỆN";
-    if (path.startsWith("/space")) return "KHÔNG GIAN SUỐI";
-    if (path.startsWith("/menu")) return "THỰC ĐƠN";
-    if (path.startsWith("/contact")) return "CHỈ ĐƯỜNG & LIÊN HỆ";
-    if (path.startsWith("/admin")) return "QUẢN TRỊ VIÊN";
-    return "CẨM CÙ HOUSE";
+  // Xác định số thứ tự và tên trang
+  const getPageInfo = (path: string) => {
+    if (!path || path === "/") return { num: "[01]", title: "TRANG CHỦ" };
+    if (path.startsWith("/about")) return { num: "[02]", title: "CÂU CHUYỆN" };
+    if (path.startsWith("/space")) return { num: "[03]", title: "KHÔNG GIAN SUỐI" };
+    if (path.startsWith("/menu")) return { num: "[04]", title: "THỰC ĐƠN" };
+    if (path.startsWith("/contact")) return { num: "[05]", title: "CHỈ ĐƯỜNG & LIÊN HỆ" };
+    if (path.startsWith("/admin")) return { num: "[AD]", title: "QUẢN TRỊ VIÊN" };
+    return { num: "[00]", title: "CẨM CÙ HOUSE" };
   };
 
-  const currentTitle = getPageTitle(pathname || "");
+  const { num, title } = getPageInfo(pathname || "");
 
-  // Dự phòng cross-fade 0.3s khi bật reduced-motion
+  // Dự phòng cross-fade 0.3s khi bật reduced-motion (Section 9 & 10)
   if (shouldReduceMotion) {
     return (
       <motion.div
@@ -34,64 +41,64 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
         animate={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
         onAnimationComplete={onComplete}
-        className="fixed inset-0 z-[99999] pointer-events-none bg-[var(--paper)]"
+        className="fixed inset-0 z-[99998] pointer-events-none bg-[var(--bg)]"
       />
     );
   }
 
   return (
-    <motion.div
-      key={`page-arch-curtain-${pathname}`}
-      initial={{ y: "100%", borderRadius: "999px 999px 0 0" }}
-      animate={{
-        y: ["100%", "0%", "-100%"],
-        borderRadius: ["999px 999px 0 0", "0px 0px 0 0", "0 0 999px 999px"],
-      }}
-      transition={{
-        duration: 1.05,
-        times: [0, 0.45, 1],
-        ease: [0.65, 0, 0.35, 1],
-      }}
-      onAnimationComplete={onComplete}
-      className="fixed inset-0 z-[99999] pointer-events-none flex flex-col items-center justify-center bg-[var(--basalt)] text-white shadow-2xl overflow-hidden"
+    <div
+      key={`curtain-wrapper-${pathname}`}
+      className="fixed inset-0 z-[99998] pointer-events-none overflow-hidden select-none"
     >
-      {/* Tên trang Fraunces 64px + Tọa độ Mono */}
+      {/* 5 Cột dọc (pine / ember / bg) quét lên theo thứ tự (stagger .06s) - Section 9 */}
+      <div className="absolute inset-0 flex w-full h-full">
+        {COLUMNS.map((col, index) => (
+          <motion.div
+            key={col.id}
+            initial={{ y: "100%" }}
+            animate={{
+              y: ["100%", "0%", "-100%"],
+            }}
+            transition={{
+              duration: 0.82,
+              times: [0, 0.42, 1],
+              delay: index * 0.06,
+              ease: [0.77, 0, 0.175, 1],
+            }}
+            onAnimationComplete={index === COLUMNS.length - 1 ? onComplete : undefined}
+            className={`w-1/5 h-full ${col.color} border-r border-white/5 last:border-r-0`}
+          />
+        ))}
+      </div>
+
+      {/* Trung tâm: Số trang + Tên trang Display (Section 9) */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{
           opacity: [0, 1, 1, 0],
-          scale: [0.9, 1, 1, 0.95],
-          y: [30, 0, 0, -30],
+          scale: [0.95, 1, 1, 0.98],
+          y: [20, 0, 0, -20],
         }}
         transition={{
-          duration: 1.05,
+          duration: 0.88,
           times: [0, 0.35, 0.65, 1],
           ease: "easeInOut",
         }}
-        className="relative z-10 flex flex-col items-center text-center px-6"
+        className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-20"
       >
-        {/* Star Hoya Icon */}
-        <div className="w-12 h-12 rounded-full border border-white/30 bg-white/10 flex items-center justify-center mb-5 backdrop-blur-sm">
-          <StarHoya size={24} className="text-white" strokeWidth={1.5} />
-        </div>
-
-        {/* Tọa độ mono */}
-        <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/80 mb-2">
-          11.99° N · 107.69° E · ĐỘ CAO 800M+
+        <span className="font-mono text-[13px] tracking-widest text-[var(--ember)] font-bold mb-2">
+          {num} · 11.99° N · 107.69° E
         </span>
 
-        {/* Tên trang Fraunces 64px */}
-        <h2 className="font-serif text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-white leading-tight uppercase">
-          {currentTitle}
+        <h2 className="font-display font-black text-[clamp(32px,6vw,72px)] tracking-tight text-[#F2EDE4] uppercase leading-none">
+          {title}
         </h2>
 
-        {/* Slogan */}
-        <p className="font-serif italic text-[16px] sm:text-[18px] text-white/90 mt-2">
+        <p className="font-serif italic text-[16px] text-[#F2EDE4]/70 mt-2">
           Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
         </p>
-
-        <div className="w-20 h-[1.5px] bg-white/40 mt-4" />
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

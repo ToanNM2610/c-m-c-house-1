@@ -20,7 +20,7 @@ export default function Template({ children }: { children: ReactNode }) {
     setShowCurtain(true);
     const timer = setTimeout(() => {
       setShowCurtain(false);
-    }, 950);
+    }, 1100);
     return () => clearTimeout(timer);
   }, [pathname, isAdmin]);
 

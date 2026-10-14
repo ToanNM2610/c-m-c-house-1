@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import StarHoya from '@/components/ui/StarHoya';
 import './camcu-intro.css';
 
 const SHOW_ONCE = true;
@@ -55,7 +54,7 @@ export default function CamcuIntro() {
       return;
     }
 
-    // ── Khởi chạy Intro Diễn Hoạt Cao Nguyên ──
+    // ── Khởi chạy Intro Đại Ngàn Điện Ảnh (≤ 3.5s) ──
     let cleanup = () => {};
 
     async function runIntro() {
@@ -69,13 +68,12 @@ export default function CamcuIntro() {
 
       const skipBtn = dom.querySelector('#skip-btn') as HTMLElement | null;
       const elevationEl = dom.querySelector('#elevation-num') as HTMLElement | null;
-      const contourPaths = dom.querySelectorAll('.contour-path');
-      const hoyaPath = dom.querySelector('.hoya-star-path') as SVGPathElement | null;
-      const hoyaWrap = dom.querySelector('.hoya-wrap') as HTMLElement | null;
+      const progressLine = dom.querySelector('#elevation-progress') as HTMLElement | null;
+      const centerContent = dom.querySelector('#intro-center') as HTMLElement | null;
+      const emberLine = dom.querySelector('#intro-ember-line') as HTMLElement | null;
       const titleChars = dom.querySelectorAll('.intro-char');
-      const taglineEl = dom.querySelector('.intro-tagline') as HTMLElement | null;
-      const archPortal = dom.querySelector('.intro-arch-portal') as HTMLElement | null;
-      const metaCoords = dom.querySelector('.intro-meta') as HTMLElement | null;
+      const leftHalf = dom.querySelector('#intro-half-left') as HTMLElement | null;
+      const rightHalf = dom.querySelector('#intro-half-right') as HTMLElement | null;
 
       // Finish & Dispatch
       const finishIntro = () => {
@@ -87,142 +85,96 @@ export default function CamcuIntro() {
         setIsVisible(false);
       };
 
-      // Arch Expansion Exit (Vòm lớn dần phủ toàn màn hình)
-      const triggerArchExit = (fast = false) => {
+      // Tách hai nửa màn hình dọc mở ra Hero (Section 9)
+      const triggerCurtainSplit = (fast = false) => {
         if (exitingRef.current) return;
         exitingRef.current = true;
 
         const exitTl = gsap.timeline({ onComplete: finishIntro });
 
         exitTl
-          .to(['#skip-btn', '.intro-meta', '#elevation-box'], {
+          .to([centerContent, skipBtn], {
             opacity: 0,
-            duration: fast ? 0.15 : 0.25,
+            duration: fast ? 0.15 : 0.3,
             ease: 'power2.in',
           })
           .to(
-            archPortal,
+            leftHalf,
             {
-              clipPath: 'circle(150% at 50% 50%)',
-              opacity: 0,
-              duration: fast ? 0.45 : 0.85,
+              xPercent: -100,
+              duration: fast ? 0.35 : 0.75,
               ease: 'power3.inOut',
             },
-            0
+            fast ? 0.05 : 0.1
           )
           .to(
-            dom,
+            rightHalf,
             {
-              opacity: 0,
-              duration: fast ? 0.35 : 0.65,
-              ease: 'power2.inOut',
+              xPercent: 100,
+              duration: fast ? 0.35 : 0.75,
+              ease: 'power3.inOut',
             },
-            fast ? 0.15 : 0.35
+            fast ? 0.05 : 0.1
           )
           .add(() => document.body.classList.add('intro-go'), fast ? 0.1 : 0.3);
       };
 
-      // Set initial states
-      gsap.set(contourPaths, { strokeDashoffset: 1200, opacity: 0 });
-      if (hoyaPath) gsap.set(hoyaPath, { strokeDashoffset: 600, opacity: 0 });
-      gsap.set(hoyaWrap, { scale: 0.6, rotation: -45, opacity: 0 });
-      gsap.set(titleChars, { y: 60, opacity: 0 });
-      gsap.set(taglineEl, { y: 20, opacity: 0 });
-      gsap.set(metaCoords, { opacity: 0 });
-      gsap.set(archPortal, {
-        clipPath: 'inset(18% 28% 18% 28% round 999px 999px 28px 28px)',
-        opacity: 1,
-      });
+      // Initial States
+      gsap.set(emberLine, { scaleX: 0, opacity: 0 });
+      gsap.set(titleChars, { y: 25, opacity: 0, filter: 'blur(16px)' });
+      gsap.set(leftHalf, { xPercent: 0 });
+      gsap.set(rightHalf, { xPercent: 0 });
+      if (progressLine) gsap.set(progressLine, { scaleX: 0, transformOrigin: 'left' });
 
       const elevationState = { val: 0 };
 
       // Main Timeline (≤ 3.5s total)
       const tl = gsap.timeline({
         onComplete: () => {
-          setTimeout(() => triggerArchExit(false), 200);
+          triggerCurtainSplit(false);
         },
       });
 
       tl
-        // 1. Đường đồng mức vẽ nét từ giữa ra
-        .to(metaCoords, { opacity: 1, duration: 0.4 }, 0.1)
-        .to(
-          contourPaths,
-          {
-            strokeDashoffset: 0,
-            opacity: 0.25,
-            duration: 1.8,
-            stagger: 0.12,
-            ease: 'power2.out',
+        // 1. Đường kẻ ember vẽ ngang
+        .to(emberLine, {
+          scaleX: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power3.out',
+        }, 0.1)
+        // 2. Chữ "CẨM CÙ HOUSE" hiện ký tự mờ -> nét
+        .to(titleChars, {
+          y: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.7,
+          stagger: 0.035,
+          ease: 'power2.out',
+        }, 0.35)
+        // 3. Bộ đếm mono 000 -> 800m cùng vạch tiến độ
+        .to(elevationState, {
+          val: 800,
+          duration: 1.8,
+          ease: 'power2.out',
+          onUpdate() {
+            if (elevationEl) {
+              const currentNum = Math.round(elevationState.val);
+              elevationEl.textContent = `${String(currentNum).padStart(3, '0')} m`;
+            }
           },
-          0.1
-        )
-        // 2. Bộ đếm độ cao 0m -> 800m
-        .to(
-          elevationState,
-          {
-            val: 800,
-            duration: 2.2,
-            ease: 'power2.out',
-            onUpdate() {
-              if (elevationEl) {
-                elevationEl.textContent = `${Math.round(elevationState.val)}m`;
-              }
-            },
-          },
-          0.2
-        )
-        // 3. Hoa Hoya sao vẽ nét rồi nở
-        .to(
-          hoyaWrap,
-          {
-            opacity: 1,
-            scale: 1,
-            rotation: 0,
-            duration: 1.2,
-            ease: 'back.out(1.5)',
-          },
-          0.3
-        )
-        .to(
-          hoyaPath,
-          {
-            strokeDashoffset: 0,
-            opacity: 1,
-            duration: 1.4,
-            ease: 'power2.out',
-          },
-          0.3
-        )
-        // 4. Chữ "CẨM CÙ HOUSE" hiện từng chữ (mask đủ chỗ cho dấu)
-        .to(
-          titleChars,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.04,
-            ease: 'power3.out',
-          },
-          0.7
-        )
-        // 5. Tagline
-        .to(
-          taglineEl,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: 'power2.out',
-          },
-          1.2
-        );
+        }, 0.5)
+        .to(progressLine, {
+          scaleX: 1,
+          duration: 1.8,
+          ease: 'power2.out',
+        }, 0.5);
 
       // Skip action & Escape key
-      const handleSkip = () => triggerArchExit(true);
+      const handleSkip = () => triggerCurtainSplit(true);
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape' && dom.style.display !== 'none') {
-          triggerArchExit(true);
+          triggerCurtainSplit(true);
         }
       };
 
@@ -255,104 +207,47 @@ export default function CamcuIntro() {
       ref={containerRef}
       role="dialog"
       aria-label="Khởi động Cẩm Cù House"
-      className="fixed inset-0 z-[99999] bg-[#1C1612] text-[#FDFBF7] flex flex-col items-center justify-center overflow-hidden select-none"
+      className="fixed inset-0 z-[99999] bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden select-none"
     >
-      {/* Vòm cổng mở rộng (Portal) */}
+      {/* Hai nửa màn hình tách dọc mở ra Hero (Section 9) */}
       <div
-        className="intro-arch-portal absolute inset-0 pointer-events-none border border-[rgba(244,236,221,0.12)]"
-        aria-hidden="true"
+        id="intro-half-left"
+        className="intro-half absolute top-0 left-0 w-1/2 h-full bg-[#0A0E0C] border-r border-[rgba(242,237,228,0.08)] z-10 pointer-events-none"
       />
-
-      {/* Đường đồng mức SVG từ giữa tỏa ra */}
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none opacity-30"
-        viewBox="0 0 1000 1000"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        <ellipse
-          cx="500"
-          cy="500"
-          rx="180"
-          ry="130"
-          fill="none"
-          stroke="rgba(244, 236, 221, 0.4)"
-          strokeWidth="1.2"
-          strokeDasharray="1200"
-          className="contour-path"
-        />
-        <ellipse
-          cx="500"
-          cy="500"
-          rx="320"
-          ry="230"
-          fill="none"
-          stroke="rgba(244, 236, 221, 0.3)"
-          strokeWidth="1.2"
-          strokeDasharray="1200"
-          className="contour-path"
-        />
-        <ellipse
-          cx="500"
-          cy="500"
-          rx="460"
-          ry="340"
-          fill="none"
-          stroke="rgba(244, 236, 221, 0.2)"
-          strokeWidth="1.2"
-          strokeDasharray="1200"
-          className="contour-path"
-        />
-        <ellipse
-          cx="500"
-          cy="500"
-          rx="600"
-          ry="440"
-          fill="none"
-          stroke="rgba(244, 236, 221, 0.15)"
-          strokeWidth="1.2"
-          strokeDasharray="1200"
-          className="contour-path"
-        />
-      </svg>
+      <div
+        id="intro-half-right"
+        className="intro-half absolute top-0 right-0 w-1/2 h-full bg-[#0A0E0C] border-l border-[rgba(242,237,228,0.08)] z-10 pointer-events-none"
+      />
 
       {/* Nút Bỏ qua */}
       <button
         id="skip-btn"
         type="button"
-        className="absolute top-6 right-6 z-50 px-4 py-2 rounded-full border border-white/20 bg-black/30 hover:bg-white/10 text-xs font-mono tracking-wider text-white/80 transition-all cursor-pointer backdrop-blur-md"
+        className="absolute top-6 right-6 z-40 px-4 py-2 border border-[rgba(242,237,228,0.2)] bg-[#101714]/80 hover:bg-[var(--ember)] hover:text-[#0A0E0C] text-[12px] font-mono tracking-wider text-[#F2EDE4] transition-all cursor-pointer backdrop-blur-md clip-chamfer-14"
         aria-label="Bỏ qua phần giới thiệu"
       >
-        BỎ QUA (ESC) →
+        [BỎ QUA · ESC]
       </button>
 
-      {/* Khối Tọa độ góc trên trái */}
-      <div className="intro-meta absolute top-6 left-6 z-40 hidden sm:flex items-center gap-2 font-mono text-[11px] text-white/60 tracking-widest uppercase">
-        <span>11.99° N · 107.69° E</span>
-        <span>·</span>
-        <span>GIA NGHĨA, ĐẮK NÔNG</span>
-      </div>
-
       {/* Nội dung trung tâm */}
-      <div className="relative z-30 flex flex-col items-center text-center px-6 max-w-xl">
-        {/* Hoa Hoya sao vẽ nét rồi nở */}
-        <div className="hoya-wrap w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mb-6 text-[var(--basalt)]">
-          <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
-            <path
-              className="hoya-star-path"
-              d="M50 8 L59 36 L89 36 L65 54 L74 82 L50 65 L26 82 L35 54 L11 36 L41 36 Z"
-              stroke="#E0764F"
-              strokeWidth="2.5"
-              strokeLinejoin="round"
-              strokeDasharray="600"
-              fill="rgba(224, 118, 79, 0.15)"
-            />
-          </svg>
-        </div>
+      <div
+        id="intro-center"
+        className="relative z-30 w-full h-full flex flex-col items-center justify-center px-6 pointer-events-none"
+      >
+        {/* Đường kẻ ember vẽ ngang */}
+        <div
+          id="intro-ember-line"
+          className="w-full max-w-[640px] h-[2px] bg-gradient-to-r from-transparent via-[var(--ember)] to-transparent mb-8"
+        />
 
-        {/* Chữ "CẨM CÙ HOUSE" hiện từng chữ (Mask có đủ padding-top cho dấu tiếng Việt) */}
-        <div className="overflow-visible pt-3 pb-1 mb-3">
-          <h1 className="font-serif text-[clamp(36px,7vw,76px)] font-bold tracking-[0.08em] text-[#FDFBF7] flex justify-center flex-wrap leading-[1.25]">
+        {/* Tọa độ mono & Nhãn */}
+        <span className="font-mono text-[12px] uppercase tracking-[0.25em] text-[var(--ember)] mb-3 font-semibold">
+          [11.99° N · 107.69° E · CAO NGUYÊN ĐẮK NÔNG]
+        </span>
+
+        {/* Chữ "CẨM CÙ HOUSE" hiện ký tự mờ -> nét */}
+        <div className="overflow-visible pt-4 pb-2 mb-3">
+          <h1 className="font-display text-[clamp(44px,9vw,110px)] font-black tracking-tight text-[#F2EDE4] flex justify-center flex-wrap leading-none uppercase">
             {titleString.split('').map((char, i) => (
               <span
                 key={i}
@@ -366,24 +261,27 @@ export default function CamcuIntro() {
         </div>
 
         {/* Tagline */}
-        <p className="intro-tagline font-serif italic text-[16px] sm:text-[19px] text-[var(--flower)] tracking-wide mb-6">
+        <p className="font-serif italic text-[16px] sm:text-[20px] text-[var(--ember)] tracking-wide mb-8">
           Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
         </p>
 
-        {/* Bộ đếm độ cao 0m -> 800m */}
-        <div
-          id="elevation-box"
-          className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-black/40 border border-white/15 backdrop-blur-md"
-        >
-          <span className="font-mono text-[11px] uppercase tracking-widest text-white/60">
-            ĐỘ CAO ĐẠT ĐƯỢC
-          </span>
-          <span
-            id="elevation-num"
-            className="font-mono text-[20px] font-bold text-[var(--flower)] tabular-nums"
-          >
-            0m
-          </span>
+        {/* Bộ đếm mono 000 -> 800 m cùng vạch tiến độ */}
+        <div className="flex flex-col items-center gap-2 w-48">
+          <div className="flex items-center justify-between w-full font-mono text-[12px] uppercase text-[rgba(242,237,228,0.7)] tracking-wider">
+            <span>ĐỘ CAO</span>
+            <span
+              id="elevation-num"
+              className="text-[18px] font-bold text-[var(--ember)] tabular-nums"
+            >
+              000 m
+            </span>
+          </div>
+          <div className="w-full h-[2px] bg-[rgba(242,237,228,0.15)] overflow-hidden">
+            <div
+              id="elevation-progress"
+              className="w-full h-full bg-[var(--ember)]"
+            />
+          </div>
         </div>
       </div>
     </div>

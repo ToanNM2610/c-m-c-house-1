@@ -1,4 +1,4 @@
-/* ===== CẨM CÙ HOUSE - INTRO CAO NGUYÊN (KHÓI CỦI & NƯỚC SUỐI) ===== */
+/* ===== CẨM CÙ HOUSE - INTRO ĐẠI NGÀN ĐIỆN ẢNH ===== */
 html.intro-lock,
 html.intro-lock body {
   overflow: hidden !important;
@@ -10,24 +10,14 @@ html.intro-seen #camcu-intro-pro {
 }
 
 #camcu-intro-pro {
-  background-color: #1C1612;
-  perspective: 1000px;
-}
-
-#camcu-intro-pro .intro-arch-portal {
-  will-change: clip-path, opacity;
-  transition: none;
-}
-
-.contour-path {
-  will-change: stroke-dashoffset, opacity;
-}
-
-.hoya-star-path {
-  will-change: stroke-dashoffset, opacity;
+  background-color: #0A0E0C;
 }
 
 .intro-char {
   display: inline-block;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
+}
+
+.intro-half {
+  will-change: transform;
 }
