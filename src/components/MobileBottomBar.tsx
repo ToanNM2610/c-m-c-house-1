@@ -15,18 +15,18 @@ export default function MobileBottomBar() {
   return (
     <aside
       aria-label="Thanh liên hệ nhanh"
-      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[#1C1612]/95 backdrop-blur-xl border-t border-[rgba(244,236,221,0.14)] px-3 py-2 shadow-[0_-6px_20px_rgba(0,0,0,0.3)] pb-[calc(env(safe-area-inset-bottom,0px)+8px)]"
+      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[var(--bg)]/95 backdrop-blur-xl border-t border-[var(--line)] px-3 py-2 shadow-2xl pb-[calc(env(safe-area-inset-bottom,0px)+8px)] transition-colors"
     >
       <div className="max-w-md mx-auto grid grid-cols-3 gap-2 h-[44px]">
-        {/* Nút 1: Gọi Hotline - Nền bazan */}
+        {/* Nút 1: Gọi Hotline - Nền ember */}
         <a
           href="tel:0382851688"
           onClick={() => trackEvent("click_call")}
-          className="btn-press-sm flex items-center justify-center gap-1.5 rounded-full bg-[var(--basalt)] text-white shadow-xs text-center font-semibold text-[12px] min-h-[42px]"
+          className="flex items-center justify-center gap-1.5 rounded-sm bg-[var(--ember)] text-[var(--btn-primary-text)] shadow-sm text-center font-bold text-[12px] font-mono uppercase min-h-[42px] active:scale-95 transition-transform"
           aria-label="Gọi ngay hotline"
         >
           <PhoneCall className="w-3.5 h-3.5 shrink-0" />
-          <span>{isEn ? "Call" : "Gọi ngay"}</span>
+          <span>{isEn ? "CALL" : "GỌI NGAY"}</span>
         </a>
 
         {/* Nút 2: Nhắn Zalo */}
@@ -35,11 +35,11 @@ export default function MobileBottomBar() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackEvent("click_zalo")}
-          className="btn-press-sm flex items-center justify-center gap-1.5 rounded-full bg-[#2A201A] hover:bg-[#342921] text-[#F4ECDD] border border-[rgba(244,236,221,0.14)] text-center font-medium text-[12px] min-h-[42px]"
+          className="flex items-center justify-center gap-1.5 rounded-sm bg-[var(--card)] hover:border-[var(--ember)] text-[var(--ink)] border border-[var(--line)] text-center font-bold text-[12px] font-mono uppercase min-h-[42px] active:scale-95 transition-transform"
           aria-label="Nhắn qua Zalo"
         >
-          <MessageCircle className="w-3.5 h-3.5 text-blue-300 shrink-0" />
-          <span>Zalo</span>
+          <MessageCircle className="w-3.5 h-3.5 text-[var(--ember)] shrink-0" />
+          <span>ZALO</span>
         </a>
 
         {/* Nút 3: Chỉ đường Google Maps */}
@@ -48,11 +48,11 @@ export default function MobileBottomBar() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackEvent("click_directions")}
-          className="btn-press-sm flex items-center justify-center gap-1.5 rounded-full bg-[#2A201A] hover:bg-[#342921] text-[#F4ECDD] border border-[rgba(244,236,221,0.14)] text-center font-medium text-[12px] min-h-[42px]"
+          className="flex items-center justify-center gap-1.5 rounded-sm bg-[var(--card)] hover:border-[var(--ember)] text-[var(--ink)] border border-[var(--line)] text-center font-bold text-[12px] font-mono uppercase min-h-[42px] active:scale-95 transition-transform"
           aria-label="Chỉ đường Google Maps"
         >
-          <Navigation className="w-3.5 h-3.5 text-[var(--stream)] shrink-0" />
-          <span>{isEn ? "Directions" : "Chỉ đường"}</span>
+          <Navigation className="w-3.5 h-3.5 text-[var(--mist)] shrink-0" />
+          <span>{isEn ? "MAPS" : "CHỈ ĐƯỜNG"}</span>
         </a>
       </div>
     </aside>

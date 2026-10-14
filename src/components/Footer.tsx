@@ -7,19 +7,12 @@ import {
   Clock, 
   PhoneCall, 
   Mail, 
-  Share2, 
-  Navigation,
-  ArrowUp
+  ArrowUp,
+  Share2
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import RotatingSeal from "@/components/ui/RotatingSeal";
-import ContourLines from "@/components/ui/ContourLines";
+import StarHoya from "@/components/ui/StarHoya";
 
-/**
- * Chân trang (Section 7.5):
- * Nền --charcoal, đường đồng mức mờ; trên cùng tem tròn xoay + câu khẩu hiệu (Fraunces 40px);
- * 4 cột; chữ khổng lồ "CẨM CÙ HOUSE" cắt nửa dưới trồi lên; bản quyền · Lên đầu trang · dòng thiết kế.
- */
 export default function Footer() {
   const { locale, dict } = useLanguage();
   const isEn = locale === "en";
@@ -28,7 +21,7 @@ export default function Footer() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 500);
+      setShowScrollTop(window.scrollY > 400);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -39,187 +32,180 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-[#1C1612] text-[#F4ECDD] pt-16 md:pt-24 pb-8 border-t border-[rgba(244,236,221,0.12)] relative overflow-hidden transition-colors">
-      {/* Đường đồng mức mờ nền chân trang (Section 7.5) */}
-      <ContourLines opacity={0.09} className="text-[#F4ECDD]" />
-
-      <div className="container-unified relative z-10">
-        {/* Trên cùng: Tem tròn xoay + Khẩu hiệu Fraunces 40px (Section 7.5) */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-12 mb-12 border-b border-[rgba(244,236,221,0.12)]">
+    <footer className="w-full bg-[var(--bg-2)] text-[var(--ink)] pt-20 pb-10 border-t border-[var(--line)] relative overflow-hidden transition-colors">
+      <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
+        {/* Trên cùng: Tọa độ & Slogan điện ảnh */}
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pb-12 border-b border-[var(--line)]">
           <div className="flex flex-col gap-2 max-w-2xl">
-            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--flower)]">
-              {isEn ? "Dak Nong Highlands · Elevation 800m+" : "Cao nguyên Đắk Nông · Độ cao 800m+"}
+            <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--ember)]" />
+              11.99° N · 107.69° E · ĐỘ CAO 800M+
             </span>
-            <h2 className="font-serif text-[26px] sm:text-[34px] md:text-[40px] font-bold text-[#F4ECDD] leading-tight">
-              Chốn Dừng Chân <em className="italic text-[var(--basalt)]">Mộc Mạc</em> Bên Bờ Suối Đá
+            <h2 className="font-display font-extrabold text-[28px] sm:text-[38px] md:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
+              CHỐN DỪNG CHÂN <span className="font-serif italic font-normal text-[var(--ember)] lowercase">mộc mạc</span> BÊN BỜ SUỐI ĐÁ
             </h2>
           </div>
-          <RotatingSeal size={108} className="text-[#F4ECDD] shrink-0 self-center md:self-auto" />
+
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-sm border border-[var(--line)] bg-[var(--card)] flex items-center justify-center text-[var(--ember)]">
+              <StarHoya size={24} strokeWidth={2} />
+            </div>
+          </div>
         </div>
 
-        {/* 4 Cột: 1. Thương hiệu & tọa độ · 2. Điều hướng · 3. Giờ & Hotline · 4. Địa chỉ & Kết nối */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.1fr_1.3fr] gap-10 lg:gap-12 pb-14">
-          {/* Cột 1: Thương hiệu + Tọa độ + Độ cao */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <span className="font-serif text-[24px] font-bold text-[#F4ECDD] tracking-tight">
-                Cẩm Cù House
-              </span>
-            </div>
-            <p className="text-[15px] text-[#C7BBA8] leading-relaxed max-w-[38ch]">
+        {/* 4 Cột kẻ ô (Grid với dấu '+' tại các giao điểm) */}
+        <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-14 border-b border-[var(--line)]">
+          {/* Cột 1: Thương hiệu + Tọa độ */}
+          <div className="flex flex-col gap-4 relative">
+            <span className="font-mono text-[11px] text-[var(--ember)] uppercase tracking-wider font-bold">
+              [01] THƯƠNG HIỆU
+            </span>
+            <span className="font-display font-black text-[24px] uppercase tracking-tight text-[var(--ink)]">
+              CẨM CÙ HOUSE
+            </span>
+            <p className="text-[14px] text-[var(--ink-muted)] leading-relaxed">
               {isEn
                 ? "An eco-friendly coffee & dining sanctuary nestled beside a cool natural stream in the Dak Nong highlands."
                 : "Khu ẩm thực & cà phê sinh thái bên dòng suối mát lành miền cao nguyên Đắk Nông. Chốn dừng chân mộc mạc."}
             </p>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#2A201A] rounded-full text-[var(--stream)] font-mono text-[11px] tracking-wider uppercase w-fit border border-[rgba(244,236,221,0.12)]">
-              <MapPin className="w-3.5 h-3.5 text-[var(--stream)]" />
-              <span>11.99° N · 107.69° E · ĐỘ CAO 800M+</span>
+            <div className="font-mono text-[11px] text-[var(--mist)] uppercase tracking-wider mt-2">
+              GIA NGHĨA · ĐẮK NÔNG · 800M+
             </div>
           </div>
 
           {/* Cột 2: Điều hướng */}
-          <div className="flex flex-col gap-3.5">
-            <span className="font-mono text-[12px] font-bold text-[var(--flower)] tracking-wider uppercase">
-              {isEn ? "Navigation" : "Điều hướng"}
+          <div className="flex flex-col gap-4 relative">
+            <span className="font-mono text-[11px] text-[var(--ember)] uppercase tracking-wider font-bold">
+              [02] ĐIỀU HƯỚNG
             </span>
-            <nav className="flex flex-col gap-2.5 text-[15px] text-[#C7BBA8] font-medium">
-              <Link href="/" className="hover:text-[var(--basalt)] hover:underline transition-colors w-fit">
-                {dict.nav.home}
+            <nav className="flex flex-col gap-2.5 font-mono text-[13px] uppercase tracking-wider text-[var(--ink-muted)]">
+              <Link href="/" className="hover:text-[var(--ember)] hover:translate-x-1 transition-all w-fit">
+                → {dict.nav.home}
               </Link>
-              <Link href="/about" className="hover:text-[var(--basalt)] hover:underline transition-colors w-fit">
-                {dict.nav.about}
+              <Link href="/about" className="hover:text-[var(--ember)] hover:translate-x-1 transition-all w-fit">
+                → {dict.nav.about}
               </Link>
-              <Link href="/space" className="hover:text-[var(--basalt)] hover:underline transition-colors w-fit">
-                {dict.nav.space}
+              <Link href="/space" className="hover:text-[var(--ember)] hover:translate-x-1 transition-all w-fit">
+                → {dict.nav.space}
               </Link>
-              <Link href="/menu" className="hover:text-[var(--basalt)] hover:underline transition-colors w-fit">
-                {dict.nav.menu}
+              <Link href="/menu" className="hover:text-[var(--ember)] hover:translate-x-1 transition-all w-fit">
+                → {dict.nav.menu}
               </Link>
-              <Link href="/contact" className="hover:text-[var(--basalt)] hover:underline transition-colors w-fit">
-                {dict.nav.contact}
+              <Link href="/contact" className="hover:text-[var(--ember)] hover:translate-x-1 transition-all w-fit">
+                → {dict.nav.contact}
               </Link>
             </nav>
           </div>
 
-          {/* Cột 3: Giờ mở cửa & Hotline */}
-          <div className="flex flex-col gap-3.5">
-            <span className="font-mono text-[12px] font-bold text-[var(--flower)] tracking-wider uppercase">
-              {dict.contact.openingHoursTitle}
+          {/* Cột 3: Giờ & Hotline */}
+          <div className="flex flex-col gap-4 relative">
+            <span className="font-mono text-[11px] text-[var(--ember)] uppercase tracking-wider font-bold">
+              [03] GIỜ & HOTLINE
             </span>
-            <div className="flex flex-col gap-2 text-[15px] text-[#C7BBA8]">
-              <div className="flex items-center gap-2 text-[#F4ECDD] font-semibold text-[14px]">
-                <Clock className="w-4 h-4 text-[var(--stream)]" />
-                <span>{isEn ? "Service Hours" : "Thời gian phục vụ"}</span>
+            <div className="flex flex-col gap-2 text-[14px]">
+              <div>
+                <span className="text-[var(--ink-muted)] text-[12px] uppercase font-mono block">Thứ 2 – 5:</span>
+                <span className="font-mono font-bold text-[15px] text-[var(--ink)]">07:00 – 18:00</span>
               </div>
-              <p className="leading-snug">
-                <strong className="text-[#F4ECDD] font-medium">{isEn ? "Mon – Thu:" : "Thứ 2 – 5:"}</strong><br />
-                <span className="font-mono text-[14px]">07:00 – 18:00</span>
-              </p>
-              <p className="leading-snug">
-                <strong className="text-[var(--flower)] font-medium">{isEn ? "Fri – Sun:" : "Thứ 6 – CN:"}</strong><br />
-                <span className="font-mono text-[14px]">07:00 – 22:00</span>
-              </p>
+              <div>
+                <span className="text-[var(--ember)] text-[12px] uppercase font-mono block">Thứ 6 – CN:</span>
+                <span className="font-mono font-bold text-[15px] text-[var(--ember)]">07:00 – 22:00</span>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-[var(--line)] flex flex-col gap-1">
+              <a href="tel:0382851688" className="font-mono text-[14px] font-bold text-[var(--ember)] hover:underline flex items-center gap-2">
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>038 285 1688 (Zalo)</span>
+              </a>
+              <a href="tel:0774659000" className="font-mono text-[14px] font-bold text-[var(--ink)] hover:text-[var(--ember)] flex items-center gap-2">
+                <PhoneCall className="w-3.5 h-3.5" />
+                <span>077 465 9000</span>
+              </a>
             </div>
           </div>
 
-          {/* Cột 4: Địa chỉ, Hotline, Email & Kết nối */}
-          <div className="flex flex-col gap-3.5">
-            <span className="font-mono text-[12px] font-bold text-[var(--flower)] tracking-wider uppercase">
-              {dict.contact.addressTitle}
+          {/* Cột 4: Địa chỉ & Kết nối */}
+          <div className="flex flex-col gap-4 relative">
+            <span className="font-mono text-[11px] text-[var(--ember)] uppercase tracking-wider font-bold">
+              [04] ĐỊA CHỈ & KẾT NỐI
             </span>
-            <p className="text-[14px] text-[#C7BBA8] leading-relaxed">
+            <p className="text-[13px] text-[var(--ink-muted)] leading-relaxed">
               Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
             </p>
 
-            <div className="flex flex-col gap-1 text-[15px]">
-              <a href="tel:0382851688" className="hover:text-[var(--basalt)] flex items-center gap-2 text-[#F4ECDD] font-semibold">
-                <PhoneCall className="w-4 h-4 text-[var(--basalt)]" />
-                <span className="font-mono text-[14px]">038 285 1688 (Zalo)</span>
-              </a>
-              <a href="tel:0774659000" className="hover:text-[var(--basalt)] flex items-center gap-2 text-[#F4ECDD] font-semibold">
-                <PhoneCall className="w-4 h-4 text-[var(--basalt)]" />
-                <span className="font-mono text-[14px]">077 465 9000</span>
-              </a>
-            </div>
-
-            <a 
-              href="mailto:thuynhu8788@gmail.com" 
-              className="text-[14px] text-[#C7BBA8] hover:text-[var(--basalt)] flex items-center gap-2"
-            >
-              <Mail className="w-4 h-4 text-[var(--stream)]" />
+            <a href="mailto:thuynhu8788@gmail.com" className="font-mono text-[12px] text-[var(--mist)] hover:underline flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5" />
               <span>thuynhu8788@gmail.com</span>
             </a>
 
-            {/* 4 Nút kết nối tròn */}
-            <div className="flex items-center gap-2.5 pt-1">
+            {/* Mạng xã hội */}
+            <div className="flex items-center gap-2 pt-2">
               <a
-                href="https://youtube.com/@Cam_Cu_House"
+                href="https://www.facebook.com/share/1DVLMySW8H/"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="YouTube"
-                className="w-10 h-10 rounded-full bg-[#2A201A] border border-[rgba(244,236,221,0.14)] flex items-center justify-center text-red-400 hover:bg-[var(--basalt)] hover:text-white transition-all shadow-xs"
+                className="w-9 h-9 rounded-sm border border-[var(--line)] bg-[var(--card)] hover:border-[var(--ember)] hover:text-[var(--ember)] flex items-center justify-center text-[12px] font-mono transition-colors"
+                aria-label="Facebook"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
+                FB
               </a>
               <a
                 href="https://www.tiktok.com/@camcuhousedaknong"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="TikTok"
-                className="w-10 h-10 rounded-full bg-[#2A201A] border border-[rgba(244,236,221,0.14)] flex items-center justify-center text-[#F4ECDD] hover:bg-[var(--basalt)] hover:text-white transition-all shadow-xs"
+                className="w-9 h-9 rounded-sm border border-[var(--line)] bg-[var(--card)] hover:border-[var(--ember)] hover:text-[var(--ember)] flex items-center justify-center text-[12px] font-mono transition-colors"
+                aria-label="TikTok"
               >
-                <span className="font-bold text-[11px] font-mono">TT</span>
+                TT
               </a>
               <a
-                href="https://www.facebook.com/share/1DVLMySW8H/"
+                href="https://youtube.com/@Cam_Cu_House"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Facebook"
-                className="w-10 h-10 rounded-full bg-[#2A201A] border border-[rgba(244,236,221,0.14)] flex items-center justify-center text-[#F4ECDD] hover:bg-[var(--basalt)] hover:text-white transition-all shadow-xs"
+                className="w-9 h-9 rounded-sm border border-[var(--line)] bg-[var(--card)] hover:border-[var(--ember)] hover:text-[var(--ember)] flex items-center justify-center text-[12px] font-mono transition-colors"
+                aria-label="YouTube"
               >
-                <Share2 className="w-4 h-4" />
-              </a>
-              <a
-                href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
-                target="_blank"
-                rel="noopener noreferrer"
-                title={dict.common.openGoogleMaps}
-                className="w-10 h-10 rounded-full bg-[#2A201A] border border-[rgba(244,236,221,0.14)] flex items-center justify-center text-[var(--stream)] hover:bg-[var(--basalt)] hover:text-white transition-all shadow-xs"
-              >
-                <Navigation className="w-4 h-4" />
+                YT
               </a>
             </div>
           </div>
         </div>
 
-        {/* Hàng cuối: Bản quyền · Lên đầu trang · Dòng thiết kế (Section 7.5) */}
-        <div className="pt-6 border-t border-[rgba(244,236,221,0.12)] flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-[#C7BBA8] font-mono">
-          <p>© 2026 Cẩm Cù House. Tất cả quyền được bảo lưu.</p>
-
-          {showScrollTop && (
-            <button
-              type="button"
-              onClick={scrollToTop}
-              className="btn-press inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#2A201A] hover:bg-[#342921] text-[#F4ECDD] transition-all text-[12px] font-semibold border border-[rgba(244,236,221,0.14)] shadow-xs"
-            >
-              <ArrowUp className="w-3.5 h-3.5 text-[var(--flower)]" />
-              <span>{isEn ? "Back to top" : "Lên đầu trang"}</span>
-            </button>
-          )}
-
-          <p className="text-[var(--stream)]">
-            Tâm tình bên dòng suối Đắk Nông
-          </p>
+        {/* Chữ "CẨM CÙ HOUSE" khổng lồ tràn ngang viền ember, tô đặc khi hover (Section 2 & 7.6) */}
+        <div className="w-full py-8 text-center overflow-hidden select-none group cursor-default">
+          <span
+            className="font-display font-black text-[clamp(44px,14vw,220px)] uppercase tracking-tighter leading-none block transition-all duration-500"
+            style={{
+              WebkitTextStroke: "1.5px var(--ember)",
+              color: "transparent",
+            }}
+          >
+            <span className="group-hover:text-[var(--ember)] transition-colors duration-500">
+              CẨM CÙ HOUSE
+            </span>
+          </span>
         </div>
-      </div>
 
-      {/* Chữ khổng lồ "CẨM CÙ HOUSE" cắt nửa dưới, độ mờ .10, trồi lên khi cuộn (Section 7.5) */}
-      <div className="w-full overflow-hidden select-none pointer-events-none mt-8 h-[9vw] min-h-[60px] max-h-[120px] relative flex justify-center items-start opacity-[0.10]">
-        <p className="font-serif text-center font-bold text-[12vw] leading-none tracking-[0.05em] whitespace-nowrap text-[#F4ECDD] -translate-y-[20%]">
-          CẨM CÙ HOUSE
-        </p>
+        {/* Hàng cuối: Bản quyền · Lên đầu trang ↑ · Dòng thiết kế */}
+        <div className="pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[11px] sm:text-[12px] text-[var(--ink-muted)]">
+          <span>
+            © {new Date().getFullYear()} CẨM CÙ HOUSE. TẤT CẢ QUYỀN ĐƯỢC BẢO LƯU.
+          </span>
+
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-[var(--ember)] hover:underline"
+          >
+            <span>LÊN ĐẦU TRANG</span>
+            <ArrowUp className="w-3.5 h-3.5" />
+          </button>
+
+          <span className="text-[var(--ink-muted)]">
+            THIẾT KẾ ĐẠI NGÀN ĐIỆN ẢNH
+          </span>
+        </div>
       </div>
     </footer>
   );
