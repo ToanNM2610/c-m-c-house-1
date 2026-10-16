@@ -65,12 +65,13 @@ export default function ContactPage() {
             1. ĐẦU TRANG: HERO TỐI (SECTION 8.5.1)
            ========================================================================= */}
         <PageDarkHero
-          badges={[
-            "[05 · 11.99° N · 107.69° E]",
-            "[CAO ĐỘ 800M+]",
-          ]}
-          h1Main="TỪ GIA NGHĨA, CẨM CÙ HOUSE"
-          h1Accent="Chờ Đón Bạn"
+          badges={
+            isEn
+              ? ["[05 · 11.99° N · 107.69° E]", "[ALTITUDE 800M+]"]
+              : ["[05 · 11.99° N · 107.69° E]", "[CAO ĐỘ 800M+]"]
+          }
+          h1Main={isEn ? "FROM GIA NGHIA, CẨM CÙ HOUSE" : "TỪ GIA NGHĨA, CẨM CÙ HOUSE"}
+          h1Accent={isEn ? "Welcomes You" : "Chờ Đón Bạn"}
           subtitle={dict.common.addressFull}
           backgroundImage="/uploads/gallery/1788250253557-29323827.jpg"
         />

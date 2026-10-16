@@ -203,7 +203,11 @@ export default function SpacePage() {
                   className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]"
                 >
                   <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
-                  <span>[03] KHÔNG GIAN SINH THÁI ĐẮK NÔNG · 30 GÓC ẢNH THỰC TẾ</span>
+                  <span>
+                    {isEn
+                      ? "[03] DAK NONG ECO STREAM SANCTUARY · 30 REAL PHOTOS"
+                      : "[03] KHÔNG GIAN SINH THÁI ĐẮK NÔNG · 30 GÓC ẢNH THỰC TẾ"}
+                  </span>
                 </motion.div>
 
                 {/* H1 Một khối, không ngắt giữa cụm, có hiệu ứng reveal mềm mại */}
@@ -213,7 +217,7 @@ export default function SpacePage() {
                   transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                   className="font-display font-black text-[clamp(34px,5.5vw,78px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1 text-balance"
                 >
-                  KHÔNG GIAN SINH THÁI, BÊN BỜ SUỐI ĐÁ
+                  {isEn ? "PRISTINE ECO SANCTUARY, BY THE BOULDER STREAM" : "KHÔNG GIAN SINH THÁI, BÊN BỜ SUỐI ĐÁ"}
                 </motion.h1>
 
                 <motion.p
@@ -235,13 +239,13 @@ export default function SpacePage() {
               >
                 <div className="flex flex-col">
                   <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist-on-dark)] font-bold">
-                    NHIỆT ĐỘ KHÍ HẬU
+                    {isEn ? "CLIMATE TEMPERATURE" : "NHIỆT ĐỘ KHÍ HẬU"}
                   </span>
                   <span className="font-display font-black text-[28px] text-[var(--ember-on-dark)] leading-none mt-1">
                     22°C – 26°C
                   </span>
                   <span className="font-mono text-[11px] text-[var(--ink-muted-on-dark)] mt-0.5">
-                    Mát mẻ quanh năm
+                    {isEn ? "Cool all year round" : "Mát mẻ quanh năm"}
                   </span>
                 </div>
 
@@ -249,13 +253,13 @@ export default function SpacePage() {
 
                 <div className="flex flex-col">
                   <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist-on-dark)] font-bold">
-                    ĐỊA CHẤT TỰ NHIÊN
+                    {isEn ? "NATURAL GEOLOGY" : "ĐỊA CHẤT TỰ NHIÊN"}
                   </span>
                   <span className="font-display font-black text-[28px] text-[var(--ink-on-dark)] leading-none mt-1">
-                    ĐÁ BAZAN CỔ
+                    {isEn ? "ANCIENT BASALT" : "ĐÁ BAZAN CỔ"}
                   </span>
                   <span className="font-mono text-[11px] text-[var(--ink-muted-on-dark)] mt-0.5">
-                    Hàng triệu năm tuổi
+                    {isEn ? "Millions of years old" : "Hàng triệu năm tuổi"}
                   </span>
                 </div>
               </motion.div>

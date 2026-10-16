@@ -124,7 +124,11 @@ export default function AboutPage() {
                 className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]"
               >
                 <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
-                <span>[TÂM TÌNH CAO NGUYÊN · 11.99° N · 107.69° E]</span>
+                <span>
+                  {isEn
+                    ? "[HIGHLAND SENTIMENT · 11.99° N · 107.69° E]"
+                    : "[TÂM TÌNH CAO NGUYÊN · 11.99° N · 107.69° E]"}
+                </span>
               </motion.div>
 
               {/* H1 CÂU CHUYỆN CẨM CÙ tràn ngang + Chốn Bình Yên Giữa Đất Ngàn */}
@@ -135,7 +139,7 @@ export default function AboutPage() {
                   transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                   className="font-display font-black text-[clamp(40px,8vw,100px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1"
                 >
-                  CÂU CHUYỆN CẨM CÙ
+                  {isEn ? "THE STORY OF CẨM CÙ" : "CÂU CHUYỆN CẨM CÙ"}
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 0, y: 18 }}
@@ -143,7 +147,7 @@ export default function AboutPage() {
                   transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
                   className="font-serif italic text-[clamp(24px,3.5vw,42px)] text-[var(--ember)]"
                 >
-                  Chốn Bình Yên Giữa Đất Ngàn
+                  {dict.about.subtitle}
                 </motion.p>
               </div>
 
@@ -165,13 +169,13 @@ export default function AboutPage() {
                 className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line-on-dark)] font-mono text-[12.5px] uppercase tracking-wider text-[var(--ink-on-dark)]"
               >
                 <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
-                  [01 HOA CẨM CÙ BỀN BỈ]
+                  {isEn ? "[01 RESILIENT HOYA]" : "[01 HOA CẨM CÙ BỀN BỈ]"}
                 </span>
                 <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
-                  [02 SUỐI ĐÁ NGUYÊN BẢN]
+                  {isEn ? "[02 NATURAL STREAM]" : "[02 SUỐI ĐÁ NGUYÊN BẢN]"}
                 </span>
                 <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
-                  [03 ROBUSTA RANG CỦI]
+                  {isEn ? "[03 WOOD-FIRED ROBUSTA]" : "[03 ROBUSTA RANG CỦI]"}
                 </span>
               </motion.div>
             </div>

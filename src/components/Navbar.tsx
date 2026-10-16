@@ -16,6 +16,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import StarHoya from "@/components/ui/StarHoya";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 
 const NAV_ITEMS = [
   { href: "/", num: "01", labelVi: "Trang Chủ", labelEn: "Home" },
@@ -101,6 +102,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { locale, setLocale, dict } = useLanguage();
+  const { isDark } = useTheme();
   const isEn = locale === "en";
   const storeStatus = useStoreStatus();
 
@@ -168,9 +170,9 @@ export default function Navbar() {
         {/* 1. Thanh trên cùng (micro-bar mono 12px - Section 7.1) */}
         <div
           className={`w-full border-b transition-colors py-1.5 px-4 ${
-            isScrolled
-              ? "bg-[var(--bg-2)] text-[var(--ink)] border-[var(--line)]"
-              : "bg-[#070B09] text-[#F4EEE2] border-white/10"
+            isDark
+              ? "bg-[#070B09] text-[#F4EEE2] border-white/10"
+              : "bg-[#EFE9DC] text-[#2C241E] border-[rgba(62,39,35,0.12)]"
           }`}
         >
           <div className="max-w-[1360px] mx-auto flex items-center justify-between font-mono text-[11px] sm:text-[12px] tracking-wider uppercase">
@@ -180,29 +182,29 @@ export default function Navbar() {
                   storeStatus.isOpen ? "bg-[#34D399]" : "bg-[#F28B82]"
                 }`}
               />
-              <span className={`font-bold ${isScrolled ? "text-[var(--ink)]" : "text-[#F4EEE2]"}`}>
+              <span className={`font-bold ${isDark ? "text-[#F4EEE2]" : "text-[#2C241E]"}`}>
                 {statusString}
               </span>
             </div>
 
             <div
               className={`hidden sm:flex items-center gap-4 ${
-                isScrolled ? "text-[var(--ink-muted)]" : "text-[rgba(244,238,226,0.85)]"
+                isDark ? "text-[rgba(244,238,226,0.85)]" : "text-[rgba(44,36,30,0.8)]"
               }`}
             >
               <span>11.99° N · 107.69° E</span>
               <span>·</span>
-              <span className={`font-bold ${isScrolled ? "text-[var(--ember)]" : "text-[var(--ember-on-dark,#FF7D47)]"}`}>800M+</span>
+              <span className={`font-bold ${isDark ? "text-[var(--ember-on-dark,#FF7D47)]" : "text-[var(--ember)]"}`}>800M+</span>
             </div>
           </div>
         </div>
 
-        {/* 2. Header Content Bar (Tránh dải kem trống ở đầu trang, hòa hợp tuyệt đối với Hero) */}
+        {/* 2. Header Content Bar (Tự thích ứng Sáng và Tối hài hòa, rõ nét) */}
         <div
           className={`w-full transition-all duration-300 border-b ${
-            isScrolled
-              ? "bg-[var(--card)] text-[var(--ink)] border-[var(--line)] shadow-lg"
-              : "bg-[#0A0E0C] text-[#F4EEE2] border-white/10 shadow-md"
+            isDark
+              ? "bg-[#0A0E0C] text-[#F4EEE2] border-white/10 shadow-md"
+              : "bg-[#FAF6EE] text-[#2C241E] border-[rgba(62,39,35,0.12)] shadow-xs"
           }`}
         >
           <div
@@ -214,9 +216,9 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-3 shrink-0 group">
               <div
                 className={`w-9 h-9 rounded-sm border flex items-center justify-center transition-colors ${
-                  isScrolled
-                    ? "border-[var(--line)] bg-[var(--card)] text-[var(--ember)] group-hover:border-[var(--ember)]"
-                    : "border-white/20 bg-white/5 text-[var(--ember-on-dark,#FF7D47)] group-hover:border-[var(--ember-on-dark,#FF7D47)]"
+                  isDark
+                    ? "border-white/20 bg-white/5 text-[var(--ember-on-dark,#FF7D47)] group-hover:border-[var(--ember-on-dark,#FF7D47)]"
+                    : "border-[rgba(62,39,35,0.18)] bg-[var(--card)] text-[var(--ember)] group-hover:border-[var(--ember)]"
                 }`}
               >
                 <StarHoya size={18} strokeWidth={2} />
@@ -224,14 +226,14 @@ export default function Navbar() {
               <div className="flex flex-col">
                 <span
                   className={`font-display font-extrabold text-[20px] sm:text-[22px] tracking-tight uppercase leading-none transition-colors ${
-                    isScrolled ? "text-[var(--ink)]" : "text-[#F4EEE2]"
+                    isDark ? "text-[#F4EEE2]" : "text-[#2C241E]"
                   }`}
                 >
                   CẨM CÙ HOUSE
                 </span>
                 <span
                   className={`font-mono text-[9px] tracking-widest uppercase mt-0.5 ${
-                    isScrolled ? "text-[var(--ember)]" : "text-[var(--ember-on-dark,#FF7D47)]"
+                    isDark ? "text-[var(--ember-on-dark,#FF7D47)]" : "text-[var(--ember)]"
                   }`}
                 >
                   GIA NGHĨA · 800M+
@@ -239,7 +241,7 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Navigation Links with Text Scramble */}
+            {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-8">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href;
@@ -249,17 +251,17 @@ export default function Navbar() {
                     href={item.href}
                     className={`nav-footer-link group relative py-2 flex items-center gap-1.5 font-mono text-[15.5px] tracking-wider uppercase transition-colors ${
                       isActive
-                        ? isScrolled
-                          ? "text-[var(--ember)] font-bold"
-                          : "text-[var(--ember-on-dark,#FF7D47)] font-bold"
-                        : isScrolled
-                        ? "text-[var(--ink)] hover:text-[var(--ember)]"
-                        : "text-[#F4EEE2] hover:text-[var(--ember-on-dark,#FF7D47)]"
+                        ? isDark
+                          ? "text-[var(--ember-on-dark,#FF7D47)] font-bold"
+                          : "text-[var(--ember)] font-bold"
+                        : isDark
+                        ? "text-[#F4EEE2] hover:text-[var(--ember-on-dark,#FF7D47)]"
+                        : "text-[#2C241E] hover:text-[var(--ember)]"
                     }`}
                   >
                     <span
                       className={`text-[12.5px] font-bold ${
-                        isScrolled ? "text-[var(--ember)]" : "text-[var(--ember-on-dark,#FF7D47)]"
+                        isDark ? "text-[var(--ember-on-dark,#FF7D47)]" : "text-[var(--ember)]"
                       }`}
                       aria-hidden="true"
                     >
@@ -270,7 +272,7 @@ export default function Navbar() {
                     </span>
                     <span
                       className={`absolute bottom-0 left-0 right-0 h-[2px] transition-transform duration-300 origin-left ${
-                        isScrolled ? "bg-[var(--ember)]" : "bg-[var(--ember-on-dark,#FF7D47)]"
+                        isDark ? "bg-[var(--ember-on-dark,#FF7D47)]" : "bg-[var(--ember)]"
                       } ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
                     />
                   </Link>
@@ -278,22 +280,48 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Actions: Lang switch, Theme toggle, GỌI NGAY Button */}
+            {/* Actions: Lang switch (VN/EN kép), Theme toggle, GỌI NGAY Button */}
             <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-              {/* VN / EN Switcher có aria-label cho Playwright/a11y */}
-              <button
-                type="button"
-                onClick={() => setLocale(isEn ? "vi" : "en")}
-                aria-label="Chuyển ngôn ngữ Việt / Anh"
-                className={`font-mono text-[12px] font-bold px-2.5 py-1 rounded-sm border transition-colors ${
-                  isScrolled
-                    ? "border-[var(--line)] hover:border-[var(--ember)] text-[var(--ink)]"
-                    : "border-white/20 hover:border-[var(--ember-on-dark,#FF7D47)] text-[#F4EEE2] bg-white/5"
+              {/* VN / EN Switcher rõ ràng hai chiều: Anh ra Anh, Việt ra Việt */}
+              <div
+                className={`inline-flex items-center rounded-full p-0.5 border text-[11px] font-mono font-bold transition-colors ${
+                  isDark
+                    ? "bg-[#141C17] border-white/15 text-[#F4EEE2]/70"
+                    : "bg-[#FFFFFF] border-[rgba(62,39,35,0.18)] text-[#2C241E]/70 shadow-2xs"
                 }`}
-                title={isEn ? "Chuyển sang Tiếng Việt" : "Switch to English"}
+                role="group"
+                aria-label="Chọn ngôn ngữ / Select language"
               >
-                {isEn ? "EN" : "VN"}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setLocale("vi")}
+                  className={`px-2 py-0.5 rounded-full transition-all duration-200 ${
+                    !isEn
+                      ? "bg-[var(--ember)] text-white shadow-xs font-black"
+                      : isDark
+                      ? "text-[#F4EEE2] hover:text-white opacity-60 hover:opacity-100"
+                      : "text-[#2C241E] hover:text-black opacity-60 hover:opacity-100"
+                  }`}
+                  title="Tiếng Việt"
+                >
+                  VN
+                </button>
+                <span className="text-[10px] opacity-25 px-0.5">·</span>
+                <button
+                  type="button"
+                  onClick={() => setLocale("en")}
+                  className={`px-2 py-0.5 rounded-full transition-all duration-200 ${
+                    isEn
+                      ? "bg-[var(--ember)] text-white shadow-xs font-black"
+                      : isDark
+                      ? "text-[#F4EEE2] hover:text-white opacity-60 hover:opacity-100"
+                      : "text-[#2C241E] hover:text-black opacity-60 hover:opacity-100"
+                  }`}
+                  title="English"
+                >
+                  EN
+                </button>
+              </div>
 
               {/* Theme Toggle */}
               <ThemeToggle />
@@ -312,9 +340,9 @@ export default function Navbar() {
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
                 className={`lg:hidden p-2 border rounded-sm transition-colors ${
-                  isScrolled
-                    ? "text-[var(--ink)] hover:text-[var(--ember)] border-[var(--line)]"
-                    : "text-[#F4EEE2] hover:text-[var(--ember-on-dark,#FF7D47)] border-white/20"
+                  isDark
+                    ? "text-[#F4EEE2] hover:text-[var(--ember-on-dark,#FF7D47)] border-white/20"
+                    : "text-[#2C241E] hover:text-[var(--ember)] border-[rgba(62,39,35,0.2)]"
                 }`}
                 aria-label="Mở menu điều hướng"
               >

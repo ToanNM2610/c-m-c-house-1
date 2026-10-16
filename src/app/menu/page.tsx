@@ -102,14 +102,18 @@ export default function MenuPage() {
             1. ĐẦU TRANG: HERO TỐI (SECTION 8.4.1)
            ========================================================================= */}
         <PageDarkHero
-          badges={[
-            "[67 MÓN CHỌN LỌC]",
-            "[GIÁ BÌNH DÂN 20K–45K]",
-            "[NGUYÊN LIỆU XANH SẠCH]",
-          ]}
-          h1Main="THỰC ĐƠN MỘC MẠC,"
-          h1Accent="Thức Uống Xanh & Món Ăn Lành"
-          subtitle="67 món cà phê mộc Tây Nguyên, trà thảo mộc, sinh tố, nước ép nguyên chất và điểm tâm lành mạnh bên bờ suối đá Gia Nghĩa."
+          badges={
+            isEn
+              ? ["[67 CURATED ITEMS]", "[AFFORDABLE 20K–45K]", "[CLEAN GREEN INGREDIENTS]"]
+              : ["[67 MÓN CHỌN LỌC]", "[GIÁ BÌNH DÂN 20K–45K]", "[NGUYÊN LIỆU XANH SẠCH]"]
+          }
+          h1Main={isEn ? "RUSTIC MENU," : "THỰC ĐƠN MỘC MẠC,"}
+          h1Accent={isEn ? "Green Drinks & Wholesome Bites" : "Thức Uống Xanh & Món Ăn Lành"}
+          subtitle={
+            isEn
+              ? "67 curated items: highland artisanal coffee, herbal tea, fresh smoothies, cold-pressed juices and nourishing breakfast by Gia Nghia rock stream."
+              : "67 món cà phê mộc Tây Nguyên, trà thảo mộc, sinh tố, nước ép nguyên chất và điểm tâm lành mạnh bên bờ suối đá Gia Nghĩa."
+          }
           backgroundImage="/uploads/gallery/1788250253551-943009233.jpg"
         />
 
@@ -121,7 +125,7 @@ export default function MenuPage() {
             <div className="p-8 sm:p-12 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line-on-dark)] clip-chamfer-14 flex flex-col lg:flex-row lg:items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
               <div className="flex flex-col gap-4 max-w-2xl relative z-10">
                 <span className="font-mono text-[12px] font-bold uppercase tracking-widest" style={{ color: "var(--mist-on-dark)" }}>
-                  [SIGNATURE MÓN YÊU THÍCH NHẤT TẠI CẨM CÙ]
+                  {isEn ? "[MOST LOVED SIGNATURE AT CẨM CÙ]" : "[SIGNATURE MÓN YÊU THÍCH NHẤT TẠI CẨM CÙ]"}
                 </span>
 
                 <h2 className="font-display font-black text-[clamp(36px,5.5vw,64px)] uppercase tracking-tight leading-tight" style={{ color: "#F2EDE4" }}>
@@ -138,7 +142,7 @@ export default function MenuPage() {
                   </span>
                   {signatureItem.inStock === false && (
                     <span className="font-mono text-xs uppercase px-2.5 py-1 bg-red-900/60 text-red-200 border border-red-500/40 font-bold">
-                      TẠM HẾT
+                      {isEn ? "SOLD OUT" : "TẠM HẾT"}
                     </span>
                   )}
                 </div>
