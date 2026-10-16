@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 import CustomerReviewsSection from "@/components/home/CustomerReviewsSection";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
@@ -200,7 +201,7 @@ export default function HomePage() {
 
           {/* Ảnh nền phủ tối + Ken Burns sương mờ */}
           <div className="absolute inset-0 pointer-events-none select-none z-0">
-            <Image
+            <SafeImage
               src="/uploads/gallery/1788250253551-943009233.jpg"
               alt="Cẩm Cù House đại ngàn điện ảnh"
               fill
@@ -502,7 +503,7 @@ export default function HomePage() {
 
                   {/* Ảnh minh họa cắt chéo */}
                   <div className="relative aspect-[16/9] w-full overflow-hidden clip-chamfer-14 border border-[var(--line)]">
-                    <Image
+                    <SafeImage
                       src={panel.img}
                       alt={panel.title}
                       fill
@@ -553,7 +554,7 @@ export default function HomePage() {
                   }}
                   className={`relative group overflow-hidden clip-chamfer-14 border border-[var(--line)] cursor-pointer bg-[var(--card)] ${item.col}`}
                 >
-                  <Image
+                  <SafeImage
                     src={item.url}
                     alt={item.title}
                     fill
@@ -593,7 +594,7 @@ export default function HomePage() {
            ========================================================================= */}
         <section className="relative w-full py-32 sm:py-44 bg-[#0A0E0C] text-[#F4EEE2] overflow-hidden text-center border-t border-[var(--line-on-dark)]">
           <div className="absolute inset-0 pointer-events-none select-none z-0">
-            <Image
+            <SafeImage
               src="/uploads/gallery/1788250253557-29323827.jpg"
               alt="Hẹn gặp bạn bên bờ suối"
               fill

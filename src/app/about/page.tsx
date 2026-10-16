@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 import Footer from "@/components/Footer";
 import StarHoya from "@/components/ui/StarHoya";
 import { useLanguage } from "@/context/LanguageContext";
@@ -57,7 +58,7 @@ function CinematicQuoteSection({ isEn }: { isEn: boolean }) {
     >
       {/* Nền ảnh phủ tối gradient .35–.55 (Mục C7) */}
       <div className="absolute inset-0 pointer-events-none select-none z-0">
-        <Image
+        <SafeImage
           src="/uploads/gallery/1788250253557-29323827.jpg"
           alt={isEn ? "Under the forest canopy" : "Dưới bóng rừng Tây Nguyên"}
           fill
@@ -170,7 +171,7 @@ export default function AboutPage() {
               {/* Trái: Ảnh dính cắt chéo */}
               <div className="lg:col-span-6 lg:sticky lg:top-28">
                 <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
-                  <Image
+                  <SafeImage
                     src="/uploads/gallery/1788250253557-29323827.jpg"
                     alt="Khóm hoa Cẩm Cù và hoa chuông vàng"
                     fill
@@ -261,7 +262,7 @@ export default function AboutPage() {
               {/* Phải: Ảnh dính cắt chéo */}
               <div className="lg:col-span-6 lg:sticky lg:top-28 order-1 lg:order-2">
                 <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
-                  <Image
+                  <SafeImage
                     src="/uploads/gallery/1788250253562-580915883.jpg"
                     alt="Dòng suối đá tự nhiên Cẩm Cù House"
                     fill
@@ -285,7 +286,7 @@ export default function AboutPage() {
               {/* Trái: Ảnh dính cắt chéo */}
               <div className="lg:col-span-6 lg:sticky lg:top-28">
                 <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
-                  <Image
+                  <SafeImage
                     src="/uploads/gallery/1788250253551-943009233.jpg"
                     alt="Cà phê rang củi bên hiên suối"
                     fill

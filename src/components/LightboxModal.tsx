@@ -31,6 +31,7 @@ export default function LightboxModal({
   }, [photos]);
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [photoError, setPhotoError] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
@@ -40,7 +41,12 @@ export default function LightboxModal({
     } else {
       setCurrentIndex(0);
     }
+    setPhotoError(false);
   }, [initialIndex, isOpen, validPhotos.length]);
+
+  useEffect(() => {
+    setPhotoError(false);
+  }, [currentIndex]);
 
   // Khóa cuộn trang và đánh dấu lightbox-open để tắt custom cursor (Mục A3 & B6)
   useEffect(() => {
@@ -179,16 +185,29 @@ export default function LightboxModal({
           )}
 
           <div className="relative max-h-[70vh] sm:max-h-[75vh] w-full flex items-center justify-center overflow-hidden rounded-2xl">
-            <motion.img
-              key={currentPhoto.url}
-              src={currentPhoto.url}
-              alt={currentPhoto.title}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="max-h-[68vh] sm:max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)]"
-            />
+            {photoError ? (
+              <div
+                className="w-[320px] sm:w-[480px] h-[260px] sm:h-[340px] bg-[var(--surface-2)] rounded-2xl flex flex-col items-center justify-center text-[var(--ink-muted)] p-6 select-none"
+                aria-hidden="true"
+              >
+                <ImageIcon className="w-12 h-12 opacity-40 mb-2 text-[var(--sage)]" />
+                <span className="font-mono text-[12px] opacity-60 uppercase tracking-wider">
+                  Cẩm Cù House
+                </span>
+              </div>
+            ) : (
+              <motion.img
+                key={currentPhoto.url}
+                src={currentPhoto.url}
+                alt={currentPhoto.title}
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                onError={() => setPhotoError(true)}
+                className="max-h-[68vh] sm:max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)]"
+              />
+            )}
           </div>
 
           {validPhotos.length > 1 && (

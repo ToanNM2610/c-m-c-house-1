@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface StampPhotoProps {
   src: string;
@@ -42,7 +42,7 @@ export default function StampPhoto({
       className={`frame-stamp group select-none ${rotateClass} ${className}`}
     >
       <div className="relative overflow-hidden rounded-[4px] aspect-[4/3] w-full bg-[var(--paper-2)]">
-        <Image
+        <SafeImage
           src={src}
           alt={alt}
           fill

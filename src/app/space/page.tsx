@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
@@ -314,7 +315,7 @@ export default function SpacePage() {
           <section className="relative w-full h-[85vh] bg-[#0A0E0C] text-[#F2EDE4] flex items-center justify-center overflow-hidden">
             {filteredItems.length > 0 && (
               <div className="relative w-full h-full">
-                <Image
+                <SafeImage
                   src={filteredItems[filmIndex]?.image}
                   alt={filteredItems[filmIndex]?.title}
                   fill
@@ -396,7 +397,7 @@ export default function SpacePage() {
                       onClick={() => handleOpenLightbox(idx)}
                       className={`group relative cursor-pointer overflow-hidden clip-chamfer-14 border border-[var(--line)] bg-[var(--card)] ${colSpan} ${aspect} select-none`}
                     >
-                      <Image
+                      <SafeImage
                         src={item.image}
                         alt={item.title}
                         fill
