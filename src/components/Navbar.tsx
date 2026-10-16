@@ -152,7 +152,7 @@ export default function Navbar() {
       : `ĐANG MỞ CỬA · ĐÓNG LÚC ${storeStatus.closingTime} HÔM NAY · 23°C`
     : isEn
     ? `CLOSED · OPENS AT 07:00 TOMORROW · 23°C`
-    : `ĐANG ĐÓNG CỬA · MỞ LÚC 07:00 NGÀY MAI · 23°C`;
+    : `ĐÃ ĐÓNG CỬA · MỞ LÚC 07:00 NGÀY MAI · 23°C`;
 
   // Không hiển thị Navbar khách hàng trên trang Admin
   if (pathname?.startsWith("/admin")) return null;

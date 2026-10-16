@@ -269,13 +269,9 @@ export default function HomePage() {
                   {/* Trạng thái mở cửa + Nhiệt độ */}
                   <div className="flex items-center justify-between pb-4 border-b border-[var(--line-on-dark)]">
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          storeStatus.isOpen ? "bg-[var(--ember-on-dark)] animate-pulse" : "bg-[#F28B82]"
-                        }`}
-                      />
+                      <Clock className="w-3.5 h-3.5 text-[var(--ember-on-dark)]" />
                       <span className="font-mono text-[12px] uppercase font-bold text-[var(--ink-on-dark)]">
-                        {storeStatus.isOpen ? "ĐANG MỞ CỬA" : "ĐÃ ĐÓNG CỬA"}
+                        {isEn ? "OPERATING HOURS" : "GIỜ HOẠT ĐỘNG"}
                       </span>
                     </div>
                     <span className="font-mono text-[12px] text-[var(--ember-on-dark)] font-bold">

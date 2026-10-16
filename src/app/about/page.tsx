@@ -24,14 +24,13 @@ function WordScrubSpan({
   range: [number, number];
   progress: MotionValue<number>;
 }) {
-  // Chữ chưa sáng >= 3:1 (kem .35), chữ đã sáng kem đặc #F4EEE2 (Mục C7 & C8)
-  const opacity = useTransform(progress, range, [0.35, 1]);
-  const color = useTransform(progress, range, ["rgba(244, 238, 226, 0.35)", "#F4EEE2"]);
+  // Chữ chưa sáng >= 3:1 (kem .40), chữ đã sáng kem đặc #F4EEE2 (Mục C7 & C8)
+  const opacity = useTransform(progress, range, [0.4, 1]);
 
   return (
     <motion.span
-      style={{ opacity, color }}
-      className="inline-block mr-[0.3em] font-display font-extrabold text-[clamp(28px,4.5vw,56px)] uppercase tracking-tight leading-[1.12]"
+      style={{ opacity }}
+      className="inline-block mr-[0.3em] font-display font-extrabold text-[clamp(28px,4.5vw,56px)] uppercase tracking-tight leading-[1.12] text-[#F4EEE2]"
     >
       {word}
     </motion.span>
