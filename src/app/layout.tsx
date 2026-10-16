@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
 import PublicShell from "@/components/PublicShell";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import Script from "next/script";
 import { getPublicIntegrations } from "@/lib/integrations";
 import "lenis/dist/lenis.css";
@@ -89,22 +90,7 @@ export default async function RootLayout({
           />
         )}
         {integrations.ga4MeasurementId && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${integrations.ga4MeasurementId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${integrations.ga4MeasurementId}', {
-                  page_path: window.location.pathname,
-                });
-              `}
-            </Script>
-          </>
+          <GoogleAnalytics gaId={integrations.ga4MeasurementId} />
         )}
         <script
           dangerouslySetInnerHTML={{

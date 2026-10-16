@@ -9,6 +9,7 @@ import SmoothScroll from "@/components/motion/SmoothScroll";
 import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
 import CustomCursor from "@/components/ui/CustomCursor";
 import ScrollIndicator from "@/components/ui/ScrollIndicator";
+import CookieConsent from "@/components/ui/CookieConsent";
 
 export default function PublicShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -37,6 +38,7 @@ export default function PublicShell({ children }: { children: ReactNode }) {
         {children}
       </SmoothScroll>
       <MobileBottomBar />
+      <CookieConsent />
     </>
   );
 }
