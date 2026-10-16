@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import rawBackupData from "@/data/backup/camcu_raw_backup.json";
 
 // In-memory overrides store: { [sectionKey: string]: { vi: Record<string, any>; en: Record<string, any> } }
-let sectionOverrides: Record<string, { vi?: Record<string, string>; en?: Record<string, string> }> = {};
+const sectionOverrides: Record<string, { vi?: Record<string, string>; en?: Record<string, string> }> = {};
 
 export async function GET() {
   try {

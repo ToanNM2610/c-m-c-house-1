@@ -28,7 +28,38 @@ export const KEYS = {
   GALLERY: "camcu_gallery",
   SETTINGS: "camcu_settings",
   AUTH: "camcu_admin_auth",
+  CONTENT_BLOCKS: "camcu_content_blocks",
+  CONTENT_OVERRIDES: "camcu_content_overrides",
 };
+
+// 1ms BroadcastChannel & Cross-tab Storage Synchronization
+let broadcastChannel: BroadcastChannel | null = null;
+if (typeof window !== "undefined") {
+  try {
+    if ("BroadcastChannel" in window) {
+      broadcastChannel = new BroadcastChannel("camcu_sync_bus");
+      broadcastChannel.onmessage = (event) => {
+        if (event.data && event.data.key) {
+          window.dispatchEvent(
+            new CustomEvent("camcu_sync_update", { detail: event.data })
+          );
+        }
+      };
+    }
+  } catch (_) {}
+
+  // Cross-tab storage fallback
+  window.addEventListener("storage", (e) => {
+    if (e.key && Object.values(KEYS).includes(e.key)) {
+      try {
+        const val = e.newValue ? JSON.parse(e.newValue) : null;
+        window.dispatchEvent(
+          new CustomEvent("camcu_sync_update", { detail: { key: e.key, value: val } })
+        );
+      } catch (_) {}
+    }
+  });
+}
 
 /**
  * Get shared data from Cookie (priority) with LocalStorage fallback
@@ -96,7 +127,12 @@ export function setSharedData<T>(key: string, value: T): void {
       )}; path=/; max-age=${maxAge}${domainPart}; SameSite=Lax`;
     }
 
-    // Notify listeners in same window
+    // 1. Instant 1ms broadcast across all tabs and windows
+    try {
+      broadcastChannel?.postMessage({ key, value });
+    } catch (_) {}
+
+    // 2. Notify listeners in same window
     window.dispatchEvent(
       new CustomEvent("camcu_sync_update", { detail: { key, value } })
     );
@@ -119,6 +155,10 @@ export function removeSharedData(key: string): void {
     const domainPart = isProd ? "; domain=.camcuhouse.online" : "";
 
     document.cookie = `${key}=; path=/; max-age=0${domainPart}; SameSite=Lax`;
+
+    try {
+      broadcastChannel?.postMessage({ key, value: null });
+    } catch (_) {}
 
     window.dispatchEvent(
       new CustomEvent("camcu_sync_update", { detail: { key, value: null } })

@@ -521,26 +521,70 @@ html:not(.dark) .admin-icon-circle {
   color: var(--accent) !important;
 }
 
-/* Admin Typography Standard */
+/* =========================================================================
+   ADMIN CONSOLE TYPOGRAPHY LOCK (Mục A: Cố định kích cỡ chữ Dashboard)
+   Ngăn chặn triệt để font-h1 công khai làm biến dạng giao diện quản trị
+   ========================================================================= */
+.admin-shell,
+[data-admin-page],
+.admin-panel {
+  --font-h1: 26px !important;
+  --font-h2: 20px !important;
+  --font-h3: 16px !important;
+  --font-h4: 14px !important;
+}
+
+.admin-shell h1,
+[data-admin-page] h1,
+.admin-panel h1,
 .admin-h1 {
-  font-size: 32px;
-  line-height: 1.2;
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 26px !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  text-wrap: pretty !important;
+  margin-top: 0 !important;
+  max-width: 100% !important;
 }
 
+.admin-shell h2,
+[data-admin-page] h2,
+.admin-panel h2,
 .admin-h2 {
-  font-size: 22px;
-  line-height: 1.3;
-  font-weight: 700;
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  margin-top: 0 !important;
 }
 
+.admin-shell h3,
+[data-admin-page] h3,
+.admin-panel h3,
 .admin-card-title {
-  font-size: 18px;
-  line-height: 1.4;
-  font-weight: 600;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  margin-top: 0 !important;
+}
+
+.admin-shell h4,
+[data-admin-page] h4,
+.admin-panel h4,
+.admin-shell h5,
+[data-admin-page] h5,
+.admin-shell h6,
+[data-admin-page] h6 {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  margin-top: 0 !important;
 }
 
 .admin-body {

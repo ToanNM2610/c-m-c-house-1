@@ -217,7 +217,7 @@ export default function IntegrationsTab({ onShowToast }: Props) {
             <Key className="w-4 h-4 shrink-0" />
             <span>Trung Tâm Tích Hợp &amp; Khóa Bảo Mật</span>
           </div>
-          <h1 className="admin-h1 font-serif text-[32px] leading-[1.2] font-bold text-[var(--text)]">
+          <h1 className="admin-h1 font-serif text-[26px] leading-[1.2] font-bold text-[var(--text)]">
             Quản Lý Khóa &amp; Dịch Vụ Ngoài
           </h1>
           <p className="admin-subtle text-[13px]">

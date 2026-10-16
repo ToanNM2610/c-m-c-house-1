@@ -7,9 +7,11 @@ import React, {
   useEffect,
   ReactNode,
   useCallback,
+  useMemo,
 } from "react";
 import { translations, Locale, TranslationDictionary } from "@/lib/translations";
 import { getSharedCookie, setSharedCookie } from "@/utils/storage";
+import { getSharedData, setSharedData, KEYS } from "@/lib/syncStore";
 
 export type Language = "vi" | "en" | "VN" | "EN" | string;
 
@@ -43,6 +45,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("vi");
   const [mounted, setMounted] = useState(false);
 
+  // Dynamic Content Blocks synced in real-time (1ms) from syncStore / Admin
+  const [contentOverrides, setContentOverrides] = useState<{ vi: any; en: any }>(() => {
+    return getSharedData(KEYS.CONTENT_BLOCKS, { vi: {}, en: {} });
+  });
+
   // Hydrate initial locale from cookie or localStorage
   useEffect(() => {
     try {
@@ -58,7 +65,44 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch (_) {}
+
+    // Hydrate Content Blocks / Overrides from syncStore or API
+    try {
+      const savedOverrides = getSharedData<any>(KEYS.CONTENT_OVERRIDES, null);
+      const savedBlocks = getSharedData<any>(KEYS.CONTENT_BLOCKS, null);
+      if (savedOverrides && Object.keys(savedOverrides).length > 0) {
+        setContentOverrides(savedOverrides);
+      } else if (savedBlocks && (savedBlocks.vi || savedBlocks.en)) {
+        setContentOverrides(savedBlocks);
+      } else {
+        fetch("/api/admin/content")
+          .then((r) => r.json())
+          .then((d) => {
+            if (d && d.content) {
+              setContentOverrides(d.content);
+              setSharedData(KEYS.CONTENT_BLOCKS, d.content);
+            }
+          })
+          .catch(() => {});
+      }
+    } catch (_) {}
+
+    // 1ms Real-time Instant Sync Listener across tabs & window
+    const handleSync = (e: Event) => {
+      const custom = e as CustomEvent;
+      if (
+        custom.detail?.key === KEYS.CONTENT_BLOCKS ||
+        custom.detail?.key === KEYS.CONTENT_OVERRIDES
+      ) {
+        if (custom.detail.value) {
+          setContentOverrides(custom.detail.value);
+        }
+      }
+    };
+    window.addEventListener("camcu_sync_update", handleSync);
+
     setMounted(true);
+    return () => window.removeEventListener("camcu_sync_update", handleSync);
   }, []);
 
   const setLocale = useCallback((newLocale: Locale) => {
@@ -80,6 +124,42 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLocale(normalized === "en" ? "en" : "vi");
   }, [setLocale]);
 
+  // Deeply merge content overrides with base dictionary in real-time (Song ngữ chuẩn xác: viết ra viết, anh ra anh)
+  const mergedDict = useMemo<TranslationDictionary>(() => {
+    const base = translations[locale] || defaultDict;
+    if (!contentOverrides || typeof contentOverrides !== "object") return base;
+
+    const result: any = { ...base };
+
+    // Format 1: { vi: { section: {...} }, en: { section: {...} } }
+    if (contentOverrides[locale] && typeof contentOverrides[locale] === "object") {
+      const overridesForLocale = contentOverrides[locale];
+      for (const section of Object.keys(overridesForLocale)) {
+        if (result[section] && typeof result[section] === "object") {
+          result[section] = {
+            ...result[section],
+            ...overridesForLocale[section],
+          };
+        } else {
+          result[section] = overridesForLocale[section];
+        }
+      }
+    } else {
+      // Format 2: { section: { vi: {...}, en: {...} } }
+      for (const [section, sectionData] of Object.entries(contentOverrides)) {
+        const langData = (sectionData as any)?.[locale];
+        if (langData && typeof langData === "object") {
+          result[section] = {
+            ...(result[section] || {}),
+            ...langData,
+          };
+        }
+      }
+    }
+
+    return result as TranslationDictionary;
+  }, [locale, contentOverrides]);
+
   // Dual translation resolver: supports dictionary path ('home.heroTitleLine1') AND direct dual text ('Trang Chủ', 'Home')
   const t = useCallback(
     (keyOrVnText: string, fallbackEn?: string): string => {
@@ -93,7 +173,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
       // 2. Resolve dot-notation path like "common.brandName"
       const keys = keyOrVnText.split(".");
-      let current: any = translations[locale];
+      let current: any = mergedDict;
       for (const k of keys) {
         if (current && typeof current === "object" && k in current) {
           current = current[k];
@@ -110,7 +190,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       // 3. Fallback
       return keyOrVnText;
     },
-    [locale]
+    [locale, mergedDict]
   );
 
   const value: LanguageContextType = {
@@ -121,7 +201,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLanguage,
     setLang: setLanguage,
     t,
-    dict: translations[locale] || defaultDict,
+    dict: mergedDict,
   };
 
   return (

@@ -109,7 +109,10 @@ export default function AdminPasswordLogin({ needsFirstLogin, onLoginSuccess }: 
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center p-4 selection:bg-[var(--accent)] selection:text-black">
+    <div
+      data-admin-page="true"
+      className="admin-shell min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center p-4 selection:bg-[var(--accent)] selection:text-black"
+    >
       <div className="admin-card w-full max-w-md p-6 sm:p-8 shadow-2xl flex flex-col items-center">
         {/* Brand Icon */}
         <div className="w-14 h-14 rounded-2xl admin-icon-circle flex items-center justify-center mb-4 shadow-sm">

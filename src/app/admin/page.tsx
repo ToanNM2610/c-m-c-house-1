@@ -43,6 +43,8 @@ import {
   Activity,
   FileText,
   Copy,
+  Globe,
+  Database,
 } from "lucide-react";
 import { MENU_ITEMS, MENU_CATEGORIES } from "@/data/menu";
 import { getLocalEventStats } from "@/lib/analytics";
@@ -79,6 +81,9 @@ import IntegrationsTab from "@/components/admin/IntegrationsTab";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
 import SearchConsoleTab from "@/components/admin/SearchConsoleTab";
 import AdminPasswordLogin from "@/components/admin/AdminPasswordLogin";
+import SeoTab from "@/components/admin/SeoTab";
+import BackupTab from "@/components/admin/BackupTab";
+import { useLanguage } from "@/context/LanguageContext";
 
 export type AdminTab =
   | "overview"
@@ -89,6 +94,8 @@ export type AdminTab =
   | "gallery"
   | "settings"
   | "content"
+  | "seo"
+  | "backup"
   | "security";
 
 type AnnouncementItem = SharedAnnouncement;
@@ -124,6 +131,9 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
+
+  // Global bilingual synchronization hook
+  const { locale, setLocale } = useLanguage();
 
   // Overview Real Metrics State
   const [overviewGa4, setOverviewGa4] = useState<{
@@ -212,7 +222,17 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     "home" | "about" | "space" | "menu" | "contact" | "common" | "nav"
   >("home");
   const [contentData, setContentData] = useState<{ vi: Record<string, any>; en: Record<string, any> }>(() => {
-    return ((rawBackupData as any).content_blocks || { vi: {}, en: {} });
+    const raw = ((rawBackupData as any).content_blocks || { vi: {}, en: {} });
+    try {
+      const cached = getSharedData<{ vi: Record<string, any>; en: Record<string, any> } | null>(KEYS.CONTENT_BLOCKS, null);
+      if (cached && (cached.vi || cached.en)) {
+        return {
+          vi: { ...(raw.vi || {}), ...(cached.vi || {}) },
+          en: { ...(raw.en || {}), ...(cached.en || {}) },
+        };
+      }
+    } catch (_) {}
+    return raw;
   });
   const [editingContentKey, setEditingContentKey] = useState<string | null>(null);
   const [editViVal, setEditViVal] = useState<string>("");
@@ -237,8 +257,27 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
         },
       };
       setContentData(updated);
+
+      // Save compact overrides delta for cross-domain cookie & 1ms broadcast
+      const currentOverrides = getSharedData<any>(KEYS.CONTENT_OVERRIDES, {}) || {};
+      const updatedOverrides = {
+        ...currentOverrides,
+        [section]: {
+          ...(currentOverrides[section] || {}),
+          vi: {
+            ...((currentOverrides[section] || {}).vi || {}),
+            [key]: editViVal,
+          },
+          en: {
+            ...((currentOverrides[section] || {}).en || {}),
+            [key]: editEnVal,
+          },
+        },
+      };
+      setSharedData(KEYS.CONTENT_OVERRIDES, updatedOverrides);
+      setSharedData(KEYS.CONTENT_BLOCKS, updated);
       setEditingContentKey(null);
-      showToast(`Đã lưu nội dung [${key}] thành công!`);
+      showToast(`Đã lưu và đồng bộ tức thì [${key}]!`);
 
       await fetch("/api/admin/content", {
         method: "POST",
@@ -1180,7 +1219,10 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
   // RENDER 2: FULL ADMIN DASHBOARD WITH ACTIVATED SIDEBAR
   // ==========================================
   return (
-    <div className="bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] flex font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200">
+    <div
+      data-admin-page="true"
+      className="admin-shell bg-[#F9F8F3] dark:bg-[#121A15] min-h-screen text-[#1B281D] dark:text-[#F5F4EE] flex font-sans selection:bg-[#3E5C46] selection:text-white transition-colors duration-200"
+    >
       {/* Toast Alert Notification with Undo support */}
       {toastMessage && (
         <div className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-[999] bg-[#16261D] text-[#F3EBD8] px-5 py-3.5 rounded-2xl shadow-2xl border border-[rgba(243,235,216,0.2)] flex items-center gap-3 text-xs sm:text-sm font-semibold animate-fade-in max-w-[90vw]">
@@ -1333,6 +1375,32 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
 
             <button
               type="button"
+              onClick={() => setActiveTab("seo")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+                activeTab === "seo"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
+              }`}
+            >
+              <Globe className="w-4 h-4 shrink-0 text-[#9DC183]" />
+              <span>SEO &amp; Mạng Xã Hội</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("backup")}
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+                activeTab === "backup"
+                  ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
+                  : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
+              }`}
+            >
+              <Database className="w-4 h-4 shrink-0 text-[#9DC183]" />
+              <span>Sao Lưu &amp; Hệ Thống</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveTab("security")}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
                 activeTab === "security"
@@ -1405,6 +1473,39 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             </div>
 
             <div className="flex items-center gap-2">
+              {/* VN / EN Switcher rõ ràng hai chiều: Anh ra Anh, Việt ra Việt */}
+              <div
+                className="inline-flex items-center rounded-full p-0.5 border border-stone-300 dark:border-stone-700/60 bg-stone-100 dark:bg-[#1E2B22] text-[11px] font-mono font-bold shadow-2xs"
+                role="group"
+                aria-label="Chọn ngôn ngữ / Select language"
+              >
+                <button
+                  type="button"
+                  onClick={() => setLocale("vi")}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    locale === "vi"
+                      ? "bg-[#3E5C46] text-white shadow-xs font-black"
+                      : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white"
+                  }`}
+                  title="Tiếng Việt"
+                >
+                  VN
+                </button>
+                <span className="text-[10px] opacity-25 px-0.5">·</span>
+                <button
+                  type="button"
+                  onClick={() => setLocale("en")}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    locale === "en"
+                      ? "bg-[#3E5C46] text-white shadow-xs font-black"
+                      : "text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white"
+                  }`}
+                  title="English"
+                >
+                  EN
+                </button>
+              </div>
+
               {/* Theme Toggle Button */}
               <ThemeToggle />
 
@@ -1436,8 +1537,8 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                     <Sparkles className="w-4 h-4 shrink-0" />
                     <span>Bảng Điều Khiển Vận Hành</span>
                   </div>
-                  <h1 className="admin-h1 font-serif text-[32px] leading-[1.2] font-bold text-[var(--text)]">
-                    Xin chào Quản lý Cẩm Cù House
+                  <h1 className="admin-h1 font-serif text-[26px] leading-[1.2] font-bold text-[var(--text)]">
+                    Xin chào <span className="underline decoration-[#9DC183]/60">Quản lý Cẩm Cù House</span>
                   </h1>
                   <p className="admin-subtle flex items-center gap-2 flex-wrap">
                     <span>Hôm nay:</span>
@@ -1926,7 +2027,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               {/* Header */}
               <div className="admin-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h1 className="admin-h1 font-serif text-[var(--text)]">
+                  <h1 className="admin-h1 font-serif text-[26px] font-bold text-[var(--text)]">
                     Quản Lý Thực Đơn Cẩm Cù House
                   </h1>
                   <p className="admin-subtle mt-1 text-[13px]">
@@ -2122,7 +2223,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <div className="flex flex-col gap-6">
               <div className="p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
+                  <h1 className="admin-h1 font-serif text-[26px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                     Thư Viện Ảnh Cẩm Cù House
                   </h1>
                   <p className="text-xs text-stone-600 mt-1">
@@ -2537,7 +2638,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                 <span className="font-mono text-[12px] uppercase tracking-[0.06em] text-[var(--accent)] font-semibold">
                   [HỆ THỐNG CÀI ĐẶT & VẬN HÀNH QUÁN]
                 </span>
-                <h1 className="font-serif text-[32px] font-bold text-[#1B281D] dark:text-[#F4EEE2] leading-tight">
+                <h1 className="admin-h1 font-serif text-[26px] font-bold text-[#1B281D] dark:text-[#F4EEE2] leading-tight">
                   Cài Đặt Cửa Hàng & Lịch Hoạt Động
                 </h1>
                 <p className="text-xs text-stone-500">
@@ -2552,7 +2653,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               >
                 <div className="pb-3 border-b border-stone-200 flex items-center justify-between">
                   <div>
-                    <h2 className="font-serif text-xl font-bold text-[#3E5C46]">
+                    <h2 className="admin-h2 font-serif text-[20px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                       Giờ Mở Cửa & Trạng Thái Hoạt Động
                     </h2>
                     <p className="text-xs text-stone-500 mt-0.5">
@@ -2631,7 +2732,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                   <div className="md:col-span-2 p-5 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-4">
                     <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700/60 pb-3">
                       <div>
-                        <h3 className="font-serif text-lg font-bold text-[#1B281D] dark:text-[#F4EEE2]">
+                        <h3 className="admin-card-title font-serif text-[16px] font-bold text-[#1B281D] dark:text-[#F4EEE2]">
                           Lịch Hoạt Động 7 Ngày Trong Tuần (Mở, Đóng, Nghỉ)
                         </h3>
                         <p className="text-xs text-stone-500 mt-0.5">
@@ -2701,7 +2802,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                   <div className="md:col-span-2 p-5 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-4">
                     <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-700/60 pb-3">
                       <div>
-                        <h3 className="font-serif text-lg font-bold text-[#1B281D] dark:text-[#F4EEE2]">
+                        <h3 className="admin-card-title font-serif text-[16px] font-bold text-[#1B281D] dark:text-[#F4EEE2]">
                           Lịch Nghỉ Lễ & Ngày Đóng Cửa Đột Xuất (Chọn Bằng Lịch)
                         </h3>
                         <p className="text-xs text-stone-500 mt-0.5">
@@ -2777,7 +2878,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                   <div className="md:col-span-2 p-5 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60 flex flex-col gap-4">
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 dark:border-stone-700/60 pb-3">
                       <div>
-                        <h3 className="font-serif text-lg font-bold text-[#1B281D] dark:text-[#F4EEE2]">
+                        <h3 className="admin-card-title font-serif text-[16px] font-bold text-[#1B281D] dark:text-[#F4EEE2]">
                           Thông tin quán (khóa để tránh sửa nhầm)
                         </h3>
                         <p className="text-xs text-stone-500 mt-0.5">
@@ -2862,7 +2963,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                         ĐỒNG BỘ DỮ LIỆU TỰ ĐỘNG
                       </span>
                     </div>
-                    <h3 className="font-serif text-[22px] font-bold text-[#F4EEE2] leading-snug">
+                    <h3 className="admin-card-title font-serif text-[18px] font-bold text-[#F4EEE2] leading-snug">
                       Một Nguồn Dữ Liệu Duy Nhất Toàn Hệ Thống
                     </h3>
                     <p className="text-[15px] text-[rgba(244,238,226,0.88)] leading-relaxed max-w-3xl">
@@ -2878,7 +2979,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                 className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col gap-6"
               >
                 <div className="pb-3 border-b border-stone-200 dark:border-stone-700/60">
-                  <h2 className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                  <h2 className="admin-h2 font-serif text-[20px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                     Đổi Mật Khẩu Quản Trị Viên
                   </h2>
                   <p className="text-xs text-stone-500 mt-0.5">
@@ -2960,7 +3061,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm">
                 <div>
-                  <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
+                  <h1 className="admin-h1 font-serif text-[26px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                     Nội Dung 5 Trang Công Khai
                   </h1>
                   <p className="text-xs text-stone-600 dark:text-stone-300 mt-1">
@@ -3117,7 +3218,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               {/* Header */}
               <div className="p-6 sm:p-8 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h1 className="font-serif text-2xl font-bold text-[#3E5C46]">
+                  <h1 className="admin-h1 font-serif text-[26px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                     Tài Khoản &amp; Bảo Mật Quán
                   </h1>
                   <p className="text-xs text-stone-600 dark:text-stone-300 mt-1">
@@ -3134,7 +3235,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                       <Shield className="w-6 h-6" />
                     </div>
                     <div>
-                      <h2 className="font-serif text-lg sm:text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                      <h2 className="admin-h2 font-serif text-[20px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                         Xác Thực 2 Lớp (TOTP 2FA)
                       </h2>
                       <p className="text-xs text-stone-500 mt-0.5">
@@ -3193,7 +3294,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               >
                 <div className="pb-3 border-b border-stone-200 dark:border-stone-700/60 flex items-center justify-between">
                   <div>
-                    <h2 className="font-serif text-xl font-bold text-[#3E5C46] dark:text-[#F5F4EE]">
+                    <h2 className="admin-h2 font-serif text-[20px] font-bold text-[#3E5C46] dark:text-[#9DC183]">
                       Đổi Mật Khẩu Quản Trị Viên
                     </h2>
                     <p className="text-xs text-stone-500 mt-0.5">
@@ -3266,6 +3367,21 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                 </button>
               </form>
             </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB 6: SEO, SERP PREVIEW & SOCIAL OPENGRAPH */}
+          {/* ========================================================= */}
+          {activeTab === "seo" && <SeoTab onShowToast={showToast} />}
+
+          {/* ========================================================= */}
+          {/* TAB 7: BACKUP, RESTORE & SYSTEM DIAGNOSTICS */}
+          {/* ========================================================= */}
+          {activeTab === "backup" && (
+            <BackupTab
+              onShowToast={showToast}
+              onRefreshData={() => window.location.reload()}
+            />
           )}
         </main>
       </div>
