@@ -335,27 +335,47 @@ export default function HomePage() {
         </section>
 
         {/* =========================================================================
-            2. DẢI CHỮ CHẠY MARQUEE HAI CHIỀU NGƯỢC NHAU (SECTION 8.1.2)
+            2. DẢI CHỮ CHẠY MARQUEE TRÔI TỪ PHẢI SANG TRÁI (SECTION 8.1.2)
            ========================================================================= */}
         <section className="w-full bg-[var(--ember)] text-[var(--ember-ink)] py-4 overflow-hidden select-none font-mono text-[13px] sm:text-[14px] font-black uppercase tracking-widest border-y border-[var(--line)]">
-          {/* Hàng 1: Trôi sang trái */}
-          <div className="flex gap-6 w-max animate-marquee">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <span key={i} className="flex items-center gap-6">
-                <span>ROBUSTA RANG CỦI</span>
-                <span>·</span>
-                <span>SUỐI ĐÁ TỰ NHIÊN</span>
-                <span>·</span>
-                <span>ĐỘ CAO 800M+</span>
-                <span>·</span>
-                <span>100% ĐỀ XUẤT HÀI LÒNG</span>
-                <span>·</span>
-                <span>GIÁ BÌNH DÂN 20K–45K</span>
-                <span>·</span>
-                <span>NGUYÊN LIỆU XANH SẠCH</span>
-                <span>·</span>
-              </span>
-            ))}
+          {/* Hàng: Trôi từ phải sang trái */}
+          <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+            <div className="flex items-center gap-6 shrink-0 pr-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <span key={i} className="flex items-center gap-6 shrink-0">
+                  <span>ROBUSTA RANG CỦI</span>
+                  <span>·</span>
+                  <span>SUỐI ĐÁ TỰ NHIÊN</span>
+                  <span>·</span>
+                  <span>ĐỘ CAO 800M+</span>
+                  <span>·</span>
+                  <span>100% ĐỀ XUẤT HÀI LÒNG</span>
+                  <span>·</span>
+                  <span>GIÁ BÌNH DÂN 20K–45K</span>
+                  <span>·</span>
+                  <span>NGUYÊN LIỆU XANH SẠCH</span>
+                  <span>·</span>
+                </span>
+              ))}
+            </div>
+            <div className="flex items-center gap-6 shrink-0 pr-6" aria-hidden="true">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <span key={i} className="flex items-center gap-6 shrink-0">
+                  <span>ROBUSTA RANG CỦI</span>
+                  <span>·</span>
+                  <span>SUỐI ĐÁ TỰ NHIÊN</span>
+                  <span>·</span>
+                  <span>ĐỘ CAO 800M+</span>
+                  <span>·</span>
+                  <span>100% ĐỀ XUẤT HÀI LÒNG</span>
+                  <span>·</span>
+                  <span>GIÁ BÌNH DÂN 20K–45K</span>
+                  <span>·</span>
+                  <span>NGUYÊN LIỆU XANH SẠCH</span>
+                  <span>·</span>
+                </span>
+              ))}
+            </div>
           </div>
         </section>
 

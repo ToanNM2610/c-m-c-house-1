@@ -252,17 +252,31 @@ export default function GoogleReviewsSection() {
       {/* 2 Hàng thẻ kính mờ chạy ngược chiều, dừng khi rê chuột (Section 8.1.7) */}
       <div className="flex flex-col gap-6 overflow-hidden group">
         {/* Hàng 1: Trôi sang trái */}
-        <div className="flex gap-6 w-max animate-marquee group-hover:[animation-play-state:paused]">
-          {[...row1, ...row1, ...row1].map((review, idx) => (
-            <ReviewCard key={`r1-${review.id}-${idx}`} review={review} isEn={isEn} />
-          ))}
+        <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused]">
+          <div className="flex gap-6 shrink-0 pr-6">
+            {[...row1, ...row1].map((review, idx) => (
+              <ReviewCard key={`r1a-${review.id}-${idx}`} review={review} isEn={isEn} />
+            ))}
+          </div>
+          <div className="flex gap-6 shrink-0 pr-6" aria-hidden="true">
+            {[...row1, ...row1].map((review, idx) => (
+              <ReviewCard key={`r1b-${review.id}-${idx}`} review={review} isEn={isEn} />
+            ))}
+          </div>
         </div>
 
         {/* Hàng 2: Trôi sang phải */}
-        <div className="flex gap-6 w-max animate-marquee-reverse group-hover:[animation-play-state:paused]">
-          {[...row2, ...row2, ...row2].map((review, idx) => (
-            <ReviewCard key={`r2-${review.id}-${idx}`} review={review} isEn={isEn} />
-          ))}
+        <div className="flex w-max animate-marquee-reverse group-hover:[animation-play-state:paused]">
+          <div className="flex gap-6 shrink-0 pr-6">
+            {[...row2, ...row2].map((review, idx) => (
+              <ReviewCard key={`r2a-${review.id}-${idx}`} review={review} isEn={isEn} />
+            ))}
+          </div>
+          <div className="flex gap-6 shrink-0 pr-6" aria-hidden="true">
+            {[...row2, ...row2].map((review, idx) => (
+              <ReviewCard key={`r2b-${review.id}-${idx}`} review={review} isEn={isEn} />
+            ))}
+          </div>
         </div>
       </div>
 
