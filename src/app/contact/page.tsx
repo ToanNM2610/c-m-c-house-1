@@ -10,12 +10,10 @@ import {
   PhoneCall,
   Mail,
   Navigation,
-  Compass,
   Copy,
   Check,
   ExternalLink,
-  MessageCircle,
-  Share2
+  MessageCircle
 } from "lucide-react";
 import { getVietnamTime } from "@/lib/openingHours";
 import PageDarkHero from "@/components/layout/PageDarkHero";
@@ -91,10 +89,10 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ember)] block font-bold">
-                        BẢN ĐỒ GOOGLE MAPS
+                        {isEn ? "GOOGLE MAPS NAVIGATION" : "BẢN ĐỒ GOOGLE MAPS"}
                       </span>
                       <h2 className="contact-card-title uppercase text-[var(--ink)]">
-                        ĐỊNH VỊ TRỰC TUYẾN
+                        {isEn ? "ONLINE LOCATION" : "ĐỊNH VỊ TRỰC TUYẾN"}
                       </h2>
                     </div>
                   </div>
@@ -106,7 +104,7 @@ export default function ContactPage() {
                 {/* Bản đồ nhúng góc vát chamfer 14px */}
                 <div className="w-full aspect-[4/3] sm:aspect-[16/10] overflow-hidden clip-chamfer-14 border border-[var(--line)] relative shadow-inner bg-[var(--bg-2)]">
                   <iframe
-                    title="Bản đồ Google Maps Cẩm Cù House"
+                    title={isEn ? "Cẩm Cù House Google Maps" : "Bản đồ Google Maps Cẩm Cù House"}
                     src="https://www.google.com/maps?q=11.9912,107.6888&hl=vi&z=15&output=embed"
                     width="100%"
                     height="100%"
@@ -127,7 +125,7 @@ export default function ContactPage() {
                   className="w-full py-4 bg-[var(--ember)] text-[var(--ember-ink)] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 flex items-center justify-center gap-2 transition-opacity"
                 >
                   <Navigation className="w-4 h-4" />
-                  <span>MỞ GOOGLE MAPS DẪN ĐƯỜNG</span>
+                  <span>{isEn ? "OPEN GOOGLE MAPS DIRECTIONS" : "MỞ GOOGLE MAPS DẪN ĐƯỜNG"}</span>
                   <ExternalLink className="w-4 h-4 opacity-75" />
                 </a>
               </div>
@@ -138,7 +136,7 @@ export default function ContactPage() {
               {/* Card Hotline số 64px (Section 8.5.2) */}
               <div className="p-6 sm:p-8 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 flex flex-col gap-4 shadow-xl">
                 <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ember)] font-bold">
-                  [HOTLINE ĐÓN TIẾP &amp; HỖ TRỢ ĐƯỜNG ĐI]
+                  {isEn ? "[WELCOME & ROAD ASSISTANCE HOTLINE]" : "[HOTLINE ĐÓN TIẾP & HỖ TRỢ ĐƯỜNG ĐI]"}
                 </span>
 
                 <div className="flex flex-col gap-2">
@@ -150,7 +148,7 @@ export default function ContactPage() {
                     038 285 1688
                   </a>
                   <span className="font-mono text-[12px] text-[var(--ink-muted)]">
-                    HOTLINE 1 (HỖ TRỢ ZALO 24/7)
+                    {isEn ? "PRIMARY HOTLINE (24/7 ZALO SUPPORT)" : "HOTLINE 1 (HỖ TRỢ ZALO 24/7)"}
                   </span>
                 </div>
 
@@ -160,14 +158,14 @@ export default function ContactPage() {
                     className="flex-1 py-3 px-3 bg-[var(--ember)] text-[var(--ember-ink)] font-mono text-[12px] font-bold uppercase text-center clip-chamfer-14 hover:opacity-90 flex items-center justify-center gap-1.5"
                   >
                     <PhoneCall className="w-3.5 h-3.5" />
-                    <span>GỌI NGAY</span>
+                    <span>{isEn ? "CALL NOW" : "GỌI NGAY"}</span>
                   </a>
 
                   <button
                     type="button"
                     onClick={() => handleCopy("038 285 1688")}
                     className="p-3 bg-[var(--bg-2)] border border-[var(--line)] hover:border-[var(--ember)] text-[var(--ink)] clip-chamfer-14 font-mono text-xs flex items-center justify-center gap-1.5"
-                    title="Sao chép số điện thoại"
+                    title={isEn ? "Copy phone number" : "Sao chép số điện thoại"}
                   >
                     {copiedNumber === "038 285 1688" ? (
                       <Check className="w-4 h-4 text-emerald-400" />
@@ -181,7 +179,7 @@ export default function ContactPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-[var(--bg-2)] border border-[var(--line)] hover:border-[var(--ember)] text-[var(--ink)] clip-chamfer-14 font-mono text-xs flex items-center justify-center gap-1.5"
-                    title="Nhắn tin qua Zalo"
+                    title={isEn ? "Message via Zalo" : "Nhắn tin qua Zalo"}
                   >
                     <MessageCircle className="w-4 h-4 text-[var(--ember)]" />
                   </a>
@@ -190,7 +188,9 @@ export default function ContactPage() {
                 {/* Hotline 2 */}
                 <div className="pt-4 border-t border-[var(--line)] flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="font-mono text-[11px] text-[var(--ink-muted)] uppercase">Hotline 2 dự phòng:</span>
+                    <span className="font-mono text-[11px] text-[var(--ink-muted)] uppercase">
+                      {isEn ? "Secondary hotline:" : "Hotline 2 dự phòng:"}
+                    </span>
                     <a href="tel:0774659000" className="font-mono font-bold text-[17px] text-[var(--ink)] hover:text-[var(--ember)]">
                       077 465 9000
                     </a>
@@ -214,10 +214,10 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ember)] block font-bold">
-                      LỊCH PHỤC VỤ TUẦN
+                      {isEn ? "WEEKLY SERVICE SCHEDULE" : "LỊCH PHỤC VỤ TUẦN"}
                     </span>
                     <h2 className="font-display font-extrabold text-[20px] uppercase text-[var(--ink)]">
-                      GIỜ MỞ CỬA 7 NGÀY
+                      {isEn ? "7-DAY OPENING HOURS" : "GIỜ MỞ CỬA 7 NGÀY"}
                     </h2>
                   </div>
                 </div>
@@ -241,7 +241,7 @@ export default function ContactPage() {
                           </span>
                           {isToday && (
                             <span className="font-mono text-[10px] px-2 py-0.5 bg-[var(--ember)] text-[var(--ember-ink)] font-bold uppercase rounded-xs">
-                              HÔM NAY
+                              {isEn ? "TODAY" : "HÔM NAY"}
                             </span>
                           )}
                         </div>
@@ -258,10 +258,10 @@ export default function ContactPage() {
               <div className="p-6 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 flex items-center justify-between">
                 <div>
                   <span className="font-mono text-[11px] text-[var(--ember)] uppercase font-bold block">
-                    KÊNH TRUYỀN THÔNG
+                    {isEn ? "SOCIAL CHANNELS" : "KÊNH TRUYỀN THÔNG"}
                   </span>
                   <span className="font-display font-bold text-[18px] uppercase text-[var(--ink)]">
-                    KẾT NỐI VỚI QUÁN
+                    {isEn ? "CONNECT WITH US" : "KẾT NỐI VỚI QUÁN"}
                   </span>
                 </div>
 
@@ -303,10 +303,10 @@ export default function ContactPage() {
           <div className="p-8 sm:p-14 bg-[var(--card)] border border-[var(--line)] clip-chamfer-14">
             <div className="max-w-2xl mb-12">
               <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold block mb-2">
-                [HƯỚNG DẪN CUNG ĐƯỜNG DI CHUYỂN]
+                {isEn ? "[TRAVEL ROUTE DIRECTIONS]" : "[HƯỚNG DẪN CUNG ĐƯỜNG DI CHUYỂN]"}
               </span>
               <h2 className="font-display font-black text-[clamp(28px,4vw,44px)] uppercase tracking-tight text-[var(--ink)] leading-tight">
-                CÁCH ĐẾN QUÁN TRONG 3 BƯỚC THUẬN TIỆN
+                {isEn ? "HOW TO REACH US IN 3 EASY STEPS" : "CÁCH ĐẾN QUÁN TRONG 3 BƯỚC THUẬN TIỆN"}
               </h2>
             </div>
 
@@ -320,13 +320,15 @@ export default function ContactPage() {
                   01
                 </span>
                 <span className="font-mono text-[12px] text-[var(--ember)] uppercase font-bold">
-                  TỪ QUỐC LỘ 14
+                  {isEn ? "FROM HIGHWAY 14" : "TỪ QUỐC LỘ 14"}
                 </span>
                 <h3 className="font-bold text-[18px] text-[var(--ink)]">
-                  Rẽ vào Hẻm 437 Hùng Vương
+                  {isEn ? "Turn into Alley 437 Hung Vuong" : "Rẽ vào Hẻm 437 Hùng Vương"}
                 </h3>
                 <p className="text-[14px] text-[var(--ink-muted)] leading-relaxed">
-                  Trục đường chính thuộc Phường Nghĩa Trung, TP. Gia Nghĩa. Tuyến đường thông thoáng có biển dẫn.
+                  {isEn
+                    ? "Main route in Nghia Trung Ward, Gia Nghia City. Clear road with visible direction signs."
+                    : "Trục đường chính thuộc Phường Nghĩa Trung, TP. Gia Nghĩa. Tuyến đường thông thoáng có biển dẫn."}
                 </p>
               </div>
 
@@ -336,13 +338,15 @@ export default function ContactPage() {
                   02
                 </span>
                 <span className="font-mono text-[12px] text-[var(--ember)] uppercase font-bold">
-                  300M ĐƯỜNG BÊ TÔNG
+                  {isEn ? "300M CONCRETE PATH" : "300M ĐƯỜNG BÊ TÔNG"}
                 </span>
                 <h3 className="font-bold text-[18px] text-[var(--ink)]">
-                  Đường Bằng Phẳng Rợp Bóng Mát
+                  {isEn ? "Smooth Paved Road Under Lush Canopy" : "Đường Bằng Phẳng Rợp Bóng Mát"}
                 </h3>
                 <p className="text-[14px] text-[var(--ink-muted)] leading-relaxed">
-                  Đoạn đường bê tông phẳng phiu, rợp bóng cây xanh mát dẫn thẳng đến tận cổng Cẩm Cù House.
+                  {isEn
+                    ? "Paved, smooth road surrounded by cooling green trees directly leading to Cẩm Cù House gate."
+                    : "Đoạn đường bê tông phẳng phiu, rợp bóng cây xanh mát dẫn thẳng đến tận cổng Cẩm Cù House."}
                 </p>
               </div>
 
@@ -352,13 +356,15 @@ export default function ContactPage() {
                   03
                 </span>
                 <span className="font-mono text-[12px] text-[var(--ember)] uppercase font-bold">
-                  BÃI ĐỖ RỘNG RÃI
+                  {isEn ? "SPACIOUS PARKING" : "BÃI ĐỖ RỘNG RÃI"}
                 </span>
                 <h3 className="font-bold text-[18px] text-[var(--ink)]">
-                  Xe 4–16 Chỗ Vào Tận Sân
+                  {isEn ? "4–16 Seater Vehicles Direct Entry" : "Xe 4–16 Chỗ Vào Tận Sân"}
                 </h3>
                 <p className="text-[14px] text-[var(--ink-muted)] leading-relaxed">
-                  Sân quay đầu xe ô tô thoải mái, bãi đỗ xe miễn phí có camera an ninh quan sát 24/7.
+                  {isEn
+                    ? "Spacious turning yard for cars and SUVs, free parking with 24/7 security cameras."
+                    : "Sân quay đầu xe ô tô thoải mái, bãi đỗ xe miễn phí có camera an ninh quan sát 24/7."}
                 </p>
               </div>
             </div>
@@ -371,11 +377,11 @@ export default function ContactPage() {
         <section className="w-full bg-[#0A0E0C] text-[#F2EDE4] py-24 border-t border-[var(--line)] text-center relative overflow-hidden">
           <div className="w-full max-w-[1000px] mx-auto px-5 sm:px-10 flex flex-col items-center gap-6 relative z-10">
             <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember-on-dark,#FF6A2B)] font-bold">
-              [LỜI CHÀO TỪ CAO NGUYÊN]
+              {isEn ? "[GREETINGS FROM THE HIGHLANDS]" : "[LỜI CHÀO TỪ CAO NGUYÊN]"}
             </span>
 
             <h2 className="font-display font-black text-[clamp(30px,5.5vw,68px)] uppercase tracking-tight text-white leading-[1.18] pt-1">
-              HẸN GẶP BẠN BÊN BỜ SUỐI
+              {isEn ? "SEE YOU BY THE STONY BROOK" : "HẸN GẶP BẠN BÊN BỜ SUỐI"}
             </h2>
 
             <p className="text-[16px] sm:text-[18px] max-w-xl" style={{ color: "var(--ink-muted-on-dark)" }}>
@@ -389,7 +395,7 @@ export default function ContactPage() {
                 className="px-8 py-4 bg-[var(--ember-on-dark,#FF6A2B)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity flex items-center gap-2"
               >
                 <PhoneCall className="w-4 h-4" />
-                <span>GỌI HOTLINE 038 285 1688</span>
+                <span>{isEn ? "CALL HOTLINE 038 285 1688" : "GỌI HOTLINE 038 285 1688"}</span>
               </a>
 
               <a
@@ -400,7 +406,7 @@ export default function ContactPage() {
                 className="px-8 py-4 bg-transparent border border-white text-white font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[#0A0E0C] transition-all flex items-center gap-2"
               >
                 <Navigation className="w-4 h-4" />
-                <span>CHỈ ĐƯỜNG TỚI QUÁN</span>
+                <span>{isEn ? "DIRECTIONS TO CAFE" : "CHỈ ĐƯỜNG TỚI QUÁN"}</span>
               </a>
             </div>
           </div>

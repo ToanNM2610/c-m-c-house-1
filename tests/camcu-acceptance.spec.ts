@@ -5,6 +5,13 @@ import AxeBuilder from "@axe-core/playwright";
 const ROUTES = ["/", "/cau-chuyen", "/khong-gian", "/thuc-don", "/lien-he"];
 
 test.describe("Nghiệm thu Bước 7 & Mục 13.4 - Cẩm Cù House", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      sessionStorage.setItem("cc_intro", "1");
+      sessionStorage.setItem("camcu_intro_seen", "1");
+    });
+  });
+
   test("1. Console sạch, không có lỗi 404 và khớp 100% dữ liệu Bảng 13.1", async ({
     page,
   }) => {
@@ -77,6 +84,7 @@ test.describe("Nghiệm thu Bước 7 & Mục 13.4 - Cẩm Cù House", () => {
   }) => {
     for (const route of ROUTES) {
       await page.goto(`http://localhost:3000${route}`);
+      await page.waitForTimeout(1200);
 
       // Chế độ Tối (mặc định)
       const darkResults = await new AxeBuilder({ page })
@@ -88,6 +96,7 @@ test.describe("Nghiệm thu Bước 7 & Mục 13.4 - Cẩm Cù House", () => {
       await page.evaluate(() =>
         document.documentElement.setAttribute("data-theme", "light")
       );
+      await page.waitForTimeout(300);
       const lightResults = await new AxeBuilder({ page })
         .withTags(["wcag2a", "wcag2aa"])
         .analyze();

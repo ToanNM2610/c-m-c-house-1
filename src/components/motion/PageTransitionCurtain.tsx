@@ -47,10 +47,13 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
   }
 
   return (
-    <div
+    <motion.div
       key={`curtain-wrapper-${pathname}`}
       aria-hidden="true"
-      className="fixed inset-0 z-[99998] pointer-events-none overflow-hidden select-none bg-[#0A0E0C]"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[99998] pointer-events-none overflow-hidden select-none"
     >
       {/* 5 Cột dọc (pine / ember / bg) quét lên theo thứ tự (stagger .06s) - Section 9 */}
       <div className="absolute inset-0 flex w-full h-full">
@@ -75,9 +78,8 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
 
       {/* Trung tâm: Số trang + Tên trang Display (Section 9) */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ scale: 0.95, y: 20 }}
         animate={{
-          opacity: [0, 1, 1, 0],
           scale: [0.95, 1, 1, 0.98],
           y: [20, 0, 0, -20],
         }}
@@ -88,7 +90,7 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
         }}
         className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-20"
       >
-        <span className="font-mono text-[13px] tracking-widest text-[var(--ember)] font-bold mb-2">
+        <span className="font-mono text-[13px] tracking-widest text-[#FF7D47] font-bold mb-2">
           {num} · 11.99° N · 107.69° E
         </span>
 
@@ -96,10 +98,10 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
           {title}
         </h2>
 
-        <p className="font-serif italic text-[16px] text-[#F2EDE4]/70 mt-2">
+        <p className="font-serif italic text-[16px] text-[#F2EDE4] mt-2">
           Chốn Dừng Chân Mộc Mạc Bên Bờ Suối Đá
         </p>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

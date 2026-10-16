@@ -284,7 +284,7 @@ export default function SpacePage() {
                 }`}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
-                <span>[LƯỚI]</span>
+                <span>{isEn ? "[GRID]" : "[LƯỚI]"}</span>
               </button>
 
               <button
@@ -297,7 +297,7 @@ export default function SpacePage() {
                 }`}
               >
                 <Film className="w-3.5 h-3.5" />
-                <span>[PHIM]</span>
+                <span>{isEn ? "[FILM]" : "[PHIM]"}</span>
               </button>
             </div>
 
@@ -400,9 +400,9 @@ export default function SpacePage() {
                       type="button"
                       onClick={() => setViewMode("grid")}
                       className="p-3 bg-[var(--ember)] text-[var(--ember-ink)] font-mono text-xs font-bold uppercase clip-chamfer-14"
-                      aria-label="Quay lại dạng lưới (Esc)"
+                      aria-label={isEn ? "Return to grid view (Esc)" : "Quay lại dạng lưới (Esc)"}
                     >
-                      THOÁT (ESC)
+                      {isEn ? "EXIT (ESC)" : "THOÁT (ESC)"}
                     </button>
                   </div>
                 </div>
@@ -511,7 +511,7 @@ export default function SpacePage() {
                 className="w-[160px] h-[36px]"
               />
               <span className="font-mono text-[11px] text-[var(--ember)] font-bold uppercase tracking-wider hidden sm:inline">
-                {isPlayingAudio ? "24 BARS LIVE" : "MẶC ĐỊNH TẮT"}
+                {isPlayingAudio ? "24 BARS LIVE" : (isEn ? "DEFAULT OFF" : "MẶC ĐỊNH TẮT")}
               </span>
             </div>
           </div>
@@ -523,35 +523,55 @@ export default function SpacePage() {
         <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 pb-28">
           <div className="p-8 sm:p-14 bg-[var(--pine)] text-[#F2EDE4] border border-[var(--line-on-dark)] clip-chamfer-14 shadow-2xl">
             <span className="font-mono text-[12px] uppercase tracking-widest font-bold mb-3 block" style={{ color: "var(--mist-on-dark)" }}>
-              [CAM KẾT BẢO TỒN NGUỒN NƯỚC SUỐI ĐẮK NÔNG]
+              {isEn ? "[DAK NONG STREAM WATER PRESERVATION PLEDGE]" : "[CAM KẾT BẢO TỒN NGUỒN NƯỚC SUỐI ĐẮK NÔNG]"}
             </span>
 
             <h2 className="font-display font-black text-[clamp(28px,4.5vw,52px)] uppercase tracking-tight leading-tight mb-4 text-balance" style={{ color: "#F2EDE4" }}>
-              Gìn Giữ Mạch Nước Trong Lành &amp; Không Nhựa Một Lần
+              {isEn ? "Preserving Pure Watercourses & Zero Single-Use Plastics" : "Gìn Giữ Mạch Nước Trong Lành & Không Nhựa Một Lần"}
             </h2>
 
             <p className="text-[16px] leading-relaxed max-w-3xl mb-8" style={{ color: "rgba(242, 237, 228, 0.85)" }}>
-              Chúng tôi trân trọng từng viên sỏi và mạch nước ngầm cao nguyên. Cẩm Cù House cam kết 100% không xả thải hóa chất, sử dụng ống hút thiên nhiên và cùng du khách gìn giữ bờ suối sạch sẽ, an lành.
+              {isEn
+                ? "We cherish every pebble and highland groundwater stream. Cẩm Cù House commits to zero chemical wastewater, natural reed straws, and keeping the rocky brook clean and serene."
+                : "Chúng tôi trân trọng từng viên sỏi và mạch nước ngầm cao nguyên. Cẩm Cù House cam kết 100% không xả thải hóa chất, sử dụng ống hút thiên nhiên và cùng du khách gìn giữ bờ suối sạch sẽ, an lành."}
             </p>
 
             {/* 3 Cam kết dạng cột kẻ lưới */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-[var(--line-on-dark)] mb-10">
               <div className="flex flex-col gap-2">
-                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>[CAM KẾT 01]</span>
-                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>Không Nhựa Một Lần</h4>
-                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>100% ống hút sậy &amp; ly sứ mộc</p>
+                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>
+                  {isEn ? "[PLEDGE 01]" : "[CAM KẾT 01]"}
+                </span>
+                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>
+                  {isEn ? "Zero Single-Use Plastic" : "Không Nhựa Một Lần"}
+                </h4>
+                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>
+                  {isEn ? "100% natural reed straws & rustic ceramic cups" : "100% ống hút sậy & ly sứ mộc"}
+                </p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>[CAM KẾT 02]</span>
-                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>Bảo Vệ Mạch Nước</h4>
-                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>Không ngăn đập phá vỡ dòng chảy tự nhiên</p>
+                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>
+                  {isEn ? "[PLEDGE 02]" : "[CAM KẾT 02]"}
+                </span>
+                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>
+                  {isEn ? "Protect Natural Flow" : "Bảo Vệ Mạch Nước"}
+                </h4>
+                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>
+                  {isEn ? "No dams disturbing natural water current" : "Không ngăn đập phá vỡ dòng chảy tự nhiên"}
+                </p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>[CAM KẾT 03]</span>
-                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>Đá Bazan Nguyên Vẹn</h4>
-                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>Giữ trọn vẹn thảm rêu xanh cổ kính</p>
+                <span className="font-mono text-[11px] font-bold" style={{ color: "var(--mist-on-dark)" }}>
+                  {isEn ? "[PLEDGE 03]" : "[CAM KẾT 03]"}
+                </span>
+                <h4 className="font-bold text-[18px]" style={{ color: "#F2EDE4" }}>
+                  {isEn ? "Intact Basalt Boulders" : "Đá Bazan Nguyên Vẹn"}
+                </h4>
+                <p className="font-mono text-xs" style={{ color: "rgba(242, 237, 228, 0.82)" }}>
+                  {isEn ? "Preserving ancient lush moss carpets" : "Giữ trọn vẹn thảm rêu xanh cổ kính"}
+                </p>
               </div>
             </div>
 
@@ -561,7 +581,7 @@ export default function SpacePage() {
                 href="tel:0382851688"
                 className="px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity"
               >
-                GỌI HOTLINE: 038 285 1688
+                {isEn ? "CALL HOTLINE: 038 285 1688" : "GỌI HOTLINE: 038 285 1688"}
               </a>
 
               <a
@@ -570,7 +590,7 @@ export default function SpacePage() {
                 rel="noopener noreferrer"
                 className="px-8 py-4 bg-transparent border border-[var(--line-on-dark)] text-[var(--ink-on-dark)] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
               >
-                CHỈ ĐƯỜNG TỚI BỜ SUỐI
+                {isEn ? "DIRECTIONS TO THE STREAM" : "CHỈ ĐƯỜNG TỚI BỜ SUỐI"}
               </a>
             </div>
           </div>

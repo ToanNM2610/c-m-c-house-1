@@ -3,12 +3,9 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { 
-  MapPin, 
-  Clock, 
   PhoneCall, 
   Mail, 
-  ArrowUp,
-  Share2
+  ArrowUp
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import StarHoya from "@/components/ui/StarHoya";
@@ -39,10 +36,18 @@ export default function Footer() {
           <div className="flex flex-col gap-3.5 sm:gap-4 max-w-2xl">
             <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember-on-dark,#FF6A2B)] flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--ember-on-dark,#FF6A2B)]" />
-              11.99° N · 107.69° E · ĐỘ CAO 800M+
+              11.99° N · 107.69° E · {isEn ? "ALTITUDE 800M+" : "ĐỘ CAO 800M+"}
             </span>
             <h2 className="font-display font-extrabold text-[24px] sm:text-[34px] md:text-[40px] uppercase tracking-tight text-[var(--ink-on-dark,#F2EDE4)] leading-[1.3] pt-1">
-              CHỐN DỪNG CHÂN <span className="font-serif italic font-normal text-[var(--ember-on-dark,#FF6A2B)] lowercase">mộc mạc</span> BÊN BỜ SUỐI ĐÁ
+              {isEn ? (
+                <>
+                  RUSTIC SANCTUARY <span className="font-serif italic font-normal text-[var(--ember-on-dark,#FF6A2B)] lowercase">by the</span> NATURAL STONY BROOK
+                </>
+              ) : (
+                <>
+                  CHỐN DỪNG CHÂN <span className="font-serif italic font-normal text-[var(--ember-on-dark,#FF6A2B)] lowercase">mộc mạc</span> BÊN BỜ SUỐI ĐÁ
+                </>
+              )}
             </h2>
           </div>
 
@@ -58,7 +63,7 @@ export default function Footer() {
           {/* Cột 1: Thương hiệu + Tọa độ */}
           <div className="flex flex-col gap-4 relative">
             <span className="font-mono text-[11px] text-[var(--ember-on-dark,#FF6A2B)] uppercase tracking-wider font-bold">
-              [01] THƯƠNG HIỆU
+              {isEn ? "[01] BRAND" : "[01] THƯƠNG HIỆU"}
             </span>
             <span className="font-display font-black text-[24px] uppercase tracking-tight text-[var(--ink-on-dark,#F2EDE4)]">
               CẨM CÙ HOUSE
@@ -76,7 +81,7 @@ export default function Footer() {
           {/* Cột 2: Điều hướng */}
           <div className="flex flex-col gap-4 relative">
             <span className="font-mono text-[11px] text-[var(--ember-on-dark,#FF6A2B)] uppercase tracking-wider font-bold">
-              [02] ĐIỀU HƯỚNG
+              {isEn ? "[02] NAVIGATION" : "[02] ĐIỀU HƯỚNG"}
             </span>
             <nav className="flex flex-col gap-2.5 font-mono uppercase tracking-wider">
               <Link href="/" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:translate-x-1 transition-all w-fit">
@@ -100,15 +105,19 @@ export default function Footer() {
           {/* Cột 3: Giờ & Hotline */}
           <div className="flex flex-col gap-4 relative">
             <span className="font-mono text-[11px] text-[var(--ember-on-dark,#FF6A2B)] uppercase tracking-wider font-bold">
-              [03] GIỜ & HOTLINE
+              {isEn ? "[03] HOURS & HOTLINE" : "[03] GIỜ & HOTLINE"}
             </span>
             <div className="flex flex-col gap-2 text-[14px]">
               <div>
-                <span className="text-[var(--ink-muted-on-dark,rgba(242,237,228,0.82))] text-[12px] uppercase font-mono block">Thứ 2 – 5:</span>
+                <span className="text-[var(--ink-muted-on-dark,rgba(242,237,228,0.82))] text-[12px] uppercase font-mono block">
+                  {isEn ? "Mon – Thu:" : "Thứ 2 – 5:"}
+                </span>
                 <span className="font-mono font-bold text-[15px] text-[var(--ink-on-dark,#F2EDE4)]">07:00 – 18:00</span>
               </div>
               <div>
-                <span className="text-[var(--ember-on-dark,#FF6A2B)] text-[12px] uppercase font-mono block">Thứ 6 – CN:</span>
+                <span className="text-[var(--ember-on-dark,#FF6A2B)] text-[12px] uppercase font-mono block">
+                  {isEn ? "Fri – Sun:" : "Thứ 6 – CN:"}
+                </span>
                 <span className="font-mono font-bold text-[15px] text-[var(--ember-on-dark,#FF6A2B)]">07:00 – 22:00</span>
               </div>
             </div>
@@ -128,7 +137,7 @@ export default function Footer() {
           {/* Cột 4: Địa chỉ & Kết nối */}
           <div className="flex flex-col gap-4 relative">
             <span className="font-mono text-[11px] text-[var(--ember-on-dark,#FF6A2B)] uppercase tracking-wider font-bold">
-              [04] ĐỊA CHỈ & KẾT NỐI
+              {isEn ? "[04] ADDRESS & CONNECT" : "[04] ĐỊA CHỈ & KẾT NỐI"}
             </span>
             <p className="text-[13.5px] leading-relaxed" style={{ color: "var(--ink-muted-on-dark)" }}>
               Hẻm 437 Hùng Vương, Phường Nghĩa Trung, Thành phố Gia Nghĩa, Tỉnh Đắk Nông
@@ -196,20 +205,24 @@ export default function Footer() {
         {/* Hàng cuối: Bản quyền · Lên đầu trang ↑ · Dòng thiết kế */}
         <div className="pt-6 border-t border-[var(--line-on-dark,rgba(242,237,228,0.14))] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[12.5px] text-[var(--ink-on-dark,#F2EDE4)] font-medium">
           <span>
-            © {new Date().getFullYear()} CẨM CÙ HOUSE. TẤT CẢ QUYỀN ĐƯỢC BẢO LƯU.
+            {isEn
+              ? `© ${new Date().getFullYear()} CẨM CÙ HOUSE. ALL RIGHTS RESERVED.`
+              : `© ${new Date().getFullYear()} CẨM CÙ HOUSE. TẤT CẢ QUYỀN ĐƯỢC BẢO LƯU.`}
           </span>
 
           <button
             type="button"
             onClick={scrollToTop}
-            className="inline-flex items-center gap-1.5 font-mono text-[12.5px] font-bold uppercase tracking-wider text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)]"
+            className={`inline-flex items-center gap-1.5 font-mono text-[12.5px] font-bold uppercase tracking-wider text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] transition-opacity duration-300 ${
+              showScrollTop ? "opacity-100" : "opacity-80"
+            }`}
           >
-            <span>LÊN ĐẦU TRANG</span>
+            <span>{isEn ? "BACK TO TOP" : "LÊN ĐẦU TRANG"}</span>
             <ArrowUp className="w-3.5 h-3.5 text-[var(--ember-on-dark,#FF6A2B)]" />
           </button>
 
           <span>
-            THIẾT KẾ ĐẠI NGÀN ĐIỆN ẢNH
+            {isEn ? "CINEMATIC HIGHLAND DESIGN" : "THIẾT KẾ ĐẠI NGÀN ĐIỆN ẢNH"}
           </span>
         </div>
       </div>

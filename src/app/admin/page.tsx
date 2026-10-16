@@ -46,6 +46,7 @@ import {
   Globe,
   Database,
 } from "lucide-react";
+import QRCode from "qrcode";
 import { MENU_ITEMS, MENU_CATEGORIES } from "@/data/menu";
 import { getLocalEventStats } from "@/lib/analytics";
 import { OverrideMode, StatusOverrideData } from "@/lib/status";
@@ -205,6 +206,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
   const [totpVerificationCode, setTotpVerificationCode] = useState<string>("");
   const [totpModalMsg, setTotpModalMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [recoveryCodesCopied, setRecoveryCodesCopied] = useState<boolean>(false);
+  const [totpQrDataUrl, setTotpQrDataUrl] = useState<string>("");
 
   // 7-day Analytics Engagement Stats
   const [analyticsStats, setAnalyticsStats] = useState({
@@ -702,6 +704,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
   const handleStartTotpSetup = async () => {
     setTotpModalMsg(null);
     setTotpVerificationCode("");
+    setTotpQrDataUrl("");
     try {
       const res = await fetch("/api/admin/auth", {
         method: "PUT",
@@ -711,6 +714,21 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       const data = await res.json();
       if (data.success) {
         setTotpSetupData(data);
+        if (data.uri) {
+          try {
+            const qrUrl = await QRCode.toDataURL(data.uri, {
+              width: 240,
+              margin: 2,
+              color: {
+                dark: "#1B281D",
+                light: "#FFFFFF",
+              },
+            });
+            setTotpQrDataUrl(qrUrl);
+          } catch (qrErr) {
+            console.error("QR Code generation error:", qrErr);
+          }
+        }
         setIsTotpModalOpen(true);
       }
     } catch {
@@ -1207,7 +1225,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
           setNeedsFirstLogin(false);
           if (require2FAPrompt) {
             setActiveTab("security");
-            setIsTotpModalOpen(true);
+            handleStartTotpSetup();
             showToast("Vui lòng kích hoạt 2FA TOTP để hoàn tất bảo vệ tài khoản!");
           }
         }}
@@ -3420,29 +3438,53 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               </div>
             )}
 
-            {/* Bước 1: Khóa bí mật */}
-            <div className="flex flex-col gap-2 p-4 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60">
+            {/* Bước 1: Quét mã QR hoặc Nhập Khóa bí mật */}
+            <div className="flex flex-col gap-3 p-4 bg-stone-50 dark:bg-[#16231A] rounded-2xl border border-stone-200 dark:border-stone-700/60">
               <span className="text-xs font-bold text-stone-700 dark:text-stone-300">
-                1. Sao chép Khóa Bí Mật vào Google Authenticator
+                1. Quét mã QR bằng Google Authenticator hoặc Microsoft Authenticator
               </span>
               <p className="text-[11px] text-stone-500">
-                Mở ứng dụng Authenticator → Chọn Thêm tài khoản → Nhập khóa thiết lập (Setup key):
+                Mở ứng dụng Authenticator trên điện thoại → Chọn Quét mã QR:
               </p>
-              <div className="flex items-center gap-2 mt-1">
-                <code className="flex-1 px-3 py-2 bg-white dark:bg-[#1E2B22] rounded-xl font-mono text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] border border-stone-200 dark:border-stone-700 tracking-wider break-all">
-                  {totpSetupData.secret}
-                </code>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(totpSetupData.secret);
-                    showToast("Đã sao chép khóa bí mật 2FA!");
-                  }}
-                  className="px-3 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 text-stone-700 dark:text-stone-200 text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1 shrink-0"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Chép</span>
-                </button>
+
+              {totpQrDataUrl ? (
+                <div className="flex flex-col items-center justify-center p-3 bg-white rounded-xl border border-stone-200 dark:border-stone-700/80 self-center shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={totpQrDataUrl}
+                    alt="2FA TOTP QR Code"
+                    width={180}
+                    height={180}
+                    className="w-44 h-44 object-contain rounded-md"
+                  />
+                  <span className="text-[10px] font-mono text-stone-500 mt-1">Cẩm Cù House · Admin Security</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center p-4 bg-stone-100 dark:bg-stone-800 rounded-xl">
+                  <span className="text-xs font-mono text-stone-400 animate-pulse">Đang tạo mã QR...</span>
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-stone-200 dark:border-stone-700/60">
+                <span className="text-[11px] font-semibold text-stone-600 dark:text-stone-400 block mb-1">
+                  Hoặc nhập khóa thiết lập (Setup key) thủ công:
+                </span>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 px-3 py-2 bg-white dark:bg-[#1E2B22] rounded-xl font-mono text-xs font-bold text-[#3E5C46] dark:text-[#9DC183] border border-stone-200 dark:border-stone-700 tracking-wider break-all">
+                    {totpSetupData.secret}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(totpSetupData.secret);
+                      showToast("Đã sao chép khóa bí mật 2FA!");
+                    }}
+                    className="px-3 py-2 rounded-xl bg-stone-200 dark:bg-stone-800 hover:bg-stone-300 text-stone-700 dark:text-stone-200 text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1 shrink-0"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Chép</span>
+                  </button>
+                </div>
               </div>
             </div>
 

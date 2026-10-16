@@ -24,7 +24,12 @@ export default function CamcuIntro() {
     const hasForceParam = params.has('intro') || params.has('replay');
 
     // Nếu prefers-reduced-motion hoặc đã xem trong phiên SPA (và không có force param)
-    if ((hasIntroPlayedInThisSession && !hasForceParam) || reduce) {
+    const hasSeenIntro =
+      hasIntroPlayedInThisSession ||
+      sessionStorage.getItem('camcu_intro_seen') === '1' ||
+      sessionStorage.getItem('cc_intro') === '1';
+
+    if ((hasSeenIntro && !hasForceParam) || reduce) {
       dom.style.display = 'none';
       root.classList.remove('intro-lock');
       document.body.classList.add('intro-go');
@@ -73,6 +78,10 @@ export default function CamcuIntro() {
             opacity: 0,
             duration: fast ? 0.15 : 0.3,
             ease: 'power2.in',
+            onComplete: () => {
+              if (skipBtn) skipBtn.style.display = 'none';
+              if (centerContent) centerContent.style.display = 'none';
+            },
           })
           .to(
             leftHalf,

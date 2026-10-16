@@ -154,7 +154,7 @@ export default function MenuPage() {
                   className="px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-mono text-[13px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity inline-flex items-center gap-2"
                 >
                   <PhoneCall className="w-4 h-4 text-[#0A0E0C]" />
-                  <span style={{ color: "#0A0E0C" }}>GỌI HOTLINE ĐÓN TIẾP</span>
+                  <span style={{ color: "#0A0E0C" }}>{isEn ? "CALL HOTLINE FOR WELCOME" : "GỌI HOTLINE ĐÓN TIẾP"}</span>
                 </a>
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function MenuPage() {
                       type="button"
                       onClick={() => setSearchQuery("")}
                       className="absolute right-3 p-1 text-[var(--ink-muted)] hover:text-[var(--ink)]"
-                      aria-label="Xóa tìm kiếm"
+                      aria-label={isEn ? "Clear search" : "Xóa tìm kiếm"}
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -200,7 +200,7 @@ export default function MenuPage() {
               {/* Mục lục danh mục đánh số 01–08 */}
               <div className="bg-[var(--card)] border border-[var(--line)] clip-chamfer-14 p-5 flex flex-col gap-2">
                 <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--ink-muted)] font-bold pb-2 border-b border-[var(--line)] block">
-                  MỤC LỤC DANH MỤC
+                  {isEn ? "CATEGORIES DIRECTORY" : "MỤC LỤC DANH MỤC"}
                 </span>
 
                 <button
@@ -212,7 +212,7 @@ export default function MenuPage() {
                       : "text-[var(--ink-muted)] hover:text-[var(--ink)] hover:bg-[var(--bg-2)]"
                   }`}
                 >
-                  <span>[TẤT CẢ 67 MÓN]</span>
+                  <span>{isEn ? "[ALL 67 ITEMS]" : "[TẤT CẢ 67 MÓN]"}</span>
                   <span className="tabular-nums">({menuItems.length})</span>
                 </button>
 
@@ -245,8 +245,10 @@ export default function MenuPage() {
             {/* CỘT PHẢI (8 cols): Danh sách món theo nhóm (SECTION 8.4.4) */}
             <div className="lg:col-span-8 flex flex-col gap-14">
               <div className="flex items-center justify-between pb-2 border-b border-[var(--line)] font-mono text-[12px] uppercase text-[var(--ink-muted)]">
-                <span className="font-bold text-[var(--ember)]">HIỂN THỊ: {filteredItems.length} / {menuItems.length} MÓN</span>
-                <span>[THỰC ĐƠN CHỌN LỌC]</span>
+                <span className="font-bold text-[var(--ember)]">
+                  {isEn ? `SHOWING: ${filteredItems.length} / ${menuItems.length} ITEMS` : `HIỂN THỊ: ${filteredItems.length} / ${menuItems.length} MÓN`}
+                </span>
+                <span>{isEn ? "[CURATED MENU]" : "[THỰC ĐƠN CHỌN LỌC]"}</span>
               </div>
 
               {validCategories.map((cat, catIdx) => {
@@ -268,7 +270,7 @@ export default function MenuPage() {
                         </h3>
                       </div>
                       <span className="font-mono text-[12px] text-[var(--ink-muted)] tabular-nums">
-                        {groupItems.length} MÓN
+                        {groupItems.length} {isEn ? "ITEMS" : "MÓN"}
                       </span>
                     </div>
 
@@ -308,7 +310,7 @@ export default function MenuPage() {
                                 )}
                                 {isOutOfStock && (
                                   <span className="text-mono-label border border-[var(--line)] px-2 py-0.5">
-                                    [TẠM HẾT]
+                                    {isEn ? "[SOLD OUT]" : "[TẠM HẾT]"}
                                   </span>
                                 )}
                               </div>
@@ -339,7 +341,7 @@ export default function MenuPage() {
               {filteredItems.length === 0 && (
                 <div className="p-12 text-center border border-[var(--line)] clip-chamfer-14 bg-[var(--card)] flex flex-col items-center gap-3">
                   <span className="font-mono text-[13px] text-[var(--ink-muted)] uppercase">
-                    KHÔNG TÌM THẤY MÓN PHÙ HỢP VỚI TỪ KHÓA &ldquo;{searchQuery}&rdquo;
+                    {isEn ? `NO ITEMS FOUND MATCHING “${searchQuery}”` : `KHÔNG TÌM THẤY MÓN PHÙ HỢP VỚI TỪ KHÓA “${searchQuery}”`}
                   </span>
                   <button
                     type="button"
@@ -349,7 +351,7 @@ export default function MenuPage() {
                     }}
                     className="font-mono text-xs uppercase text-[var(--ember)] hover:underline font-bold"
                   >
-                    XÓA BỘ LỌC ĐỂ XEM TOÀN BỘ 67 MÓN
+                    {isEn ? "CLEAR FILTERS TO VIEW ALL 67 ITEMS" : "XÓA BỘ LỌC ĐỂ XEM TOÀN BỘ 67 MÓN"}
                   </button>
                 </div>
               )}
@@ -364,13 +366,15 @@ export default function MenuPage() {
           <div className="w-full max-w-[1360px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex flex-col gap-2 max-w-2xl">
               <span className="font-mono text-[12px] uppercase tracking-widest font-bold" style={{ color: "var(--ember-ink)" }}>
-                [CAM KẾT TỪ BẾP &amp; QUẦY BAR CẨM CÙ]
+                {isEn ? "[PLEDGE FROM CẨM CÙ KITCHEN & BAR]" : "[CAM KẾT TỪ BẾP & QUẦY BAR CẨM CÙ]"}
               </span>
               <h3 className="font-display font-black text-[28px] sm:text-[38px] uppercase tracking-tight leading-tight" style={{ color: "var(--ember-ink)" }}>
-                NGUYÊN LIỆU XANH TƯƠI MỖI NGÀY
+                {isEn ? "FRESH NATURAL INGREDIENTS DAILY" : "NGUYÊN LIỆU XANH TƯƠI MỖI NGÀY"}
               </h3>
               <p className="text-[15px] sm:text-[16px] font-medium leading-relaxed" style={{ color: "var(--ember-ink)" }}>
-                Chúng tôi không sử dụng chất bảo quản hay hương liệu công nghiệp. Cà phê rang củi mộc, trà hái sớm và điểm tâm nóng hổi phục vụ tận tâm.
+                {isEn
+                  ? "We do not use artificial preservatives or chemical flavors. Wood-fired pure coffee, early-harvested tea and wholesome hot breakfast served with sincere heart."
+                  : "Chúng tôi không sử dụng chất bảo quản hay hương liệu công nghiệp. Cà phê rang củi mộc, trà hái sớm và điểm tâm nóng hổi phục vụ tận tâm."}
               </p>
             </div>
 
@@ -380,7 +384,7 @@ export default function MenuPage() {
                 className="px-6 py-3.5 bg-[#0A0E0C] text-[#F2EDE4] font-mono text-[12px] font-bold uppercase tracking-wider clip-chamfer-14 hover:opacity-90 transition-opacity flex items-center gap-2"
               >
                 <PhoneCall className="w-4 h-4 text-[var(--ember-on-dark,#FF6A2B)]" />
-                <span>GỌI HOTLINE ĐÓN TIẾP</span>
+                <span>{isEn ? "CALL HOTLINE FOR WELCOME" : "GỌI HOTLINE ĐÓN TIẾP"}</span>
               </a>
 
               <a
@@ -390,7 +394,7 @@ export default function MenuPage() {
                 className="px-6 py-3.5 bg-transparent border-2 border-current text-[var(--ember-ink)] font-mono text-[12px] font-bold uppercase tracking-wider clip-chamfer-14 hover:bg-[#0A0E0C] hover:text-[#F2EDE4] transition-all flex items-center gap-2"
               >
                 <Navigation className="w-4 h-4" />
-                <span>CHỈ ĐƯỜNG TỚI QUÁN</span>
+                <span>{isEn ? "DIRECTIONS TO CAFE" : "CHỈ ĐƯỜNG TỚI QUÁN"}</span>
               </a>
             </div>
           </div>

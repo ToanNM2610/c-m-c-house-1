@@ -309,7 +309,8 @@ export default function Navbar() {
                 <span className="text-[10px] opacity-25 px-0.5">·</span>
                 <button
                   type="button"
-                  onClick={() => setLocale("en")}
+                  onClick={() => setLocale(isEn ? "vi" : "en")}
+                  aria-label="Chuyển ngôn ngữ Việt / Anh"
                   className={`px-2 py-0.5 rounded-full transition-all duration-200 ${
                     isEn
                       ? "bg-[var(--ember)] text-white shadow-xs font-black"

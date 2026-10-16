@@ -193,12 +193,12 @@ export default function AboutPage() {
                 <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
                   <SafeImage
                     src="/uploads/gallery/1788250253557-29323827.jpg"
-                    alt="Khóm hoa Cẩm Cù và hoa chuông vàng"
+                    alt={isEn ? "Hoya and Golden Bell garden" : "Khóm hoa Cẩm Cù và hoa chuông vàng"}
                     fill
                     className="object-cover"
                   />
                   <div className="absolute bottom-4 left-4 font-mono text-[11px] text-white/90 bg-black/60 px-3 py-1 backdrop-blur-sm">
-                    [CHƯƠNG 01] VƯỜN HOA VEN SUỐI
+                    {isEn ? "[CHAPTER 01] STREAM-SIDE GARDEN" : "[CHƯƠNG 01] VƯỜN HOA VEN SUỐI"}
                   </div>
                 </div>
               </div>
@@ -216,16 +216,18 @@ export default function AboutPage() {
                 </span>
 
                 <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
-                  SỨC SỐNG BỀN BỈ CỦA HOA CẨM CÙ
+                  {isEn ? "RESILIENT VITALITY OF HOYA BLOOMS" : "SỨC SỐNG BỀN BỈ CỦA HOA CẨM CÙ"}
                 </span>
 
                 <h2 className="font-display font-black text-[32px] sm:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
-                  {dict.home.pillar1Title || (isEn ? "Resilient Hoya Blooms" : "Sức Sống Bền Bỉ Của Hoa Cẩm Cù")}
+                  {dict.home.pillar1Title || (isEn ? "Resilient Hoya Blooms" : "Sức Sống Bền BỈ Của Hoa Cẩm Cù")}
                 </h2>
 
                 {/* Câu trích italic 32px vạch ember */}
                 <blockquote className="border-l-2 border-[var(--ember)] pl-6 text-[clamp(20px,2.5vw,30px)] font-serif italic text-[var(--ink)] leading-snug">
-                  &ldquo;Loài hoa của sự kiên cường và tình cảm son sắt, vươn mình rực rỡ từ những vách đá cằn cỗi.&rdquo;
+                  {isEn
+                    ? "“A flower of perseverance and steadfast devotion, flourishing proudly from rugged mountain rocks.”"
+                    : "“Loài hoa của sự kiên cường và tình cảm son sắt, vươn mình rực rỡ từ những vách đá cằn cỗi.”"}
                 </blockquote>
 
                 <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
@@ -233,7 +235,9 @@ export default function AboutPage() {
                 </p>
 
                 <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
-                  Cẩm Cù House được đặt tên theo loài hoa leo bền bỉ ấy. Dù trải qua bao mùa nắng gió cao nguyên, từng chùm hoa hình ngôi sao năm cánh vẫn nhẫn nại bung tỏa hương thơm dịu ngọt, chở che cho những tâm hồn mỏi mệt tìm về.
+                  {isEn
+                    ? "Cẩm Cù House was named after that enduring climbing flower. Weathering mountain sun and winds, each star-shaped blossom patiently unfolds sweet fragrance, sheltering weary souls returning to nature."
+                    : "Cẩm Cù House được đặt tên theo loài hoa leo bền bỉ ấy. Dù trải qua bao mùa nắng gió cao nguyên, từng chùm hoa hình ngôi sao năm cánh vẫn nhẫn nại bung tỏa hương thơm dịu ngọt, chở che cho những tâm hồn mỏi mệt tìm về."}
                 </p>
               </div>
             </div>
@@ -259,7 +263,7 @@ export default function AboutPage() {
                 </span>
 
                 <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
-                  DÒNG NƯỚC MÁT LÀNH NGUYÊN SƠ
+                  {isEn ? "COOL PRISTINE STREAM WATER" : "DÒNG NƯỚC MÁT LÀNH NGUYÊN SƠ"}
                 </span>
 
                 <h2 className="font-display font-black text-[32px] sm:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
@@ -267,7 +271,9 @@ export default function AboutPage() {
                 </h2>
 
                 <blockquote className="border-l-2 border-[var(--ember)] pl-6 text-[clamp(20px,2.5vw,30px)] font-serif italic text-[var(--ink)] leading-snug">
-                  &ldquo;Nước suối reo từ khe đá bazan, mang trọn hơi thở đại ngàn xoa dịu mọi âu lo.&rdquo;
+                  {isEn
+                    ? "“Stream water murmuring through basalt rocks, carrying the deep breath of the highland forest to soothe all worries.”"
+                    : "“Nước suối reo từ khe đá bazan, mang trọn hơi thở đại ngàn xoa dịu mọi âu lo.”"}
                 </blockquote>
 
                 <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
@@ -275,7 +281,9 @@ export default function AboutPage() {
                 </p>
 
                 <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
-                  Chúng tôi gìn giữ nguyên vẹn lòng suối tự nhiên với những tảng đá mộc phủ rêu. Ngồi trên sàn gỗ, thả lỏng đôi chân chạm vào dòng nước trong vắt, bạn sẽ cảm nhận rõ rệt nhịp đập của đất mẹ Tây Nguyên.
+                  {isEn
+                    ? "We preserved the natural stream bed intact with its mossy stones. Sitting on the timber deck, letting your feet touch the cool crystal water, you will genuinely feel the heartbeat of the Central Highlands."
+                    : "Chúng tôi gìn giữ nguyên vẹn lòng suối tự nhiên với những tảng đá mộc phủ rêu. Ngồi trên sàn gỗ, thả lỏng đôi chân chạm vào dòng nước trong vắt, bạn sẽ cảm nhận rõ rệt nhịp đập của đất mẹ Tây Nguyên."}
                 </p>
               </div>
 
@@ -284,12 +292,12 @@ export default function AboutPage() {
                 <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
                   <SafeImage
                     src="/uploads/gallery/1788250253562-580915883.jpg"
-                    alt="Dòng suối đá tự nhiên Cẩm Cù House"
+                    alt={isEn ? "Natural rock stream at Cẩm Cù House" : "Dòng suối đá tự nhiên Cẩm Cù House"}
                     fill
                     className="object-cover"
                   />
                   <div className="absolute bottom-4 left-4 font-mono text-[11px] text-white/90 bg-black/60 px-3 py-1 backdrop-blur-sm">
-                    [CHƯƠNG 02] BỜ SUỐI ĐÁ TỰ NHIÊN
+                    {isEn ? "[CHAPTER 02] NATURAL STONY BROOK" : "[CHƯƠNG 02] BỜ SUỐI ĐÁ TỰ NHIÊN"}
                   </div>
                 </div>
               </div>
@@ -308,12 +316,12 @@ export default function AboutPage() {
                 <div className="relative aspect-[4/3] sm:aspect-[16/11] overflow-hidden clip-chamfer-14 border border-[var(--line)] shadow-2xl">
                   <SafeImage
                     src="/uploads/gallery/1788250253551-943009233.jpg"
-                    alt="Cà phê rang củi bên hiên suối"
+                    alt={isEn ? "Wood-fired coffee by the stream deck" : "Cà phê rang củi bên hiên suối"}
                     fill
                     className="object-cover"
                   />
                   <div className="absolute bottom-4 left-4 font-mono text-[11px] text-white/90 bg-black/60 px-3 py-1 backdrop-blur-sm">
-                    [CHƯƠNG 03] KHÓI CỦI & CÀ PHÊ MỘC
+                    {isEn ? "[CHAPTER 03] WOOD FIRE & PURE COFFEE" : "[CHƯƠNG 03] KHÓI CỦI & CÀ PHÊ MỘC"}
                   </div>
                 </div>
               </div>
@@ -331,7 +339,7 @@ export default function AboutPage() {
                 </span>
 
                 <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)] font-bold">
-                  HƯƠNG VỊ RANG CỦI NỒNG NÀN
+                  {isEn ? "DEEP WOOD-FIRED AROMA" : "HƯƠNG VỊ RANG CỦI NỒNG NÀN"}
                 </span>
 
                 <h2 className="font-display font-black text-[32px] sm:text-[44px] uppercase tracking-tight text-[var(--ink)] leading-tight">
@@ -339,7 +347,9 @@ export default function AboutPage() {
                 </h2>
 
                 <blockquote className="border-l-2 border-[var(--ember)] pl-6 text-[clamp(20px,2.5vw,30px)] font-serif italic text-[var(--ink)] leading-snug">
-                  &ldquo;Từng giọt cà phê mộc sánh đậm hòa vào làn khói củi sớm, đượm sâu vị đất trời.&rdquo;
+                  {isEn
+                    ? "“Every drop of rich pure coffee melds with early morning woodsmoke, deeply infused with the spirit of earth and sky.”"
+                    : "“Từng giọt cà phê mộc sánh đậm hòa vào làn khói củi sớm, đượm sâu vị đất trời.”"}
                 </blockquote>
 
                 <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
@@ -347,7 +357,9 @@ export default function AboutPage() {
                 </p>
 
                 <p className="text-[16px] sm:text-[17px] text-[var(--ink-muted)] leading-relaxed">
-                  Không hương liệu công nghiệp, không phụ gia. Từng hạt Robusta Đắk Nông được chế biến cẩn trọng, giữ trọn hậu vị ngọt thanh và hương thơm đặc trưng của ngọn lửa rừng.
+                  {isEn
+                    ? "No artificial flavorings, no chemicals. Each Dak Nong Robusta bean is roasted with care, preserving a crisp sweet aftertaste and the unmistakable warmth of forest fire."
+                    : "Không hương liệu công nghiệp, không phụ gia. Từng hạt Robusta Đắk Nông được chế biến cẩn trọng, giữ trọn hậu vị ngọt thanh và hương thơm đặc trưng của ngọn lửa rừng."}
                 </p>
               </div>
             </div>
@@ -369,15 +381,17 @@ export default function AboutPage() {
             </div>
 
             <span className="font-mono text-[12.5px] uppercase tracking-widest font-bold" style={{ color: "var(--mist-on-dark)" }}>
-              [LỜI HẸN ƯỚC TỪ CẨM CÙ HOUSE]
+              {isEn ? "[A PROMISE FROM CẨM CÙ HOUSE]" : "[LỜI HẸN ƯỚC TỪ CẨM CÙ HOUSE]"}
             </span>
 
             <h2 className="font-display font-black text-[clamp(32px,6vw,72px)] uppercase tracking-tight leading-tight" style={{ color: "#F2EDE4" }}>
-              HẸN BẠN MỘT NGÀY THẢNH THƠI BÊN SUỐI
+              {isEn ? "SEE YOU ON A RELAXING DAY BY THE STREAM" : "HẸN BẠN MỘT NGÀY THẢNH THƠI BÊN SUỐI"}
             </h2>
 
             <p className="text-[16px] sm:text-[18px] max-w-xl leading-relaxed" style={{ color: "rgba(242, 237, 228, 0.85)" }}>
-              Cẩm Cù House luôn sẵn sàng đón chào bạn cùng gia đình ghé chơi, thưởng thức tách cà phê rang củi và hít thở bầu không khí tinh khôi nơi đại ngàn.
+              {isEn
+                ? "Cẩm Cù House is always ready to welcome you and your family, savoring wood-fired coffee and breathing pure highland forest air."
+                : "Cẩm Cù House luôn sẵn sàng đón chào bạn cùng gia đình ghé chơi, thưởng thức tách cà phê rang củi và hít thở bầu không khí tinh khôi nơi đại ngàn."}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
@@ -386,14 +400,14 @@ export default function AboutPage() {
                 className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--ember-on-dark)] text-[#0A0E0C] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-xl"
               >
                 <PhoneCall className="w-4 h-4 text-[#0A0E0C]" />
-                <span style={{ color: "#0A0E0C" }}>GỌI HOTLINE 038 285 1688</span>
+                <span style={{ color: "#0A0E0C" }}>{isEn ? "CALL HOTLINE 038 285 1688" : "GỌI HOTLINE 038 285 1688"}</span>
               </a>
 
               <Link
                 href="/space"
                 className="inline-flex items-center gap-2.5 px-8 py-4 bg-transparent border border-[var(--line-on-dark)] text-[var(--ink-on-dark)] font-sans font-bold text-[15px] uppercase tracking-wider clip-chamfer-14 hover:bg-white hover:text-[var(--pine)] transition-all"
               >
-                <span>XEM KHÔNG GIAN SUỐI</span>
+                <span>{isEn ? "VIEW STREAM SANCTUARY" : "XEM KHÔNG GIAN SUỐI"}</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
