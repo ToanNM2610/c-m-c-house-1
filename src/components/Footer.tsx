@@ -36,12 +36,12 @@ export default function Footer() {
       <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
         {/* Trên cùng: Tọa độ & Slogan điện ảnh */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 pb-12 border-b border-[var(--line-on-dark,rgba(242,237,228,0.14))]">
-          <div className="flex flex-col gap-2 max-w-2xl">
+          <div className="flex flex-col gap-3.5 sm:gap-4 max-w-2xl">
             <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember-on-dark,#FF6A2B)] flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[var(--ember-on-dark,#FF6A2B)]" />
               11.99° N · 107.69° E · ĐỘ CAO 800M+
             </span>
-            <h2 className="font-display font-extrabold text-[28px] sm:text-[38px] md:text-[44px] uppercase tracking-tight text-[var(--ink-on-dark,#F2EDE4)] leading-tight">
+            <h2 className="font-display font-extrabold text-[24px] sm:text-[34px] md:text-[40px] uppercase tracking-tight text-[var(--ink-on-dark,#F2EDE4)] leading-[1.3] pt-1">
               CHỐN DỪNG CHÂN <span className="font-serif italic font-normal text-[var(--ember-on-dark,#FF6A2B)] lowercase">mộc mạc</span> BÊN BỜ SUỐI ĐÁ
             </h2>
           </div>
@@ -173,18 +173,10 @@ export default function Footer() {
         </div>
 
         {/* Chữ "CẨM CÙ HOUSE" khổng lồ tràn ngang viền ember, tô đặc khi hover (Section 2 & 7.6) */}
-        <div aria-hidden="true" className="w-full py-8 text-center overflow-hidden select-none group cursor-default">
-          <svg className="w-full h-auto max-h-[180px]" viewBox="0 0 1200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <text
-              x="50%"
-              y="50%"
-              dominantBaseline="middle"
-              textAnchor="middle"
-              className="font-display font-black text-[84px] sm:text-[100px] uppercase tracking-tighter fill-transparent stroke-[var(--ember)] stroke-[2px] group-hover:fill-[var(--ember)] transition-colors duration-500"
-            >
-              CẨM CÙ HOUSE
-            </text>
-          </svg>
+        <div aria-hidden="true" className="w-full py-6 sm:py-8 text-center overflow-hidden select-none group cursor-default">
+          <p className="font-display font-black text-[clamp(36px,8.2vw,108px)] uppercase tracking-wider text-transparent [-webkit-text-stroke:1.5px_var(--ember-on-dark,#FF6A2B)] [text-stroke:1.5px_var(--ember-on-dark,#FF6A2B)] group-hover:text-[var(--ember-on-dark,#FF6A2B)] transition-all duration-500 leading-normal py-2 m-0 select-none whitespace-nowrap">
+            CẨM CÙ HOUSE
+          </p>
         </div>
 
         {/* Hàng cuối: Bản quyền · Lên đầu trang ↑ · Dòng thiết kế */}

@@ -131,8 +131,8 @@ export default function AboutPage() {
               </div>
 
               {/* H1 CÂU CHUYỆN CẨM CÙ tràn ngang + Chốn Bình Yên Giữa Đất Ngàn */}
-              <div className="flex flex-col gap-2">
-                <h1 className="font-display font-black text-[clamp(44px,9vw,110px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-none">
+              <div className="flex flex-col gap-3 sm:gap-4">
+                <h1 className="font-display font-black text-[clamp(40px,8vw,100px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1">
                   CÂU CHUYỆN CẨM CÙ
                 </h1>
                 <p className="font-serif italic text-[clamp(24px,3.5vw,42px)] text-[var(--ember)]">

@@ -105,7 +105,7 @@ function WordScrubReveal({ text }: { text: string }) {
   return (
     <h2
       ref={containerRef}
-      className="font-display font-extrabold text-[clamp(32px,5.5vw,72px)] uppercase tracking-tight leading-[1.08] text-balance max-w-5xl"
+      className="font-display font-extrabold text-[clamp(30px,5vw,68px)] uppercase tracking-tight leading-[1.28] text-balance max-w-5xl py-1"
     >
       {words.map((word, i) => {
         const start = i / words.length;
@@ -318,7 +318,7 @@ export default function HomePage() {
 
           {/* Chữ Display "CẨM CÙ HOUSE" khổng lồ tràn ngang đáy màn hình (Section 8.1.1) */}
           <div className="w-full relative z-10 pt-8 border-t border-[var(--line)] overflow-hidden select-none">
-            <h1 className="font-display font-black text-[clamp(44px,12.5vw,180px)] uppercase tracking-tighter leading-none text-center whitespace-nowrap text-[var(--ink-on-dark)] opacity-90">
+            <h1 className="font-display font-black text-[clamp(44px,12.5vw,180px)] uppercase tracking-tighter leading-tight py-2 text-center whitespace-nowrap text-[var(--ink-on-dark)] opacity-90">
               {heroTitleLetters.map((char, index) => (
                 <motion.span
                   key={index}
@@ -424,7 +424,7 @@ export default function HomePage() {
                 <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--ember)] font-bold">
                   [ĐỘ CAO ĐẮK NÔNG]
                 </span>
-                <span className="font-display font-black text-[clamp(72px,8vw,140px)] leading-none text-[var(--ink)]">
+                <span className="font-display font-black text-[clamp(54px,6.5vw,96px)] leading-tight text-[var(--ink)] tracking-tight">
                   <MetricCounter target={800} suffix="m+" />
                 </span>
                 <p className="text-[14px] text-[var(--ink-muted)] font-medium">
@@ -437,7 +437,7 @@ export default function HomePage() {
                 <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--ember)] font-bold">
                   [ĐÁNH GIÁ THỰC TẾ]
                 </span>
-                <span className="font-display font-black text-[clamp(72px,8vw,140px)] leading-none text-[var(--ember)]">
+                <span className="font-display font-black text-[clamp(54px,6.5vw,96px)] leading-tight text-[var(--ember)] tracking-tight">
                   <MetricCounter target={100} suffix="%" />
                 </span>
                 <p className="text-[14px] text-[var(--ink-muted)] font-medium">
@@ -450,9 +450,14 @@ export default function HomePage() {
                 <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--forest)] font-bold">
                   [MÔI TRƯỜNG SINH THÁI]
                 </span>
-                <span className="font-display font-black text-[clamp(72px,8vw,140px)] leading-none text-[var(--ink)]">
-                  <MetricCounter target={0} suffix=" KHÓI BỤI" />
-                </span>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="font-display font-black text-[clamp(54px,6.5vw,96px)] leading-tight text-[var(--ink)] tracking-tight">
+                    <MetricCounter target={0} />
+                  </span>
+                  <span className="font-display font-extrabold text-[clamp(22px,2.5vw,36px)] leading-tight uppercase tracking-tight text-[var(--ink)] whitespace-nowrap">
+                    KHÓI BỤI
+                  </span>
+                </div>
                 <p className="text-[14px] text-[var(--ink-muted)] font-medium">
                   Tách biệt hoàn toàn khỏi còi xe, hòa vào thiên nhiên trong lành.
                 </p>
@@ -466,11 +471,11 @@ export default function HomePage() {
            ========================================================================= */}
         <section className="w-full py-28 sm:py-36 bg-[var(--bg)] text-[var(--ink)] relative overflow-hidden transition-colors">
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 mb-16">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3.5 sm:gap-4">
               <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
                 [04] VÌ SAO CHỌN CHÚNG TÔI
               </span>
-              <h2 className="font-display font-black text-[clamp(36px,6vw,72px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+              <h2 className="font-display font-black text-[clamp(32px,5.5vw,68px)] uppercase tracking-tight text-[var(--ink)] leading-[1.2] pt-1">
                 BỐN GIÁ TRỊ <span className="font-serif italic font-normal text-[var(--ember)] lowercase">nguyên bản</span>
               </h2>
             </div>
@@ -539,11 +544,11 @@ export default function HomePage() {
         <section className="w-full py-28 sm:py-36 bg-[var(--bg-2)] border-y border-[var(--line)] relative overflow-hidden transition-colors">
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 mb-14">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3.5 sm:gap-4">
                 <span className="font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
                   [05] KHÔNG GIAN CHECK-IN
                 </span>
-                <h2 className="font-display font-black text-[clamp(32px,5.5vw,64px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+                <h2 className="font-display font-black text-[clamp(32px,5vw,60px)] uppercase tracking-tight text-[var(--ink)] leading-[1.2] pt-1">
                   GÓC SUỐI <span className="font-serif italic font-normal text-[var(--ember)] lowercase">thơ mộng</span>
                 </h2>
               </div>
@@ -625,7 +630,7 @@ export default function HomePage() {
               <StarHoya size={24} strokeWidth={2} />
             </div>
 
-            <h2 className="font-display font-black text-[clamp(36px,8vw,96px)] uppercase tracking-tight text-[#F4EEE2] leading-none">
+            <h2 className="font-display font-black text-[clamp(34px,7vw,84px)] uppercase tracking-tight text-[#F4EEE2] leading-[1.18] pt-1 text-center">
               GHÉ CẨM CÙ HOUSE
             </h2>
 

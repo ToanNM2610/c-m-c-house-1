@@ -210,7 +210,7 @@ export default function SpacePage() {
                 </div>
 
                 {/* H1 Một khối, không ngắt giữa cụm */}
-                <h1 className="font-display font-black text-[clamp(36px,6vw,84px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-none text-balance">
+                <h1 className="font-display font-black text-[clamp(34px,5.5vw,78px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1 text-balance">
                   KHÔNG GIAN SINH THÁI, BÊN BỜ SUỐI ĐÁ
                 </h1>
 

@@ -219,13 +219,13 @@ export default function GoogleReviewsSection() {
     <section className="w-full py-24 sm:py-32 bg-[var(--bg)] text-[var(--ink)] relative overflow-hidden transition-colors border-t border-b border-[var(--line)]">
       <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 mb-14">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3.5 sm:gap-4">
             <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
               <span>[06] CẢM NHẬN KHÁCH HÀNG</span>
               <span>·</span>
               <span>GOOGLE MAPS 100% THỰC TẾ</span>
             </div>
-            <h2 className="font-display font-black text-[clamp(32px,5.5vw,64px)] uppercase tracking-tight text-[var(--ink)] leading-none">
+            <h2 className="font-display font-black text-[clamp(30px,5vw,60px)] uppercase tracking-tight text-[var(--ink)] leading-[1.2] pt-1">
               TRẢI NGHIỆM ĐẠI NGÀN <span className="font-serif italic font-normal text-[var(--ember)] lowercase">từ du khách</span>
             </h2>
           </div>

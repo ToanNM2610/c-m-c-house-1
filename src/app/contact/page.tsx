@@ -373,7 +373,7 @@ export default function ContactPage() {
               [LỜI CHÀO TỪ CAO NGUYÊN]
             </span>
 
-            <h2 className="font-display font-black text-[clamp(32px,6vw,72px)] uppercase tracking-tight text-white leading-none">
+            <h2 className="font-display font-black text-[clamp(30px,5.5vw,68px)] uppercase tracking-tight text-white leading-[1.18] pt-1">
               HẸN GẶP BẠN BÊN BỜ SUỐI
             </h2>
 
