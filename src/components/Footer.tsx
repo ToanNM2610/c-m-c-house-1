@@ -173,17 +173,17 @@ export default function Footer() {
         </div>
 
         {/* Chữ "CẨM CÙ HOUSE" khổng lồ tràn ngang viền ember, tô đặc khi hover (Section 2 & 7.6) */}
-        <div aria-hidden="true" className="w-full py-6 sm:py-10 text-center overflow-hidden select-none group cursor-default">
+        <div aria-hidden="true" className="w-full py-6 sm:py-10 text-center select-none group cursor-default" style={{ overflow: "visible" }}>
           <svg
-            className="w-full h-auto max-h-[190px] sm:max-h-[240px]"
-            viewBox="0 -38 1200 170"
+            className="w-full h-auto max-h-[200px] sm:max-h-[250px]"
+            viewBox="0 -52 1200 185"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             style={{ overflow: "visible" }}
           >
             <text
               x="50%"
-              y="75"
+              y="80"
               dominantBaseline="middle"
               textAnchor="middle"
               className="font-display font-black text-[96px] sm:text-[116px] uppercase tracking-wider fill-transparent stroke-[var(--ember-on-dark,#FF6A2B)] stroke-[2.2px] group-hover:fill-[var(--ember-on-dark,#FF6A2B)] transition-colors duration-500"

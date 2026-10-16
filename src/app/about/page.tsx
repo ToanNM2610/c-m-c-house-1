@@ -117,28 +117,53 @@ export default function AboutPage() {
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
             <div className="flex flex-col gap-6 max-w-4xl">
               {/* Nhãn mono */}
-              <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]"
+              >
                 <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
                 <span>[TÂM TÌNH CAO NGUYÊN · 11.99° N · 107.69° E]</span>
-              </div>
+              </motion.div>
 
               {/* H1 CÂU CHUYỆN CẨM CÙ tràn ngang + Chốn Bình Yên Giữa Đất Ngàn */}
               <div className="flex flex-col gap-3 sm:gap-4">
-                <h1 className="font-display font-black text-[clamp(40px,8vw,100px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1">
+                <motion.h1
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-display font-black text-[clamp(40px,8vw,100px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1"
+                >
                   CÂU CHUYỆN CẨM CÙ
-                </h1>
-                <p className="font-serif italic text-[clamp(24px,3.5vw,42px)] text-[var(--ember)]">
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                  className="font-serif italic text-[clamp(24px,3.5vw,42px)] text-[var(--ember)]"
+                >
                   Chốn Bình Yên Giữa Đất Ngàn
-                </p>
+                </motion.p>
               </div>
 
               {/* Mô tả */}
-              <p className="text-[17px] sm:text-[18px] text-[var(--ink-muted)] leading-[1.7] max-w-[62ch]">
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.28, ease: "easeOut" }}
+                className="text-[17px] sm:text-[18px] text-[var(--ink-muted)] leading-[1.7] max-w-[62ch]"
+              >
                 {dict.about.description}
-              </p>
+              </motion.p>
 
               {/* 3 Badge Mono */}
-              <div className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line-on-dark)] font-mono text-[12.5px] uppercase tracking-wider text-[var(--ink-on-dark)]">
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.36, ease: "easeOut" }}
+                className="flex flex-wrap items-center gap-4 pt-6 border-t border-[var(--line-on-dark)] font-mono text-[12.5px] uppercase tracking-wider text-[var(--ink-on-dark)]"
+              >
                 <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
                   [01 HOA CẨM CÙ BỀN BỈ]
                 </span>
@@ -148,7 +173,7 @@ export default function AboutPage() {
                 <span className="px-3.5 py-1.5 bg-[#0A0E0C]/65 border border-[var(--line-on-dark)] text-[var(--ink-on-dark)]">
                   [03 ROBUSTA RANG CỦI]
                 </span>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>

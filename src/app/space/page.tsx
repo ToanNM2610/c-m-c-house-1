@@ -196,23 +196,43 @@ export default function SpacePage() {
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
               <div className="max-w-4xl flex flex-col gap-4">
-                <div className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]">
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  className="inline-flex items-center gap-2 font-mono text-[12px] uppercase tracking-widest text-[var(--ember)]"
+                >
                   <Compass className="w-3.5 h-3.5 text-[var(--ember)]" />
                   <span>[03] KHÔNG GIAN SINH THÁI ĐẮK NÔNG · 30 GÓC ẢNH THỰC TẾ</span>
-                </div>
+                </motion.div>
 
-                {/* H1 Một khối, không ngắt giữa cụm */}
-                <h1 className="font-display font-black text-[clamp(34px,5.5vw,78px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1 text-balance">
+                {/* H1 Một khối, không ngắt giữa cụm, có hiệu ứng reveal mềm mại */}
+                <motion.h1
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-display font-black text-[clamp(34px,5.5vw,78px)] uppercase tracking-tight text-[var(--ink-on-dark)] leading-[1.18] pt-1 text-balance"
+                >
                   KHÔNG GIAN SINH THÁI, BÊN BỜ SUỐI ĐÁ
-                </h1>
+                </motion.h1>
 
-                <p className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] max-w-2xl leading-relaxed">
+                <motion.p
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                  className="text-[16px] sm:text-[18px] text-[var(--ink-muted)] max-w-2xl leading-relaxed"
+                >
                   {dict.space.subtitle}
-                </p>
+                </motion.p>
               </div>
 
               {/* Khối chỉ số bên phải: 22°C–26°C · Đá Bazan Cổ (Section 8.3.1) */}
-              <div className="flex items-center gap-6 shrink-0 bg-[#131B17] border border-[var(--line-on-dark)] clip-chamfer-14 p-5 shadow-xl">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
+                className="flex items-center gap-6 shrink-0 bg-[#131B17] border border-[var(--line-on-dark)] clip-chamfer-14 p-5 shadow-xl"
+              >
                 <div className="flex flex-col">
                   <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--mist-on-dark)] font-bold">
                     NHIỆT ĐỘ KHÍ HẬU
@@ -238,7 +258,7 @@ export default function SpacePage() {
                     Hàng triệu năm tuổi
                   </span>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
