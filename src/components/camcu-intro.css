@@ -5,9 +5,7 @@ html.intro-lock body {
   touch-action: none;
 }
 
-html.intro-seen #camcu-intro-pro {
-  display: none !important;
-}
+
 
 #camcu-intro-pro {
   background-color: #0A0E0C;

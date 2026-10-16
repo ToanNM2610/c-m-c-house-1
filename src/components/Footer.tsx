@@ -173,10 +173,24 @@ export default function Footer() {
         </div>
 
         {/* Chữ "CẨM CÙ HOUSE" khổng lồ tràn ngang viền ember, tô đặc khi hover (Section 2 & 7.6) */}
-        <div aria-hidden="true" className="w-full py-6 sm:py-8 text-center overflow-hidden select-none group cursor-default">
-          <p className="font-display font-black text-[clamp(36px,8.2vw,108px)] uppercase tracking-wider text-transparent [-webkit-text-stroke:1.5px_var(--ember-on-dark,#FF6A2B)] [text-stroke:1.5px_var(--ember-on-dark,#FF6A2B)] group-hover:text-[var(--ember-on-dark,#FF6A2B)] transition-all duration-500 leading-normal py-2 m-0 select-none whitespace-nowrap">
-            CẨM CÙ HOUSE
-          </p>
+        <div aria-hidden="true" className="w-full py-6 sm:py-10 text-center overflow-hidden select-none group cursor-default">
+          <svg
+            className="w-full h-auto max-h-[190px] sm:max-h-[240px]"
+            viewBox="0 -38 1200 170"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ overflow: "visible" }}
+          >
+            <text
+              x="50%"
+              y="75"
+              dominantBaseline="middle"
+              textAnchor="middle"
+              className="font-display font-black text-[96px] sm:text-[116px] uppercase tracking-wider fill-transparent stroke-[var(--ember-on-dark,#FF6A2B)] stroke-[2.2px] group-hover:fill-[var(--ember-on-dark,#FF6A2B)] transition-colors duration-500"
+            >
+              CẨM CÙ HOUSE
+            </text>
+          </svg>
         </div>
 
         {/* Hàng cuối: Bản quyền · Lên đầu trang ↑ · Dòng thiết kế */}

@@ -1218,18 +1218,9 @@ html.dark .nav-hover-line::after {
   color: var(--ink-on-dark);
 }
 
-/* 8. Chữ ghost "CẨM CÙ HOUSE" tăng độ mờ lên .16 */
+/* 8. Chữ ghost "CẨM CÙ HOUSE" ẩn hoàn toàn để không đè chữ */
 .hero-ghost-text {
-  font-family: var(--font-display), sans-serif;
-  font-size: clamp(72px, 18vw, 290px);
-  font-weight: 800;
-  line-height: 0.9;
-  text-transform: uppercase;
-  color: var(--ink-on-dark);
-  opacity: 0.16;
-  user-select: none;
-  pointer-events: none;
-  white-space: nowrap;
+  display: none !important;
 }
 
 /* 2. Lớp gradient đen đáy ảnh .65+, chữ kem 16px+, tối đa 2 dòng */

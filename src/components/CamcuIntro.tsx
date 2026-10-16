@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 import './camcu-intro.css';
 
-const SHOW_ONCE = true;
-const STORAGE_KEY = 'cc_intro';
+let hasIntroPlayedInThisSession = false;
 
 export default function CamcuIntro() {
   const [isVisible, setIsVisible] = useState(true);
@@ -23,51 +23,24 @@ export default function CamcuIntro() {
     const params = new URLSearchParams(window.location.search);
     const hasForceParam = params.has('intro') || params.has('replay');
 
-    if (hasForceParam) {
-      try {
-        sessionStorage.removeItem(STORAGE_KEY);
-      } catch (_) {}
-    }
-
-    const seen = (): boolean => {
-      try {
-        return (
-          sessionStorage.getItem(STORAGE_KEY) === '1' ||
-          sessionStorage.getItem('camcu_intro_seen') === '1'
-        );
-      } catch (_) {
-        return false;
-      }
-    };
-
-    const markSeen = () => {
-      try {
-        sessionStorage.setItem(STORAGE_KEY, '1');
-      } catch (_) {}
-    };
-
-    // Đã xem hoặc prefers-reduced-motion -> bỏ qua intro ngay lập tức
-    if ((SHOW_ONCE && seen() && !hasForceParam) || reduce) {
+    // Nếu prefers-reduced-motion hoặc đã xem trong phiên SPA (và không có force param)
+    if ((hasIntroPlayedInThisSession && !hasForceParam) || reduce) {
       dom.style.display = 'none';
       root.classList.remove('intro-lock');
       document.body.classList.add('intro-go');
-      markSeen();
       document.dispatchEvent(new CustomEvent('camcu:intro-done'));
       setIsVisible(false);
       return;
     }
 
-    // ── Khởi chạy Intro Đại Ngàn Điện Ảnh (≤ 3.5s) ──
+    // ── Khởi chạy Intro Đại Ngàn Điện Ảnh (≤ 2.8s) ──
     let cleanup = () => {};
 
-    async function runIntro() {
+    function runIntro() {
       exitingRef.current = false;
       dom.style.display = '';
       root.classList.add('intro-lock');
       document.body.classList.remove('intro-go');
-
-      const gsapModule = await import('gsap');
-      const gsap = gsapModule.default || gsapModule;
 
       const skipBtn = dom.querySelector('#skip-btn') as HTMLElement | null;
       const elevationEl = dom.querySelector('#elevation-num') as HTMLElement | null;
@@ -80,7 +53,7 @@ export default function CamcuIntro() {
 
       // Finish & Dispatch
       const finishIntro = () => {
-        markSeen();
+        hasIntroPlayedInThisSession = true;
         dom.style.display = 'none';
         root.classList.remove('intro-lock');
         document.body.classList.add('intro-go');
@@ -124,14 +97,14 @@ export default function CamcuIntro() {
 
       // Initial States
       gsap.set(emberLine, { scaleX: 0, opacity: 0 });
-      gsap.set(titleChars, { y: 25, opacity: 0, filter: 'blur(16px)' });
+      gsap.set(titleChars, { y: 20, opacity: 0, filter: 'blur(8px)' });
       gsap.set(leftHalf, { xPercent: 0 });
       gsap.set(rightHalf, { xPercent: 0 });
       if (progressLine) gsap.set(progressLine, { scaleX: 0, transformOrigin: 'left' });
 
       const elevationState = { val: 0 };
 
-      // Main Timeline (≤ 3.5s total)
+      // Main Timeline (≤ 2.8s total)
       const tl = gsap.timeline({
         onComplete: () => {
           triggerCurtainSplit(false);
@@ -143,22 +116,22 @@ export default function CamcuIntro() {
         .to(emberLine, {
           scaleX: 1,
           opacity: 1,
-          duration: 0.6,
+          duration: 0.5,
           ease: 'power3.out',
-        }, 0.1)
+        }, 0.05)
         // 2. Chữ "CẨM CÙ HOUSE" hiện ký tự mờ -> nét
         .to(titleChars, {
           y: 0,
           opacity: 1,
           filter: 'blur(0px)',
-          duration: 0.7,
+          duration: 0.6,
           stagger: 0.035,
           ease: 'power2.out',
-        }, 0.35)
+        }, 0.25)
         // 3. Bộ đếm mono 000 -> 800m cùng vạch tiến độ
         .to(elevationState, {
           val: 800,
-          duration: 1.8,
+          duration: 1.5,
           ease: 'power2.out',
           onUpdate() {
             if (elevationEl) {
@@ -166,12 +139,12 @@ export default function CamcuIntro() {
               elevationEl.textContent = `${String(currentNum).padStart(3, '0')} m`;
             }
           },
-        }, 0.5)
+        }, 0.4)
         .to(progressLine, {
           scaleX: 1,
-          duration: 1.8,
+          duration: 1.5,
           ease: 'power2.out',
-        }, 0.5);
+        }, 0.4);
 
       // Skip action & Escape key
       const handleSkip = () => triggerCurtainSplit(true);

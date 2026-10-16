@@ -189,15 +189,7 @@ export default function HomePage() {
             1. HERO (TOÀN MÀN HÌNH - SECTION 8.1.1)
            ========================================================================= */}
         <section className="hero-dark-surface relative min-h-screen flex flex-col justify-between pt-28 sm:pt-36 pb-12 sm:pb-16 overflow-hidden bg-[#0A0E0C] text-[#F2EDE4]">
-          {/* Chữ ghost CẨM CÙ HOUSE độ mờ .16 */}
-          <div
-            aria-hidden="true"
-            className="hero-ghost-text absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[1200px] flex justify-center pointer-events-none select-none"
-          >
-            <svg viewBox="0 0 1200 120" className="w-full h-auto max-h-[160px] overflow-visible" fill="currentColor">
-              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontWeight="800">CẨM{"\u00A0"}CÙ HOUSE</text>
-            </svg>
-          </div>
+
 
           {/* Ảnh nền phủ tối + Ken Burns sương mờ */}
           <div className="absolute inset-0 pointer-events-none select-none z-0">

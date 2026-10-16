@@ -191,15 +191,7 @@ export default function SpacePage() {
             1. ĐẦU TRANG: H1 KHÔNG GIAN SINH THÁI + CHỈ SỐ (SECTION 8.3.1)
            ========================================================================= */}
         <section className="hero-dark-surface relative pt-36 sm:pt-44 pb-14 border-b border-[var(--line)] bg-[#0A0E0C] text-[#F2EDE4] overflow-hidden">
-          {/* Chữ ghost CẨM CÙ HOUSE độ mờ .16 */}
-          <div
-            aria-hidden="true"
-            className="hero-ghost-text absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[1200px] flex justify-center pointer-events-none select-none"
-          >
-            <svg viewBox="0 0 1200 120" className="w-full h-auto max-h-[160px] overflow-visible" fill="currentColor">
-              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontWeight="800">CẨM{"\u00A0"}CÙ HOUSE</text>
-            </svg>
-          </div>
+
 
           <div className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 relative z-10">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">

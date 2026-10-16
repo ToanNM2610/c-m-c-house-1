@@ -122,14 +122,9 @@ export default async function RootLayout({
                     });
                     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
                   }
-                  var seenIntro = sessionStorage.getItem('cc_intro') === '1';
-                  var params = new URLSearchParams(location.search);
-                  var hasForce = params.has('intro') || params.has('replay');
-                  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                  if ((!seenIntro || hasForce) && !prefersReduced) {
+                  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                  if (!prefersReduced) {
                     document.documentElement.classList.add('intro-lock');
-                  } else {
-                    document.documentElement.classList.add('intro-seen');
                   }
                 } catch(e) {}
               })();
