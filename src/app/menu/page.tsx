@@ -16,6 +16,7 @@ import { trackEvent } from "@/lib/analytics";
 import { getSharedData, KEYS } from "@/lib/syncStore";
 import { CAMCU_MENU_OVERRIDES_KEY, getStoredData } from "@/utils/storage";
 import PageDarkHero from "@/components/layout/PageDarkHero";
+import { searchMenuItemsLocally } from "@/lib/search";
 
 export default function MenuPage() {
   const { locale, dict } = useLanguage();
@@ -75,24 +76,7 @@ export default function MenuPage() {
     };
   }, []);
 
-  function removeVietnameseTones(str: string): string {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "D")
-      .toLowerCase();
-  }
-
-  const filteredItems = menuItems.filter((item) => {
-    const matchesCategory = activeCategory === "all" || item.category === activeCategory;
-    if (!matchesCategory) return false;
-    if (!searchQuery.trim()) return true;
-    const cleanQuery = removeVietnameseTones(searchQuery.trim());
-    const cleanName = removeVietnameseTones(item.name);
-    const cleanDesc = removeVietnameseTones(item.description || "");
-    return cleanName.includes(cleanQuery) || cleanDesc.includes(cleanQuery);
-  });
+  const filteredItems = searchMenuItemsLocally(menuItems, searchQuery, activeCategory);
 
   const getCategoryCount = (catId: string) => {
     if (catId === "all") return menuItems.length;

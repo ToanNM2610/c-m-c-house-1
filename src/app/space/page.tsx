@@ -28,8 +28,10 @@ import {
   ChevronRight,
   X,
   Droplets,
-  Trees
+  Trees,
+  Search
 } from "lucide-react";
+import { searchSpaceItemsLocally } from "@/lib/search";
 
 export default function SpacePage() {
   const { locale, dict } = useLanguage();
@@ -37,6 +39,7 @@ export default function SpacePage() {
 
   const [viewMode, setViewMode] = useState<"grid" | "film">("grid");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isFiltering, setIsFiltering] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [galleryPhotos, setGalleryPhotos] = useState<SharedGalleryItem[]>([]);
@@ -148,9 +151,7 @@ export default function SpacePage() {
     return item;
   });
 
-  const filteredItems = activeFilter === "all"
-    ? allItems
-    : allItems.filter((i) => Array.isArray(i.category) && i.category.includes(activeFilter));
+  const filteredItems = searchSpaceItemsLocally(allItems, searchQuery, activeFilter);
 
   const lightboxPhotos = filteredItems.map((item) => ({
     url: item.image,
@@ -282,6 +283,29 @@ export default function SpacePage() {
                 <Film className="w-3.5 h-3.5" />
                 <span>[PHIM]</span>
               </button>
+            </div>
+
+            {/* Thanh tìm kiếm không gian tiếng Việt không dấu */}
+            <div className="relative flex items-center w-full sm:w-auto min-w-[180px] sm:min-w-[220px]">
+              <Search className="w-3.5 h-3.5 absolute left-3 text-[var(--ink-muted)] pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isEn ? "Search space photos..." : "Tìm góc ảnh, suối đá..."}
+                className="w-full bg-[var(--card)] text-[var(--ink)] placeholder:text-[var(--ink-muted)] font-mono text-[12px] pl-8 pr-7 py-1.5 border border-[var(--line)] rounded-sm focus:outline-none focus:border-[var(--ember)] transition-colors"
+                aria-label={isEn ? "Search space photos" : "Tìm kiếm không gian"}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                  aria-label="Xóa tìm kiếm"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
             </div>
 
             {/* 5 Chip lọc mono */}
