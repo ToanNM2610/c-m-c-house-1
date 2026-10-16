@@ -50,11 +50,11 @@ body:not(.dark) {
   --gold: #E8C77A;
 
   /* Token cố định cho mọi Hero tối & ảnh (Không bao giờ đổi sang chữ đen ở chế độ Sáng) */
-  --ink-on-dark: #F4EEE2;
-  --ink-muted-on-dark: rgba(244, 238, 226, 0.85);
+  --ink-on-dark: #F2EDE4;
+  --ink-muted-on-dark: rgba(242, 237, 228, 0.85);
   --ember-on-dark: #FF7D47;
   --mist-on-dark: #A9C4B6;
-  --line-on-dark: rgba(244, 238, 226, 0.22);
+  --line-on-dark: rgba(242, 237, 228, 0.22);
 
   /* Unified Aliases for Components & Admin */
   --paper: var(--bg);
@@ -130,11 +130,11 @@ body.dark:not([data-theme="light"]) {
   --gold: #F0D58F;
 
   /* Token cố định cho mọi Hero tối & ảnh (Không bao giờ đổi sang chữ đen ở chế độ Sáng) */
-  --ink-on-dark: #F4EEE2;
-  --ink-muted-on-dark: rgba(244, 238, 226, 0.85);
+  --ink-on-dark: #F2EDE4;
+  --ink-muted-on-dark: rgba(242, 237, 228, 0.85);
   --ember-on-dark: #FF6A2B;
   --mist-on-dark: #A9C4B6;
-  --line-on-dark: rgba(244, 238, 226, 0.22);
+  --line-on-dark: rgba(242, 237, 228, 0.22);
 
   --paper: var(--bg);
   --paper-2: var(--bg-2);
