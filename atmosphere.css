@@ -1,0 +1,222 @@
+:root,
+[data-theme="light"],
+[data-phase="dawn"],
+[data-phase="day"] {
+  /* Bảng màu Sương sớm & Nắng đồi - Tương phản chữ/nền >= 8.5:1 */
+  --bg-primary: #f6f4ef;
+  --bg-surface: #ece8df;
+  --bg-elevated: #ffffff;
+  --text-primary: #18241b;
+  --text-secondary: #334739;
+  --accent-botanical: #1e4d32;
+  --accent-warm: #7c3f1c;
+  --border-subtle: rgba(24, 36, 27, 0.16);
+  --ambient-glow-opacity: 0.22;
+}
+
+[data-phase="dusk"] {
+  /* Hoàng hôn phố núi - Tương phản chữ/nền >= 7.8:1 */
+  --bg-primary: #f3ece2;
+  --bg-surface: #e7ddd0;
+  --bg-elevated: #fbf7f2;
+  --text-primary: #231b16;
+  --text-secondary: #4a3a30;
+  --accent-botanical: #244b35;
+  --accent-warm: #8a3c19;
+  --border-subtle: rgba(35, 27, 22, 0.18);
+  --ambient-glow-opacity: 0.28;
+}
+
+[data-theme="dark"],
+[data-phase="night"] {
+  /* Đèn vàng dưới hiên (Dark Mode) - Tương phản chữ/nền >= 10.2:1 */
+  --bg-primary: #111814;
+  --bg-surface: #19231d;
+  --bg-elevated: #202d25;
+  --text-primary: #f2efe9;
+  --text-secondary: #c8d3cb;
+  --accent-botanical: #7fd19e;
+  --accent-warm: #f0b27a;
+  --border-subtle: rgba(242, 239, 233, 0.18);
+  --ambient-glow-opacity: 0.18;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1rem; /* 16px >= 14px */
+  line-height: 1.6;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Quy tắc cỡ chữ tối thiểu 14px; chỉ nhãn viết hoa được dùng 12px */
+p,
+li,
+a,
+button,
+input,
+span {
+  font-size: max(0.875rem, 14px);
+}
+
+.label-uppercase-12 {
+  font-size: 0.75rem !important; /* 12px */
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* Lớp phủ tối bắt buộc cho mọi thành phần chữ đặt trên ảnh */
+.image-card-with-text {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-card-with-text::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 16, 12, 0.65) 0%,
+    rgba(10, 16, 12, 0.85) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.image-card-with-text > .overlay-content {
+  position: relative;
+  z-index: 2;
+  color: #f7f5f0;
+}
+
+/* Lớp hiệu ứng Sương mù & Nắng xiên Gia Nghĩa - Chỉ animate transform/opacity/clip-path */
+.highland-mist-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--ambient-glow-opacity);
+  background: radial-gradient(
+    circle at 20% 25%,
+    rgba(127, 209, 158, 0.28),
+    transparent 60%
+  );
+  will-change: transform, opacity;
+  animation: mistDrift 18s ease-in-out infinite alternate;
+}
+
+@keyframes mistDrift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+    opacity: 0.16;
+  }
+  100% {
+    transform: translate3d(2%, 1.5%, 0) scale(1.04);
+    opacity: 0.26;
+  }
+}
+
+/* Thanh trạng thái khí quyển & Hành động chính (Zero Manual Ops) */
+.atmosphere-status-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.625rem 1.25rem;
+}
+
+.atmosphere-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.primary-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.btn-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background-color: var(--accent-botanical);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+[data-theme="dark"] .btn-cta-primary,
+[data-phase="night"] .btn-cta-primary {
+  color: #0f1712;
+}
+
+.btn-cta-primary:hover,
+.btn-cta-primary:focus-visible {
+  transform: translateY(-1px);
+  opacity: 0.94;
+}
+
+.btn-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--text-primary);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Responsive chuẩn cho Desktop 1440px và Mobile 390px */
+@media (max-width: 640px) {
+  .atmosphere-status-bar {
+    padding: 0.5rem 0.875rem;
+  }
+  .atmosphere-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .primary-cta-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .btn-cta-primary,
+  .btn-cta-secondary {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Tôn trọng tuyệt đối prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .highland-mist-layer,
+  .btn-cta-primary,
+  .btn-cta-secondary {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

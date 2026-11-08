@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import StarHoya from "@/components/ui/StarHoya";
+import AtmosphereBar from "@/components/AtmosphereBar";
 import { useStoreStatus } from "@/lib/openingHours";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -147,15 +148,6 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // Micro-bar status string (Section 7.1)
-  const statusString = storeStatus.isOpen
-    ? isEn
-      ? `OPEN NOW · CLOSES AT ${storeStatus.closingTime} TODAY · 23°C`
-      : `ĐANG MỞ CỬA · ĐÓNG LÚC ${storeStatus.closingTime} HÔM NAY · 23°C`
-    : isEn
-    ? `CLOSED · OPENS AT 07:00 TOMORROW · 23°C`
-    : `ĐÃ ĐÓNG CỬA · MỞ LÚC 07:00 NGÀY MAI · 23°C`;
-
   // Không hiển thị Navbar khách hàng trên trang Admin
   if (pathname?.startsWith("/admin")) return null;
 
@@ -167,37 +159,8 @@ export default function Navbar() {
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        {/* 1. Thanh trên cùng (micro-bar mono 12px - Section 7.1) */}
-        <div
-          className={`w-full border-b transition-colors py-1.5 px-4 ${
-            isDark
-              ? "bg-[#070B09] text-[#F4EEE2] border-white/10"
-              : "bg-[#EFE9DC] text-[#2C241E] border-[rgba(62,39,35,0.12)]"
-          }`}
-        >
-          <div className="max-w-[1360px] mx-auto flex items-center justify-between font-mono text-[11px] sm:text-[12px] tracking-wider uppercase">
-            <div className="flex items-center gap-2 truncate">
-              <span
-                className={`w-2 h-2 rounded-full shrink-0 animate-pulse ${
-                  storeStatus.isOpen ? "bg-[#34D399]" : "bg-[#F28B82]"
-                }`}
-              />
-              <span className={`font-bold ${isDark ? "text-[#F4EEE2]" : "text-[#2C241E]"}`}>
-                {statusString}
-              </span>
-            </div>
-
-            <div
-              className={`hidden sm:flex items-center gap-4 ${
-                isDark ? "text-[rgba(244,238,226,0.85)]" : "text-[rgba(44,36,30,0.8)]"
-              }`}
-            >
-              <span>11.99° N · 107.69° E</span>
-              <span>·</span>
-              <span className={`font-bold ${isDark ? "text-[var(--ember-on-dark,#FF7D47)]" : "text-[var(--ember)]"}`}>800M+</span>
-            </div>
-          </div>
-        </div>
+        {/* 1. Thanh trạng thái khí quyển thời gian thực Cẩm Cù House (Real-time Atmosphere) */}
+        <AtmosphereBar />
 
         {/* 2. Header Content Bar (Tự thích ứng Sáng và Tối hài hòa, rõ nét) */}
         <div

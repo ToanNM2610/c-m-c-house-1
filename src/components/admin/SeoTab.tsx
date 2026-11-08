@@ -33,7 +33,7 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
       descVi: "Chốn dừng chân mộc mạc nép mình bên bờ suối đá mát lành của cao nguyên Gia Nghĩa, Đắk Nông. Thưởng thức cà phê Robusta rang củi mộc, hòa mình vào thanh âm thiên nhiên nguyên bản.",
       descEn: "A rustic sanctuary nestled by the natural rock stream in Gia Nghĩa, Đắk Nông. Sip pure wood-roasted Robusta coffee and listen to the murmuring water.",
       keywords: "cà phê suối đá, cẩm cù house, gia nghĩa đắk nông, robusta rang củi, cà phê mộc",
-      image: "/space/suoi-da-1.webp",
+      image: "/images/og-home.jpg",
     },
     about: {
       name: "Câu Chuyện (/about)",
@@ -43,7 +43,7 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
       descVi: "Khám phá hành trình xây dựng Cẩm Cù House bên dòng suối đá Gia Nghĩa. Giữ trọn tinh hoa Robusta cao nguyên đất đỏ bazan và triết lý sống hòa hợp thiên nhiên.",
       descEn: "Discover the journey of crafting Cẩm Cù House by Gia Nghĩa stream. Preserving highland Robusta heritage and living in harmony with nature.",
       keywords: "câu chuyện cẩm cù house, lịch sử quán, cà phê gia nghĩa",
-      image: "/space/quan-suoi-1.webp",
+      image: "/images/og-about.jpg",
     },
     space: {
       name: "Không Gian Suối (/space)",
@@ -53,7 +53,7 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
       descVi: "Chiêm ngưỡng 30+ hình ảnh không gian bờ suối đá tự nhiên, cầu gỗ, chòi lá và góc ngồi thưởng thức cà phê yên tĩnh tại Cẩm Cù House, Gia Nghĩa.",
       descEn: "Explore 30+ photos of natural rock streams, wooden bridges, thatched huts and quiet coffee retreats at Cẩm Cù House.",
       keywords: "không gian cẩm cù house, bờ suối tự nhiên, suối reo gia nghĩa",
-      image: "/space/suoi-da-2.webp",
+      image: "/images/og-space.jpg",
     },
     menu: {
       name: "Thực Đơn (/menu)",
@@ -63,7 +63,7 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
       descVi: "Bảng giá đầy đủ 67 món: Cà phê Robusta rang củi, Trà thảo mộc suối reo, Nước ép trái cây tươi và Ẩm thực ăn sáng đậm vị mộc Gia Nghĩa. Giá từ 25.000đ.",
       descEn: "Full 67-item menu: Wood-roasted Robusta coffee, stream herbal teas, fresh highland juices and breakfast delights. From 25,000 VND.",
       keywords: "thực đơn cẩm cù house, giá cà phê cẩm cù, đặc sản gia nghĩa",
-      image: "/space/mon-an-1.webp",
+      image: "/images/og-menu.jpg",
     },
     contact: {
       name: "Chỉ Đường & Liên Hệ (/contact)",
@@ -73,7 +73,7 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
       descVi: "Vị trí: Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP. Gia Nghĩa. Đường bê tông rộng, ô tô 4-16 chỗ quay đầu tận sân. Hotline / Zalo: 038 285 1688.",
       descEn: "Location: Hem 437 Hung Vuong, Nghia Trung, Gia Nghia. Wide concrete road, parking for 4-16 seat vehicles. Hotline: 038 285 1688.",
       keywords: "chỉ đường cẩm cù house, địa chỉ cẩm cù house, hotline 0382851688",
-      image: "/space/quan-suoi-2.webp",
+      image: "/images/og-contact.jpg",
     },
   };
 

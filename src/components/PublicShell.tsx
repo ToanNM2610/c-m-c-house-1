@@ -29,6 +29,7 @@ export default function PublicShell({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <div className="highland-mist-layer" aria-hidden="true" />
       <ScrollProgressBar />
       <CustomCursor />
       <ScrollIndicator />

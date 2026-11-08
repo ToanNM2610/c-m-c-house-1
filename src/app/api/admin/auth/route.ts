@@ -35,7 +35,7 @@ function getClientIp(req: NextRequest): string {
   );
 }
 
-export function isValidSession(token: string): boolean {
+function isValidSession(token: string): boolean {
   if (!token) return false;
   return activeSessions.has(token);
 }
