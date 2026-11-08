@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "../components/camcu-intro.css";
 @import "../../atmosphere.css";
+@import "../../editorial-menu.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

@@ -1,0 +1,263 @@
+/* ==========================================================================
+   EDITORIAL BOTANICAL MENU - CẨM CÙ HOUSE (PURE TYPOGRAPHY, NO IMAGES)
+   Bố cục tạp chí thực vật học 2 cột (Desktop 1440px) / 1 cột (Mobile 390px)
+   ========================================================================== */
+
+.editorial-menu-section {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 4.5rem 2.5rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+/* Đầu trang tạp chí (Editorial Masthead) */
+.editorial-masthead {
+  border-top: 2px solid var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 2rem 0;
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
+.editorial-masthead-title {
+  font-family: var(--font-display, "Playfair Display", "Noto Serif", Georgia, serif);
+  font-size: clamp(2rem, 3.5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0.35rem 0 0 0;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.editorial-masthead-meta {
+  font-size: 0.9375rem; /* 15px >= 14px */
+  color: var(--text-secondary);
+  max-width: 460px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Thanh mục lục danh mục (Botanical Chapter Index) */
+.editorial-category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 2rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.editorial-cat-chip {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.editorial-cat-chip:hover,
+.editorial-cat-chip:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--text-primary);
+}
+
+.editorial-cat-chip[aria-pressed="true"],
+.editorial-cat-chip.is-active {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+/* Khối từng chương danh mục */
+.editorial-chapter {
+  margin-bottom: 4rem;
+}
+
+.editorial-chapter-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--text-primary);
+  padding-bottom: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.editorial-chapter-title {
+  font-family: var(--font-display, "Playfair Display", "Noto Serif", Georgia, serif);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Lưới 2 cột chuẩn Tạp chí trên Desktop 1440px */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 4rem;
+  row-gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Từng mục món ăn/đồ uống (Tuyệt đối không chứa ảnh) */
+.editorial-menu-item {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  position: relative;
+}
+
+.editorial-menu-item:hover {
+  transform: translateX(4px);
+}
+
+.editorial-menu-item.is-out-of-stock {
+  opacity: 0.45;
+}
+
+/* Dòng đầu: Số thứ tự + Tên món + Đường chấm (Dot leader) + Giá */
+.editorial-item-topline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.editorial-item-index {
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 0.875rem; /* 14px */
+  color: var(--accent-botanical);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.editorial-item-name {
+  font-family: var(--font-display, "Playfair Display", "Noto Serif", Georgia, serif);
+  font-size: 1.125rem; /* 18px >= 14px */
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.editorial-dot-leader {
+  flex: 1;
+  border-bottom: 1px dotted var(--border-subtle);
+  margin: 0 0.5rem;
+  min-width: 1.5rem;
+  height: 0;
+  align-self: center;
+}
+
+.editorial-item-price {
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 1rem; /* 16px >= 14px */
+  font-weight: 700;
+  color: var(--accent-warm);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Mô tả hương vị món (Cỡ chữ 15px >= 14px, tương phản >= 7:1) */
+.editorial-item-desc {
+  font-size: 0.9375rem; /* 15px */
+  color: var(--text-secondary);
+  margin: 0.4rem 0 0 2rem;
+  line-height: 1.55;
+}
+
+/* Nhãn đặc tính món - Duy nhất được phép dùng 12px viết hoa */
+.editorial-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0 2rem;
+}
+
+.editorial-tag-12 {
+  font-size: 0.75rem !important; /* 12px uppercase theo đúng quy định */
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  line-height: 1.4;
+  display: inline-block;
+}
+
+/* Chân trang Thực đơn - Chỉ điều hướng Gọi Hotline & Chỉ đường (Zero Manual Ops) */
+.editorial-menu-footer {
+  margin-top: 3.5rem;
+  padding: 2rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.editorial-footer-text {
+  font-size: 1rem; /* 16px */
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive chuẩn cho Mobile 390px */
+@media (max-width: 900px) {
+  .editorial-menu-section {
+    padding: 2.5rem 1rem;
+  }
+
+  .editorial-masthead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem 0;
+  }
+
+  .editorial-grid {
+    grid-template-columns: 1fr;
+    row-gap: 1.5rem;
+  }
+
+  .editorial-item-desc,
+  .editorial-item-tags {
+    margin-left: 0;
+  }
+
+  .editorial-menu-footer {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.25rem;
+  }
+}
+
+/* Tôn trọng tuyệt đối prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .editorial-cat-chip,
+  .editorial-menu-item {
+    transition: none !important;
+    transform: none !important;
+  }
+}

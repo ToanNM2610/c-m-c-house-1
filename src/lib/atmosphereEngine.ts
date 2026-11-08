@@ -190,3 +190,4 @@ export function mapWeatherCodeEn(code: number): string {
   if (code >= 80 && code <= 99) return "Rain showers";
   return "Mild highland air";
 }
+
