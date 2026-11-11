@@ -1,0 +1,71 @@
+// Prisma Schema for Cẩm Cù House (camcu-cafe)
+// Single source of truth database schema for Editorial Botanical Monograph & Spatial Scrollytelling
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  nameVi      String
+  nameEn      String
+  order       String
+  description String?
+  menuItems   MenuItem[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model MenuItem {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  name        String
+  variants    String?   // JSON array string: e.g. ["Đen", "Sữa"]
+  note        String?
+  price       Int?      @default(0)
+  badge       String?   // "Signature" | "Best-seller" | "Green & Clean" | "Morning"
+  isSignature Boolean   @default(false)
+  isHealthy   Boolean   @default(false)
+  priceTier   String    @default("$")
+  inStock     Boolean   @default(true)
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SpacePhoto {
+  id          String   @id @default(cuid())
+  figureCode  String   @unique // "FIG. 01" to "FIG. 30"
+  orderNumber String
+  chapter     Int      // 1 to 4
+  title       String
+  subtitle    String?
+  caption     String?
+  imageUrl    String
+  aspectRatio String?  @default("4/3")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reservation {
+  id            String   @id @default(cuid())
+  customerName  String
+  phone         String
+  visitDate     String   // "YYYY-MM-DD"
+  visitTime     String   // "HH:mm"
+  guests        Int      @default(2)
+  seatingArea   String   // "stream" | "garden" | "covered"
+  preOrderItems String?  // JSON string array of item codes / names
+  note          String?
+  status        String   @default("pending") // "pending" | "confirmed" | "completed" | "cancelled"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

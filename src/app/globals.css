@@ -2,6 +2,7 @@
 @import "../components/camcu-intro.css";
 @import "../../atmosphere.css";
 @import "../../editorial-menu.css";
+@import "../../spatial-scrollytelling.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
 import { SPACE_ITEMS, SPACE_CATEGORIES, SpaceItem } from "@/data/space";
 import { useLanguage } from "@/context/LanguageContext";
+import SpatialScrollytelling from "@/components/SpatialScrollytelling";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   getSharedData,
@@ -410,65 +411,11 @@ export default function SpacePage() {
             )}
           </section>
         ) : (
-          /* CHẾ ĐỘ LƯỚI: Bento 12 Cột với FLIP Filter .45s (Section 8.3.3) */
-          <section className="w-full max-w-[1360px] mx-auto px-5 sm:px-10 py-16">
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
-              <AnimatePresence mode="popLayout">
-                {filteredItems.map((item, idx) => {
-                  let colSpan = "lg:col-span-4";
-                  let aspect = "aspect-[4/3]";
-
-                  if (idx % 7 === 0) {
-                    colSpan = "lg:col-span-8";
-                    aspect = "aspect-[16/10]";
-                  } else if (idx % 7 === 5 || idx % 7 === 6) {
-                    colSpan = "lg:col-span-6";
-                    aspect = "aspect-[16/10]";
-                  }
-
-                  return (
-                    <motion.figure
-                      layout
-                      key={item.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.45 }}
-                      onClick={() => handleOpenLightbox(idx)}
-                      className={`group relative cursor-pointer overflow-hidden clip-chamfer-14 border border-[var(--line)] bg-[var(--card)] ${colSpan} ${aspect} select-none`}
-                    >
-                      <SafeImage
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-                      />
-
-                      {/* Phủ ember 15% khi hover */}
-                      <div className="absolute inset-0 bg-[var(--ember)]/0 group-hover:bg-[var(--ember)]/15 transition-colors duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0E0C]/90 via-[#0A0E0C]/25 to-transparent flex flex-col justify-end p-5 sm:p-6 text-[#F2EDE4]" />
-
-                      {/* Figcaption chuẩn hóa cho mọi thẻ ảnh Bento & Không Gian Suối (Yêu cầu 2) */}
-                      <figcaption className="photo-caption-overlay absolute inset-x-0 bottom-0 p-5 z-10 flex flex-col">
-                        <span
-                          className="text-mono-label font-bold"
-                          style={{ color: "var(--ember-on-dark)" }}
-                        >
-                          [{String(idx + 1).padStart(2, "0")}/30]
-                        </span>
-                        <p className="photo-caption-title mt-1">{item.title}</p>
-                      </figcaption>
-
-                      {/* Nút Maximize */}
-                      <div className="absolute top-4 right-4 z-20 w-8 h-8 bg-black/40 border border-white/20 text-white rounded-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Maximize2 className="w-3.5 h-3.5" />
-                      </div>
-                    </motion.figure>
-                  );
-                })}
-              </AnimatePresence>
-            </motion.div>
-          </section>
+          /* HÀNH TRÌNH 30 ẢNH KHÔNG GIAN BẤT ĐỐI XỨNG (SPATIAL SCROLLYTELLING) */
+          <SpatialScrollytelling
+            initialPhotos={filteredItems}
+            onOpenLightbox={handleOpenLightbox}
+          />
         )}
 
         {/* =========================================================================

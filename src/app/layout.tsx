@@ -141,9 +141,11 @@ export default async function RootLayout({
               "image": "https://camcuhouse.online/images/og-home.jpg",
               "@id": "https://camcuhouse.online/#cafe",
               "url": "https://camcuhouse.online",
-              "telephone": "+84382851688",
+              "telephone": ["+84382851688", "+84774659000"],
+              "email": "thuynhu8788@gmail.com",
               "priceRange": "25.000 - 55.000 VNĐ",
               "servesCuisine": "Vietnamese Coffee, Breakfast & Local Snacks",
+              "description": "Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Gia Nghĩa.",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "Hẻm 437 Hùng Vương",
@@ -171,10 +173,34 @@ export default async function RootLayout({
                   "closes": "22:00",
                 },
               ],
+              "amenityFeature": [
+                {
+                  "@type": "LocationFeatureSpecification",
+                  "name": "Chỗ ngồi ngoài trời (View bờ suối)",
+                  "value": true
+                },
+                {
+                  "@type": "LocationFeatureSpecification",
+                  "name": "Đặt bàn trước (Reservation)",
+                  "value": true
+                },
+                {
+                  "@type": "LocationFeatureSpecification",
+                  "name": "Phục vụ mang về (Takeaway)",
+                  "value": true
+                }
+              ],
+              "sameAs": [
+                "https://maps.app.goo.gl/G6aP51qJ6aDabp676",
+                "https://www.facebook.com/share/1DVLMySW8H/",
+                "https://www.tiktok.com/@camcuhousedaknong?is_from_webapp=1&sender_device=pc",
+                "https://www.youtube.com/@Cam_Cu_House"
+              ],
               "aggregateRating": {
                 "@type": "AggregateRating",
-                "ratingValue": "4.9",
-                "reviewCount": "6",
+                "ratingValue": "5.0",
+                "reviewCount": "8",
+                "bestRating": "5"
               },
               "hasMenu": "https://camcuhouse.online/menu",
             }),
