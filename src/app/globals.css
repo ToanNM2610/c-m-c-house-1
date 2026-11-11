@@ -270,7 +270,6 @@ h1, .font-h1 {
   font-weight: 800;
   line-height: 1.02;
   letter-spacing: -0.02em;
-  text-wrap: balance;
   color: inherit;
   text-rendering: optimizeLegibility;
 }
@@ -281,7 +280,6 @@ h2, .font-h2 {
   font-weight: 750;
   line-height: 1.08;
   letter-spacing: -0.015em;
-  text-wrap: balance;
   color: inherit;
   text-rendering: optimizeLegibility;
 }
@@ -292,7 +290,6 @@ h3, .font-h3 {
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.01em;
-  text-wrap: balance;
   color: inherit;
   text-rendering: optimizeLegibility;
 }
@@ -546,7 +543,6 @@ html:not(.dark) .admin-icon-circle {
   font-weight: 700 !important;
   letter-spacing: normal !important;
   text-transform: none !important;
-  text-wrap: pretty !important;
   margin-top: 0 !important;
   max-width: 100% !important;
 }
@@ -613,7 +609,6 @@ p, .font-body {
   font-size: var(--font-body);
   line-height: var(--font-body-line);
   font-weight: 500;
-  text-wrap: pretty;
   max-width: 65ch;
   color: var(--text-muted);
 }
@@ -1001,6 +996,7 @@ html.dark .btn-primary {
 /* Micro-interactions & Transform Utilities */
 .btn-press {
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
   transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, background-color 200ms ease;
   will-change: transform;
@@ -1011,6 +1007,7 @@ html.dark .btn-primary {
 
 .btn-press-sm {
   cursor: pointer;
+  -webkit-user-select: none;
   user-select: none;
   transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
@@ -1158,7 +1155,6 @@ html.dark .nav-hover-line::after {
 }
 .no-scrollbar {
   -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 /* ==========================================================================
@@ -1181,11 +1177,6 @@ html.dark .nav-hover-line::after {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #537D5F;
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #3E5C46 #121A15;
 }
 
 /* ==========================================================================
@@ -1288,6 +1279,7 @@ html.dark .nav-hover-line::after {
   font-weight: 500;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1428,7 +1420,6 @@ html.dark .nav-hover-line::after {
   font-variation-settings: "opsz" 72, "SOFT" 100;
   font-variant-numeric: lining-nums tabular-nums;
   font-feature-settings: "lnum" 1, "tnum" 1;
-  text-wrap: balance;
 }
 
 .h2-morning {
@@ -1438,7 +1429,6 @@ html.dark .nav-hover-line::after {
   line-height: 1.12;
   font-variation-settings: "opsz" 48, "SOFT" 100;
   font-variant-numeric: lining-nums tabular-nums;
-  text-wrap: balance;
 }
 
 .h3-morning {
@@ -1447,7 +1437,6 @@ html.dark .nav-hover-line::after {
   font-weight: 500;
   line-height: 1.2;
   font-variation-settings: "opsz" 36, "SOFT" 100;
-  text-wrap: balance;
 }
 
 .h4-morning {
@@ -1478,7 +1467,6 @@ html.dark .nav-hover-line::after {
   font-size: clamp(19px, 1.5vw, 21px);
   line-height: 1.7;
   font-weight: 400;
-  text-wrap: pretty;
 }
 
 .stat-number-large {
