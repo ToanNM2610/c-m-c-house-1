@@ -13,6 +13,9 @@ export default function Template({ children }: { children: ReactNode }) {
 
   // Màn che chuyển cảnh giữa các trang (chỉ kích hoạt khi chuyển route, không chặn tải đầu)
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
     if (isAdmin) {
       setShowCurtain(false);
       return;

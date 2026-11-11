@@ -234,8 +234,8 @@ export const SPATIAL_CHAPTERS: SpatialChapter[] = [
   {
     chapter: 1,
     romanNum: "Chương I",
-    titleVi: "Lối Nhỏ Vào Vườn",
-    titleEn: "Pathway to the Verdant Sanctuary",
+    titleVi: "Ngưỡng Cửa & Lối Nhỏ Hẻm 437",
+    titleEn: "Threshold & Lane 437 Pathway",
     rangeLabel: "FIG. 01 — 07",
     photos: [
       { id: "sp1", figureCode: "FIG. 01", orderNumber: "01", title: "Chòi Gỗ Mộc Ngắm Đồi Xanh", subtitle: "Hiên Gỗ Nhìn Thung Lũng", description: "Hiên gỗ lợp lá thoáng đãng phóng tầm mắt ra thung lũng Đắk Nông lộng gió ban mai.", image: "/uploads/gallery/1788250253551-943009233.jpg", chapter: 1 },
@@ -250,8 +250,8 @@ export const SPATIAL_CHAPTERS: SpatialChapter[] = [
   {
     chapter: 2,
     romanNum: "Chương II",
-    titleVi: "Bên Bờ Suối Mát",
-    titleEn: "Beside the Boulder Spring",
+    titleVi: "Bàn Ngoài Trời Bên Bờ Suối Mát",
+    titleEn: "Outdoor Creekside Seating",
     rangeLabel: "FIG. 08 — 16",
     photos: [
       { id: "sp8", figureCode: "FIG. 08", orderNumber: "08", title: "Hoa Đào Nở Rộ Bên Ban Công Đón Nắng", subtitle: "Sắc Xuân Vùng Cao", description: "Cành đào hồng thắm khoe sắc bên bờ rào gỗ mộc, đón những tia nắng sớm trong trẻo của Gia Nghĩa.", image: "/uploads/gallery/1788250253568-69250175.jpg", chapter: 2 },
@@ -268,8 +268,8 @@ export const SPATIAL_CHAPTERS: SpatialChapter[] = [
   {
     chapter: 3,
     romanNum: "Chương III",
-    titleVi: "Hương Vị Xanh Sạch",
-    titleEn: "Clean & Pure Flavors",
+    titleVi: "Góc Xanh Sinh Thái & Hoa Cẩm Cù",
+    titleEn: "Verdant Eco-Corner & Hoya Blooms",
     rangeLabel: "FIG. 17 — 23",
     photos: [
       { id: "sp17", figureCode: "FIG. 17", orderNumber: "17", title: "Đường Lát Đá Cờ Đỏ & Hàng Dong Riềng", subtitle: "Lối Mòn Quanh Co", description: "Con đường đá nhỏ uốn lượn rợp bóng hoa dong riềng dẫn lối du khách len lỏi khám phá mọi ngóc ngách của quán.", image: "/uploads/gallery/1788250253585-162974099.jpg", chapter: 3 },
@@ -284,8 +284,8 @@ export const SPATIAL_CHAPTERS: SpatialChapter[] = [
   {
     chapter: 4,
     romanNum: "Chương IV",
-    titleVi: "Chiều Buông & Đêm Cuối Tuần",
-    titleEn: "Dusk & Weekend Nights",
+    titleVi: "Hoàng Hôn & Ánh Đèn Đêm Cuối Tuần (Thứ 6 – Chủ Nhật mở đến 22h)",
+    titleEn: "Dusk & Weekend Night Lanterns (Fri–Sun open till 22h)",
     rangeLabel: "FIG. 24 — 30",
     photos: [
       { id: "sp24", figureCode: "FIG. 24", orderNumber: "24", title: "Bếp Lửa Trại & Khóm Hoa Huệ Cam Bên Suối", subtitle: "Hoàng Hôn Cao Nguyên", description: "Ánh lửa vàng ấm áp kết hợp sắc hoa huệ cam nở rộ ven suối trong ánh chiều tà bình dị.", image: "/uploads/gallery/1788250253602-486743244.jpg", chapter: 4 },
@@ -298,3 +298,4 @@ export const SPATIAL_CHAPTERS: SpatialChapter[] = [
     ],
   },
 ];
+

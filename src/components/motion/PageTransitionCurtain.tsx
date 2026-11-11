@@ -22,10 +22,10 @@ export default function PageTransitionCurtain({ onComplete }: PageTransitionCurt
   // Xác định số thứ tự và tên trang
   const getPageInfo = (path: string) => {
     if (!path || path === "/") return { num: "[01]", title: "TRANG CHỦ" };
-    if (path.startsWith("/about")) return { num: "[02]", title: "CÂU CHUYỆN" };
-    if (path.startsWith("/space")) return { num: "[03]", title: "KHÔNG GIAN SUỐI" };
-    if (path.startsWith("/menu")) return { num: "[04]", title: "THỰC ĐƠN" };
-    if (path.startsWith("/contact")) return { num: "[05]", title: "CHỈ ĐƯỜNG & LIÊN HỆ" };
+    if (path.startsWith("/cau-chuyen") || path.startsWith("/about")) return { num: "[02]", title: "CÂU CHUYỆN" };
+    if (path.startsWith("/khong-gian-suoi") || path.startsWith("/space")) return { num: "[03]", title: "KHÔNG GIAN SUỐI" };
+    if (path.startsWith("/thuc-don") || path.startsWith("/menu")) return { num: "[04]", title: "THỰC ĐƠN" };
+    if (path.startsWith("/chi-duong-lien-he") || path.startsWith("/contact")) return { num: "[05]", title: "CHỈ ĐƯỜNG & LIÊN HỆ" };
     if (path.startsWith("/admin")) return { num: "[AD]", title: "QUẢN TRỊ VIÊN" };
     return { num: "[00]", title: "CẨM CÙ HOUSE" };
   };

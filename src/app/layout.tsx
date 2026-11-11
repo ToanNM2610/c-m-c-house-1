@@ -5,6 +5,7 @@ import { fraunces, beVietnamPro } from "./fonts";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { TransitionProvider } from "@/context/TransitionContext";
+import { PreOrderProvider } from "@/context/PreOrderContext";
 import PublicShell from "@/components/PublicShell";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import Script from "next/script";
@@ -211,7 +212,9 @@ export default async function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <TransitionProvider>
-              <PublicShell>{children}</PublicShell>
+              <PreOrderProvider>
+                <PublicShell>{children}</PublicShell>
+              </PreOrderProvider>
             </TransitionProvider>
           </LanguageProvider>
         </ThemeProvider>

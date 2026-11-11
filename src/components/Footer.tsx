@@ -83,21 +83,21 @@ export default function Footer() {
             <span className="font-mono text-[11px] text-[var(--ember-on-dark,#FF6A2B)] uppercase tracking-wider font-bold">
               {isEn ? "[02] NAVIGATION" : "[02] ĐIỀU HƯỚNG"}
             </span>
-            <nav className="flex flex-col gap-2.5 font-mono uppercase tracking-wider">
-              <Link href="/" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:translate-x-1 transition-all w-fit">
-                → {dict.nav.home}
+            <nav className="flex flex-col gap-2.5 font-mono uppercase tracking-wider text-[13px]">
+              <Link href="/" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
+                → [01] {isEn ? "Home" : "Trang Chủ"}
               </Link>
-              <Link href="/about" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:translate-x-1 transition-all w-fit">
-                → {dict.nav.about}
+              <Link href="/cau-chuyen" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
+                → [02] {isEn ? "Our Story" : "Câu Chuyện"}
               </Link>
-              <Link href="/space" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:translate-x-1 transition-all w-fit">
-                → {dict.nav.space}
+              <Link href="/khong-gian-suoi" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
+                → [03] {isEn ? "Stream Sanctuary" : "Không Gian Suối"}
               </Link>
-              <Link href="/menu" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:translate-x-1 transition-all w-fit">
-                → {dict.nav.menu}
+              <Link href="/thuc-don" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
+                → [04] {isEn ? "Menu" : "Thực Đơn"}
               </Link>
-              <Link href="/contact" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] hover:translate-x-1 transition-all w-fit">
-                → {dict.nav.contact}
+              <Link href="/chi-duong-lien-he" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
+                → [05] {isEn ? "Directions & Contact" : "Chỉ Đường & Liên Hệ"}
               </Link>
             </nav>
           </div>

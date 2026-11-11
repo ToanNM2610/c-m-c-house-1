@@ -44,7 +44,7 @@ export default function MobileBottomBar() {
 
         {/* Nút 3: Chỉ đường Google Maps */}
         <a
-          href="https://maps.google.com/?q=Hem+437+Hung+Vuong+Nghia+Trung+Gia+Nghia+Dak+Nong"
+          href="https://maps.app.goo.gl/G6aP51qJ6aDabp676"
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackEvent("click_directions")}

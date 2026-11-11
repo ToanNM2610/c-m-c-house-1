@@ -12,12 +12,14 @@ const nextConfig: NextConfig = {
 
   turbopack: {},
 
-  async rewrites() {
+  async redirects() {
     return [
-      { source: '/cau-chuyen', destination: '/about' },
-      { source: '/khong-gian', destination: '/space' },
-      { source: '/thuc-don', destination: '/menu' },
-      { source: '/lien-he', destination: '/contact' },
+      { source: '/about', destination: '/cau-chuyen', permanent: true },
+      { source: '/space', destination: '/khong-gian-suoi', permanent: true },
+      { source: '/khong-gian', destination: '/khong-gian-suoi', permanent: true },
+      { source: '/menu', destination: '/thuc-don', permanent: true },
+      { source: '/contact', destination: '/chi-duong-lien-he', permanent: true },
+      { source: '/lien-he', destination: '/chi-duong-lien-he', permanent: true },
     ];
   },
 

@@ -114,3 +114,4 @@ export default function OpenStatusBadge({ className = "", showDetails = true }: 
     </div>
   );
 }
+
