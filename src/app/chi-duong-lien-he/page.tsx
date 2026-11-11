@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { CAM_CU_HOUSE_INFO } from "@/data/camCuHouseData";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePreOrder } from "@/context/PreOrderContext";
+import { trackCustomerAction, saveReservation } from "@/lib/cmsStore";
 import {
   MapPin,
   Navigation,
@@ -43,6 +44,36 @@ export default function ContactDirectionsPage() {
   const [visitTime, setVisitTime] = useState("09:00");
   const [specialNote, setSpecialNote] = useState("");
   const [copiedNote, setCopiedNote] = useState(false);
+  const [submittedReservation, setSubmittedReservation] = useState(false);
+
+  const handleSendReservation = () => {
+    if (!customerPhone && !customerName) {
+      alert("Vui lòng nhập ít nhất số điện thoại hoặc họ tên để quán xác nhận đặt chỗ.");
+      return;
+    }
+
+    saveReservation({
+      customerName: customerName.trim() || "Khách ghé thăm",
+      customerPhone: customerPhone.trim() || "Chưa để lại SĐT",
+      guestCount,
+      visitDate: visitDate || new Date().toISOString().split("T")[0],
+      visitTime: visitTime || "09:00",
+      serviceType,
+      specialNote: specialNote.trim(),
+      preOrderItems: preOrderItems.map((i) => ({
+        code: i.code,
+        name: i.name,
+        variant: i.variant,
+        quantity: i.quantity,
+        price: i.price ?? 0,
+      })),
+      totalEstimatedAmount,
+    });
+
+    trackCustomerAction("click_call");
+    setSubmittedReservation(true);
+    setTimeout(() => setSubmittedReservation(false), 5000);
+  };
 
   // Set default date to today
   useEffect(() => {
@@ -146,6 +177,7 @@ Xin cảm ơn!`;
             <div className="pt-6 border-t border-white/10 flex flex-wrap items-center gap-4 text-xs font-mono">
               <a
                 href={CAM_CU_HOUSE_INFO.contacts.primaryTel}
+                onClick={() => trackCustomerAction("click_call")}
                 className="px-4 py-2 rounded-full bg-[#E86C3A] text-white font-bold inline-flex items-center gap-2 hover:opacity-90"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
@@ -154,6 +186,7 @@ Xin cảm ơn!`;
 
               <a
                 href={CAM_CU_HOUSE_INFO.contacts.secondaryTel}
+                onClick={() => trackCustomerAction("click_call")}
                 className="px-4 py-2 rounded-full bg-white/10 text-white font-bold inline-flex items-center gap-2 hover:bg-white/20"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
@@ -207,6 +240,7 @@ Xin cảm ơn!`;
                 href={CAM_CU_HOUSE_INFO.socials.googleMaps}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackCustomerAction("click_directions")}
                 className="w-full py-4 bg-[#E86C3A] text-white font-bold text-center rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-md"
               >
                 <Navigation className="w-4 h-4" />
@@ -527,11 +561,28 @@ Xin cảm ơn!`;
                 />
               </div>
 
-              {/* HÀNH ĐỘNG GỌI HOTLINE / ZALO HOÀN TẤT ĐẶT CHỖ */}
+              {/* HÀNH ĐỘNG GỬI ĐƠN & GỌI HOTLINE / ZALO HOÀN TẤT ĐẶT CHỖ */}
               <div className="pt-4 border-t border-[var(--border-subtle)] flex flex-col gap-4">
+                {/* NÚT GỬI ĐƠN ĐẶT CHỖ TRỰC TIẾP LÊN ADMIN */}
+                <button
+                  type="button"
+                  onClick={handleSendReservation}
+                  className="w-full py-4 bg-emerald-600 text-white font-bold text-center rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-700 transition-colors shadow-md text-sm cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Gửi Yêu Cầu Đặt Chỗ Đến Quán</span>
+                </button>
+
+                {submittedReservation && (
+                  <div className="p-3 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-medium text-center animate-fadeIn">
+                    ✓ Đã gửi yêu cầu đặt chỗ thành công! Quán sẽ gọi xác nhận ngay cho bạn qua số điện thoại đã cung cấp.
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <a
                     href="tel:0382851688"
+                    onClick={() => trackCustomerAction("click_call")}
                     className="py-4 bg-[#E86C3A] text-white font-bold text-center rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-md text-sm"
                   >
                     <PhoneCall className="w-4 h-4" />
@@ -542,6 +593,7 @@ Xin cảm ơn!`;
                     href="https://zalo.me/0382851688"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackCustomerAction("click_zalo")}
                     className="py-4 bg-[#141B17] border border-white/20 text-[#F3F1EC] font-bold text-center rounded-xl flex items-center justify-center gap-2 hover:border-[#E86C3A] transition-colors text-sm"
                   >
                     <MessageCircle className="w-4 h-4 text-[#E86C3A]" />
@@ -553,7 +605,7 @@ Xin cảm ơn!`;
                 <button
                   type="button"
                   onClick={handleCopySummary}
-                  className="w-full py-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-primary)] font-mono text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[#E86C3A] flex items-center justify-center gap-2 transition-all"
+                  className="w-full py-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-primary)] font-mono text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[#E86C3A] flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   {copiedNote ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedNote ? "Đã sao chép nội dung đặt chỗ!" : "Sao chép toàn bộ thông tin đặt chỗ"}</span>

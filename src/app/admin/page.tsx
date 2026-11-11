@@ -45,6 +45,8 @@ import {
   Copy,
   Globe,
   Database,
+  Calendar,
+  MessageCircle,
 } from "lucide-react";
 import QRCode from "qrcode";
 import { MENU_ITEMS, MENU_CATEGORIES } from "@/data/menu";
@@ -57,6 +59,13 @@ import {
   KEYS,
   SharedAnnouncement,
 } from "@/lib/syncStore";
+import {
+  CMS_KEYS,
+  broadcastSync,
+  useReservations,
+  updateReservationStatus,
+  ReservationItem,
+} from "@/lib/cmsStore";
 import {
   CAMCU_AUTH_KEY,
   CAMCU_MENU_OVERRIDES_KEY,
@@ -151,6 +160,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
   // Store opening hours & override state (Single source of truth)
   const storeStatus = useStoreStatus();
   const [storeOverride, setStoreOverrideState] = useState<StoreOverrideMode>("auto");
+  const reservations = useReservations();
 
   // Bảng Giờ hoạt động 7 ngày (Mục D13)
   const [schedule7Days, setSchedule7Days] = useState([
@@ -278,6 +288,8 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       };
       setSharedData(KEYS.CONTENT_OVERRIDES, updatedOverrides);
       setSharedData(KEYS.CONTENT_BLOCKS, updated);
+      broadcastSync(CMS_KEYS.CONTENT_OVERRIDES, updatedOverrides);
+      broadcastSync(CMS_KEYS.CONTENT_BLOCKS, updated);
       setEditingContentKey(null);
       showToast(`Đã lưu và đồng bộ tức thì [${key}]!`);
 
@@ -801,6 +813,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     };
     setMenuOverrides(updated);
     setStoredData(CAMCU_MENU_OVERRIDES_KEY, updated, true);
+    broadcastSync(CMS_KEYS.MENU_OVERRIDES, updated);
 
     // Sync camcu_disabled_menu_ids (array of out-of-stock item IDs)
     const currentDisabled = getSharedData<string[]>(KEYS.DISABLED_MENU_IDS, []);
@@ -849,6 +862,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     };
     setMenuOverrides(updated);
     setStoredData(CAMCU_MENU_OVERRIDES_KEY, updated, true);
+    broadcastSync(CMS_KEYS.MENU_OVERRIDES, updated);
     setEditingPriceId(null);
     showToast(`Đã cập nhật giá mới: ${numPrice.toLocaleString("vi-VN")}đ`);
 
@@ -888,6 +902,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       const updated = [newNoticeItem, ...prev];
       setSharedData(KEYS.ANNOUNCEMENTS, updated);
       setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+      broadcastSync(CMS_KEYS.ANNOUNCEMENTS, updated);
       return updated;
     });
 
@@ -912,6 +927,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       const updated = prev.filter((a) => a.id !== id);
       setSharedData(KEYS.ANNOUNCEMENTS, updated);
       setStoredData(CAMCU_ANNOUNCEMENTS_KEY, updated, true);
+      broadcastSync(CMS_KEYS.ANNOUNCEMENTS, updated);
       return updated;
     });
     showToast("Đã xóa bản tin thành công");
@@ -1028,6 +1044,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       setGallery(updatedGallery);
       setSharedData(KEYS.GALLERY, updatedGallery);
       setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+      broadcastSync(CMS_KEYS.GALLERY, updatedGallery);
       setNewPhoto({ title: "", url: "" });
       showToast("Đã lưu ảnh mới vào thư viện!");
 
@@ -1058,6 +1075,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     setGallery(updatedGallery);
     setSharedData(KEYS.GALLERY, updatedGallery);
     setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+    broadcastSync(CMS_KEYS.GALLERY, updatedGallery);
 
     const savedCount = newGalleryItems.length;
     setPendingPhotos([]);
@@ -1079,6 +1097,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     setGallery(updatedGallery);
     setSharedData(KEYS.GALLERY, updatedGallery);
     setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+    broadcastSync(CMS_KEYS.GALLERY, updatedGallery);
     showToast("Đã xóa ảnh khỏi thư viện");
 
     try {
@@ -1094,6 +1113,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
     setGallery(updatedGallery);
     setSharedData(KEYS.GALLERY, updatedGallery);
     setStoredData(CAMCU_GALLERY_KEY, updatedGallery, false);
+    broadcastSync(CMS_KEYS.GALLERY, updatedGallery);
 
     try {
       fetch("/api/admin/gallery", {
@@ -1117,6 +1137,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       setGallery(resetList);
       setSharedData(KEYS.GALLERY, resetList);
       setStoredData(CAMCU_GALLERY_KEY, resetList, false);
+      broadcastSync(CMS_KEYS.GALLERY, resetList);
       showToast("Đã đồng bộ 31 ảnh về taxonomy và tên gọi chuẩn thành công!");
     }
   };
@@ -1155,6 +1176,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     setStoredData(CAMCU_SETTINGS_KEY, settings, true);
+    broadcastSync(CMS_KEYS.SETTINGS, settings);
     showToast("Cập nhật thông tin cửa hàng thành công");
 
     try {
@@ -1266,7 +1288,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       )}
 
       {/* Sidebar - ALWAYS DARK IN BOTH MODES (Background #14241C, Text #F5EEDC, Active #1F3A2A with left border sage #9DC183) */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-[#14241C] text-[#F5EEDC] z-50 flex-col justify-between py-6 px-4 border-r border-[rgba(245,238,220,0.14)] shadow-sm transition-colors duration-200">
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-72 min-w-[270px] bg-[#14241C] text-[#F5EEDC] z-50 flex-col justify-between py-6 px-4 border-r border-[rgba(245,238,220,0.14)] shadow-sm transition-colors duration-200">
         <div className="flex flex-col gap-6">
           {/* Brand */}
           <div className="flex items-center gap-3 px-2">
@@ -1290,7 +1312,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("overview")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "overview"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1303,7 +1325,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("analytics")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "analytics"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1316,7 +1338,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("searchConsole")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "searchConsole"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1329,7 +1351,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("integrations")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "integrations"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1342,33 +1364,43 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("menu")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "menu"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <UtensilsCrossed className="w-4 h-4 shrink-0 text-[#9DC183]" />
-              <span>Quản Lý Thực Đơn (67 món)</span>
+              <div className="flex items-center gap-2.5 whitespace-nowrap">
+                <UtensilsCrossed className="w-4 h-4 shrink-0 text-[#9DC183]" />
+                <span>Quản Lý Thực Đơn</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-white/10 text-[#9DC183] shrink-0">
+                67 món
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("gallery")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "gallery"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <ImageIcon className="w-4 h-4 shrink-0 text-[#9DC183]" />
-              <span>Thư Viện Ảnh (30+ ảnh)</span>
+              <div className="flex items-center gap-2.5 whitespace-nowrap">
+                <ImageIcon className="w-4 h-4 shrink-0 text-[#9DC183]" />
+                <span>Thư Viện Ảnh</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-white/10 text-[#9DC183] shrink-0">
+                30+ ảnh
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("settings")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "settings"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1381,20 +1413,25 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("content")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center justify-between w-full px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "content"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
               }`}
             >
-              <FileText className="w-4 h-4 shrink-0 text-[#9DC183]" />
-              <span>Nội Dung Trang (5 trang)</span>
+              <div className="flex items-center gap-2.5 whitespace-nowrap">
+                <FileText className="w-4 h-4 shrink-0 text-[#9DC183]" />
+                <span>Nội Dung Trang</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-white/10 text-[#9DC183] shrink-0">
+                5 trang
+              </span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("seo")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "seo"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1407,7 +1444,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("backup")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "backup"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1420,7 +1457,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
             <button
               type="button"
               onClick={() => setActiveTab("security")}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                 activeTab === "security"
                   ? "bg-[#1F3A2A] text-[#F5EEDC] border-l-4 border-[#9DC183] font-bold"
                   : "text-[#C9C2AE] hover:bg-white/5 hover:text-[#F5EEDC]"
@@ -1455,7 +1492,7 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
       </aside>
 
       {/* Main Content Body */}
-      <div className="pl-0 md:pl-64 pb-20 md:pb-8 w-full min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-300">
+      <div className="pl-0 md:pl-72 pb-20 md:pb-8 w-full min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text)] transition-colors duration-300">
         {/* Top Header */}
         <header className="h-16 bg-[var(--bg)]/95 backdrop-blur-xl border-b border-[var(--border)] sticky top-0 z-40 flex items-center justify-between px-6 sm:px-8">
           <div className="flex items-center gap-3">
@@ -1549,42 +1586,94 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
           {activeTab === "overview" && (
             <>
               {/* Welcome Banner */}
-              <div className="admin-card p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2 text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider">
-                    <Sparkles className="w-4 h-4 shrink-0" />
-                    <span>Bảng Điều Khiển Vận Hành</span>
+              <div className="admin-card p-6 sm:p-8 flex flex-col gap-6">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-2 text-[12px] font-bold text-[var(--accent)] uppercase tracking-wider">
+                      <Sparkles className="w-4 h-4 shrink-0" />
+                      <span>Bảng Điều Khiển Vận Hành</span>
+                    </div>
+                    <h1 className="admin-h1 font-serif text-[26px] leading-[1.2] font-bold text-[var(--text)]">
+                      Xin chào <span className="underline decoration-[#9DC183]/60">Quản lý Cẩm Cù House</span>
+                    </h1>
+                    <p className="admin-subtle flex items-center gap-2 flex-wrap text-sm">
+                      <span>Hôm nay:</span>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full font-bold text-[12px] ${
+                        storeStatus.isOpen
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
+                          : "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30"
+                      }`}>
+                        {storeStatus.isOpen
+                          ? `Quán đang mở cửa đón khách • Đóng lúc ${storeStatus.closingTime}`
+                          : "Đã đóng cửa • Mở cửa lại lúc 07:00 sáng"}
+                      </span>
+                      <span>•</span>
+                      <span>Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đăk Nông (Bên bờ suối)</span>
+                    </p>
                   </div>
-                  <h1 className="admin-h1 font-serif text-[26px] leading-[1.2] font-bold text-[var(--text)]">
-                    Xin chào <span className="underline decoration-[#9DC183]/60">Quản lý Cẩm Cù House</span>
-                  </h1>
-                  <p className="admin-subtle flex items-center gap-2 flex-wrap">
-                    <span>Hôm nay:</span>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] font-bold text-[12px]">
-                      {settings.isOpen ? "Quán đang mở cửa đón khách" : "Quán đang tạm nghỉ"}
-                    </span>
-                    <span>•</span>
-                    <span>Khu sinh thái Suối Reo, Nghĩa Trung, Gia Nghĩa</span>
-                  </p>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setNoticeModalOpen(true)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--surface-2)] hover:opacity-90 text-[var(--text)] text-[13px] font-semibold transition-all border border-[var(--border)] cursor-pointer"
+                    >
+                      <Radio className="w-4 h-4 text-[var(--accent)]" />
+                      <span>+ Tạo Tin Mới</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("menu")}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--btn-primary)] text-white text-[13px] font-semibold hover:opacity-90 transition-all shadow-md cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Quản Lý Menu Món</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setNoticeModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--surface-2)] hover:opacity-90 text-[var(--text)] text-[13px] font-semibold transition-all border border-[var(--border)] cursor-pointer"
-                  >
-                    <Radio className="w-4 h-4 text-[var(--accent)]" />
-                    <span>+ Tạo Tin Mới</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("menu")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--btn-primary)] text-white text-[13px] font-semibold hover:opacity-90 transition-all shadow-md cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Quản Lý Menu Món</span>
-                  </button>
+                {/* Thanh Thời Lượng Đóng/Mở Đột Xuất Di Chuyển Lên Đây */}
+                <div className="pt-4 border-t border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3 bg-[var(--surface-2)]/50 p-4 rounded-xl">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                    <span className="text-[13px] font-semibold text-[var(--text)]">
+                      Thời lượng áp dụng khi đóng/mở đột xuất:
+                    </span>
+                    {storeStatus.overrideUntil && (
+                      <span className="text-xs text-[var(--accent)] font-mono">
+                        (Áp dụng đến {new Date(storeStatus.overrideUntil).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })})
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(["1h", "2h", "4h", "today", "indefinite"] as const).map((dur) => (
+                      <button
+                        key={dur}
+                        type="button"
+                        onClick={() => {
+                          setOverrideDuration(dur);
+                          if (storeOverride !== "auto") {
+                            handleStoreOverrideChange(storeOverride, dur);
+                          }
+                        }}
+                        className={`min-h-[40px] px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all cursor-pointer flex items-center justify-center ${
+                          overrideDuration === dur
+                            ? "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] shadow-sm font-bold"
+                            : "bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
+                        }`}
+                      >
+                        {dur === "1h"
+                          ? "Trong 1 giờ"
+                          : dur === "2h"
+                          ? "Trong 2 giờ"
+                          : dur === "4h"
+                          ? "Trong 4 giờ"
+                          : dur === "today"
+                          ? "Hết hôm nay"
+                          : "Vô thời hạn"}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -1700,9 +1789,11 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                       <Phone className="w-5 h-5 text-[var(--accent)]" />
                     </div>
                   </div>
-                  <div className="mt-4 pt-3 flex items-center justify-between text-[13px] border-t border-[var(--border)]">
-                    <span className="admin-subtle">Hotline 038 285 1688</span>
-                    <span className="inline-flex items-center gap-1 font-bold text-[var(--accent)] text-[13px]">
+                  <div className="mt-4 pt-3 flex items-center justify-between gap-2 text-[13px] border-t border-[var(--border)]">
+                    <span className="admin-subtle font-mono text-xs whitespace-nowrap">
+                      0382 851 688 · 0774 659 000
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-bold text-[var(--accent)] text-[12px] whitespace-nowrap shrink-0">
                       <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                       <span>Tự động đo lường</span>
                     </span>
@@ -1806,45 +1897,102 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Quick Status Control with Duration */}
-                <div className="pt-3 border-t border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3">
+              {/* Customer Reservations Notification Panel (Mới nhận từ Website [05]) */}
+              <div className="admin-card p-6 sm:p-7 flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[var(--border)]">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                    <span className="text-[13px] font-semibold text-[var(--text)]">
-                      Thời lượng áp dụng khi đóng/mở đột xuất:
-                    </span>
+                    <Calendar className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                    <h2 className="admin-h2 font-serif text-[22px] font-bold text-[var(--text)]">
+                      Đơn Đặt Bàn &amp; Trợ Lý Đặt Chỗ Từ Website
+                    </h2>
+                    {reservations.length > 0 && (
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                        {reservations.length} đơn
+                      </span>
+                    )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    {(["1h", "2h", "4h", "today", "indefinite"] as const).map((dur) => (
-                      <button
-                        key={dur}
-                        type="button"
-                        onClick={() => {
-                          setOverrideDuration(dur);
-                          if (storeOverride !== "auto") {
-                            handleStoreOverrideChange(storeOverride, dur);
-                          }
-                        }}
-                        className={`min-h-[44px] px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all cursor-pointer flex items-center justify-center ${
-                          overrideDuration === dur
-                            ? "bg-[var(--btn-primary)] text-[var(--btn-primary-text)] shadow-sm font-bold"
-                            : "bg-[var(--surface-2)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
-                        }`}
-                      >
-                        {dur === "1h"
-                          ? "Trong 1 giờ"
-                          : dur === "2h"
-                          ? "Trong 2 giờ"
-                          : dur === "4h"
-                          ? "Trong 4 giờ"
-                          : dur === "today"
-                          ? "Hết hôm nay"
-                          : "Vô thời hạn"}
-                      </button>
+                  <span className="admin-subtle text-[13px]">
+                    Đồng bộ thời gian thực từ Form Đặt Chỗ tại trang [05] Chỉ Đường &amp; Liên Hệ
+                  </span>
+                </div>
+
+                {reservations.length === 0 ? (
+                  <div className="py-8 text-center admin-subtle text-[13px] flex flex-col items-center justify-center gap-2">
+                    <Calendar className="w-8 h-8 text-[var(--text-subtle)]" />
+                    <p>Chưa có đơn đặt bàn mới. Khách gửi yêu cầu từ trang [05] sẽ xuất hiện tức thì tại đây.</p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col divide-y divide-[var(--border)]">
+                    {reservations.map((res) => (
+                      <div key={res.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-base text-[var(--text)]">
+                              {res.customerName}
+                            </span>
+                            <a
+                              href={`tel:${res.customerPhone}`}
+                              className="font-mono text-xs font-bold text-[var(--accent)] hover:underline inline-flex items-center gap-1 bg-[var(--surface-2)] px-2 py-0.5 rounded border border-[var(--border)]"
+                            >
+                              <Phone className="w-3 h-3" />
+                              <span>{res.customerPhone}</span>
+                            </a>
+                            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#3E5C46]/20 text-[#3E5C46] dark:text-[#9DC183]">
+                              {res.serviceType === "outdoor" ? "Ngồi ngoài trời bên suối" : "Mang về (Takeaway)"}
+                            </span>
+                            <span className="text-xs text-[var(--text-muted)] font-mono">
+                              {res.guestCount} khách • {res.visitTime} ngày {res.visitDate}
+                            </span>
+                          </div>
+
+                          {res.specialNote && (
+                            <p className="text-xs text-[var(--text-muted)] italic">
+                              Ghi chú: “{res.specialNote}”
+                            </p>
+                          )}
+
+                          {res.preOrderItems && res.preOrderItems.length > 0 && (
+                            <div className="flex items-center gap-2 flex-wrap text-xs text-[var(--text-muted)] mt-1">
+                              <span className="font-semibold text-[var(--text)]">Món chọn trước:</span>
+                              {res.preOrderItems.map((item, idx) => (
+                                <span key={idx} className="bg-[var(--surface-2)] px-2 py-0.5 rounded border border-[var(--border)] font-mono">
+                                  {item.name} {item.variant ? `(${item.variant})` : ""} x{item.quantity}
+                                </span>
+                              ))}
+                              {res.totalEstimatedAmount ? (
+                                <span className="font-bold text-[var(--accent)] font-mono">
+                                  (Ước tính: {res.totalEstimatedAmount.toLocaleString("vi-VN")}đ)
+                                </span>
+                              ) : null}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                            res.status === "confirmed"
+                              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
+                              : res.status === "cancelled"
+                              ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30"
+                              : "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                          }`}>
+                            {res.status === "confirmed" ? "Đã xác nhận" : res.status === "cancelled" ? "Đã hủy" : "Chờ gọi xác nhận"}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => updateReservationStatus(res.id, res.status === "confirmed" ? "pending" : "confirmed")}
+                            className="text-xs px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] hover:bg-[var(--surface-3)] font-semibold transition-all cursor-pointer"
+                          >
+                            {res.status === "confirmed" ? "Đổi sang chờ" : "Xác nhận đơn"}
+                          </button>
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
+                )}
               </div>
 
               {/* 2-Column Overview Section: Bảng Tin + Quick Dish Status */}
@@ -3091,11 +3239,11 @@ export default function AdminPage({ initialTab = "overview" }: { initialTab?: Ad
               {/* Page Section Pills */}
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
                 {[
-                  { id: "home", label: "Trang Chủ (/)" },
-                  { id: "about", label: "Câu Chuyện (/about)" },
-                  { id: "space", label: "Không Gian Suối (/space)" },
-                  { id: "menu", label: "Thực Đơn (/menu)" },
-                  { id: "contact", label: "Chỉ Đường & Liên Hệ (/contact)" },
+                  { id: "home", label: "[01] Trang Chủ (/)" },
+                  { id: "about", label: "[02] Câu Chuyện (/cau-chuyen)" },
+                  { id: "space", label: "[03] Không Gian Suối (/khong-gian-suoi)" },
+                  { id: "menu", label: "[04] Thực Đơn (/thuc-don)" },
+                  { id: "contact", label: "[05] Chỉ Đường & Liên Hệ (/chi-duong-lien-he)" },
                   { id: "common", label: "Chung & Chân Trang" },
                   { id: "nav", label: "Thanh Điều Hướng" },
                 ].map((pg) => (

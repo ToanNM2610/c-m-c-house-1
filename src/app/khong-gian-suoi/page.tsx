@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import LightboxModal from "@/components/LightboxModal";
 import { SPATIAL_CHAPTERS, SpatialPhotoItem, CAM_CU_HOUSE_INFO } from "@/data/camCuHouseData";
 import { useLanguage } from "@/context/LanguageContext";
+import { CMS_KEYS } from "@/lib/cmsStore";
+import { getStoredData } from "@/utils/storage";
 import {
   Compass,
   ArrowRight,
@@ -22,8 +24,45 @@ export default function StreamSanctuaryPage() {
   const { locale } = useLanguage();
   const isVi = locale !== "en";
 
-  // Danh sách phẳng tất cả 30 ảnh cho Lightbox
-  const allPhotos: SpatialPhotoItem[] = SPATIAL_CHAPTERS.flatMap((ch) => ch.photos);
+  const [customGallery, setCustomGallery] = useState<any[]>(() => {
+    return getStoredData<any[]>(CMS_KEYS.GALLERY, []);
+  });
+
+  React.useEffect(() => {
+    const handleUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail || detail.key === CMS_KEYS.GALLERY) {
+        setCustomGallery(getStoredData<any[]>(CMS_KEYS.GALLERY, []));
+      }
+    };
+    window.addEventListener("camcu_sync_update", handleUpdate);
+    window.addEventListener("storage", handleUpdate);
+    return () => {
+      window.removeEventListener("camcu_sync_update", handleUpdate);
+      window.removeEventListener("storage", handleUpdate);
+    };
+  }, []);
+
+  // Danh sách phẳng tất cả ảnh (30 ảnh gốc + ảnh quản trị đồng bộ)
+  const allPhotos: SpatialPhotoItem[] = React.useMemo(() => {
+    const base = SPATIAL_CHAPTERS.flatMap((ch) => ch.photos);
+    if (!customGallery || customGallery.length === 0) return base;
+
+    // Map overrides or additions from admin gallery
+    const overrideMap = new Map(customGallery.map((g) => [g.id || g.title, g]));
+    return base.map((p) => {
+      const matched = overrideMap.get(p.id) || overrideMap.get(p.title);
+      if (matched) {
+        return {
+          ...p,
+          title: matched.title || p.title,
+          image: matched.url || p.image,
+          description: matched.caption || p.description,
+        };
+      }
+      return p;
+    });
+  }, [customGallery]);
 
   // Bộ lọc theo chương: 0 = Tất cả, 1 = Chương I, 2 = Chương II, 3 = Chương III, 4 = Chương IV
   const [activeChapter, setActiveChapter] = useState<number>(0);

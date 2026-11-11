@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { EDITORIAL_MENU_DATA, EditorialMenuItem, EditorialMenuCategory, CAM_CU_HOUSE_INFO } from "@/data/camCuHouseData";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePreOrder } from "@/context/PreOrderContext";
+import { useMenuOverrides, trackCustomerAction } from "@/lib/cmsStore";
 import {
   Search,
   Plus,
@@ -23,6 +24,12 @@ export default function MenuPage() {
   const { locale } = useLanguage();
   const isVi = locale !== "en";
   const { items: preOrderItems, addItem, removeItem, updateQuantity, clearTray, totalItems, totalEstimatedAmount } = usePreOrder();
+  const menuOverrides = useMenuOverrides();
+
+  // Track page view event for Admin analytics
+  useEffect(() => {
+    trackCustomerAction("view_menu");
+  }, []);
 
   const [activeCategoryId, setActiveCategoryId] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -223,6 +230,11 @@ export default function MenuPage() {
                 {/* Bố cục 2 cột trên Desktop (1440px), 1 cột trên Mobile (390px) */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-2">
                   {category.items.map((item) => {
+                    const override = menuOverrides[item.code] || menuOverrides[item.name] || {};
+                    const inStock = override.inStock !== false;
+                    const displayPrice = override.price ?? item.price;
+                    const displayBadge = override.tag ?? item.badge;
+
                     const activeVariant = selectedVariants[item.code] || (item.variants ? item.variants[0] : undefined);
                     const isInTray = preOrderItems.some(
                       (p) => p.code === item.code && (p.variant || "") === (activeVariant || "")
@@ -231,7 +243,9 @@ export default function MenuPage() {
                     return (
                       <div
                         key={item.code}
-                        className="flex justify-between items-start gap-4 py-3.5 border-b border-stone-200/60 dark:border-white/10 hover:border-[#E86C3A]/50 transition-colors"
+                        className={`flex justify-between items-start gap-4 py-3.5 border-b border-stone-200/60 dark:border-white/10 hover:border-[#E86C3A]/50 transition-colors ${
+                          !inStock ? "opacity-60 grayscale-[30%]" : ""
+                        }`}
                       >
                         {/* Cột trái (flex-1): Tên món, mã món, mô tả, tùy chọn */}
                         <div className="flex-1 flex flex-col gap-1 min-w-0 pr-2">
@@ -239,12 +253,17 @@ export default function MenuPage() {
                             <span className="font-mono text-[12px] font-bold text-[#E86C3A] shrink-0">
                               [{item.code}]
                             </span>
-                            <span className="font-sans font-bold text-[16px] sm:text-[17px] text-[var(--text-primary)]">
+                            <span className={`font-sans font-bold text-[16px] sm:text-[17px] text-[var(--text-primary)] ${!inStock ? "line-through text-[var(--text-muted)]" : ""}`}>
                               {item.name}
                             </span>
-                            {item.badge && (
+                            {displayBadge && (
                               <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E86C3A]/10 text-[#E86C3A] font-bold uppercase tracking-wider shrink-0">
-                                {item.badge}
+                                {displayBadge}
+                              </span>
+                            )}
+                            {!inStock && (
+                              <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30 font-bold uppercase tracking-wider shrink-0">
+                                {isVi ? "Tạm hết hôm nay" : "Sold out today"}
                               </span>
                             )}
                           </div>
@@ -283,28 +302,34 @@ export default function MenuPage() {
                         {/* Cột phải (shrink-0): Giá tiền & Nút chọn món */}
                         <div className="shrink-0 flex flex-col items-end gap-2 text-right">
                           <span className="font-mono font-bold text-[15px] sm:text-[16px] text-[#E86C3A] whitespace-nowrap">
-                            {formatPrice(item.price)}
+                            {formatPrice(displayPrice)}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              addItem({
-                                code: item.code,
-                                name: item.name,
-                                price: item.price,
-                                variant: activeVariant,
-                              })
-                            }
-                            className={`px-3 py-1 rounded-full font-mono text-xs font-bold inline-flex items-center gap-1 whitespace-nowrap transition-all ${
-                              isInTray
-                                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                                : "bg-[#E86C3A] text-white hover:opacity-90 shadow-xs"
-                            }`}
-                            title="Thêm vào Khay Đặt Trước / Mang Về"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            <span>{isInTray ? "Thêm tiếp" : "Chọn món"}</span>
-                          </button>
+                          {inStock ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                addItem({
+                                  code: item.code,
+                                  name: item.name,
+                                  price: displayPrice,
+                                  variant: activeVariant,
+                                })
+                              }
+                              className={`px-3 py-1 rounded-full font-mono text-xs font-bold inline-flex items-center gap-1 whitespace-nowrap transition-all ${
+                                isInTray
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                  : "bg-[#E86C3A] text-white hover:opacity-90 shadow-xs"
+                              }`}
+                              title="Thêm vào Khay Đặt Trước / Mang Về"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>{isInTray ? "Thêm tiếp" : "Chọn món"}</span>
+                            </button>
+                          ) : (
+                            <span className="px-3 py-1 rounded-full font-mono text-xs font-bold bg-stone-500/10 text-stone-400 border border-stone-500/20 cursor-not-allowed">
+                              {isVi ? "Tạm hết" : "Sold out"}
+                            </span>
+                          )}
                         </div>
                       </div>
                     );

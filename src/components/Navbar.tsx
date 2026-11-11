@@ -18,6 +18,7 @@ import StarHoya from "@/components/ui/StarHoya";
 import AtmosphereBar from "@/components/AtmosphereBar";
 import { useLanguage } from "@/context/LanguageContext";
 import { usePreOrder } from "@/context/PreOrderContext";
+import { trackCustomerAction } from "@/lib/cmsStore";
 
 export const NAV_ITEMS = [
   { href: "/", num: "01", labelVi: "TRANG CHỦ", labelEn: "HOME" },
@@ -157,6 +158,7 @@ export default function Navbar() {
               {/* Hotline Button */}
               <a
                 href="tel:0382851688"
+                onClick={() => trackCustomerAction("click_call")}
                 className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 bg-[#E86C3A] text-white font-sans font-bold text-[13px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-md whitespace-nowrap"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
@@ -248,6 +250,7 @@ export default function Navbar() {
               <div className="grid grid-cols-3 gap-2">
                 <a
                   href="tel:0382851688"
+                  onClick={() => trackCustomerAction("click_call")}
                   className="py-3 px-2 bg-[#E86C3A] text-white font-bold text-center font-mono text-[12px] uppercase rounded-sm flex items-center justify-center gap-1.5"
                 >
                   <PhoneCall className="w-3.5 h-3.5" />
@@ -257,6 +260,7 @@ export default function Navbar() {
                   href="https://zalo.me/0382851688"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackCustomerAction("click_zalo")}
                   className="py-3 px-2 bg-[#161A18] border border-white/15 text-[#F3F1EC] font-bold text-center font-mono text-[12px] uppercase rounded-sm flex items-center justify-center gap-1.5"
                 >
                   <MessageCircle className="w-3.5 h-3.5 text-[#E86C3A]" />
@@ -266,6 +270,7 @@ export default function Navbar() {
                   href="https://maps.app.goo.gl/G6aP51qJ6aDabp676"
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackCustomerAction("click_directions")}
                   className="py-3 px-2 bg-[#161A18] border border-white/15 text-[#F3F1EC] font-bold text-center font-mono text-[12px] uppercase rounded-sm flex items-center justify-center gap-1.5"
                 >
                   <Navigation className="w-3.5 h-3.5 text-[#E86C3A]" />

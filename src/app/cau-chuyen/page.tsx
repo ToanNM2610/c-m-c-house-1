@@ -5,6 +5,7 @@ import Link from "next/link";
 import SafeImage from "@/components/ui/SafeImage";
 import Footer from "@/components/Footer";
 import CustomerReviewsSection from "@/components/home/CustomerReviewsSection";
+import AnnouncementBar from "@/components/home/AnnouncementBar";
 import StarHoya from "@/components/ui/StarHoya";
 import { useLanguage } from "@/context/LanguageContext";
 import { CAM_CU_HOUSE_INFO } from "@/data/camCuHouseData";
@@ -27,6 +28,7 @@ export default function StoryPage() {
 
   return (
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[#E86C3A] selection:text-white transition-colors">
+      <AnnouncementBar />
       <main className="w-full">
         {/* MASTHEAD HEADER */}
         <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">

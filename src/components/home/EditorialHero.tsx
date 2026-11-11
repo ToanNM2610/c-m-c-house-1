@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import OpenStatusBadge from "@/components/OpenStatusBadge";
+import AnnouncementBar from "@/components/home/AnnouncementBar";
+import { trackCustomerAction } from "@/lib/cmsStore";
 import { CAM_CU_HOUSE_INFO } from "@/data/camCuHouseData";
 import {
   Compass,
@@ -94,8 +96,10 @@ export default function EditorialHero() {
   ];
 
   return (
-    <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-hidden transition-colors">
-      <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col gap-10">
+    <>
+      <AnnouncementBar />
+      <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-hidden transition-colors">
+        <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col gap-10">
         {/* Top Masthead metadata bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-3">
@@ -184,6 +188,7 @@ export default function EditorialHero() {
 
               <a
                 href={CAM_CU_HOUSE_INFO.contacts.primaryTel}
+                onClick={() => trackCustomerAction("click_call")}
                 className="px-4 py-3.5 text-[14px] font-mono font-bold text-[var(--text-primary)] hover:text-[#E86C3A] transition-colors inline-flex items-center gap-2"
               >
                 <PhoneCall className="w-4 h-4 text-[#E86C3A]" />
@@ -318,5 +323,6 @@ export default function EditorialHero() {
         </div>
       </div>
     </section>
+    </>
   );
 }

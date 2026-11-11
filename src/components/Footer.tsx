@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import StarHoya from "@/components/ui/StarHoya";
+import { trackCustomerAction } from "@/lib/cmsStore";
 
 export default function Footer() {
   const { locale, dict } = useLanguage();
@@ -123,11 +124,19 @@ export default function Footer() {
             </div>
 
             <div className="pt-2 border-t border-[var(--line-on-dark,rgba(242,237,228,0.18))] flex flex-col gap-1">
-              <a href="tel:0382851688" className="font-mono text-[14px] font-bold text-[var(--ember-on-dark,#FF6A2B)] hover:underline flex items-center gap-2">
+              <a
+                href="tel:0382851688"
+                onClick={() => trackCustomerAction("click_call")}
+                className="font-mono text-[14px] font-bold text-[var(--ember-on-dark,#FF6A2B)] hover:underline flex items-center gap-2"
+              >
                 <PhoneCall className="w-3.5 h-3.5" />
                 <span>038 285 1688 (Zalo)</span>
               </a>
-              <a href="tel:0774659000" className="font-mono text-[14px] font-bold text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] flex items-center gap-2">
+              <a
+                href="tel:0774659000"
+                onClick={() => trackCustomerAction("click_call")}
+                className="font-mono text-[14px] font-bold text-[var(--ink-on-dark,#F2EDE4)] hover:text-[var(--ember-on-dark,#FF6A2B)] flex items-center gap-2"
+              >
                 <PhoneCall className="w-3.5 h-3.5" />
                 <span>077 465 9000</span>
               </a>

@@ -108,24 +108,21 @@ export function getAtmospherePhaseName(phase: AtmospherePhase, locale: "vi" | "e
   }
 }
 
+import { getStoreStatus } from "@/lib/openingHours";
+
 /**
- * Kiểm tra trạng thái hoạt động:
- * - Thứ 2–5 (1..4): 07:00 (420) – 18:00 (1080)
- * - Thứ 6–CN (5,6,0): 07:00 (420) – 22:00 (1320)
+ * Kiểm tra trạng thái hoạt động (đồng bộ 100% với getStoreStatus):
+ * - Thứ 2–5 (1..4): 07:00 – 18:00
+ * - Thứ 6–CN (5,6,0): 07:00 – 22:00
+ * Tự động đồng bộ override từ Admin
  */
-export function getStoreOpenStatus(dayOfWeek: number, totalMinutes: number): StoreOpenStatus {
-  const isWeekendSchedule = dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0;
-  const openMinutes = 7 * 60; // 07:00
-  const closeMinutes = isWeekendSchedule ? 22 * 60 : 18 * 60;
-
-  const isOpen = totalMinutes >= openMinutes && totalMinutes < closeMinutes;
-  const closingTime = isWeekendSchedule ? "22:00" : "18:00";
-
+export function getStoreOpenStatus(_dayOfWeek?: number, _totalMinutes?: number): StoreOpenStatus {
+  const current = getStoreStatus();
   return {
-    isOpen,
-    closingTime,
-    scheduleTextVi: "Thứ 2–5 07:00–18:00 | Thứ 6–CN 07:00–22:00",
-    scheduleTextEn: "Mon–Thu 07:00–18:00 | Fri–Sun 07:00–22:00",
+    isOpen: current.isOpen,
+    closingTime: current.closingTime,
+    scheduleTextVi: current.scheduleText || "Thứ 2–5 07:00–18:00 | Thứ 6–CN 07:00–22:00",
+    scheduleTextEn: current.scheduleTextEn || "Mon–Thu 07:00–18:00 | Fri–Sun 07:00–22:00",
   };
 }
 
