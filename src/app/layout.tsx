@@ -123,10 +123,6 @@ export default async function RootLayout({
                     });
                     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
                   }
-                  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                  if (!prefersReduced) {
-                    document.documentElement.classList.add('intro-lock');
-                  }
                 } catch(e) {}
               })();
             `,

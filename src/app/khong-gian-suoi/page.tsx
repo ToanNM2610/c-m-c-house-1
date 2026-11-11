@@ -56,7 +56,7 @@ export default function StreamSanctuaryPage() {
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[#E86C3A] selection:text-white transition-colors">
       <main className="w-full">
         {/* MASTHEAD BANNER */}
-        <section className="relative w-full pt-32 sm:pt-40 pb-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
+        <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
           <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <span className="font-mono text-xs uppercase tracking-widest text-[#E86C3A] font-bold">
@@ -68,7 +68,7 @@ export default function StreamSanctuaryPage() {
               </span>
             </div>
 
-            <h1 className="font-display font-black text-[clamp(36px,6vw,72px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.08]">
+            <h1 className="font-display font-black text-[clamp(32px,5.5vw,68px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.25] sm:leading-snug mb-2">
               {isVi
                 ? "TRIỂN LÃM KHÔNG GIAN SINH THÁI BÊN BỜ SUỐI"
                 : "CREEKSIDE SPATIAL ARCHITECTURE EXHIBITION"}
@@ -131,8 +131,8 @@ export default function StreamSanctuaryPage() {
                 </span>
               </div>
 
-              {/* Lưới ảnh bất đối xứng Awwwards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-start">
+              {/* Lưới ảnh bất đối xứng Awwwards - Chú thích nằm BÊN DƯỚI khung ảnh */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 items-start">
                 {chapter.photos.map((item, idx) => {
                   let colSpan = "lg:col-span-4";
                   let aspect = "aspect-[4/3]";
@@ -149,35 +149,39 @@ export default function StreamSanctuaryPage() {
                     <figure
                       key={item.id}
                       onClick={() => handleOpenLightbox(item.id)}
-                      className={`group relative cursor-pointer overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-black ${colSpan} ${aspect} select-none transition-transform duration-500 hover:-translate-y-1`}
+                      className={`group flex flex-col gap-3.5 cursor-pointer select-none ${colSpan} transition-transform duration-300 hover:-translate-y-1`}
                     >
-                      <SafeImage
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 opacity-90"
-                      />
+                      {/* Khung ảnh độc lập */}
+                      <div className={`relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-black w-full ${aspect}`}>
+                        <SafeImage
+                          src={item.image}
+                          alt={item.title}
+                          fill
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        />
+                        {/* Nút Maximize góc trên */}
+                        <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Maximize2 className="w-3.5 h-3.5 text-white" />
+                        </div>
+                      </div>
 
-                      {/* LỚP PHỦ TỐI BẮT BUỘC (DARK OVERLAY TƯƠNG PHẢN >= 4.5:1) */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10 transition-opacity" />
-
-                      {/* Figcaption với số thứ tự và tiêu đề */}
-                      <figcaption className="absolute inset-x-0 bottom-0 p-5 z-10 flex flex-col justify-end text-white">
-                        <div className="flex items-center justify-between">
+                      {/* Chú thích nằm BÊN DƯỚI khung ảnh, rõ ràng không đè lên hình */}
+                      <figcaption className="flex flex-col gap-1 px-1">
+                        <div className="flex items-center justify-between gap-2">
                           <span className="font-mono text-[12px] font-bold text-[#E86C3A] tracking-wider uppercase">
                             [{item.figureCode} · {item.orderNumber}/30]
                           </span>
-                          <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Maximize2 className="w-3.5 h-3.5 text-white" />
-                          </div>
+                          <span className="font-mono text-[11px] text-[var(--text-secondary)]">
+                            {item.subtitle}
+                          </span>
                         </div>
 
-                        <h3 className="font-sans font-bold text-[16px] sm:text-[18px] text-white mt-1 leading-snug">
+                        <h3 className="font-sans font-bold text-[16px] sm:text-[17px] text-[var(--text-primary)] leading-snug group-hover:text-[#E86C3A] transition-colors">
                           {item.title}
                         </h3>
 
-                        <p className="text-[13px] text-white/80 font-mono mt-0.5 line-clamp-1">
-                          {item.subtitle}
+                        <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed">
+                          {item.description}
                         </p>
                       </figcaption>
                     </figure>
@@ -233,3 +237,4 @@ export default function StreamSanctuaryPage() {
     </div>
   );
 }
+

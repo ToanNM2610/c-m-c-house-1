@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   PhoneCall, 
@@ -34,40 +34,6 @@ export default function Navbar() {
   const isEn = locale === "en";
   const { totalItems } = usePreOrder();
 
-  // Scroll behavior: auto-hide on scroll down, show on scroll up
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentY = window.scrollY;
-          setIsScrolled(currentY > 30);
-
-          if (currentY > 120) {
-            if (currentY > lastScrollY.current + 8) {
-              setIsVisible(false);
-            } else if (currentY < lastScrollY.current - 8) {
-              setIsVisible(true);
-            }
-          } else {
-            setIsVisible(true);
-          }
-
-          lastScrollY.current = currentY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   // Close mobile drawer upon route change
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -78,21 +44,14 @@ export default function Navbar() {
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        {/* 1. Thanh trạng thái khí quyển thời gian thực Cẩm Cù House */}
+      {/* 1. Header Sticky Top-0 Chuẩn, Nền tối sang trọng #0E100F, không đè nội dung */}
+      <header className="sticky top-0 z-50 w-full bg-[#0E100F] border-b border-white/10 shadow-lg">
+        {/* Thanh trạng thái khí quyển thời gian thực Cẩm Cù House */}
         <AtmosphereBar />
 
-        {/* 2. Top Navbar Quy Chuẩn: Nền tối sang trọng (#0E100F), chữ sáng (#F3F1EC), điểm nhấn (#E86C3A) */}
-        <div className="w-full bg-[#0E100F] text-[#F3F1EC] border-b border-white/10 shadow-lg transition-all duration-300">
-          <div
-            className={`w-full max-w-[1440px] mx-auto px-4 sm:px-8 flex items-center justify-between gap-4 transition-all duration-300 ${
-              isScrolled ? "h-16" : "h-20"
-            }`}
-          >
+        {/* Thanh điều hướng chính với chiều cao chuẩn h-20 */}
+        <div className="w-full h-20 flex items-center justify-between">
+          <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 flex items-center justify-between gap-4">
             {/* Logo hoa Hoya + CẨM CÙ HOUSE */}
             <Link href="/" className="flex items-center gap-3 shrink-0 group">
               <div className="w-9 h-9 rounded-sm border border-[#E86C3A]/40 bg-[#161A18] flex items-center justify-center text-[#E86C3A] group-hover:border-[#E86C3A] transition-colors">
@@ -109,7 +68,7 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Links: Đúng 5 mục, 1 dòng duy nhất, gạch chân 2px màu cam #E86C3A */}
-            <nav className="hidden xl:flex items-center gap-6 2xl:gap-8">
+            <nav className="hidden lg:flex items-center gap-3 xl:gap-5 2xl:gap-7 shrink-0">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href || pathname === item.alias;
                 return (
@@ -125,13 +84,13 @@ export default function Navbar() {
                     <span className="font-mono text-[12px] font-bold text-[#E86C3A]" aria-hidden="true">
                       [{item.num}]
                     </span>
-                    <span className="font-sans text-[13.5px] uppercase tracking-wider font-semibold whitespace-nowrap">
+                    <span className="font-sans text-[13px] xl:text-[14px] uppercase tracking-wider font-semibold whitespace-nowrap">
                       {isEn ? item.labelEn : item.labelVi}
                     </span>
 
                     {/* Badge số món đặt trước trên link thực đơn */}
                     {item.href === "/thuc-don" && totalItems > 0 && (
-                      <span className="ml-1 px-1.5 py-0.2 bg-[#E86C3A] text-white text-[10px] font-mono rounded-full font-bold">
+                      <span className="ml-0.5 px-1.5 py-0.2 bg-[#E86C3A] text-white text-[10px] font-mono rounded-full font-bold">
                         {totalItems}
                       </span>
                     )}
@@ -148,12 +107,12 @@ export default function Navbar() {
             </nav>
 
             {/* Actions: Khay món, Ngôn ngữ, Giao diện, Gọi ngay & Hamburger */}
-            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
               {/* Khay đặt trước nhanh nếu có món */}
               {totalItems > 0 && (
                 <Link
                   href="/chi-duong-lien-he#dat-ban-form"
-                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1B2420] border border-[#E86C3A]/50 rounded-full text-[12px] font-mono text-[#E86C3A] hover:bg-[#E86C3A] hover:text-white transition-all"
+                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1B2420] border border-[#E86C3A]/50 rounded-full text-[12px] font-mono text-[#E86C3A] hover:bg-[#E86C3A] hover:text-white transition-all whitespace-nowrap"
                   title="Xem khay món đặt trước"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
@@ -198,7 +157,7 @@ export default function Navbar() {
               {/* Hotline Button */}
               <a
                 href="tel:0382851688"
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-[#E86C3A] text-white font-sans font-bold text-[13px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-md"
+                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 bg-[#E86C3A] text-white font-sans font-bold text-[13px] uppercase tracking-wider clip-chamfer-14 hover:opacity-90 active:scale-95 transition-all shadow-md whitespace-nowrap"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
                 <span>0382 851 688</span>
@@ -208,7 +167,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                className="xl:hidden p-2 border border-white/20 rounded-sm text-[#F3F1EC] hover:text-[#E86C3A] hover:border-[#E86C3A] transition-colors"
+                className="lg:hidden p-2 border border-white/20 rounded-sm text-[#F3F1EC] hover:text-[#E86C3A] hover:border-[#E86C3A] transition-colors"
                 aria-label="Mở menu điều hướng"
               >
                 <MenuIcon className="w-6 h-6" />
@@ -218,7 +177,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* 3. Fullscreen Mobile Drawer: Nền tối sang trọng #0E100F */}
+      {/* 2. Fullscreen Mobile Drawer: Nền tối sang trọng #0E100F */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -260,11 +219,11 @@ export default function Navbar() {
                     <Link
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="group flex items-baseline gap-3 py-2 border-b border-white/5"
+                      className="group flex items-baseline gap-3 py-3 border-b border-white/5 whitespace-nowrap"
                     >
                       <span className="font-mono text-sm text-[#E86C3A]">[{item.num}]</span>
                       <span
-                        className={`font-display font-extrabold text-[clamp(24px,6vw,40px)] uppercase leading-none tracking-tight transition-colors ${
+                        className={`font-display font-extrabold text-[clamp(20px,5vw,36px)] uppercase leading-none tracking-tight transition-colors ${
                           isActive
                             ? "text-[#E86C3A]"
                             : "text-[#F3F1EC] group-hover:text-[#E86C3A]"
@@ -277,7 +236,7 @@ export default function Navbar() {
                           {totalItems} món
                         </span>
                       )}
-                      <ArrowRight className="w-6 h-6 opacity-0 group-hover:opacity-100 text-[#E86C3A] -translate-x-2 group-hover:translate-x-0 transition-all ml-auto" />
+                      <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 text-[#E86C3A] -translate-x-2 group-hover:translate-x-0 transition-all ml-auto shrink-0" />
                     </Link>
                   </motion.div>
                 );

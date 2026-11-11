@@ -29,7 +29,7 @@ export default function StoryPage() {
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[#E86C3A] selection:text-white transition-colors">
       <main className="w-full">
         {/* MASTHEAD HEADER */}
-        <section className="relative w-full pt-32 sm:pt-40 pb-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
+        <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
           <div className="w-full max-w-[1280px] mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <span className="font-mono text-xs uppercase tracking-widest text-[#E86C3A] font-bold">
@@ -41,7 +41,7 @@ export default function StoryPage() {
               </span>
             </div>
 
-            <h1 className="font-display font-black text-[clamp(36px,6vw,72px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.08]">
+            <h1 className="font-display font-black text-[clamp(32px,5.5vw,68px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.25] sm:leading-snug mb-2">
               {isVi
                 ? "HÀNH TRÌNH BÊN DÒNG SUỐI HẺM 437 HÙNG VƯƠNG"
                 : "THE ECO-SANCTUARY JOURNEY BY LANE 437 STREAM"}
@@ -62,7 +62,7 @@ export default function StoryPage() {
         </section>
 
         {/* HERO IMAGE BANNER */}
-        <div className="w-full h-[400px] sm:h-[500px] relative overflow-hidden bg-black">
+        <div className="w-full h-[360px] sm:h-[460px] relative overflow-hidden bg-black">
           <SafeImage
             src="/uploads/gallery/1788250253554-875120458.jpg"
             alt="Không gian Cẩm Cù House bên dòng suối mát"
@@ -71,11 +71,11 @@ export default function StoryPage() {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-black/40" />
-          <div className="absolute bottom-6 left-6 sm:left-12 max-w-md p-4 rounded-lg bg-black/60 backdrop-blur-md border border-white/15 text-[#F3F1EC]">
+          <div className="absolute bottom-6 left-4 sm:left-12 max-w-lg p-4 rounded-xl bg-black/75 backdrop-blur-md border border-white/20 text-[#F3F1EC]">
             <span className="font-mono text-[11px] text-[#E86C3A] uppercase tracking-wider block font-bold">
               FIG. STORY-01 · KHÔNG GIAN BÊN SUỐI
             </span>
-            <p className="text-[13px] text-white/90 mt-1">
+            <p className="text-[13px] text-white/90 mt-1 leading-relaxed">
               Ban công gỗ đón gió chiều róc rách bên bờ suối tự nhiên Cẩm Cù House.
             </p>
           </div>
@@ -213,3 +213,4 @@ export default function StoryPage() {
     </div>
   );
 }
+

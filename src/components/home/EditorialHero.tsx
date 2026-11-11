@@ -94,14 +94,8 @@ export default function EditorialHero() {
   ];
 
   return (
-    <section className="relative w-full pt-32 sm:pt-40 pb-20 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-hidden transition-colors">
-      {/* Background ambient lighting */}
-      <div
-        className="pointer-events-none absolute -top-40 right-0 w-[550px] h-[550px] rounded-full bg-[#E86C3A] opacity-5 blur-3xl"
-        aria-hidden="true"
-      />
-
-      <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col gap-12">
+    <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[var(--bg-primary)] text-[var(--text-primary)] overflow-hidden transition-colors">
+      <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col gap-10">
         {/* Top Masthead metadata bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-3">
@@ -117,7 +111,7 @@ export default function EditorialHero() {
         </div>
 
         {/* Editorial Magazine Cover Hero */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-8 flex flex-col gap-5">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -137,7 +131,7 @@ export default function EditorialHero() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className="font-display font-black text-[clamp(44px,7vw,92px)] tracking-tight leading-[1.05] text-[var(--text-primary)] uppercase"
+              className="font-display font-black text-[clamp(36px,6vw,76px)] tracking-tight leading-[1.25] sm:leading-snug mb-2 text-[var(--text-primary)] uppercase"
             >
               CẨM CÙ HOUSE
             </motion.h1>

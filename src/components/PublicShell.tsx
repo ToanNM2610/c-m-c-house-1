@@ -4,11 +4,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, ReactNode } from "react";
 import Navbar from "@/components/Navbar";
 import MobileBottomBar from "@/components/MobileBottomBar";
-import CamcuIntro from "@/components/CamcuIntro";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
 import CustomCursor from "@/components/ui/CustomCursor";
-import ScrollIndicator from "@/components/ui/ScrollIndicator";
 import CookieConsent from "@/components/ui/CookieConsent";
 
 export default function PublicShell({ children }: { children: ReactNode }) {
@@ -32,8 +30,6 @@ export default function PublicShell({ children }: { children: ReactNode }) {
       <div className="highland-mist-layer" aria-hidden="true" />
       <ScrollProgressBar />
       <CustomCursor />
-      <ScrollIndicator />
-      <CamcuIntro />
       <Navbar />
       <SmoothScroll>
         {children}

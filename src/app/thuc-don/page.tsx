@@ -78,7 +78,7 @@ export default function MenuPage() {
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[#E86C3A] selection:text-white transition-colors pb-24">
       <main className="w-full">
         {/* MASTHEAD HEADER */}
-        <section className="relative w-full pt-32 sm:pt-40 pb-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
+        <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
           <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <span className="font-mono text-xs uppercase tracking-widest text-[#E86C3A] font-bold">
@@ -92,10 +92,10 @@ export default function MenuPage() {
 
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
               <div>
-                <h1 className="font-display font-black text-[clamp(36px,6vw,72px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.08]">
+                <h1 className="font-display font-black text-[clamp(32px,5.5vw,68px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.25] sm:leading-snug mb-2">
                   {isVi ? "CHUYÊN KHẢO THỰC ĐƠN THỰC VẬT HỌC" : "BOTANICAL EDITORIAL MONOGRAPH"}
                 </h1>
-                <p className="font-serif italic text-[20px] sm:text-[24px] text-[#E86C3A] mt-2 max-w-3xl leading-relaxed">
+                <p className="font-serif italic text-[20px] sm:text-[24px] text-[#E86C3A] max-w-3xl leading-relaxed">
                   {isVi
                     ? "Thiết kế chữ thuần khiết (Text-Only) theo phong cách tạp chí cổ điển. Tươi mát, xanh sạch và minh bạch giá."
                     : "Pure typographic menu crafted like an authentic botanical journal. Clean, transparent, zero photos."}
@@ -221,7 +221,7 @@ export default function MenuPage() {
                 </div>
 
                 {/* Bố cục 2 cột trên Desktop (1440px), 1 cột trên Mobile (390px) */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-2">
                   {category.items.map((item) => {
                     const activeVariant = selectedVariants[item.code] || (item.variants ? item.variants[0] : undefined);
                     const isInTray = preOrderItems.some(
@@ -231,77 +231,43 @@ export default function MenuPage() {
                     return (
                       <div
                         key={item.code}
-                        className="p-5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] hover:border-[#E86C3A]/40 transition-colors flex flex-col justify-between gap-3"
+                        className="flex justify-between items-start gap-4 py-3.5 border-b border-stone-200/60 dark:border-white/10 hover:border-[#E86C3A]/50 transition-colors"
                       >
-                        <div>
-                          {/* Mã món, Huy hiệu và Nút thêm món */}
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-[12px] font-bold text-[#E86C3A]">
-                                [{item.code}]
-                              </span>
-                              {item.badge && (
-                                <span className="label-uppercase-12 font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E86C3A]/10 text-[#E86C3A] font-bold">
-                                  {item.badge}
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Nút thêm vào khay đặt trước */}
-                            <button
-                              type="button"
-                              onClick={() =>
-                                addItem({
-                                  code: item.code,
-                                  name: item.name,
-                                  price: item.price,
-                                  variant: activeVariant,
-                                })
-                              }
-                              className={`px-3 py-1.5 rounded-full font-mono text-xs font-bold inline-flex items-center gap-1.5 transition-all ${
-                                isInTray
-                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                                  : "bg-[#E86C3A] text-white hover:opacity-90 shadow-xs"
-                              }`}
-                              title="Thêm vào Khay Đặt Trước / Mang Về"
-                            >
-                              <Plus className="w-3.5 h-3.5" />
-                              <span>{isInTray ? "Thêm tiếp" : "Chọn món"}</span>
-                            </button>
-                          </div>
-
-                          {/* Hàng tên món và Giá với Đường dẫn chấm Dot-Leader */}
-                          <div className="flex items-baseline justify-between gap-2 mt-2">
-                            <span className="font-sans font-bold text-[16px] sm:text-[18px] text-[var(--text-primary)]">
+                        {/* Cột trái (flex-1): Tên món, mã món, mô tả, tùy chọn */}
+                        <div className="flex-1 flex flex-col gap-1 min-w-0 pr-2">
+                          <div className="flex items-baseline gap-2 flex-wrap">
+                            <span className="font-mono text-[12px] font-bold text-[#E86C3A] shrink-0">
+                              [{item.code}]
+                            </span>
+                            <span className="font-sans font-bold text-[16px] sm:text-[17px] text-[var(--text-primary)]">
                               {item.name}
                             </span>
-                            <span className="dot-leader flex-1 mx-2" aria-hidden="true" />
-                            <span className="font-mono font-bold text-[15px] sm:text-[16px] text-[#E86C3A] shrink-0">
-                              {formatPrice(item.price)}
-                            </span>
+                            {item.badge && (
+                              <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-[#E86C3A]/10 text-[#E86C3A] font-bold uppercase tracking-wider shrink-0">
+                                {item.badge}
+                              </span>
+                            )}
                           </div>
 
                           {/* Ghi chú mô tả món */}
                           {item.note && (
-                            <p className="text-[13.5px] text-[var(--text-secondary)] mt-1 leading-relaxed">
+                            <p className="text-[13.5px] text-[var(--text-secondary)] leading-relaxed">
                               {item.note}
                             </p>
                           )}
-                        </div>
 
-                        {/* Biến thể món (nếu có, ví dụ Đen/Sữa hoặc Bánh tráng Sa tế/Ớt siêu cay) */}
-                        {item.variants && item.variants.length > 0 && (
-                          <div className="pt-2 border-t border-[var(--border-subtle)] flex items-center gap-2">
-                            <span className="font-mono text-[11px] text-[var(--text-secondary)] uppercase">
-                              Tùy chọn:
-                            </span>
-                            <div className="flex flex-wrap gap-1.5">
+                          {/* Biến thể nếu có */}
+                          {item.variants && item.variants.length > 0 && (
+                            <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                              <span className="font-mono text-[11px] text-[var(--text-secondary)] uppercase">
+                                Tùy chọn:
+                              </span>
                               {item.variants.map((v) => (
                                 <button
                                   key={v}
                                   type="button"
                                   onClick={() => handleSelectVariant(item.code, v)}
-                                  className={`px-2.5 py-0.5 rounded-md font-mono text-[11px] font-bold transition-all ${
+                                  className={`px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all ${
                                     activeVariant === v
                                       ? "bg-[#E86C3A] text-white"
                                       : "bg-[var(--bg-primary)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[#E86C3A]"
@@ -311,8 +277,35 @@ export default function MenuPage() {
                                 </button>
                               ))}
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
+
+                        {/* Cột phải (shrink-0): Giá tiền & Nút chọn món */}
+                        <div className="shrink-0 flex flex-col items-end gap-2 text-right">
+                          <span className="font-mono font-bold text-[15px] sm:text-[16px] text-[#E86C3A] whitespace-nowrap">
+                            {formatPrice(item.price)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addItem({
+                                code: item.code,
+                                name: item.name,
+                                price: item.price,
+                                variant: activeVariant,
+                              })
+                            }
+                            className={`px-3 py-1 rounded-full font-mono text-xs font-bold inline-flex items-center gap-1 whitespace-nowrap transition-all ${
+                              isInTray
+                                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                : "bg-[#E86C3A] text-white hover:opacity-90 shadow-xs"
+                            }`}
+                            title="Thêm vào Khay Đặt Trước / Mang Về"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>{isInTray ? "Thêm tiếp" : "Chọn món"}</span>
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
@@ -366,3 +359,4 @@ export default function MenuPage() {
     </div>
   );
 }
+

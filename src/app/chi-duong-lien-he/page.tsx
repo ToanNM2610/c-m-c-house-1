@@ -120,7 +120,7 @@ Xin cảm ơn!`;
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[#E86C3A] selection:text-white transition-colors pb-24">
       <main className="w-full">
         {/* MASTHEAD HEADER */}
-        <section className="relative w-full pt-32 sm:pt-40 pb-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
+        <section className="relative w-full py-10 sm:py-16 px-4 sm:px-8 border-b border-[var(--border-subtle)] bg-[#0E100F] text-[#F3F1EC]">
           <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <span className="font-mono text-xs uppercase tracking-widest text-[#E86C3A] font-bold">
@@ -132,7 +132,7 @@ Xin cảm ơn!`;
               </span>
             </div>
 
-            <h1 className="font-display font-black text-[clamp(36px,6vw,72px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.08]">
+            <h1 className="font-display font-black text-[clamp(32px,5.5vw,68px)] uppercase tracking-tight text-[#F3F1EC] leading-[1.25] sm:leading-snug mb-2">
               {isVi ? "CHỈ ĐƯỜNG BẢN ĐỒ & TRỢ LÝ ĐẶT CHỖ" : "DIRECTIONS & RESERVATION ASSISTANT"}
             </h1>
 
