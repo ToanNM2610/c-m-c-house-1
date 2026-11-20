@@ -9,6 +9,7 @@ import {
 } from 'next/font/google';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
+import { PreOrderProvider } from '@/context/PreOrderContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
 import Navbar from '@/components/common/Navbar';
 import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
@@ -145,19 +146,21 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-paper text-ink-primary selection:bg-accent-botanical selection:text-white">
         <AppProvider>
-          <NavigationDirectionProvider>
-            {/* 120Hz/120fps 8K Cinematic Intro Preloader Overlay (Storefront Only) */}
-            <Suspense fallback={null}>
-              <CinematicIntro8K />
-            </Suspense>
-            {/* Living Nature Ambient 120fps Canvas (Light sunlight bokeh / Dark fireflies) */}
-            <LivingNatureCanvas />
-            <Navbar />
-            {children}
-            {/* Global Interactive Modals & Quick Chat */}
-            <GalleryLightboxModal />
-            <QuickChatWidget />
-          </NavigationDirectionProvider>
+          <PreOrderProvider>
+            <NavigationDirectionProvider>
+              {/* 120Hz/120fps 8K Cinematic Intro Preloader Overlay (Storefront Only) */}
+              <Suspense fallback={null}>
+                <CinematicIntro8K />
+              </Suspense>
+              {/* Living Nature Ambient 120fps Canvas (Light sunlight bokeh / Dark fireflies) */}
+              <LivingNatureCanvas />
+              <Navbar />
+              {children}
+              {/* Global Interactive Modals & Quick Chat */}
+              <GalleryLightboxModal />
+              <QuickChatWidget />
+            </NavigationDirectionProvider>
+          </PreOrderProvider>
         </AppProvider>
       </body>
     </html>

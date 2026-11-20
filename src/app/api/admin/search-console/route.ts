@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchSearchConsoleData, SearchConsoleReportData } from "@/lib/google-apis";
 
+export const dynamic = "force-dynamic";
+
 // 10-minute cache for Google Search Console API responses
 interface CachedReport {
   timestamp: number;

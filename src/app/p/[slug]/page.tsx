@@ -10,10 +10,18 @@ interface StaticPageProps {
   params: { slug: string };
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: StaticPageProps): Promise<Metadata> {
-  const page = await prisma.staticPage.findUnique({
-    where: { slug: params.slug },
-  });
+  let page;
+  try {
+    page = await prisma.staticPage.findUnique({
+      where: { slug: params.slug },
+    });
+  } catch {
+    console.error('[Static page] Unable to load CMS metadata.');
+    return { title: 'Chưa kết nối — Cẩm Cù House' };
+  }
 
   if (!page) {
     return { title: 'Trang không tồn tại — Cẩm Cù House' };
@@ -26,9 +34,15 @@ export async function generateMetadata({ params }: StaticPageProps): Promise<Met
 }
 
 export default async function StaticLegalPage({ params }: StaticPageProps) {
-  const page = await prisma.staticPage.findUnique({
-    where: { slug: params.slug },
-  });
+  let page;
+  try {
+    page = await prisma.staticPage.findUnique({
+      where: { slug: params.slug },
+    });
+  } catch {
+    console.error('[Static page] Unable to load CMS content.');
+    notFound();
+  }
 
   if (!page || !page.published) {
     notFound();

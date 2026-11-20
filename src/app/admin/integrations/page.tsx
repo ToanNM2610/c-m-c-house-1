@@ -1,4 +1,4 @@
-import AdminPage from "../page";
+import AdminPageClient from "@/components/admin/AdminPageClient";
 
 export const metadata = {
   title: "Tích hợp & Khóa | Cẩm Cù Admin",
@@ -9,5 +9,5 @@ export const metadata = {
 };
 
 export default function AdminIntegrationsPage() {
-  return <AdminPage initialTab="integrations" />;
+  return <AdminPageClient initialTab="integrations" />;
 }

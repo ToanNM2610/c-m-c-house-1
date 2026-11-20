@@ -1,4 +1,4 @@
-import AdminPage from "../page";
+import AdminPageClient from "@/components/admin/AdminPageClient";
 
 export const metadata = {
   title: "Search Console | Cẩm Cù Admin",
@@ -9,5 +9,5 @@ export const metadata = {
 };
 
 export default function AdminSearchConsolePage() {
-  return <AdminPage initialTab="searchConsole" />;
+  return <AdminPageClient initialTab="searchConsole" />;
 }

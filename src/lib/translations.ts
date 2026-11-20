@@ -21,6 +21,9 @@ export interface EventTranslation {
   badgeEn: string;
 }
 
+export type Locale = "vi" | "en";
+export type TranslationDictionary = Record<string, unknown>;
+
 export const menuItemTranslations: Record<string, MenuItemTranslation> = {
   // 1. Cà phê (Coffee)
   'cf-01': {
@@ -700,5 +703,10 @@ export const defaultContentEn = {
   brandStorySubtitleEn: 'A Story of Basalt Soil, Gentle Streams & Pure Wood-Roasted Coffee',
   brandStoryContentEn: 'Dong Gia Nghia, Lam Dong is blessed not only with waterfalls and boundless greenery, but also serene green valleys. Cẩm Cù House was born from our profound love for nature and a dream to preserve an untamed green haven in Dong Gia Nghia. Star-shaped porcelain wax flowers bloom gracefully over the crystal-clear streams.',
   brandStoryPhilosophyEn: 'Our philosophy is simple: "Green - Wholesome - Pure". Every cup of wood-roasted coffee carries the volcanic richness of basalt soil; every herbal teapot is carefully harvested from home garden botanicals. No noisy air conditioners or traffic honks—only mountain breeze, babbling water, and warm laughter.',
+};
+
+export const translations: Record<Locale, TranslationDictionary> = {
+  vi: {},
+  en: defaultContentEn,
 };
 

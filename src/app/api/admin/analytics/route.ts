@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchGa4Analytics, Ga4ReportData } from "@/lib/google-apis";
 
+export const dynamic = "force-dynamic";
+
 // 10-minute cache for GA4 Data API responses
 interface CachedReport {
   timestamp: number;

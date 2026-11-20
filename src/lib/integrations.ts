@@ -73,7 +73,7 @@ export async function getPublicIntegrations(): Promise<PublicIntegrations> {
 
 export function revalidateIntegrationsCache(): void {
   try {
-    revalidateTag("integrations", "max");
+    revalidateTag("integrations");
   } catch (error) {
     console.warn("[Integrations] revalidateTag warning:", error);
   }

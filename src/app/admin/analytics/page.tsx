@@ -1,4 +1,4 @@
-import AdminPage from "../page";
+import AdminPageClient from "@/components/admin/AdminPageClient";
 
 export const metadata = {
   title: "Google Analytics 4 | Cẩm Cù Admin",
@@ -9,5 +9,5 @@ export const metadata = {
 };
 
 export default function AdminAnalyticsPage() {
-  return <AdminPage initialTab="analytics" />;
+  return <AdminPageClient initialTab="analytics" />;
 }
