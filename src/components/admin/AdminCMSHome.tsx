@@ -259,7 +259,7 @@ export default function AdminCMSHome() {
               <span>Khu Vực 1: Botanical Magazine Hero ({activeLangTab.toUpperCase()})</span>
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Tiêu đề lớn dạng tạp chí, khẩu hiệu và công tắc hiển thị hạt cà phê 3D.
+              Tiêu đề lớn dạng tạp chí, khẩu hiệu và nội dung giới thiệu.
             </p>
           </div>
           <span className="text-xs font-mono px-2.5 py-1 rounded bg-slate-100 text-slate-600">
@@ -402,26 +402,6 @@ export default function AdminCMSHome() {
             </div>
           </div>
         )}
-
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-slate-800 block">Hiển Thị Khung 3D Hạt Cà Phê Bazan:</span>
-            <span className="text-[11px] text-slate-500">Bật/tắt sân khấu tương tác 3D WebGL Three.js ở cột bên phải Hero</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowHero3DBean(!showHero3DBean)}
-            className={`w-12 h-6 rounded-full transition-colors relative ${
-              showHero3DBean ? 'bg-emerald-600' : 'bg-slate-300'
-            }`}
-          >
-            <span
-              className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                showHero3DBean ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
       </div>
 
       {/* Section 2: Philosophy Preview */}

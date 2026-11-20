@@ -19,7 +19,6 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
-import RoastedCoffeeBeanStage from '@/components/3d/RoastedCoffeeBean';
 import FooterSection from '@/components/home/FooterSection';
 import { useApp } from '@/context/AppContext';
 import { MenuItem } from '@/types';
@@ -33,7 +32,6 @@ import {
 } from '@/components/motion/EditorialMotion';
 import {
   ScrollLayoutCard3D,
-  ScrollParallaxFrame,
   EditorialDivider120,
 } from '@/components/motion/ScrollMotion120';
 import {
@@ -228,25 +226,24 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Column: Bounded 3D Coffee Bean Stage Entrance */}
+            {/* Right Column: Editorial Photo Card (Lightweight 2D) */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: EDITORIAL_EASE }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: EDITORIAL_EASE }}
               className="lg:col-span-5 flex flex-col items-center justify-center w-full"
             >
-              <ScrollParallaxFrame offset={18} className="w-full">
-                {c?.showHero3DBean !== false ? (
-                  <RoastedCoffeeBeanStage />
-                ) : (
-                  <div className="w-full h-[360px] lg:h-[440px] rounded-3xl bg-forest-100/50 dark:bg-forest-900/40 border border-forest-200 dark:border-forest-700 flex flex-col items-center justify-center p-8 text-center">
-                    <span className="font-serif text-3xl font-bold text-accent-botanical mb-2">Cẩm Cù House</span>
-                    <p className="text-xs font-mono text-ink-muted">
-                      {isEn ? 'Eco-coffee sanctuary beside streamside in Gia Nghia, Dak Nong' : 'Cà phê sinh thái bên bờ suối Gia Nghĩa, Đăk Nông'}
-                    </p>
-                  </div>
-                )}
-              </ScrollParallaxFrame>
+              <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100/50 dark:bg-forest-900/40">
+                <img
+                  src="/uploads/gallery/fig-01.jpg"
+                  alt={isEn ? 'Cẩm Cù House streamside sanctuary' : 'Không gian bên suối Cẩm Cù House'}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+              </div>
+              <p className="mt-3 text-[11px] font-mono uppercase tracking-wider text-ink-muted">
+                {isEn ? 'Fig. 01 — Streamside Sanctuary, Gia Nghia' : 'Hình 01 — Không gian bên suối, Gia Nghĩa'}
+              </p>
             </motion.div>
           </div>
 

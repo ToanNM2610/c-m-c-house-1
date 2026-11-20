@@ -535,7 +535,7 @@ export default function AdminSettingsManager() {
                 <span>Hệ thống chuyển động & Cường độ hiệu ứng (120fps Living Motion System):</span>
               </span>
               <p className="text-[11px] text-slate-500 leading-relaxed max-w-2xl">
-                Điều chỉnh cường độ chuyển động sống động trên toàn bộ website công cộng: hạt thiên nhiên LivingNature Canvas, cuộn quán tính velocity skew, 3D tilt thẻ, nút hút nam châm Magnetic Button và vệt sáng chuyển trang 3D. Tự động tương thích với chuẩn <code className="bg-slate-200 px-1 py-0.5 rounded font-mono">prefers-reduced-motion</code>.
+                Điều chỉnh cường độ chuyển động sống động trên toàn bộ website công cộng: hiệu ứng chuyển động 2D mượt mà, phản hồi con trỏ, nút hút nam châm Magnetic Button và vệt sáng chuyển trang êm ái. Tự động tương thích với chuẩn <code className="bg-slate-200 px-1 py-0.5 rounded font-mono">prefers-reduced-motion</code>.
               </p>
             </div>
 
@@ -562,7 +562,7 @@ export default function AdminSettingsManager() {
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 leading-tight">
-                  Đầy đủ hạt sương bokeh, đom đóm dạ quang, nghiêng 3D ±4.5°, hút nam châm & vệt sáng chuyển cảnh.
+                  Đầy đủ hiệu ứng mượt mà, phản hồi con trỏ, hút nam châm & vệt sáng chuyển cảnh.
                 </p>
               </button>
 
@@ -1028,14 +1028,14 @@ export default function AdminSettingsManager() {
         </div>
       </div>
 
-      {/* 4. Media & 3D Model Uploader */}
+      {/* 4. Media & Image Uploader */}
       <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
         <h3 className="text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
           <Box className="w-4 h-4 text-emerald-600" />
-          <span>4. Tải Lên Tệp Media & File Model 3D (.glb / .gltf)</span>
+          <span>4. Tải Lên Tệp Media & Hình Ảnh</span>
         </h3>
         <p className="text-xs text-slate-500">
-          Tải các mô hình đồ uống thực tế 3D hoặc hình ảnh chất lượng cao lên máy chủ và gán trực tiếp cho món trong thực đơn.
+          Tải hình ảnh chất lượng cao lên máy chủ và gán trực tiếp cho món trong thực đơn.
         </p>
 
         <form onSubmit={handleUploadFile} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
@@ -1081,7 +1081,7 @@ export default function AdminSettingsManager() {
 
           <div className="flex items-center justify-between pt-2">
             <span className="text-[11px] font-mono text-slate-400">
-              Hỗ trợ tệp 3D binary GLB hoặc hình ảnh PNG/JPG/WebP lên đến 10MB
+              Hỗ trợ hình ảnh PNG/JPG/WebP hoặc tệp đính kèm lên đến 10MB
             </span>
             <button
               type="submit"

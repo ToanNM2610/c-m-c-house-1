@@ -159,7 +159,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
     {
       moduleLabel: 'MODULE 1: QUẢN LÝ NỘI DUNG (CMS)',
       items: [
-        { id: 'home-cms', label: 'Trang chủ & 3D Hạt Cà Phê', icon: Layout, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+        { id: 'home-cms', label: 'Trang chủ & Giao diện', icon: Layout, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
         { id: 'menu-cms', label: 'Thực đơn 7 Danh mục', icon: UtensilsCrossed, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
         { id: 'gallery-cms', label: 'Thư viện 30 Bản khắc', icon: Camera, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
         { id: 'events-cms', label: 'Tin tức & Sự kiện', icon: Music, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },

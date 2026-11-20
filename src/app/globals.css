@@ -126,7 +126,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--accent-botanical);
 }
 
-/* Prevent 3D canvas interaction interference when layered behind */
+/* Lightweight overlay layer utility */
 .canvas-interactive {
   pointer-events: auto;
 }

@@ -119,7 +119,8 @@ export function MagneticButton({
 
 /**
  * 2. InteractiveTiltCard
- * Tactile 3D micro-tilt card clamped to ±4.5deg with cursor-following radial spotlight.
+ * Lightweight 2D GPU card transition (opacity + subtle translateY) with cursor-following radial spotlight.
+ * Stripped of heavy 3D perspective, rotateX, rotateY, and preserve-3d.
  */
 interface InteractiveTiltCardProps {
   children: React.ReactNode;
@@ -131,18 +132,10 @@ interface InteractiveTiltCardProps {
 export function InteractiveTiltCard({
   children,
   className = '',
-  maxTilt = 4.5,
   spotlight = true,
 }: InteractiveTiltCardProps) {
   const { motionIntensity, enableAnimations } = useApp();
   const cardRef = useRef<HTMLDivElement | null>(null);
-
-  const rotateXVal = useMotionValue(0);
-  const rotateYVal = useMotionValue(0);
-
-  const springConfig = { stiffness: 220, damping: 22, mass: 0.3 };
-  const rotateX = useSpring(rotateXVal, springConfig);
-  const rotateY = useSpring(rotateYVal, springConfig);
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0, isInside: false });
   const [canHover, setCanHover] = useState(false);
@@ -163,47 +156,33 @@ export function InteractiveTiltCard({
     const y = e.clientY - rect.top;
 
     setMousePos({ x, y, isInside: true });
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const clampTilt = motionIntensity === 'SUBTLE' ? maxTilt * 0.45 : maxTilt;
-
-    // Invert rotateX so moving down tilts the top away
-    const rX = ((y - centerY) / centerY) * -clampTilt;
-    const rY = ((x - centerX) / centerX) * clampTilt;
-
-    rotateXVal.set(rX);
-    rotateYVal.set(rY);
   };
 
   const handleMouseLeave = () => {
     setMousePos(prev => ({ ...prev, isInside: false }));
-    rotateXVal.set(0);
-    rotateYVal.set(0);
   };
 
   if (!enableAnimations || motionIntensity === 'OFF' || !canHover) {
     return <div className={className}>{children}</div>;
   }
 
+  const isSubtle = motionIntensity === 'SUBTLE';
+
   return (
     <motion.div
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      whileHover={{ y: isSubtle ? -1.5 : -3 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       style={{
-        transformStyle: 'preserve-3d',
-        perspective: 1000,
-        rotateX,
-        rotateY,
         willChange: 'transform',
       }}
       className={`relative ${className}`}
     >
       {children}
 
-      {/* Dynamic radial spotlight highlight following cursor */}
+      {/* Dynamic radial spotlight highlight following cursor (lightweight 2D) */}
       {spotlight && mousePos.isInside && (
         <div
           aria-hidden="true"

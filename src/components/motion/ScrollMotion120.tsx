@@ -6,7 +6,6 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  useVelocity,
   HTMLMotionProps,
 } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
@@ -57,8 +56,7 @@ export function ScrollReadingProgress120() {
 
 /**
  * VelocityScrollGrid
- * High-FPS velocity-linked skew effect: as user scrolls rapidly, container subtly tilts
- * with skewY clamped to ±1.6deg via spring damping, clearing to 0deg when stopped.
+ * High-FPS velocity-linked smooth scroll container: lightweight 2D translation without heavy 3D skews.
  */
 interface VelocityScrollGridProps {
   children: React.ReactNode;
@@ -69,30 +67,11 @@ interface VelocityScrollGridProps {
 export function VelocityScrollGrid({
   children,
   className = '',
-  maxSkew = 1.6,
 }: VelocityScrollGridProps) {
-  const { enableAnimations, motionIntensity } = useApp();
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-
-  const rawSkew = useTransform(scrollVelocity, [-2500, 2500], [maxSkew, -maxSkew]);
-  const smoothSkew = useSpring(rawSkew, { stiffness: 220, damping: 28, mass: 0.25 });
-
-  if (!enableAnimations || motionIntensity === 'OFF') {
-    return <div className={className}>{children}</div>;
-  }
-
   return (
-    <motion.div
-      style={{
-        skewY: motionIntensity === 'SUBTLE' ? 0 : smoothSkew,
-        willChange: 'transform',
-        transformStyle: 'preserve-3d',
-      }}
-      className={className}
-    >
+    <div className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -153,9 +132,8 @@ export function CurtainPhotoReveal({
 
 /**
  * ScrollLayoutCard3D
- * GPU-accelerated 3D perspective scroll elevation.
- * Elevates smoothly from subtle 3D tilt (rotateX: 4deg, scale3d: 0.975, translate3d: 22px, opacity: 0.7)
- * into crisp planar alignment at 120fps.
+ * Lightweight 2D GPU-accelerated scroll elevation (opacity + translateY).
+ * Zero 3D transforms, perspective(), rotateX/Y, or translateZ.
  */
 interface ScrollLayoutCard3DProps extends HTMLMotionProps<'div'> {
   children: React.ReactNode;
@@ -179,12 +157,12 @@ export function ScrollLayoutCard3D({
   return (
     <motion.div
       initial={{
-        opacity: 0.7,
-        transform: 'perspective(1200px) rotateX(4deg) scale3d(0.975, 0.975, 1) translate3d(0px, 22px, 0px)',
+        opacity: 0,
+        y: 16,
       }}
       whileInView={{
         opacity: 1,
-        transform: 'perspective(1200px) rotateX(0deg) scale3d(1, 1, 1) translate3d(0px, 0px, 0px)',
+        y: 0,
       }}
       viewport={{ once: true, amount: 0.12 }}
       transition={{
@@ -193,8 +171,6 @@ export function ScrollLayoutCard3D({
         ease: EDITORIAL_EASE,
       }}
       style={{
-        transformStyle: 'preserve-3d',
-        backfaceVisibility: 'hidden',
         willChange: 'transform, opacity',
         ...style,
       }}

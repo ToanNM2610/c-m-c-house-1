@@ -33,21 +33,18 @@ export default function Template({ children }: { children: React.ReactNode }) {
 
   const isSubtle = motionIntensity === 'SUBTLE';
 
-  // Determine initial 3D pose based on spatial route direction (+1 = right, -1 = left, 0 = neutral)
-  let initialTransform = isSubtle
-    ? 'perspective(1600px) translate3d(0%, 8px, -15px) rotateX(1deg) scale3d(0.99, 0.99, 1)'
-    : 'perspective(1600px) translate3d(0%, 14px, -35px) rotateX(2.5deg) scale3d(0.985, 0.985, 1)';
+  // Lightweight 2D initial pose based on spatial route direction (+1 = right, -1 = left, 0 = neutral)
+  let initialX = 0;
+  let initialY = isSubtle ? 8 : 14;
 
   if (direction > 0) {
     // Navigating towards right in route order
-    initialTransform = isSubtle
-      ? 'perspective(1600px) translate3d(3%, 0px, -40px) rotateY(-3.5deg) scale3d(0.985, 0.985, 1)'
-      : 'perspective(1600px) translate3d(6%, 0px, -90px) rotateY(-6.5deg) scale3d(0.97, 0.97, 1)';
+    initialX = isSubtle ? 3 : 6;
+    initialY = 0;
   } else if (direction < 0) {
     // Navigating towards left in route order
-    initialTransform = isSubtle
-      ? 'perspective(1600px) translate3d(-3%, 0px, -40px) rotateY(3.5deg) scale3d(0.985, 0.985, 1)'
-      : 'perspective(1600px) translate3d(-6%, 0px, -90px) rotateY(6.5deg) scale3d(0.97, 0.97, 1)';
+    initialX = isSubtle ? -3 : -6;
+    initialY = 0;
   }
 
   const handleAnimationComplete = () => {
@@ -97,16 +94,18 @@ export default function Template({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      {/* Directional 3D Spatial Route Transition Wrapper */}
+      {/* Directional 2D Route Transition Wrapper (opacity + translate only) */}
       <motion.div
         ref={containerRef}
         initial={{
           opacity: 0,
-          transform: initialTransform,
+          x: initialX,
+          y: initialY,
         }}
         animate={{
           opacity: 1,
-          transform: 'perspective(1600px) translate3d(0%, 0px, 0px) rotateY(0deg) scale3d(1, 1, 1)',
+          x: 0,
+          y: 0,
         }}
         transition={{
           duration: isSubtle ? 0.36 : 0.48,
@@ -115,8 +114,6 @@ export default function Template({ children }: { children: React.ReactNode }) {
         onAnimationComplete={handleAnimationComplete}
         style={{
           transform: animationFinished ? 'none' : undefined,
-          transformStyle: 'preserve-3d',
-          backfaceVisibility: 'hidden',
           willChange: animationFinished ? 'auto' : 'transform, opacity',
         }}
         className="w-full"

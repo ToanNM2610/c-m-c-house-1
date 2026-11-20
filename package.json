@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
-    "@react-three/drei": "^9.106.0",
-    "@react-three/fiber": "^8.16.8",
     "@types/nodemailer": "^8.0.2",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
@@ -25,7 +23,6 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4",
-    "three": "^0.164.1",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -33,7 +30,6 @@
     "@types/node": "^20.17.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@types/three": "^0.164.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.18",
