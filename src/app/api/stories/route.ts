@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -73,6 +74,7 @@ export async function POST(req: NextRequest) {
       details: `Created story: ${title}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(created, 'Thêm câu chuyện thành công');
   } catch (error) {
     console.error('Error creating highlight story:', error);
@@ -135,6 +137,7 @@ export async function PUT(req: NextRequest) {
       details: `Updated story: ${updated.title}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, 'Cập nhật câu chuyện thành công');
   } catch (error) {
     console.error('Error updating highlight story:', error);
@@ -163,6 +166,7 @@ export async function DELETE(req: NextRequest) {
       details: `Deleted story: ${deleted.title}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(deleted, 'Xoá câu chuyện thành công');
   } catch (error) {
     console.error('Error deleting highlight story:', error);

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
 import {
   Be_Vietnam_Pro,
   Plus_Jakarta_Sans,
@@ -11,11 +10,7 @@ import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { PreOrderProvider } from '@/context/PreOrderContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
-import Navbar from '@/components/common/Navbar';
-import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
-import LivingNatureCanvas from '@/components/motion/LivingNatureCanvas';
-import GalleryLightboxModal from '@/components/modals/GalleryLightboxModal';
-import QuickChatWidget from '@/components/common/QuickChatWidget';
+import StorefrontShell from '@/components/layout/StorefrontShell';
 
 const beVietnam = Be_Vietnam_Pro({
   weight: ['300', '400', '500', '600', '700'],
@@ -148,17 +143,9 @@ export default function RootLayout({
         <AppProvider>
           <PreOrderProvider>
             <NavigationDirectionProvider>
-              {/* 120Hz/120fps 8K Cinematic Intro Preloader Overlay (Storefront Only) */}
-              <Suspense fallback={null}>
-                <CinematicIntro8K />
-              </Suspense>
-              {/* Living Nature Ambient 120fps Canvas (Light sunlight bokeh / Dark fireflies) */}
-              <LivingNatureCanvas />
-              <Navbar />
-              {children}
-              {/* Global Interactive Modals & Quick Chat */}
-              <GalleryLightboxModal />
-              <QuickChatWidget />
+              <StorefrontShell>
+                {children}
+              </StorefrontShell>
             </NavigationDirectionProvider>
           </PreOrderProvider>
         </AppProvider>

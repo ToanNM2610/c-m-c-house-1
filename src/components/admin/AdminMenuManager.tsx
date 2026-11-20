@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Check, X, RefreshCw, Plus, Edit2, Trash2, UtensilsCrossed, Globe } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 import { MenuItem, CategoryId } from '@/types';
 
 export default function AdminMenuManager() {
@@ -46,6 +47,7 @@ export default function AdminMenuManager() {
       });
       if (res.ok) {
         await refreshData();
+        broadcastCmsSync('menu');
       }
     } catch (err) {
       console.error(err);
@@ -92,6 +94,7 @@ export default function AdminMenuManager() {
       });
       if (res.ok) {
         await refreshData();
+        broadcastCmsSync('menu');
         setEditingItem(null);
       } else {
         alert('Lỗi cập nhật món');
@@ -112,6 +115,7 @@ export default function AdminMenuManager() {
       const res = await fetch(`/api/menu/${itemId}`, { method: 'DELETE' });
       if (res.ok) {
         await refreshData();
+        broadcastCmsSync('menu');
       } else {
         alert('Không thể xóa món này');
       }
@@ -152,6 +156,7 @@ export default function AdminMenuManager() {
         setNewItemHighlightEn('');
         setIsAddingItem(false);
         await refreshData();
+        broadcastCmsSync('menu');
       } else {
         alert('Lỗi tạo món mới');
       }

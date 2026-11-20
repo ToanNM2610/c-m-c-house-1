@@ -21,6 +21,7 @@ import {
   Type,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 
 export default function AdminSettingsManager() {
   const { data, refreshData } = useApp();
@@ -147,6 +148,7 @@ export default function AdminSettingsManager() {
       if (res.ok) {
         setSavedSuccess(true);
         await refreshData();
+        broadcastCmsSync('settings');
         setTimeout(() => setSavedSuccess(false), 4000);
       } else {
         alert('Lỗi lưu cài đặt');

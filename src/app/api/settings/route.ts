@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
@@ -79,7 +80,7 @@ export async function GET() {
       reviewAutoIntervalSec: (settings as any).reviewAutoIntervalSec ?? 6,
     };
 
-    return NextResponse.json(formatted);
+    return apiSuccess(formatted);
   } catch (error) {
     console.error('Error fetching settings:', error);
     return apiError('Không thể tải cấu hình quán', 500);
@@ -263,6 +264,8 @@ export async function PATCH(req: NextRequest) {
       reviewDisplayMode: (updated as any).reviewDisplayMode || 'AUTO_RANDOM',
       reviewAutoIntervalSec: (updated as any).reviewAutoIntervalSec ?? 6,
     };
+
+    revalidatePath('/', 'layout');
 
     return apiSuccess(formatted, { message: 'Cập nhật cấu hình quán thành công' });
   } catch (error: any) {

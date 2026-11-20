@@ -174,7 +174,7 @@ export default function HomePage() {
           {/* 2-Column Botanical Magazine Cover Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column: Monumental Editorial Typography */}
-            <div className="lg:col-span-7 space-y-5">
+            <div className={`${c?.showHero3DBean !== false ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-5`}>
               <div className="text-xs font-mono tracking-widest uppercase text-accent-botanical font-semibold flex items-center gap-2">
                 <span className="w-7 h-px bg-accent-botanical" />
                 <span>{heroEyebrow}</span>
@@ -227,24 +227,26 @@ export default function HomePage() {
             </div>
 
             {/* Right Column: Editorial Photo Card (Lightweight 2D) */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15, ease: EDITORIAL_EASE }}
-              className="lg:col-span-5 flex flex-col items-center justify-center w-full"
-            >
-              <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100/50 dark:bg-forest-900/40">
-                <img
-                  src="/uploads/gallery/fig-01.jpg"
-                  alt={isEn ? 'Cẩm Cù House streamside sanctuary' : 'Không gian bên suối Cẩm Cù House'}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
-              </div>
-              <p className="mt-3 text-[11px] font-mono uppercase tracking-wider text-ink-muted">
-                {isEn ? 'Fig. 01 — Streamside Sanctuary, Gia Nghia' : 'Hình 01 — Không gian bên suối, Gia Nghĩa'}
-              </p>
-            </motion.div>
+            {c?.showHero3DBean !== false && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: EDITORIAL_EASE }}
+                className="lg:col-span-5 flex flex-col items-center justify-center w-full"
+              >
+                <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100/50 dark:bg-forest-900/40">
+                  <img
+                    src="/uploads/gallery/fig-01.jpg"
+                    alt={isEn ? 'Cẩm Cù House streamside sanctuary' : 'Không gian bên suối Cẩm Cù House'}
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                  />
+                </div>
+                <p className="mt-3 text-[11px] font-mono uppercase tracking-wider text-ink-muted">
+                  {isEn ? 'Fig. 01 — Streamside Sanctuary, Gia Nghia' : 'Hình 01 — Không gian bên suối, Gia Nghĩa'}
+                </p>
+              </motion.div>
+            )}
           </div>
 
           {/* Bottom Quick Feature Metrics */}

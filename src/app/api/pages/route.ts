@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
       details: `Created static page: ${cleanSlug}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(created, 'Tạo trang tĩnh thành công');
   } catch (error) {
     console.error('Error creating static page:', error);
@@ -98,6 +100,7 @@ export async function PUT(req: NextRequest) {
       details: `Updated static page: ${updated.slug}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, 'Cập nhật trang tĩnh thành công');
   } catch (error) {
     console.error('Error updating static page:', error);
@@ -126,6 +129,7 @@ export async function DELETE(req: NextRequest) {
       details: `Deleted static page: ${deleted.slug}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(deleted, 'Xoá trang tĩnh thành công');
   } catch (error) {
     console.error('Error deleting static page:', error);

@@ -7,7 +7,7 @@ export interface ApiResponse<T = unknown> {
   meta?: Record<string, unknown>;
 }
 
-export function apiSuccess<T>(data: T, meta?: Record<string, unknown> | string, status = 200) {
+export function apiSuccess<T>(data: T, meta?: Record<string, unknown> | string, status = 200, headers?: HeadersInit) {
   const metaObj = typeof meta === 'string' ? { message: meta } : meta;
   return NextResponse.json(
     {
@@ -15,18 +15,29 @@ export function apiSuccess<T>(data: T, meta?: Record<string, unknown> | string, 
       data,
       ...(metaObj ? { meta: metaObj } : {}),
     },
-    { status }
+    {
+      status,
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        ...(headers || {}),
+      },
+    }
   );
 }
 
-export function apiError(message: string, status = 400, meta?: Record<string, unknown>) {
+export function apiError(message: string, status = 400, meta?: Record<string, unknown>, headers?: HeadersInit) {
   return NextResponse.json(
     {
       success: false,
       error: message,
       ...(meta ? { meta } : {}),
     },
-    { status }
+    {
+      status,
+      headers: {
+        'Cache-Control': 'no-store, max-age=0',
+        ...(headers || {}),
+      },
+    }
   );
 }
-

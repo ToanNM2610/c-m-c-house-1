@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { PhoneCall, Navigation, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { trackEvent } from "@/lib/analytics";
@@ -9,8 +10,13 @@ import { trackEvent } from "@/lib/analytics";
  * Gọi · Zalo · Chỉ đường, cao 56px, an toàn vùng tai thỏ
  */
 export default function MobileBottomBar() {
+  const pathname = usePathname();
   const { locale } = useLanguage();
   const isEn = locale === "en";
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <aside

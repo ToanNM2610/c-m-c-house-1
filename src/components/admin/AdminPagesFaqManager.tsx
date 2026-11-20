@@ -16,8 +16,11 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { StaticPage, FaqItem } from '@/types';
+import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 
 export default function AdminPagesFaqManager() {
+  const { refreshData } = useApp();
   const [tab, setTab] = useState<'pages' | 'faq'>('pages');
   const [pages, setPages] = useState<StaticPage[]>([]);
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
@@ -84,6 +87,8 @@ export default function AdminPagesFaqManager() {
         setIsPageModalOpen(false);
         setEditingPage(null);
         fetchData();
+        refreshData();
+        broadcastCmsSync('pages-faq');
       } else {
         showToast('error', json.error || 'Lỗi lưu trang');
       }
@@ -102,6 +107,8 @@ export default function AdminPagesFaqManager() {
       if (res.ok && json.success) {
         showToast('success', 'Đã xoá trang tĩnh');
         fetchData();
+        refreshData();
+        broadcastCmsSync('pages-faq');
       } else {
         showToast('error', json.error || 'Lỗi xoá');
       }
@@ -132,6 +139,8 @@ export default function AdminPagesFaqManager() {
         setIsFaqModalOpen(false);
         setEditingFaq(null);
         fetchData();
+        refreshData();
+        broadcastCmsSync('pages-faq');
       } else {
         showToast('error', json.error || 'Lỗi lưu FAQ');
       }
@@ -150,6 +159,8 @@ export default function AdminPagesFaqManager() {
       if (res.ok && json.success) {
         showToast('success', 'Đã xoá câu hỏi FAQ');
         fetchData();
+        refreshData();
+        broadcastCmsSync('pages-faq');
       } else {
         showToast('error', json.error || 'Lỗi xoá');
       }

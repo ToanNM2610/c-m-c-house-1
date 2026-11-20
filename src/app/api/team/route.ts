@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
       details: `Added team member: ${name}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(created, 'Thêm thành viên thành công');
   } catch (error) {
     console.error('Error creating team member:', error);
@@ -90,6 +92,7 @@ export async function PUT(req: NextRequest) {
       details: `Updated team member: ${updated.name}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, 'Cập nhật thành viên thành công');
   } catch (error) {
     console.error('Error updating team member:', error);
@@ -118,6 +121,7 @@ export async function DELETE(req: NextRequest) {
       details: `Deleted team member: ${deleted.name}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(deleted, 'Xoá thành viên thành công');
   } catch (error) {
     console.error('Error deleting team member:', error);

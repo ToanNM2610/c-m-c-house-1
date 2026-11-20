@@ -63,7 +63,7 @@ export default function Navbar() {
       >
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-6">
           {/* Zone 1: Brand Logo (Left, shrink-0 whitespace-nowrap) */}
-          <Link href="/" className="flex items-center gap-2 group shrink-0 whitespace-nowrap mr-4">
+          <Link href="/" prefetch={true} className="flex items-center gap-2 group shrink-0 whitespace-nowrap mr-4">
             <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-ink-primary whitespace-nowrap">
               CẨM CÙ <span className="font-normal italic text-accent-botanical">HOUSE</span>
             </span>
@@ -77,6 +77,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
+                  prefetch={true}
                   className={`py-1 transition-colors relative whitespace-nowrap shrink-0 ${
                     active
                       ? 'text-accent-botanical font-bold'
@@ -238,6 +239,7 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
+                    prefetch={true}
                     onClick={() => setMobileMenuOpen(false)}
                     className={`text-sm font-serif font-bold py-2 border-b border-forest-100/60 dark:border-forest-800/60 flex items-center justify-between whitespace-nowrap ${
                       active ? 'text-accent-botanical' : 'text-ink-primary hover:text-accent-botanical'

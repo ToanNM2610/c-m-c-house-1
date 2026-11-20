@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
       details: `Created redirect rule: ${cleanSource} -> ${cleanTarget} (${statusCode})`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(created, 'Thêm quy tắc điều hướng thành công');
   } catch (error) {
     console.error('Error creating redirect:', error);
@@ -91,6 +93,7 @@ export async function PUT(req: NextRequest) {
       details: `Updated redirect rule ID: ${id}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, 'Cập nhật quy tắc điều hướng thành công');
   } catch (error) {
     console.error('Error updating redirect:', error);
@@ -119,6 +122,7 @@ export async function DELETE(req: NextRequest) {
       details: `Deleted redirect rule: ${deleted.sourcePath}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(deleted, 'Xoá quy tắc điều hướng thành công');
   } catch (error) {
     console.error('Error deleting redirect:', error);

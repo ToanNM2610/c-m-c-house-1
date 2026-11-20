@@ -18,8 +18,11 @@ import {
   Shield,
 } from 'lucide-react';
 import { PageSeo, RedirectRule } from '@/types';
+import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 
 export default function AdminSeoManager() {
+  const { refreshData } = useApp();
   const [tab, setTab] = useState<'seo' | 'redirects' | 'sitemap'>('seo');
   const [seoList, setSeoList] = useState<PageSeo[]>([]);
   const [redirects, setRedirects] = useState<RedirectRule[]>([]);
@@ -104,6 +107,8 @@ export default function AdminSeoManager() {
       if (res.ok && json.success) {
         showToast('success', `Đã lưu cấu hình SEO cho route ${selectedRoute}`);
         fetchData();
+        refreshData();
+        broadcastCmsSync('seo');
       } else {
         showToast('error', json.error || 'Lỗi lưu SEO');
       }
@@ -140,6 +145,8 @@ export default function AdminSeoManager() {
         setNewSource('');
         setNewTarget('');
         fetchData();
+        refreshData();
+        broadcastCmsSync('seo');
       } else {
         showToast('error', json.error || 'Lỗi thêm điều hướng');
       }
@@ -158,6 +165,8 @@ export default function AdminSeoManager() {
       if (res.ok && json.success) {
         showToast('success', 'Đã xoá quy tắc điều hướng');
         fetchData();
+        refreshData();
+        broadcastCmsSync('seo');
       } else {
         showToast('error', json.error || 'Lỗi xoá');
       }

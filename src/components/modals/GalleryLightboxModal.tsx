@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useEffect, useCallback, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { X, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { EDITORIAL_EASE } from '@/components/motion/EditorialMotion';
 
 export default function GalleryLightboxModal() {
+  const pathname = usePathname();
   const { activeLightboxPlate, closeLightbox, openLightbox, data, language } = useApp();
   const [imgError, setImgError] = useState(false);
   const isEn = language === 'en';
@@ -47,6 +49,11 @@ export default function GalleryLightboxModal() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  // Strictly skip render on admin console
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const title = isEn && activeLightboxPlate?.titleEn ? activeLightboxPlate.titleEn : activeLightboxPlate?.titleVi;
   const chapterTitle = isEn && activeLightboxPlate?.chapterTitleEn ? activeLightboxPlate.chapterTitleEn : activeLightboxPlate?.chapterTitleVi;

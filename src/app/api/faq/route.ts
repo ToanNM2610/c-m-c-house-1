@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
       details: `Created FAQ: ${question.slice(0, 50)}...`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(created, 'Thêm câu hỏi FAQ thành công');
   } catch (error) {
     console.error('Error creating FAQ:', error);
@@ -88,6 +90,7 @@ export async function PUT(req: NextRequest) {
       details: `Updated FAQ ID: ${id}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, 'Cập nhật câu hỏi FAQ thành công');
   } catch (error) {
     console.error('Error updating FAQ:', error);
@@ -116,6 +119,7 @@ export async function DELETE(req: NextRequest) {
       details: `Deleted FAQ: ${deleted.question.slice(0, 50)}...`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(deleted, 'Xoá câu hỏi FAQ thành công');
   } catch (error) {
     console.error('Error deleting FAQ:', error);

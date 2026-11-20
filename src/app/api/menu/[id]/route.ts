@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
@@ -101,6 +102,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       data: dataToUpdate,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess({
       ...updated,
       variants: updated.variants ? JSON.parse(updated.variants) : undefined,
@@ -122,6 +124,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     await prisma.menuItem.delete({
       where: { id: params.id },
     });
+    revalidatePath('/', 'layout');
     return apiSuccess({ deletedId: params.id }, { message: 'Xóa món thành công' });
   } catch (error: any) {
     console.error('Error deleting menu item:', error);

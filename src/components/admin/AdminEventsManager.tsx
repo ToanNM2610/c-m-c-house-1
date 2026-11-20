@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 import { CafeEvent } from '@/types';
 
 export default function AdminEventsManager() {
@@ -119,6 +120,7 @@ export default function AdminEventsManager() {
       });
       if (res.ok) {
         await refreshData();
+        broadcastCmsSync('events');
       }
     } catch (err) {
       console.error(err);
@@ -131,6 +133,7 @@ export default function AdminEventsManager() {
       const res = await fetch(`/api/events?id=${id}`, { method: 'DELETE' });
       if (res.ok) {
         await refreshData();
+        broadcastCmsSync('events');
       }
     } catch (err) {
       console.error(err);
@@ -165,6 +168,7 @@ export default function AdminEventsManager() {
         if (res.ok) {
           resetForm();
           await refreshData();
+          broadcastCmsSync('events');
         } else {
           alert('Lỗi cập nhật sự kiện');
         }
@@ -189,6 +193,7 @@ export default function AdminEventsManager() {
         if (res.ok) {
           resetForm();
           await refreshData();
+          broadcastCmsSync('events');
         } else {
           alert('Lỗi tạo sự kiện mới');
         }

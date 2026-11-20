@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
@@ -78,6 +79,8 @@ export async function PATCH(req: NextRequest) {
       where: { id },
       data: dataToUpdate,
     });
+
+    revalidatePath('/', 'layout');
 
     return apiSuccess(updated, { message: `Cập nhật ${id} thành công` });
   } catch (error: any) {

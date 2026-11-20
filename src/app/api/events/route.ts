@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
@@ -10,7 +11,7 @@ export async function GET() {
     const events = await prisma.eventPost.findMany({
       orderBy: { createdAt: 'desc' },
     });
-    return NextResponse.json(events);
+    return apiSuccess(events);
   } catch (error) {
     console.error('Error fetching events:', error);
     return apiError('Không thể tải danh sách sự kiện', 500);
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(created, { message: 'Thêm sự kiện thành công' }, 201);
   } catch (error: any) {
     console.error('Error adding event:', error);
@@ -114,6 +116,7 @@ export async function PATCH(req: NextRequest) {
       data: dataToUpdate,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, { message: 'Cập nhật sự kiện thành công' });
   } catch (error: any) {
     console.error('Error updating event:', error);
@@ -139,6 +142,7 @@ export async function DELETE(req: NextRequest) {
       where: { id },
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess({ id }, { message: 'Xóa sự kiện thành công' });
   } catch (error: any) {
     console.error('Error deleting event:', error);

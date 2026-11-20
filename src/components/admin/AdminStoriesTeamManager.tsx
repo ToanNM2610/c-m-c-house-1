@@ -18,8 +18,11 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { HighlightStory, TeamMember } from '@/types';
+import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 
 export default function AdminStoriesTeamManager() {
+  const { refreshData } = useApp();
   const [tab, setTab] = useState<'stories' | 'team'>('stories');
   const [stories, setStories] = useState<HighlightStory[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -121,6 +124,8 @@ export default function AdminStoriesTeamManager() {
         setIsStoryModalOpen(false);
         setEditingStory(null);
         fetchData();
+        refreshData();
+        broadcastCmsSync('stories-team');
       } else {
         showToast('error', json.error || 'Lỗi lưu câu chuyện');
       }
@@ -139,6 +144,8 @@ export default function AdminStoriesTeamManager() {
       if (res.ok && json.success) {
         showToast('success', 'Đã xoá câu chuyện');
         fetchData();
+        refreshData();
+        broadcastCmsSync('stories-team');
       } else {
         showToast('error', json.error || 'Lỗi xoá câu chuyện');
       }
@@ -169,6 +176,8 @@ export default function AdminStoriesTeamManager() {
         setIsTeamModalOpen(false);
         setEditingMember(null);
         fetchData();
+        refreshData();
+        broadcastCmsSync('stories-team');
       } else {
         showToast('error', json.error || 'Lỗi lưu thành viên');
       }
@@ -187,6 +196,8 @@ export default function AdminStoriesTeamManager() {
       if (res.ok && json.success) {
         showToast('success', 'Đã xoá thành viên');
         fetchData();
+        refreshData();
+        broadcastCmsSync('stories-team');
       } else {
         showToast('error', json.error || 'Lỗi xoá');
       }

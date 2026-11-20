@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
@@ -113,6 +114,8 @@ export async function PATCH(req: NextRequest) {
       data: dataToUpdate,
     });
 
+    revalidatePath('/', 'layout');
+
     return apiSuccess({
       ...updated,
       variants: updated.variants ? JSON.parse(updated.variants) : undefined,
@@ -170,6 +173,8 @@ export async function POST(req: NextRequest) {
         orderCount: 0,
       },
     });
+
+    revalidatePath('/', 'layout');
 
     return apiSuccess(created, { message: 'Thêm món mới thành công' }, 201);
   } catch (error: any) {

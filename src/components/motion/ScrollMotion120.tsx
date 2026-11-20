@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   motion,
   useScroll,
@@ -26,10 +27,12 @@ export const SPRING_120HZ = {
  * Directly driven by hardware-accelerated scaleX of scrollYProgress
  */
 export function ScrollReadingProgress120() {
+  const pathname = usePathname();
   const { enableAnimations, motionIntensity } = useApp();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, SPRING_120HZ);
 
+  if (pathname?.startsWith('/admin')) return null;
   if (!enableAnimations || motionIntensity === 'OFF') return null;
 
   return (

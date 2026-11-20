@@ -15,6 +15,7 @@ import {
   Globe,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 import { PhilosophyCard } from '@/types';
 
 export default function AdminCMSHome() {
@@ -173,6 +174,7 @@ export default function AdminCMSHome() {
       if (res.ok) {
         setSavedSuccess(true);
         await refreshData();
+        broadcastCmsSync('content');
         setTimeout(() => setSavedSuccess(false), 4000);
       } else {
         alert('Có lỗi khi lưu nội dung CMS.');
@@ -402,6 +404,27 @@ export default function AdminCMSHome() {
             </div>
           </div>
         )}
+
+        {/* Hero Photo Card Toggle */}
+        <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <span className="text-xs font-bold text-slate-800 block">Hiển Thị Ảnh Bìa Hero (Hình 01 bên suối):</span>
+            <span className="text-[11px] text-slate-500">Bật/tắt khung ảnh bìa biên tập 2D ở cột bên phải Hero trên trang chủ</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowHero3DBean(!showHero3DBean)}
+            className={`w-12 h-6 rounded-full transition-colors relative ${
+              showHero3DBean ? 'bg-emerald-600' : 'bg-slate-300'
+            }`}
+          >
+            <span
+              className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
+                showHero3DBean ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Section 2: Philosophy Preview */}

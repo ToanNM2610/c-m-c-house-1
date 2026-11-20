@@ -2,11 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MapPin, Phone, Mail, Compass, ExternalLink, ShieldCheck } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 export default function FooterSection() {
+  const pathname = usePathname();
   const { data, language } = useApp();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
   const s = data.settings;
   const isEn = language === 'en';
 

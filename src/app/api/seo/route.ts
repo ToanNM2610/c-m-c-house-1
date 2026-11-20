@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -64,6 +65,7 @@ export async function PUT(req: NextRequest) {
       details: `Updated SEO configuration for route: ${route}`,
     });
 
+    revalidatePath('/', 'layout');
     return apiSuccess(updated, 'Cập nhật cấu hình SEO thành công');
   } catch (error) {
     console.error('Error updating PageSeo:', error);

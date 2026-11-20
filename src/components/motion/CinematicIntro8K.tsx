@@ -282,8 +282,8 @@ export default function CinematicIntro8K() {
     };
   }, [isEligible, isUnmounted, isDark, triggerExit]);
 
-  // If not eligible or unmounted after exit animation, return null
-  if (!isEligible || isUnmounted) {
+  // If on admin/api, not eligible, or unmounted after exit animation, return null
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/api') || !isEligible || isUnmounted) {
     return null;
   }
 

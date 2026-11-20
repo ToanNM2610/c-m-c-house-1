@@ -143,14 +143,34 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Real-time polling every 2500ms
+  // Real-time zero-delay BroadcastChannel sync + background polling fallback
   useEffect(() => {
     fetchData();
+
+    let channel: BroadcastChannel | null = null;
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      try {
+        channel = new BroadcastChannel('camcu_cms_sync');
+        channel.onmessage = (event) => {
+          if (event.data?.type === 'CMS_UPDATED' || event.data === 'sync') {
+            fetchData();
+          }
+        };
+      } catch (err) {
+        console.warn('BroadcastChannel sync init:', err);
+      }
+    }
+
     const interval = setInterval(() => {
       fetchData();
-    }, 2500);
+    }, 5000);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (channel) {
+        channel.close();
+      }
+      clearInterval(interval);
+    };
   }, [fetchData]);
 
   const openLightbox = (plate: SpatialPlate) => setActiveLightboxPlate(plate);

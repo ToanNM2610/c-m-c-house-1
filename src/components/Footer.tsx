@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { 
   PhoneCall, 
@@ -12,6 +13,7 @@ import StarHoya from "@/components/ui/StarHoya";
 import { trackCustomerAction } from "@/lib/cmsStore";
 
 export default function Footer() {
+  const pathname = usePathname();
   const { locale, dict } = useLanguage();
   const isEn = locale === "en";
 
@@ -28,6 +30,10 @@ export default function Footer() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <footer className="w-full bg-[#0A0E0C] text-[var(--ink-on-dark,#F2EDE4)] pt-20 pb-10 border-t border-[var(--line-on-dark,rgba(242,237,228,0.14))] relative overflow-hidden">

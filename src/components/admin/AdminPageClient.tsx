@@ -307,7 +307,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
                       <button
                         key={item.id}
                         onClick={() => setActiveTab(item.id)}
-                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-colors duration-75 ${
                           isActive
                             ? 'bg-emerald-600 text-white font-semibold shadow-sm'
                             : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
@@ -381,7 +381,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
                                 setActiveTab(item.id);
                                 setMobileDrawerOpen(false);
                               }}
-                              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition-colors duration-75 ${
                                 isActive ? 'bg-emerald-600 text-white font-semibold' : 'text-slate-400 hover:text-white hover:bg-slate-800'
                               }`}
                             >

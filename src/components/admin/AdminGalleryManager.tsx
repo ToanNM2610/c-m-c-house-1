@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 import { SpatialPlate } from '@/types';
 
 export default function AdminGalleryManager() {
@@ -83,6 +84,7 @@ export default function AdminGalleryManager() {
       });
       if (res.ok) {
         await refreshData();
+        broadcastCmsSync('gallery');
         // Clear broken image status for this plate if any
         setBrokenImages((prev) => ({ ...prev, [editingPlateId]: false }));
         setEditingPlateId(null);
@@ -145,6 +147,7 @@ export default function AdminGalleryManager() {
       // Clear broken image state
       setBrokenImages((prev) => ({ ...prev, [plateId]: false }));
       await refreshData();
+      broadcastCmsSync('gallery');
     } catch (err: any) {
       console.error(err);
       alert(err.message || 'Không thể tải ảnh lên');
@@ -190,6 +193,7 @@ export default function AdminGalleryManager() {
       if (res.ok) {
         setBrokenImages((prev) => ({ ...prev, [plate.id]: false }));
         await refreshData();
+        broadcastCmsSync('gallery');
       } else {
         alert('Lỗi gỡ bỏ ảnh');
       }
@@ -264,6 +268,7 @@ export default function AdminGalleryManager() {
     }
 
     await refreshData();
+    broadcastCmsSync('gallery');
     setBrokenImages({});
     setBulkUploading(false);
     setBulkProgress(null);
