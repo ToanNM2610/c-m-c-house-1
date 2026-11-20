@@ -1,120 +1,62 @@
-import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { apiSuccess, apiError } from '@/lib/api-response';
+import { getSessionUser } from '@/lib/auth';
 
-const DATA_FILE = path.join(process.cwd(), "src/data/gallery.json");
-const UPLOAD_DIR = path.join(process.cwd(), "public/uploads/gallery");
-
-interface GalleryImage {
-  id: string;
-  url: string;
-  caption: string;
-}
-
-// Hàm hỗ trợ đọc dữ liệu JSON
-async function readGalleryData(): Promise<GalleryImage[]> {
-  try {
-    const data = await fs.readFile(DATA_FILE, "utf8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Lỗi đọc file JSON:", error);
-    return [];
-  }
-}
-
-// Hàm hỗ trợ ghi dữ liệu JSON
-async function writeGalleryData(data: GalleryImage[]) {
-  await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
-}
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const images = await readGalleryData();
-  return NextResponse.json({ images });
+  try {
+    const plates = await prisma.spatialFigure.findMany({
+      orderBy: { id: 'asc' },
+    });
+    return apiSuccess(plates);
+  } catch (error) {
+    console.error('Error fetching gallery plates:', error);
+    return apiError('Không thể tải thư viện 30 ảnh', 500);
+  }
 }
 
-export async function POST(req: Request) {
+export async function PATCH(req: NextRequest) {
   try {
-    const formData = await req.formData();
-    const files = formData.getAll("files") as File[];
-
-    if (!files || files.length === 0) {
-      return NextResponse.json({ error: "Không có file nào được tải lên." }, { status: 400 });
+    const user = await getSessionUser(req);
+    if (!user) {
+      return apiError('Yêu cầu xác thực tài khoản quản trị', 401);
     }
 
-    // Đảm bảo thư mục upload tồn tại
-    try {
-      await fs.access(UPLOAD_DIR);
-    } catch {
-      await fs.mkdir(UPLOAD_DIR, { recursive: true });
+    const body = await req.json();
+    const { id, titleVi, locationVi, descriptionVi, chapter, imageUrl, customGlbUrl } = body;
+
+    if (!id) {
+      return apiError('Thiếu mã ảnh (id, vd: FIG. 01)', 400);
     }
 
-    const currentImages = await readGalleryData();
-    const newImages: GalleryImage[] = [];
-
-    for (const file of files) {
-      if (!file.type.startsWith("image/")) continue;
-
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const uniqueId = Date.now().toString() + "-" + Math.round(Math.random() * 1e9);
-      const ext = path.extname(file.name) || ".jpg";
-      const filename = `${uniqueId}${ext}`;
-      const filePath = path.join(UPLOAD_DIR, filename);
-
-      await fs.writeFile(filePath, buffer);
-
-      const newImage: GalleryImage = {
-        id: uniqueId,
-        url: `/uploads/gallery/${filename}`,
-        caption: file.name.split('.')[0]
+    const dataToUpdate: Record<string, unknown> = {};
+    if (titleVi !== undefined) dataToUpdate.titleVi = titleVi;
+    if (locationVi !== undefined) dataToUpdate.locationVi = locationVi;
+    if (descriptionVi !== undefined) dataToUpdate.descriptionVi = descriptionVi;
+    if (typeof chapter === 'number') {
+      dataToUpdate.chapter = chapter;
+      const chapterTitles: Record<number, string> = {
+        1: 'Chương I: Lối Nhỏ Vào Vườn',
+        2: 'Chương II: Bên Bờ Suối Mát',
+        3: 'Chương III: Hương Vị Xanh Sạch',
+        4: 'Chương IV: Chiều Buông & Đêm Cuối Tuần',
       };
-      
-      newImages.push(newImage);
+      dataToUpdate.chapterTitleVi = chapterTitles[chapter] || `Chương ${chapter}`;
     }
+    if (imageUrl !== undefined) dataToUpdate.imageUrl = imageUrl;
+    if (customGlbUrl !== undefined) dataToUpdate.customGlbUrl = customGlbUrl;
 
-    // Cập nhật Database JSON
-    const updatedImages = [...newImages, ...currentImages];
-    await writeGalleryData(updatedImages);
+    const updated = await prisma.spatialFigure.update({
+      where: { id },
+      data: dataToUpdate,
+    });
 
-    return NextResponse.json({ success: true, newImages, allImages: updatedImages });
-  } catch (error) {
-    console.error("Lỗi tải ảnh:", error);
-    return NextResponse.json({ error: "Lỗi hệ thống khi tải ảnh." }, { status: 500 });
+    return apiSuccess(updated, { message: `Cập nhật ${id} thành công` });
+  } catch (error: any) {
+    console.error('Error updating gallery plate:', error);
+    return apiError(error.message || 'Lỗi cập nhật ảnh không gian', 500);
   }
 }
 
-export async function DELETE(req: Request) {
-  try {
-    const { id } = await req.json();
-    if (!id) return NextResponse.json({ error: "Thiếu ID ảnh cần xóa." }, { status: 400 });
-
-    const currentImages = await readGalleryData();
-    const imageToDelete = currentImages.find(img => img.id === id);
-
-    if (!imageToDelete) {
-      return NextResponse.json({ error: "Không tìm thấy ảnh." }, { status: 404 });
-    }
-
-    // Xóa file vật lý nếu ảnh đó nằm trong thư mục uploads (không phải ảnh placeholder)
-    if (imageToDelete.url.startsWith('/uploads/gallery/')) {
-      const filename = path.basename(imageToDelete.url);
-      const filePath = path.join(UPLOAD_DIR, filename);
-      try {
-        await fs.access(filePath);
-        await fs.unlink(filePath);
-      } catch (e) {
-        console.warn("Không thể xóa file vật lý hoặc file không tồn tại:", filePath);
-      }
-    }
-
-    // Cập nhật Database JSON
-    const updatedImages = currentImages.filter(img => img.id !== id);
-    await writeGalleryData(updatedImages);
-
-    return NextResponse.json({ success: true, allImages: updatedImages });
-  } catch (error) {
-    console.error("Lỗi xóa ảnh:", error);
-    return NextResponse.json({ error: "Lỗi hệ thống khi xóa ảnh." }, { status: 500 });
-  }
-}

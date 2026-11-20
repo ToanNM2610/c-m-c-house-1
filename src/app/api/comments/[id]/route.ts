@@ -1,0 +1,74 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getSessionUser } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
+
+interface RouteParams {
+  params: {
+    id: string;
+  };
+}
+
+// PATCH /api/comments/[id] - toggle isFeatured or update status
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
+  try {
+    const session = await getSessionUser(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = params;
+    if (!id) {
+      return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const { isFeatured, status, rating, content, authorName, visitDate } = body;
+
+    const updated = await prisma.guestComment.update({
+      where: { id },
+      data: {
+        isFeatured: isFeatured !== undefined ? Boolean(isFeatured) : undefined,
+        status: status !== undefined ? status : undefined,
+        rating: rating !== undefined ? Number(rating) : undefined,
+        content: content !== undefined ? String(content).trim() : undefined,
+        authorName: authorName !== undefined ? String(authorName).trim() : undefined,
+        visitDate: visitDate !== undefined ? String(visitDate) : undefined,
+      },
+    });
+
+    return NextResponse.json({ success: true, comment: updated });
+  } catch (error) {
+    console.error('PATCH /api/comments/[id] error:', error);
+    return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
+  }
+}
+
+// PUT /api/comments/[id] - alias for update
+export async function PUT(request: NextRequest, { params }: RouteParams) {
+  return PATCH(request, { params });
+}
+
+// DELETE /api/comments/[id] - delete single comment
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  try {
+    const session = await getSessionUser(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = params;
+    if (!id) {
+      return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+    }
+
+    await prisma.guestComment.delete({ where: { id } });
+
+    return NextResponse.json({ success: true, message: 'Đã xoá đánh giá' });
+  } catch (error) {
+    console.error('DELETE /api/comments/[id] error:', error);
+    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
+  }
+}
+

@@ -1,6 +1,3 @@
-// Prisma Schema for Cẩm Cù House (camcu-cafe)
-// Single source of truth database schema for Editorial Botanical Monograph & Spatial Scrollytelling
-
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
@@ -10,63 +7,401 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Category {
-  id          String     @id @default(cuid())
-  slug        String     @unique
-  nameVi      String
-  nameEn      String
-  order       String
-  description String?
-  menuItems   MenuItem[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+model StoreSettings {
+  id              String   @id @default("default")
+  name            String
+  tagline         String
+  taglineEn       String   @default("Botanical Eco-Coffee & Streamside Sanctuary")
+  address         String
+  addressEn       String   @default("Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong")
+  hotlines        String   // JSON array of strings
+  email           String
+  monThuHours     String
+  monThuHoursEn   String   @default("Mon – Thu: 07:00 – 18:00")
+  friSunHours     String
+  friSunHoursEn   String   @default("Fri – Sun: 07:00 – 22:00")
+  timezone        String   @default("Asia/Ho_Chi_Minh")
+  socialProof     String
+  socialProofEn   String   @default("100% Recommended (Based on 8/8 customer reviews)")
+  googleMapsUrl   String
+  facebookUrl     String
+  tiktokUrl       String
+  youtubeUrl      String
+  announcement    String
+  announcementEn  String   @default("Acoustic live music by the stream every Saturday evening (19:30 - 21:30)")
+  footerDesc      String   @default("Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Thức uống thảo mộc và cà phê rang mộc.")
+  footerDescEn    String   @default("Eco-coffee sanctuary nestled beside a natural stream in Dong Gia Nghia, Lam Dong. Wood-roasted coffee, fresh herbal teas, and tranquil rainforest canopy.")
+  defaultLanguage String   @default("vi") // "vi" | "en"
+  defaultTheme    String   @default("light") // "light" | "dark" | "auto"
+  fontPreset      String   @default("sans-be-vietnam") // "sans-be-vietnam" | "sans-jakarta" | "sans-inter" | "serif-editorial"
+  lightBgHex      String   @default("#F6F3EC")
+  lightAccentHex  String   @default("#2E5A3C")
+  darkBgHex       String   @default("#111915")
+  darkAccentHex   String   @default("#4C9A67")
+  enableAnimations Boolean @default(true)
+  motionIntensity  String  @default("VIVID") // "OFF" | "SUBTLE" | "VIVID"
+
+  // Marketing & Tracking Integration (Module 4)
+  gaMeasurementId String?  @default("") // Google Analytics 4 (e.g. G-XXXXX)
+  gtmContainerId  String?  @default("") // Google Tag Manager (e.g. GTM-XXXXX)
+  gscVerification String?  @default("") // Google Search Console verification meta tag
+  facebookPixelId String?  @default("") // Facebook Meta Pixel ID
+  tiktokPixelId   String?  @default("") // TikTok Pixel ID
+
+  // Floating Quick-Chat & Contact Integration (Module 4)
+  enableQuickChat Boolean  @default(true)
+  zaloUrl         String?  @default("https://zalo.me/0382851688")
+  messengerUrl    String?  @default("https://m.me/camcuhousedaknong")
+  quickChatPhone  String?  @default("0382851688")
+  enableSocialShare Boolean @default(true)
+
+  // Cinematic Intro Overlay Configuration (120fps)
+  enableIntro     Boolean  @default(true)
+  introFrequency  String   @default("SESSION") // "SESSION" | "ALWAYS"
+  introEyebrowVi  String   @default("ĐÔNG GIA NGHĨA • LÂM ĐỒNG • HẺM 437 HÙNG VƯƠNG")
+  introEyebrowEn  String   @default("DONG GIA NGHIA • LAM DONG • ALLEY 437 HUNG VUONG")
+  introSubtitleVi String   @default("Cà phê sinh thái bên bờ suối — Xanh sạch & Trong lành")
+  introSubtitleEn String   @default("Streamside Ecological Café — Clean & Lush Sanctuary")
+
+  // Review Showcase Configuration (Module 4)
+  reviewDisplayMode    String   @default("AUTO_RANDOM") // "AUTO_RANDOM" | "MANUAL"
+  reviewAutoIntervalSec Int     @default(6)
+
+  updatedAt       DateTime @updatedAt
+}
+
+model SiteContent {
+  id                      String   @id @default("default")
+  // Hero Section
+  heroEyebrow             String   @default("BOTANICAL ECO-COFFEE & STREAMSIDE SANCTUARY")
+  heroEyebrowEn           String   @default("BOTANICAL ECO-COFFEE & STREAMSIDE SANCTUARY")
+  heroTitle               String   @default("CẨM CÙ HOUSE")
+  heroTitleEn             String   @default("CẨM CÙ HOUSE")
+  heroSubtitle            String   @default("Bên Dòng Suối Mát • Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng")
+  heroSubtitleEn          String   @default("Beside Fresh Mountain Stream • Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong")
+  heroTagline             String   @default("Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng.")
+  heroTaglineEn           String   @default("Eco-coffee sanctuary beside a natural stream — Fresh, serene, and harmonized with rainforest nature in the heart of Dong Gia Nghia, Lam Dong.")
+  heroDescription         String   @default("Tận hưởng không gian suối mát rượi quanh năm, view suối tự nhiên, hương vị cà phê muối đậm đà rang mộc bazan Đăk Nông cùng các thức uống thảo mộc lành sạch cho tâm hồn.")
+  heroDescriptionEn       String   @default("Experience year-round cool streamside breezes, natural waterfall views, authentic wood-roasted Dak Nong basalt coffee, and wholesome botanical herbal drinks for peace of mind.")
+  showHero3DBean          Boolean  @default(true)
+
+  // Philosophy & Sanctuary Preview Section
+  philosophyEyebrow       String   @default("VỀ KHÔNG GIAN BÊN SUỐI")
+  philosophyEyebrowEn     String   @default("ABOUT OUR STREAMSIDE SANCTUARY")
+  philosophyTitle         String   @default("Nơi Nhịp Thở Chậm Lại Bên Dòng Suối Tự Nhiên")
+  philosophyTitleEn       String   @default("Where Your Breath Slows Down by the Gentle Stream")
+  philosophyLead          String   @default("Giữa lòng Đông Gia Nghĩa, Lâm Đồng, Cẩm Cù House ẩn mình dưới con dốc rợp bóng cây tại Hẻm 437 Hùng Vương, nép mình bên dòng suối nhỏ chảy róc rách bốn mùa.")
+  philosophyLeadEn        String   @default("In the heart of Dong Gia Nghia, Lam Dong, Cẩm Cù House is nestled down a tree-shaded slope at Alley 437 Hung Vuong, sitting peacefully along a gentle natural stream flowing year-round.")
+  philosophyStory         String   @default("Chúng tôi giữ lại nguyên vẹn nét hoang sơ của ghềnh đá, tán cây rừng và làn hơi nước mát lạnh để tạo nên một chốn dừng chân thanh sạch, bình yên đúng nghĩa cho bạn và người thương.")
+  philosophyStoryEn       String   @default("We preserve the pristine basalt rocks, rainforest canopy, and cool water mists to create a truly pure, serene haven for you and your loved ones.")
+  philosophyCards         String   // JSON array of { title, desc, iconName }
+  philosophyCardsEn       String?  // JSON array of { title, desc, iconName }
+
+  // Brand Story & About Us (/gioi-thieu) Section
+  brandStoryTitle         String   @default("Hành Trình Khởi Sinh Dưới Vòm Hoa Cẩm Cù")
+  brandStoryTitleEn       String   @default("The Awakening Journey Beneath the Wax Plant Vines")
+  brandStorySubtitle      String   @default("Câu Chuyện Về Đất Đỏ Bazan, Con Suối Nhỏ & Giọt Cà Phê Mộc")
+  brandStorySubtitleEn    String   @default("A Story of Basalt Soil, Gentle Streams & Pure Wood-Roasted Coffee")
+  brandStoryContent       String   @default("Đông Gia Nghĩa, Lâm Đồng không chỉ có thiên nhiên xanh mát mà còn có những thung lũng xanh tĩnh lặng ẩn mình. Cẩm Cù House được sinh ra từ chính niềm say mê thiên nhiên và khát khao gìn giữ một khoảng trời xanh trong lành giữa lòng Đông Gia Nghĩa. Từng giàn lan Cẩm Cù bung nở những chùm hoa hình ngôi sao sáp dịu dàng soi bóng xuống dòng nước suối trong veo.")
+  brandStoryContentEn     String   @default("Dong Gia Nghia, Lam Dong is blessed with pristine waterfalls and serene green valleys. Cẩm Cù House was born from our profound love for nature and a dream to preserve an untamed green haven in Dong Gia Nghia. Star-shaped porcelain wax flowers bloom gracefully over the crystal-clear streams.")
+  brandStoryPhilosophy    String   @default("Triết lý của chúng tôi rất giản dị: 'Xanh - Lành - Thuần Khiết'. Mỗi ly cà phê mộc là hương vị của đất bazan núi lửa, mỗi ấm trà thảo mộc là sự chắt chiu từ hoa lá vườn nhà. Không gian ở đây không có máy lạnh ngột ngạt hay tiếng còi xe, chỉ có gió ngàn, tiếng suối reo và tiếng cười của những buổi chuyện trò ấm cúng.")
+  brandStoryPhilosophyEn  String   @default("Our philosophy is simple: 'Green - Wholesome - Pure'. Every cup of wood-roasted coffee carries the volcanic richness of basalt soil; every herbal teapot is carefully harvested from home garden botanicals. No noisy air conditioners or traffic honks—only mountain breeze, babbling water, and warm laughter.")
+  brandStoryImageUrl      String?
+
+  // Corporate Vision & Mission
+  visionTitle             String   @default("Tầm Nhìn & Sứ Mệnh Sinh Thái")
+  visionTitleEn           String   @default("Ecological Vision & Mission")
+  visionDesc              String   @default("Trở thành điểm hẹn sinh thái biểu trưng của Đông Gia Nghĩa, Lâm Đồng — nơi gìn giữ vẻ đẹp nguyên bản của dòng suối rừng và tôn vinh nông sản thảo mộc tự nhiên.")
+  visionDescEn            String   @default("To be the premier ecological destination of Dong Gia Nghia, Lam Dong — preserving the pristine beauty of natural forest streams and celebrating wholesome organic botanicals.")
+
+  updatedAt               DateTime @updatedAt
+}
+
+model MenuCategory {
+  id         String     @id // 'coffee' | 'tea' | 'smoothie' | 'juice' | 'soda-yogurt' | 'other' | 'food'
+  nameVi     String
+  nameEn     String
+  slug       String
+  orderIndex Int        @default(0)
+  items      MenuItem[]
 }
 
 model MenuItem {
-  id          String    @id @default(cuid())
-  code        String    @unique
-  name        String
-  variants    String?   // JSON array string: e.g. ["Đen", "Sữa"]
-  note        String?
-  price       Int?      @default(0)
-  badge       String?   // "Signature" | "Best-seller" | "Green & Clean" | "Morning"
-  isSignature Boolean   @default(false)
-  isHealthy   Boolean   @default(false)
-  priceTier   String    @default("$")
-  inStock     Boolean   @default(true)
-  categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String        @id
+  categoryId      String
+  category        MenuCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name            String
+  nameEn          String?
+  vietnameseTitle String
+  description     String
+  descriptionEn   String?
+  price           Float
+  priceDisplay    String?
+  variants        String?       // JSON array of MenuItemVariant [{ id, name, price }]
+  variantsEn      String?       // JSON array of MenuItemVariant [{ id, name, price }]
+  highlight       String?       // 'Best-seller' | 'Signature' | 'Đặc sản thảo mộc xanh sạch' | ...
+  highlightEn     String?
+  editorialNote   String?
+  editorialNoteEn String?
+  moodTags        String?       // JSON array of strings
+  modelType       String?
+  customGlbUrl    String?
+  photoUrl        String?
+  ingredients     String?       // JSON array of strings
+  inStock         Boolean       @default(true)
+  orderCount      Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
-model SpacePhoto {
+model SpatialFigure {
+  id             String  @id // 'FIG. 01' - 'FIG. 30'
+  chapter        Int     // 1, 2, 3, 4
+  chapterTitleVi String
+  chapterTitleEn String  @default("")
+  titleVi        String
+  titleEn        String  @default("")
+  locationVi     String
+  locationEn     String  @default("")
+  descriptionVi  String
+  descriptionEn  String  @default("")
+  imageUrl       String
+  customGlbUrl   String?
+  aspectRatio    String? @default("4/3")
+}
+
+model TeamMember {
+  id         String   @id @default(cuid())
+  name       String
+  nameEn     String?
+  role       String
+  roleEn     String?
+  bio        String
+  bioEn      String?
+  avatarUrl  String?
+  orderIndex Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model HighlightStory {
   id          String   @id @default(cuid())
-  figureCode  String   @unique // "FIG. 01" to "FIG. 30"
-  orderNumber String
-  chapter     Int      // 1 to 4
   title       String
-  subtitle    String?
-  caption     String?
-  imageUrl    String
-  aspectRatio String?  @default("4/3")
-  order       Int      @default(0)
+  titleEn     String?
+  category    String   // 'Sự kiện' | 'Mùa vụ' | 'Cộng đồng'
+  categoryEn  String?
+  date        String
+  dateEn      String?
+  summary     String
+  summaryEn   String?
+  content     String
+  contentEn   String?
+  imageUrl    String?
+  badge       String?  @default("Dấu ấn")
+  badgeEn     String?  @default("Milestone")
+  orderIndex  Int      @default(0)
+  published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
-model Reservation {
+model EventPost {
+  id               String   @id @default(cuid())
+  title            String
+  titleEn          String   @default("")
+  subtitle         String
+  subtitleEn       String   @default("")
+  dateOrSchedule   String
+  dateOrScheduleEn String   @default("")
+  description      String
+  descriptionEn    String   @default("")
+  badge            String
+  badgeEn          String   @default("")
+  imageUrl         String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model FaqItem {
+  id          String   @id @default(cuid())
+  question    String
+  questionEn  String?
+  answer      String
+  answerEn    String?
+  category    String   @default("Chung") // 'Đường đi & Đỗ xe' | 'Thực đơn xanh sạch' | 'Giờ mở cửa & Acoustic' | 'Họp nhóm & Mang về'
+  categoryEn  String?  @default("General")
+  orderIndex  Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StaticPage {
+  id              String   @id @default(cuid())
+  slug            String   @unique // 'chinh-sach-bao-mat' | 'dieu-khoan-su-dung' | 'noi-quy-khong-gian'
+  title           String
+  titleEn         String?
+  content         String
+  contentEn       String?
+  metaTitle       String?
+  metaDescription String?
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  url       String
+  folder    String   @default("gallery") // 'gallery' | 'events' | 'team' | 'brand'
+  filename  String
+  fileType  String   @default("image/webp")
+  fileSize  Int      @default(0)
+  altVi     String?  @default("")
+  altEn     String?  @default("")
+  createdAt DateTime @default(now())
+}
+
+model PageSeo {
   id            String   @id @default(cuid())
-  customerName  String
-  phone         String
-  visitDate     String   // "YYYY-MM-DD"
-  visitTime     String   // "HH:mm"
-  guests        Int      @default(2)
-  seatingArea   String   // "stream" | "garden" | "covered"
-  preOrderItems String?  // JSON string array of item codes / names
-  note          String?
-  status        String   @default("pending") // "pending" | "confirmed" | "completed" | "cancelled"
-  createdAt     DateTime @default(now())
+  route         String   @unique // '/' | '/gioi-thieu' | '/khong-gian' | '/thuc-don' | '/khach-hang' | '/su-kien' | '/lien-he'
+  metaTitleVi   String
+  metaTitleEn   String?
+  metaDescVi    String
+  metaDescEn    String?
+  h1Vi          String?
+  h1En          String?
+  ogImage       String?
+  canonicalUrl  String?
+  noIndex       Boolean  @default(false)
   updatedAt     DateTime @updatedAt
 }
 
+model RedirectRule {
+  id         String   @id @default(cuid())
+  sourcePath String   @unique // e.g. '/khong-gian'
+  targetPath String   // e.g. '/gioi-thieu'
+  statusCode Int      @default(301) // 301 or 302
+  isActive   Boolean  @default(true)
+  hitCount   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  fullName     String
+  role         String   @default("EDITOR") // "SUPER_ADMIN" | "EDITOR" | "SEO_MANAGER"
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ContactSubmission {
+  id          String    @id @default(cuid())
+  fullName    String
+  phone       String
+  email       String?
+  subject     String?   @default("Tư vấn chung")
+  message     String
+  status      String    @default("NEW") // "NEW" | "READ" | "RESOLVED" | "SPAM"
+  emailStatus String    @default("NOT_CONFIGURED") // "NOT_CONFIGURED" | "SENT" | "FAILED" | "DISABLED"
+  emailSentTo String?   // comma-separated list of recipient emails
+  emailError  String?   // error message if failed
+  repliedAt   DateTime? // timestamp when admin replied
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model GmailConfig {
+  id               String   @id @default("default")
+  isEnabled        Boolean  @default(true)
+  senderName       String   @default("Cẩm Cù House — Thông Báo Website")
+  senderEmail      String   @default("")
+  appPassword      String   @default("") // 16-character Google App Password (masked in API responses)
+  autoReplyEnabled Boolean  @default(false)
+  autoReplySubject String   @default("Cẩm Cù House đã nhận được lời nhắn của bạn")
+  autoReplyBody    String   @default("Cảm ơn bạn đã liên hệ Cẩm Cù House. Chúng tôi đã ghi nhận thông tin và sẽ phản hồi sớm nhất.")
+  updatedAt        DateTime @updatedAt
+}
+
+model GmailRecipient {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  label           String   @default("Nhân sự tiếp nhận")
+  receiveSubjects String   @default("ALL") // "ALL" or comma-separated filter e.g. "Tư vấn chung,Đặt tiệc nhỏ,Hợp tác sự kiện"
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model GuestComment {
+  id          String   @id @default(cuid())
+  authorName  String
+  rating      Int      @default(5) // 1-5
+  content     String
+  visitDate   String?
+  status      String   @default("PENDING") // "PENDING" | "APPROVED" | "HIDDEN" | "SPAM"
+  isFeatured  Boolean  @default(false)
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BackupRecord {
+  id           String   @id @default(cuid())
+  filename     String
+  fileSize     Int      @default(0)
+  recordCounts String?  // JSON string e.g. {"menu": 67, "figures": 30}
+  createdById  String?
+  createdAt    DateTime @default(now())
+}
+
+model SystemLog {
+  id            String   @id @default(cuid())
+  level         String   @default("INFO") // "INFO" | "WARN" | "ERROR"
+  category      String   @default("SYSTEM") // "AUTH" | "CMS" | "SEO" | "SECURITY" | "SYSTEM"
+  action        String
+  details       String?
+  ipAddress     String?
+  adminUsername String?
+  createdAt     DateTime @default(now())
+}
+
+model BlockedIp {
+  id           String    @id @default(cuid())
+  ipAddress    String    @unique
+  reason       String?   @default("Spam activity detected")
+  strikeCount  Int       @default(1)
+  blockedUntil DateTime?
+  isPermanent  Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AntiSpamConfig {
+  id                          String   @id @default("default")
+  emergencyLockdown           Boolean  @default(false)
+  maxRequestSizeKb            Int      @default(8)
+  cooldownSeconds             Int      @default(60)
+  maxPerTenMinutes            Int      @default(3)
+  maxPerDay                   Int      @default(8)
+  globalMaxPerFiveMinutes     Int      @default(25)
+  escalatingBanEnabled        Boolean  @default(true)
+  mathChallengeRequired       Boolean  @default(true)
+  mathChallengeTtlMinutes     Int      @default(15)
+  mathChallengeMinFillSeconds Int      @default(3)
+  nameMinLength               Int      @default(2)
+  nameMaxLength               Int      @default(80)
+  contentMinLength            Int      @default(10)
+  contentMaxLength            Int      @default(1200)
+  maxLinksAllowed             Int      @default(1)
+  blockedKeywords             String   @default("casino,bet88,kubet,viagra,sex,porn,vay tien,danh bac,lo de,keo nha cai,telegram,crypto,forex")
+  maxGmailPerHour             Int      @default(15)
+  updatedAt                   DateTime @updatedAt
+}

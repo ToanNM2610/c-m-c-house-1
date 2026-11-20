@@ -1,0 +1,2465 @@
+{
+  "settings": {
+    "name": "Cẩm Cù House",
+    "tagline": "Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Gia Nghĩa.",
+    "address": "Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đăk Nông",
+    "hotlines": [
+      "0382 851 688",
+      "0774 659 000"
+    ],
+    "email": "thuynhu8788@gmail.com",
+    "hours": {
+      "monThu": "07:00 – 18:00",
+      "friSun": "07:00 – 22:00",
+      "timezone": "Asia/Ho_Chi_Minh"
+    },
+    "socialProof": "100% Đề xuất (Dựa trên 8/8 lượt đánh giá thực tế từ khách hàng)",
+    "links": {
+      "googleMaps": "https://maps.app.goo.gl/G6aP51qJ6aDabp676",
+      "facebook": "https://www.facebook.com/share/1DVLMySW8H/",
+      "tiktok": "https://www.tiktok.com/@camcuhousedaknong?is_from_webapp=1&sender_device=pc",
+      "youtube": "https://www.youtube.com/@Cam_Cu_House"
+    },
+    "announcement": "D�m nh?c Acoustic ?m c�ng b�n su?i t?i Th? 7 h�ng tu?n (19:30 - 21:30) . Gi?m 10% khi d?t b�n tru?c qua web v?i m� CAMCU10"
+  },
+  "zones": [
+    {
+      "id": "stream",
+      "name": "Stream Side Deck",
+      "nameVi": "Bờ Suối Mát",
+      "description": "Không gian sát mép nước suối tự nhiên, bóng mát rượi quanh năm, tiếng nước róc rách thư thái.",
+      "isLocked": false
+    },
+    {
+      "id": "garden",
+      "name": "Hoya Garden",
+      "nameVi": "Vườn Cẩm Cù",
+      "description": "Giàn hoa Cẩm Cù sinh thái xanh mát, thảm cỏ tự nhiên, lý tưởng cho nhóm bạn và gia đình.",
+      "isLocked": false
+    },
+    {
+      "id": "deck",
+      "name": "Wooden Veranda",
+      "nameVi": "Hiên Gỗ Trên Cao",
+      "description": "Sàn gỗ mộc nâng cao nhìn bao quát toàn bộ con suối và thung lũng xanh Gia Nghĩa.",
+      "isLocked": false
+    },
+    {
+      "id": "indoor",
+      "name": "Indoor Botanical Lounge",
+      "nameVi": "Sofa Trong Nhà",
+      "description": "Phòng máy lạnh dịu nhẹ, sofa êm ái, bao quanh bởi chậu kiểng lá và hoa lan Cẩm Cù.",
+      "isLocked": false
+    }
+  ],
+  "tables": [
+    {
+      "id": "S01",
+      "label": "Suối 01",
+      "zone": "stream",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": -7,
+        "y": 0.1,
+        "z": -5
+      },
+      "features": [
+        "Sát mặt nước",
+        "Bóng râm mát"
+      ]
+    },
+    {
+      "id": "S02",
+      "label": "Suối 02",
+      "zone": "stream",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": -7,
+        "y": 0.1,
+        "z": -2
+      },
+      "features": [
+        "Gần thác ghềnh",
+        "Gió mát"
+      ]
+    },
+    {
+      "id": "S03",
+      "label": "Suối 03",
+      "zone": "stream",
+      "capacity": 6,
+      "status": "available",
+      "coordinates": {
+        "x": -7,
+        "y": 0.1,
+        "z": 1.5
+      },
+      "features": [
+        "Bàn dài bên suối",
+        "Chụp ảnh đẹp"
+      ]
+    },
+    {
+      "id": "S04",
+      "label": "Suối 04",
+      "zone": "stream",
+      "capacity": 2,
+      "status": "available",
+      "coordinates": {
+        "x": -7,
+        "y": 0.1,
+        "z": 4.5
+      },
+      "features": [
+        "Bàn đôi lãng mạn",
+        "Yên tĩnh"
+      ]
+    },
+    {
+      "id": "S05",
+      "label": "Suối 05",
+      "zone": "stream",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": -4.5,
+        "y": 0.2,
+        "z": -3.5
+      },
+      "features": [
+        "Cầu gỗ nhỏ",
+        "Gần giàn hoa"
+      ]
+    },
+    {
+      "id": "S06",
+      "label": "Suối 06",
+      "zone": "stream",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": -4.5,
+        "y": 0.2,
+        "z": 3.5
+      },
+      "features": [
+        "Cội cây cổ thụ",
+        "View suối bao quát"
+      ]
+    },
+    {
+      "id": "V01",
+      "label": "Vườn 01",
+      "zone": "garden",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": -1,
+        "y": 0.4,
+        "z": -5.5
+      },
+      "features": [
+        "Dưới vòm hoa Cẩm Cù",
+        "Thảm cỏ"
+      ]
+    },
+    {
+      "id": "V02",
+      "label": "Vườn 02",
+      "zone": "garden",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": -1,
+        "y": 0.4,
+        "z": -2
+      },
+      "features": [
+        "Ánh sáng tự nhiên",
+        "Thoáng đãng"
+      ]
+    },
+    {
+      "id": "V03",
+      "label": "Vườn 03",
+      "zone": "garden",
+      "capacity": 6,
+      "status": "available",
+      "coordinates": {
+        "x": -1,
+        "y": 0.4,
+        "z": 2
+      },
+      "features": [
+        "Bàn gỗ lớn",
+        "Họp mặt nhóm"
+      ]
+    },
+    {
+      "id": "V04",
+      "label": "Vườn 04",
+      "zone": "garden",
+      "capacity": 8,
+      "status": "available",
+      "coordinates": {
+        "x": -1,
+        "y": 0.4,
+        "z": 5.5
+      },
+      "features": [
+        "Bàn tiệc ngoài trời",
+        "Không gian rộng"
+      ]
+    },
+    {
+      "id": "V05",
+      "label": "Vườn 05",
+      "zone": "garden",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": 1.5,
+        "y": 0.5,
+        "z": -4
+      },
+      "features": [
+        "Góc tiểu cảnh đá",
+        "Thư giãn"
+      ]
+    },
+    {
+      "id": "V06",
+      "label": "Vườn 06",
+      "zone": "garden",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": 1.5,
+        "y": 0.5,
+        "z": 4
+      },
+      "features": [
+        "Hoa nở quanh năm",
+        "View đồi nhẹ"
+      ]
+    },
+    {
+      "id": "H01",
+      "label": "Hiên 01",
+      "zone": "deck",
+      "capacity": 2,
+      "status": "available",
+      "coordinates": {
+        "x": 4.5,
+        "y": 0.7,
+        "z": -3.5
+      },
+      "features": [
+        "Sàn gỗ tự nhiên",
+        "Bàn trà ngắm suối"
+      ]
+    },
+    {
+      "id": "H02",
+      "label": "Hiên 02",
+      "zone": "deck",
+      "capacity": 2,
+      "status": "available",
+      "coordinates": {
+        "x": 4.5,
+        "y": 0.7,
+        "z": -0.5
+      },
+      "features": [
+        "Góc đọc sách",
+        "Mái che mát mẻ"
+      ]
+    },
+    {
+      "id": "H03",
+      "label": "Hiên 03",
+      "zone": "deck",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": 4.5,
+        "y": 0.7,
+        "z": 2.5
+      },
+      "features": [
+        "Gần quầy pha chế",
+        "Tiện gọi món"
+      ]
+    },
+    {
+      "id": "H04",
+      "label": "Hiên 04",
+      "zone": "deck",
+      "capacity": 4,
+      "status": "available",
+      "coordinates": {
+        "x": 4.5,
+        "y": 0.7,
+        "z": 5
+      },
+      "features": [
+        "View hoàng hôn",
+        "Gió lộng"
+      ]
+    },
+    {
+      "id": "SF01",
+      "label": "Sofa 01",
+      "zone": "indoor",
+      "capacity": 6,
+      "status": "available",
+      "coordinates": {
+        "x": 7.5,
+        "y": 0.9,
+        "z": -2
+      },
+      "features": [
+        "Sofa nỉ êm ái",
+        "Máy lạnh 24°C",
+        "Ổ cắm điện"
+      ]
+    },
+    {
+      "id": "SF02",
+      "label": "Sofa 02",
+      "zone": "indoor",
+      "capacity": 8,
+      "status": "available",
+      "coordinates": {
+        "x": 7.5,
+        "y": 0.9,
+        "z": 2.5
+      },
+      "features": [
+        "Sofa góc lớn",
+        "Khu vực làm việc / gia đình",
+        "Wifi tốc độ cao"
+      ]
+    }
+  ],
+  "menu": [
+    {
+      "id": "cf-01",
+      "categoryId": "coffee",
+      "name": "Cà phê đen / Cà phê sữa",
+      "vietnameseTitle": "Cà phê Đen / Cà phê Sữa",
+      "description": "Hạt Robusta Đăk Nông rang củi truyền thống, đậm đà vị thảo mộc của đất đỏ bazan.",
+      "price": 20000,
+      "priceDisplay": "20.000đ – 25.000đ",
+      "variants": [
+        {
+          "id": "var-black",
+          "name": "Cà phê Đen",
+          "price": 20000
+        },
+        {
+          "id": "var-milk",
+          "name": "Cà phê Sữa",
+          "price": 25000
+        }
+      ],
+      "editorialNote": "Rang củi thơm nồng đượm vị Đăk Nông",
+      "moodTags": [
+        "alert"
+      ],
+      "modelType": "coffee-cup",
+      "ingredients": [
+        "Robusta Đăk Nông hạt mộc",
+        "Sữa đặc thượng hạng",
+        "Đường mía tự nhiên"
+      ],
+      "inStock": true,
+      "orderCount": 142
+    },
+    {
+      "id": "cf-02",
+      "categoryId": "coffee",
+      "name": "Cà phê Sài Gòn",
+      "vietnameseTitle": "Cà phê Sài Gòn",
+      "description": "Pha theo phong cách Sài Gòn phóng khoáng, nhiều sữa thơm béo, giải tỏa căng thẳng.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Thơm béo ngọt ngào truyền thống",
+      "moodTags": [
+        "alert"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Robusta đậm vị",
+        "Sữa tươi & sữa đặc",
+        "Đá bi tinh khiết"
+      ],
+      "inStock": true,
+      "orderCount": 88
+    },
+    {
+      "id": "cf-03",
+      "categoryId": "coffee",
+      "name": "Cà phê muối",
+      "vietnameseTitle": "Cà phê Muối Cẩm Cù",
+      "description": "Vị mặn mà dịu êm của lớp kem muối kết hợp cùng cà phê Đăk Nông đậm đặc tạo nên dư vị khó quên.",
+      "price": 29000,
+      "priceDisplay": "29.000đ",
+      "highlight": "Best-seller",
+      "editorialNote": "Món làm nên tên tuổi quán bên bờ suối",
+      "moodTags": [
+        "alert"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Cà phê phin Đăk Nông",
+        "Lớp kem béo mặn đánh bông",
+        "Muối hồng Himalaya"
+      ],
+      "inStock": true,
+      "orderCount": 310
+    },
+    {
+      "id": "cf-04",
+      "categoryId": "coffee",
+      "name": "Cà phê dừa xay",
+      "vietnameseTitle": "Cà phê Dừa Xay Tuyết",
+      "description": "Cốt dừa Bến Tre xay tuyết mát lạnh, rót nhẹ dòng cà phê nóng hổi thơm nức mũi.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "highlight": "Signature",
+      "editorialNote": "Hương thơm nhiệt đới béo ngậy khó cưỡng",
+      "moodTags": [
+        "alert",
+        "refresh"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Cốt dừa tươi Bến Tre",
+        "Sữa dừa béo mịn",
+        "Espresso Robusta Đăk Nông"
+      ],
+      "inStock": true,
+      "orderCount": 195
+    },
+    {
+      "id": "cf-05",
+      "categoryId": "coffee",
+      "name": "Cà phê kem trứng",
+      "vietnameseTitle": "Cà phê Kem Trứng Nướng",
+      "description": "Lớp kem trứng gà ta vàng óng, đánh bông sánh mịn khò đường xém nhẹ bên trên.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Béo ngậy thơm lừng không hề tanh",
+      "moodTags": [
+        "alert"
+      ],
+      "modelType": "coffee-cup",
+      "ingredients": [
+        "Lòng đỏ trứng gà ta tuyển chọn",
+        "Mật ong rừng",
+        "Cà phê phin đậm đà"
+      ],
+      "inStock": true,
+      "orderCount": 76
+    },
+    {
+      "id": "cf-06",
+      "categoryId": "coffee",
+      "name": "Bạc xỉu",
+      "vietnameseTitle": "Bạc Xỉu Suối Mát",
+      "description": "Hòa quyện ba tầng đẹp mắt: sữa đặc ngọt ngào, sữa tươi thanh mát và cà phê nồng nàn.",
+      "price": 27000,
+      "priceDisplay": "27.000đ",
+      "editorialNote": "Thanh lịch, dịu êm cho buổi sớm",
+      "moodTags": [
+        "alert"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Sữa đặc",
+        "Sữa tươi thanh trùng",
+        "Robusta Gia Nghĩa"
+      ],
+      "inStock": true,
+      "orderCount": 120
+    },
+    {
+      "id": "cf-07",
+      "categoryId": "coffee",
+      "name": "Cacao sữa",
+      "vietnameseTitle": "Cacao Sữa Ấm / Đá",
+      "description": "Bột cacao nguyên chất nguyên bản Đăk Nông, hương thơm nồng hậu và giàu dinh dưỡng.",
+      "price": 29000,
+      "priceDisplay": "29.000đ",
+      "editorialNote": "Cacao nguyên chất giàu khoáng chất",
+      "moodTags": [
+        "warm"
+      ],
+      "modelType": "coffee-cup",
+      "ingredients": [
+        "Bột cacao nguyên chất 100%",
+        "Sữa tươi thanh trùng",
+        "Sữa đặc"
+      ],
+      "inStock": true,
+      "orderCount": 65
+    },
+    {
+      "id": "cf-08",
+      "categoryId": "coffee",
+      "name": "Cacao kem muối",
+      "vietnameseTitle": "Cacao Kem Muối",
+      "description": "Sự đối lập hoàn hảo giữa vị đắng nhẹ ngọt thơm của cacao và vị béo mặn của lớp kem muối.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Phiên bản cải tiến sáng tạo độc đáo",
+      "moodTags": [
+        "warm",
+        "alert"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Cacao Đăk Nông đậm đặc",
+        "Kem muối bông xốp",
+        "Vụn socola đen"
+      ],
+      "inStock": true,
+      "orderCount": 82
+    },
+    {
+      "id": "cf-09",
+      "categoryId": "coffee",
+      "name": "Cacao kem trứng",
+      "vietnameseTitle": "Cacao Kem Trứng Béo Ngậy",
+      "description": "Dành riêng cho những tín đồ yêu thích vị ngọt thơm béo ngậy tan chảy trên đầu lưỡi.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Ấm bụng, tràn đầy năng lượng tích cực",
+      "moodTags": [
+        "warm"
+      ],
+      "modelType": "coffee-cup",
+      "ingredients": [
+        "Bột cacao nóng",
+        "Kem trứng đánh bông mịn màng"
+      ],
+      "inStock": true,
+      "orderCount": 44
+    },
+    {
+      "id": "tra-01",
+      "categoryId": "tea",
+      "name": "Trà gừng mật ong",
+      "vietnameseTitle": "Trà Gừng Mật Ong Rừng",
+      "description": "Gừng sẻ tươi cay ấm kết hợp mật ong hoa rừng Đăk Nông, làm ấm cơ thể khi ngồi ngắm suối mát.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Ấm áp, tốt cho sức khỏe",
+      "moodTags": [
+        "warm"
+      ],
+      "modelType": "herbal-tea",
+      "ingredients": [
+        "Gừng sẻ bản địa đập giập",
+        "Mật ong hoa cà phê rừng",
+        "Trà thảo mộc thơm"
+      ],
+      "inStock": true,
+      "orderCount": 95
+    },
+    {
+      "id": "tra-02",
+      "categoryId": "tea",
+      "name": "Trà Lipton thảo mộc",
+      "vietnameseTitle": "Trà Lipton Thảo Mộc Cam Quế",
+      "description": "Trà vàng ấm hòa quyện lát cam sấy, thanh quế rừng và hoa hồi mang lại cảm giác bình yên.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Thanh lọc tinh thần, tĩnh tại",
+      "moodTags": [
+        "warm",
+        "refresh"
+      ],
+      "modelType": "herbal-tea",
+      "ingredients": [
+        "Trà đen Lipton",
+        "Quế thanh tự nhiên",
+        "Cam vàng thái lát",
+        "Hồi hương"
+      ],
+      "inStock": true,
+      "orderCount": 52
+    },
+    {
+      "id": "tra-03",
+      "categoryId": "tea",
+      "name": "Trà vải",
+      "vietnameseTitle": "Trà Vải Mọng Nước",
+      "description": "Hương trà lài thanh thoát kết hợp cùng những quả vải trắng muốt giòn ngọt sảng khoái.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "editorialNote": "Giải khát tức thì ngày nắng",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Trà hoa lài thượng hạng",
+        "Vải thiều mọng nước",
+        "Nước cốt vải thanh"
+      ],
+      "inStock": true,
+      "orderCount": 110
+    },
+    {
+      "id": "tra-04",
+      "categoryId": "tea",
+      "name": "Trà đào",
+      "vietnameseTitle": "Trà Đào Hồng Mát",
+      "description": "Vị trà dịu ngọt cùng những miếng đào giòn sần sật, gợi nhớ những buổi chiều hạ êm đềm.",
+      "price": 29000,
+      "priceDisplay": "29.000đ",
+      "editorialNote": "Quen thuộc nhưng tròn vị xuất sắc",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Trà đen ủ lạnh",
+        "Đào miếng giòn thơm",
+        "Xi-rô đào tự nhiên"
+      ],
+      "inStock": true,
+      "orderCount": 134
+    },
+    {
+      "id": "tra-05",
+      "categoryId": "tea",
+      "name": "Trà đào cam sả",
+      "vietnameseTitle": "Trà Đào Cam Sả Tươi",
+      "description": "Cây sả tươi đập giập tiết tinh dầu thơm lừng quyện cùng cam vàng mọng nước và đào giòn thơm.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "highlight": "Best-seller",
+      "editorialNote": "Thức uống được yêu thích số 1 vào cuối tuần",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Cam sành tươi vắt",
+        "Sả cây đập dập ngâm nóng",
+        "Đào ngâm giòn",
+        "Trà đen"
+      ],
+      "inStock": true,
+      "orderCount": 280
+    },
+    {
+      "id": "tra-06",
+      "categoryId": "tea",
+      "name": "Trà sữa Thái xanh",
+      "vietnameseTitle": "Trà Sữa Thái Xanh Cẩm Cù",
+      "description": "Lá trà Thái xanh ủ chuẩn công thức thơm dịu tự nhiên, vị béo nhẹ dễ chịu.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Màu xanh lục thảo mộc thơm mát",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Trà xanh Thái lan chính hãng",
+        "Sữa tươi béo",
+        "Thạch giòn đi kèm"
+      ],
+      "inStock": true,
+      "orderCount": 75
+    },
+    {
+      "id": "tra-07",
+      "categoryId": "tea",
+      "name": "Trà sữa truyền thống",
+      "vietnameseTitle": "Trà Sữa Hồng Trà Cổ Điển",
+      "description": "Đậm vị hồng trà tự nhiên hòa cùng sữa thơm thanh thoát không gắt cổ.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Hương vị tuổi học trò bên bờ suối",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Hồng trà cao cấp",
+        "Sữa nguyên kem",
+        "Topping trân châu mềm"
+      ],
+      "inStock": true,
+      "orderCount": 89
+    },
+    {
+      "id": "tra-08",
+      "categoryId": "tea",
+      "name": "Trà sữa kem trứng",
+      "vietnameseTitle": "Trà Sữa Kem Trứng Nướng",
+      "description": "Trà sữa đậm đà phủ lớp kem trứng thơm ngậy bốc khói nhẹ từ ngọn lửa khò.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Sự quyến rũ khó chối từ",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "iced-coffee",
+      "ingredients": [
+        "Hồng trà sữa",
+        "Kem trứng béo thơm khò đường nâu"
+      ],
+      "inStock": true,
+      "orderCount": 112
+    },
+    {
+      "id": "tra-09",
+      "categoryId": "tea",
+      "name": "Trà hoa cúc",
+      "vietnameseTitle": "Trà Hoa Cúc Mật Ong",
+      "description": "Những đóa hoa cúc khô trắng tinh khiết giúp an thần, ngủ ngon và thanh lọc gan phổi.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Thảo mộc thư giãn",
+      "moodTags": [
+        "warm"
+      ],
+      "modelType": "herbal-tea",
+      "ingredients": [
+        "Bạch cúc khô organic",
+        "Kỷ tử đỏ",
+        "Mật ong hoa rừng"
+      ],
+      "inStock": true,
+      "orderCount": 68
+    },
+    {
+      "id": "tra-10",
+      "categoryId": "tea",
+      "name": "Hoa đu đủ mật ong",
+      "vietnameseTitle": "Hoa Đu Đủ Đực Chưng Mật Ong",
+      "description": "Thức uống đặc sản thảo mộc quý của núi rừng Tây Nguyên, nhuận phế, giảm ho, tăng đề kháng.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "highlight": "Đặc sản thảo mộc xanh sạch",
+      "editorialNote": "Bài thuốc thảo dược dân gian truyền thống quý báu",
+      "moodTags": [
+        "warm"
+      ],
+      "modelType": "herbal-tea",
+      "ingredients": [
+        "Hoa đu đủ đực phơi khô",
+        "Mật ong rừng Đăk Nông già ngọt",
+        "Nước suối nguồn tinh khiết"
+      ],
+      "inStock": true,
+      "orderCount": 154
+    },
+    {
+      "id": "st-01",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Mãng cầu",
+      "vietnameseTitle": "Sinh Tố Mãng Cầu Xiêm",
+      "description": "Mãng cầu xiêm chín cây vị chua ngọt dịu mát, sánh mịn dồi dào vitamin C.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Chua ngọt tự nhiên kích thích vị giác",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Mãng cầu xiêm chín mọng",
+        "Sữa chua men sống",
+        "Sữa đặc ít đường"
+      ],
+      "inStock": true,
+      "orderCount": 64
+    },
+    {
+      "id": "st-02",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Sapoche",
+      "vietnameseTitle": "Sinh Tố Sapoche (Hồng Xiêm)",
+      "description": "Sapoche Đăk Nông ngọt đậm đà, thơm mùi mật mía tự nhiên xay cùng sữa tươi.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Dày thịt béo thơm tự nhiên",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Sapoche chín mềm",
+        "Sữa tươi Đà Lạt",
+        "Chút sữa đặc"
+      ],
+      "inStock": true,
+      "orderCount": 47
+    },
+    {
+      "id": "st-03",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Xoài",
+      "vietnameseTitle": "Sinh Tố Xoài Cát Hòa Lộc",
+      "description": "Xoài cát vàng ươm thơm lừng, thịt xoài dày béo xay nhuyễn mềm mượt như lụa.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Màu vàng rực rỡ nắng hè",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Xoài cát chín mọng",
+        "Sữa chua",
+        "Đá tuyết"
+      ],
+      "inStock": true,
+      "orderCount": 88
+    },
+    {
+      "id": "st-04",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Dừa",
+      "vietnameseTitle": "Sinh Tố Dừa Non Xay",
+      "description": "Cơm dừa non mềm thơm xay cùng nước dừa tươi nguyên chất thanh ngọt mát rượi.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Mát lòng mát dạ bờ suối",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Cơm dừa nạo non",
+        "Nước dừa tươi",
+        "Sữa tươi"
+      ],
+      "inStock": true,
+      "orderCount": 56
+    },
+    {
+      "id": "st-05",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Bơ",
+      "vietnameseTitle": "Sinh Tố Bơ Sáp Đăk Nông",
+      "description": "Trái bơ sáp Đăk Nông nổi tiếng ruột vàng ươm dẻo quánh, hàm lượng dinh dưỡng đỉnh cao.",
+      "price": 38000,
+      "priceDisplay": "38.000đ",
+      "highlight": "Đăk Nông mùa bơ sáp",
+      "editorialNote": "Đặc sản số 1 của vùng đất Gia Nghĩa",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Bơ sáp loại 1 Gia Nghĩa",
+        "Sữa tươi",
+        "Sữa đặc",
+        "Chút cốt dừa thơm"
+      ],
+      "inStock": true,
+      "orderCount": 260
+    },
+    {
+      "id": "st-06",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Đậu đỏ",
+      "vietnameseTitle": "Sinh Tố Đậu Đỏ Dinh Dưỡng",
+      "description": "Hạt đậu đỏ hầm mềm nhừ bùi bùi xay cùng sữa, vị ngọt thanh tốt cho tim mạch.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "editorialNote": "Thanh mát, bổ máu, an lành",
+      "moodTags": [
+        "refresh",
+        "warm"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Đậu đỏ hạt nhỏ hữu cơ",
+        "Sữa hạt dinh dưỡng",
+        "Đường phèn"
+      ],
+      "inStock": true,
+      "orderCount": 39
+    },
+    {
+      "id": "st-07",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Việt quất / Dâu",
+      "vietnameseTitle": "Sinh Tố Berry (Việt Quất / Dâu)",
+      "description": "Quả dâu tây Đà Lạt mọng nước hoặc quả việt quất nhập khẩu xay cùng sữa chua men sống.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "variants": [
+        {
+          "id": "st-berry-vq",
+          "name": "Việt Quất",
+          "price": 35000
+        },
+        {
+          "id": "st-berry-dau",
+          "name": "Dâu Tây Đà Lạt",
+          "price": 35000
+        }
+      ],
+      "editorialNote": "Chống oxy hóa, đẹp da, thơm dịu",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Việt quất / Dâu tươi chín mọng",
+        "Sữa chua không đường",
+        "Mật ong"
+      ],
+      "inStock": true,
+      "orderCount": 97
+    },
+    {
+      "id": "st-08",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Bơ sầu riêng",
+      "vietnameseTitle": "Sinh Tố Bơ Sầu Riêng Thượng Hạng",
+      "description": "Sự hòa quyện tuyệt đỉnh giữa bơ sáp Đăk Nông dẻo quánh và múi sầu riêng Ri6 thơm nồng nàn.",
+      "price": 45000,
+      "priceDisplay": "45.000đ",
+      "highlight": "Signature béo ngậy",
+      "editorialNote": "Cực phẩm dành cho người sành ẩm thực Tây Nguyên",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Múi sầu riêng Ri6 hạt lép",
+        "Bơ sáp ruột vàng",
+        "Sữa tươi"
+      ],
+      "inStock": true,
+      "orderCount": 165
+    },
+    {
+      "id": "st-09",
+      "categoryId": "smoothie",
+      "name": "Sinh tố Hạt sen",
+      "vietnameseTitle": "Sinh Tố Hạt Sen Tươi",
+      "description": "Hạt sen Huế tươi bóc vỏ ninh nhừ xay nhuyễn, vị bùi béo thanh tao xoa dịu tâm trí.",
+      "price": 38000,
+      "priceDisplay": "38.000đ",
+      "editorialNote": "Thanh nhiệt, an thần, giải tỏa stress",
+      "moodTags": [
+        "refresh",
+        "warm"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Hạt sen tươi hấp chín",
+        "Sữa hạt hạnh nhân",
+        "Đường phèn"
+      ],
+      "inStock": true,
+      "orderCount": 58
+    },
+    {
+      "id": "ne-01",
+      "categoryId": "juice",
+      "name": "Nước ép Táo",
+      "vietnameseTitle": "Nước Ép Táo Nguyên Chất",
+      "description": "Táo giòn ép chậm giữ nguyên enzym và dưỡng chất tươi mới, ngọt thanh tự nhiên.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "editorialNote": "Tươi mới không thêm đường hay nước lọc",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Táo Envy tươi giòn",
+        "Đá viên tinh khiết"
+      ],
+      "inStock": true,
+      "orderCount": 84
+    },
+    {
+      "id": "ne-02",
+      "categoryId": "juice",
+      "name": "Nước ép Ổi",
+      "vietnameseTitle": "Nước Ép Ổi Hồng Ruột",
+      "description": "Ổi hồng thơm lừng, giàu vitamin C gấp 4 lần cam, chấm xíu muối ớt bên miệng ly.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Hương thơm nồng nàn của ổi vườn",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Ổi hồng ruột giòn ngọt",
+        "Lát chanh tươi"
+      ],
+      "inStock": true,
+      "orderCount": 93
+    },
+    {
+      "id": "ne-03",
+      "categoryId": "juice",
+      "name": "Nước ép Cam",
+      "vietnameseTitle": "Nước Ép Cam Sành Tươi",
+      "description": "Cam sành mọng nước vắt tay thủ công, chua ngọt cân bằng, bừng tỉnh năng lượng.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "editorialNote": "100% Cam sành vắt tay nguyên chất",
+      "moodTags": [
+        "refresh",
+        "alert"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Cam sành chín vàng mọng mật",
+        "Chút mật ong nhẹ"
+      ],
+      "inStock": true,
+      "orderCount": 115
+    },
+    {
+      "id": "ne-04",
+      "categoryId": "juice",
+      "name": "Nước ép Thơm (Dứa)",
+      "vietnameseTitle": "Nước Ép Thơm Khóm Tươi",
+      "description": "Thơm mật chín thơm lừng, ép chậm giữ lại trọn vẹn bromelain hỗ trợ tiêu hóa tốt.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Vị ngọt thanh dịu kích thích tiêu hóa",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Trái thơm mật ngọt lịm",
+        "Lá bạc hà trang trí"
+      ],
+      "inStock": true,
+      "orderCount": 71
+    },
+    {
+      "id": "ne-05",
+      "categoryId": "juice",
+      "name": "Nước ép Chanh dây",
+      "vietnameseTitle": "Nước Ép Chanh Dây Đăk Nông",
+      "description": "Chanh dây tím vỏ bóng đặc sản Gia Nghĩa, thơm nức mũi và chua ngọt bùng nổ.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Thơm nức mũi, giải nhiệt tức thì",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Cốt chanh dây tím Đăk Nông",
+        "Đường mía tự nhiên"
+      ],
+      "inStock": true,
+      "orderCount": 130
+    },
+    {
+      "id": "ne-06",
+      "categoryId": "juice",
+      "name": "Nước ép Cà rốt",
+      "vietnameseTitle": "Nước Ép Cà Rốt Tươi",
+      "description": "Cà rốt vườn giòn ngọt ép chậm, bổ sung hàm lượng vitamin A và beta-carotene tuyệt vời.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Sáng mắt, đẹp da, thanh lọc cơ thể",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Cà rốt củ tươi",
+        "Chút nước cốt thơm"
+      ],
+      "inStock": true,
+      "orderCount": 52
+    },
+    {
+      "id": "ne-07",
+      "categoryId": "juice",
+      "name": "Nước ép Dưa hấu",
+      "vietnameseTitle": "Nước Ép Dưa Hấu Đỏ Mọng",
+      "description": "Dưa hấu ruột đỏ ngọt lịm, giải khát tuyệt đối cho những trưa hè vùng cao.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Mát lành sảng khoái từng ngụm",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Dưa hấu không hạt ruột đỏ",
+        "Đá lạnh"
+      ],
+      "inStock": true,
+      "orderCount": 88
+    },
+    {
+      "id": "ne-08",
+      "categoryId": "juice",
+      "name": "Nước ép Cải Kale",
+      "vietnameseTitle": "Nước Ép Cải Kale Xanh Sạch",
+      "description": "Nữ hoàng rau xanh - cải xoăn Kale organic ép cùng táo xanh và dưa leo mát lành.",
+      "price": 38000,
+      "priceDisplay": "38.000đ",
+      "highlight": "Green Detox xanh sạch",
+      "editorialNote": "Công thức giải độc thải độc tố số 1",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Cải Kale hữu cơ",
+        "Táo xanh giòn",
+        "Dưa chuột mát",
+        "Gừng tươi lát mỏng"
+      ],
+      "inStock": true,
+      "orderCount": 140
+    },
+    {
+      "id": "ne-09",
+      "categoryId": "juice",
+      "name": "Nước ép Mix tùy chọn",
+      "vietnameseTitle": "Nước Ép Mix Tùy Chọn (2–3 Loại)",
+      "description": "Quý khách tự do chọn 2 đến 3 loại quả yêu thích để barista phối trộn ly nước ép độc bản.",
+      "price": 39000,
+      "priceDisplay": "39.000đ",
+      "editorialNote": "Ghi chú loại trái cây mong muốn khi đặt món",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Tự chọn từ: Táo, Ổi, Cam, Thơm, Cà rốt, Dưa hấu, Kale"
+      ],
+      "inStock": true,
+      "orderCount": 104
+    },
+    {
+      "id": "sd-01",
+      "categoryId": "soda-yogurt",
+      "name": "Soda Atiso đỏ",
+      "vietnameseTitle": "Soda Atiso Đỏ (Hibiscus)",
+      "description": "Sắc đỏ ngọc ruby rực rỡ từ đài hoa bụp giấm Atiso đỏ ngâm đường phèn cùng soda sủi bọt mát lạnh.",
+      "price": 30000,
+      "priceDisplay": "30.000đ",
+      "editorialNote": "Màu đỏ ngọc thiên nhiên quyến rũ",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "soda-glass",
+      "ingredients": [
+        "Đài hoa Atiso đỏ rim",
+        "Soda bọt sủi",
+        "Lá bạc hà",
+        "Chanh tươi"
+      ],
+      "inStock": true,
+      "orderCount": 118
+    },
+    {
+      "id": "sd-02",
+      "categoryId": "soda-yogurt",
+      "name": "Soda chanh bạc hà",
+      "vietnameseTitle": "Soda Chanh Bạc Hà (Mojito)",
+      "description": "Chanh tươi giã cùng lá bạc hà the mát, kết hợp soda có ga đánh thức mọi giác quan.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "The mát sảng khoái cực đỉnh",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "soda-glass",
+      "ingredients": [
+        "Lá bạc hà vò dập",
+        "Nước cốt chanh tươi",
+        "Nước khoáng có ga"
+      ],
+      "inStock": true,
+      "orderCount": 92
+    },
+    {
+      "id": "sd-03",
+      "categoryId": "soda-yogurt",
+      "name": "Soda Việt quất / Dâu",
+      "vietnameseTitle": "Soda Ý Hương Berry (Việt Quất / Dâu)",
+      "description": "Soda phong cách Ý kết hợp mứt việt quất hoặc dâu tây ngâm tự nhiên sánh ngọt.",
+      "price": 30000,
+      "priceDisplay": "30.000đ",
+      "variants": [
+        {
+          "id": "sd-vq",
+          "name": "Soda Việt Quất",
+          "price": 30000
+        },
+        {
+          "id": "sd-dau",
+          "name": "Soda Dâu Tây",
+          "price": 30000
+        }
+      ],
+      "editorialNote": "Vị ngọt thanh và sắc màu rực rỡ",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "soda-glass",
+      "ingredients": [
+        "Mứt trái cây tự nhiên",
+        "Soda sủi ga nhẹ",
+        "Lát chanh"
+      ],
+      "inStock": true,
+      "orderCount": 86
+    },
+    {
+      "id": "sd-04",
+      "categoryId": "soda-yogurt",
+      "name": "Sữa chua dầm",
+      "vietnameseTitle": "Sữa Chua Dầm Hoa Quả Tươi",
+      "description": "Sữa chua nhà làm lên men tự nhiên dầm cùng thạch dừa giòn và các loại hoa quả thái hạt lựu.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Chua chua ngọt ngọt thanh mát",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Sữa chua nhà làm",
+        "Trái cây theo mùa",
+        "Thạch dừa giòn"
+      ],
+      "inStock": true,
+      "orderCount": 95
+    },
+    {
+      "id": "sd-05",
+      "categoryId": "soda-yogurt",
+      "name": "Sữa chua nếp cẩm",
+      "vietnameseTitle": "Sữa Chua Nếp Cẩm Tây Bắc",
+      "description": "Nếp cẩm ủ men thơm nồng ngọt bùi, kết hợp sữa chua mịn màng béo ngậy.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "editorialNote": "Nếp cẩm dẻo thơm hạt mềm",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Nếp cẩm lên men rượu hoa",
+        "Sữa chua sánh mịn",
+        "Cốt dừa béo"
+      ],
+      "inStock": true,
+      "orderCount": 130
+    },
+    {
+      "id": "sd-06",
+      "categoryId": "soda-yogurt",
+      "name": "Sữa chua chanh dây",
+      "vietnameseTitle": "Sữa Chua Chanh Dây Mát Lạnh",
+      "description": "Sốt chanh dây vàng tươi óng ả phủ trên nền sữa chua trắng mịn màng.",
+      "price": 30000,
+      "priceDisplay": "30.000đ",
+      "editorialNote": "Sốt chanh dây chua ngọt tươi rói",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Sốt chanh dây Đăk Nông hạt giòn",
+        "Sữa chua tươi"
+      ],
+      "inStock": true,
+      "orderCount": 78
+    },
+    {
+      "id": "sd-07",
+      "categoryId": "soda-yogurt",
+      "name": "Sữa chua Việt quất / Dâu",
+      "vietnameseTitle": "Sữa Chua Mứt Quả (Việt Quất / Dâu)",
+      "description": "Lớp mứt trái cây đậm vị hòa quyện hoàn hảo vào sữa chua thanh tao.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "variants": [
+        {
+          "id": "sc-vq",
+          "name": "Sữa chua Việt Quất",
+          "price": 32000
+        },
+        {
+          "id": "sc-dau",
+          "name": "Sữa chua Dâu Tây",
+          "price": 32000
+        }
+      ],
+      "editorialNote": "Đậm đà hương vị trái cây rừng",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Mứt dâu / việt quất tươi",
+        "Sữa chua men sống"
+      ],
+      "inStock": true,
+      "orderCount": 84
+    },
+    {
+      "id": "sd-08",
+      "categoryId": "soda-yogurt",
+      "name": "Sữa chua hạt đác",
+      "vietnameseTitle": "Sữa Chua Hạt Đác Rim Dẻo",
+      "description": "Hạt đác rừng rim dẻo dai giòn sần sật, ngấm vị ngọt thanh kết hợp sữa chua mát lịm.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "highlight": "Hạt đác rim dẻo giòn",
+      "editorialNote": "Hạt đác rừng Tây Nguyên dẻo giòn vui miệng",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Hạt đác rừng tự nhiên",
+        "Đường phèn rim lá dứa",
+        "Sữa chua nguyên chất"
+      ],
+      "inStock": true,
+      "orderCount": 145
+    },
+    {
+      "id": "ot-01",
+      "categoryId": "other",
+      "name": "Đá me",
+      "vietnameseTitle": "Đá Me Đậu Phộng Rang",
+      "description": "Thịt me chua ngọt dầm cùng đậu phộng rang giòn rụm và mè rang thơm nức, món quà tuổi thơ.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Chua chua ngọt ngọt thơm bùi đậu phộng",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Thịt me chín rim đường thốt nốt",
+        "Đậu phộng rang vàng",
+        "Mè trắng"
+      ],
+      "inStock": true,
+      "orderCount": 98
+    },
+    {
+      "id": "ot-02",
+      "categoryId": "other",
+      "name": "Tắc xí muội",
+      "vietnameseTitle": "Tắc Xí Muội Mặn Ngọt",
+      "description": "Quả tắc tươi rim cùng xí muội mặn, giúp thông cổ mát họng, giải nhiệt thần kỳ.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Thanh giọng dịu họng những trưa nắng",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Quả tắc ngâm xí muội lâu năm",
+        "Đường phèn",
+        "Đá lạnh"
+      ],
+      "inStock": true,
+      "orderCount": 64
+    },
+    {
+      "id": "ot-03",
+      "categoryId": "other",
+      "name": "Dừa tươi",
+      "vietnameseTitle": "Dừa Xiêm Tươi Nguyên Trái",
+      "description": "Dừa xiêm ngọt lịm mát lành chặt tại chỗ, giữ nguyên vị nước dừa thanh khiết của tự nhiên.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "100% tự nhiên không pha trộn",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Trái dừa xiêm xanh mát ngọt"
+      ],
+      "inStock": true,
+      "orderCount": 110
+    },
+    {
+      "id": "ot-04",
+      "categoryId": "other",
+      "name": "Chanh mật ong",
+      "vietnameseTitle": "Chanh Mật Ong Rừng Ấm / Đá",
+      "description": "Nước cốt chanh tươi hòa cùng mật ong hoa cà phê vùng cao, thanh lọc và tăng sức bền.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Mật ong hoa rừng Đăk Nông nguyên chất",
+      "moodTags": [
+        "warm",
+        "refresh"
+      ],
+      "modelType": "herbal-tea",
+      "ingredients": [
+        "Chanh vườn mọng nước",
+        "Mật ong rừng già",
+        "Nước ấm hoặc đá"
+      ],
+      "inStock": true,
+      "orderCount": 85
+    },
+    {
+      "id": "ot-05",
+      "categoryId": "other",
+      "name": "Chanh muối",
+      "vietnameseTitle": "Chanh Muối Truyền Thống",
+      "description": "Trái chanh muối ủ chum sành ngấu đượm vị mặn thơm nồng, xoa dịu cơn mệt mỏi tức thì.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Chanh muối ủ thủ công chuẩn vị xưa",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "juice-glass",
+      "ingredients": [
+        "Chanh muối lâu năm ủ chum",
+        "Đường mía thô",
+        "Đá bi"
+      ],
+      "inStock": true,
+      "orderCount": 52
+    },
+    {
+      "id": "ot-06",
+      "categoryId": "other",
+      "name": "Dưa hấu tắc xay",
+      "vietnameseTitle": "Dưa Hấu Tắc Xay Bên Suối",
+      "description": "Thịt dưa hấu đỏ ngọt mát xay mịn cùng chút tinh dầu tắc thơm lừng ngất ngây.",
+      "price": 32000,
+      "priceDisplay": "32.000đ",
+      "highlight": "Giải nhiệt bên suối",
+      "editorialNote": "Sáng tạo mát rượi độc quyền Cẩm Cù House",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Dưa hấu chín đỏ",
+        "Nước cốt quả tắc tươi",
+        "Đá tuyết xay"
+      ],
+      "inStock": true,
+      "orderCount": 142
+    },
+    {
+      "id": "ot-07",
+      "categoryId": "other",
+      "name": "Matcha Latte",
+      "vietnameseTitle": "Matcha Latte Uji Nhật Bản",
+      "description": "Bột trà xanh Uji cao cấp đánh chổi Chasen sủi bọt ngọc bích, rót cùng dòng sữa ấm mịn.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Hương thơm trà xanh thanh tao quý phái",
+      "moodTags": [
+        "alert",
+        "warm"
+      ],
+      "modelType": "matcha-glass",
+      "ingredients": [
+        "Bột matcha nguyên chất nhập khẩu",
+        "Sữa tươi thanh trùng",
+        "Chút sữa đặc"
+      ],
+      "inStock": true,
+      "orderCount": 96
+    },
+    {
+      "id": "ot-08",
+      "categoryId": "other",
+      "name": "Matcha đậu đỏ",
+      "vietnameseTitle": "Matcha Đậu Đỏ Dẻo Quánh",
+      "description": "Lớp đậu đỏ ngọt bùi ninh mềm đặt dưới đáy ly kết hợp tầng matcha latte xanh mướt mát lạnh.",
+      "price": 38000,
+      "priceDisplay": "38.000đ",
+      "editorialNote": "Bộ đôi kinh điển thơm ngon đậm vị",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "matcha-glass",
+      "ingredients": [
+        "Matcha Uji",
+        "Đậu đỏ ninh nhừ dẻo thơm",
+        "Sữa tươi"
+      ],
+      "inStock": true,
+      "orderCount": 77
+    },
+    {
+      "id": "ot-09",
+      "categoryId": "other",
+      "name": "Oreo đá xay",
+      "vietnameseTitle": "Oreo Đá Xay Kem Tươi",
+      "description": "Bánh quy socola Oreo giòn thơm xay cùng sữa tươi và phủ ngọn kem whipping bông mềm xốp.",
+      "price": 38000,
+      "priceDisplay": "38.000đ",
+      "editorialNote": "Món ngọt ngào mê hoặc giới trẻ",
+      "moodTags": [
+        "refresh"
+      ],
+      "modelType": "smoothie-glass",
+      "ingredients": [
+        "Bánh Oreo socola",
+        "Kem whipping bông tuyết",
+        "Sữa tươi"
+      ],
+      "inStock": true,
+      "orderCount": 105
+    },
+    {
+      "id": "fd-01",
+      "categoryId": "food",
+      "name": "Bánh mì ốp la xúc xích",
+      "vietnameseTitle": "Bánh Mì Ốp La Xúc Xích",
+      "description": "Hai quả trứng gà ta ốp la lòng đào lòng đỏ sánh dẻo, xúc xích rán vàng giòn và bánh mì nóng giòn.",
+      "price": 35000,
+      "priceDisplay": "35.000đ",
+      "editorialNote": "Điểm tâm sáng",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "food-plate",
+      "ingredients": [
+        "Bánh mì giòn rụm",
+        "2 trứng gà ta ốp la lòng đào",
+        "Xúc xích Đức rán",
+        "Dưa leo & rau thơm"
+      ],
+      "inStock": true,
+      "orderCount": 125
+    },
+    {
+      "id": "fd-02",
+      "categoryId": "food",
+      "name": "Mỳ Spaghetti",
+      "vietnameseTitle": "Mỳ Ý Spaghetti Sốt Bò Bằm",
+      "description": "Sợi mì Ý luộc vừa tới dẻo dai phủ đẫm sốt cà chua tươi nấu cùng thịt bò bằm đậm đà và phô mai bào.",
+      "price": 39000,
+      "priceDisplay": "39.000đ",
+      "editorialNote": "Bữa trưa ấm nóng đầy năng lượng",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "food-plate",
+      "ingredients": [
+        "Mì Ý Barilla",
+        "Thịt bò bằm tươi",
+        "Sốt cà chua thảo mộc oregano",
+        "Phô mai Parmesan"
+      ],
+      "inStock": true,
+      "orderCount": 88
+    },
+    {
+      "id": "fd-03",
+      "categoryId": "food",
+      "name": "Bò kho + Bánh mì",
+      "vietnameseTitle": "Bò Kho Đậm Đà + Bánh Mì",
+      "description": "Thịt bò nạm gân hầm nhừ mềm thơm mùi quế hồi và nước dừa, ăn kèm bánh mì nóng giòn rụm.",
+      "price": 45000,
+      "priceDisplay": "45.000đ",
+      "highlight": "Điểm tâm đậm đà",
+      "editorialNote": "Hương vị gia truyền ấm nồng bên suối",
+      "moodTags": [
+        "food",
+        "warm"
+      ],
+      "modelType": "food-plate",
+      "ingredients": [
+        "Thịt bò nạm gân Đăk Nông hầm mềm",
+        "Cà rốt",
+        "Nước sốt quế hồi sền sệt",
+        "Bánh mì giòn"
+      ],
+      "inStock": true,
+      "orderCount": 160
+    },
+    {
+      "id": "fd-04",
+      "categoryId": "food",
+      "name": "Cà ri gà + Bánh mì",
+      "vietnameseTitle": "Cà Ri Gà Đồi + Bánh Mì Giòn",
+      "description": "Thịt gà đồi thả vườn thịt săn chắc nấu cùng khoai lang mật bùi béo và nước cốt dừa sánh mịn.",
+      "price": 42000,
+      "priceDisplay": "42.000đ",
+      "editorialNote": "Món ăn no thơm lừng ấm áp",
+      "moodTags": [
+        "food",
+        "warm"
+      ],
+      "modelType": "food-plate",
+      "ingredients": [
+        "Gà đồi thả vườn Gia Nghĩa",
+        "Khoai lang mật bùi",
+        "Cốt dừa béo ngậy",
+        "Bánh mì"
+      ],
+      "inStock": true,
+      "orderCount": 92
+    },
+    {
+      "id": "fd-05",
+      "categoryId": "food",
+      "name": "Bánh tráng phơi sương",
+      "vietnameseTitle": "Bánh Tráng Phơi Sương Trảng Bàng",
+      "description": "Bánh tráng dẻo thơm phơi sương sớm, cuốn cùng hành phi giòn, bơ béo và sốt chấm đặc biệt.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "variants": [
+        {
+          "id": "bt-sate",
+          "name": "+ Sa tế cay thơm",
+          "price": 25000
+        },
+        {
+          "id": "bt-cay",
+          "name": "+ Ớt siêu cay nồng",
+          "price": 25000
+        }
+      ],
+      "editorialNote": "Ăn vặt thần thánh rôm rả chuyện trò",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Bánh tráng phơi sương dẻo",
+        "Hành phi giòn rụm",
+        "Bơ vàng thơm",
+        "Muối tôm Tây Ninh",
+        "Sa tế / Ớt cay"
+      ],
+      "inStock": true,
+      "orderCount": 180
+    },
+    {
+      "id": "fd-06",
+      "categoryId": "food",
+      "name": "Phô mai que",
+      "vietnameseTitle": "Phô Mai Que Kéo Sợi (4 que)",
+      "description": "Vỏ bột xù chiên vàng ruộm giòn tan, lớp phô mai mozzarella bên trong nóng hổi kéo sợi dài tít tắp.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Kéo sợi béo ngậy chấm tương ớt",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Phô mai Mozzarella nhập khẩu",
+        "Bột chiên xù giòn",
+        "Tương cà, tương ớt"
+      ],
+      "inStock": true,
+      "orderCount": 114
+    },
+    {
+      "id": "fd-07",
+      "categoryId": "food",
+      "name": "Khoai tây chiên",
+      "vietnameseTitle": "Khoai Tây Chiên Giòn Lắc Bơ",
+      "description": "Khoai tây cắt lát giòn rụm bên ngoài bở mềm bên trong, lắc chút muối bơ béo thơm nức.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Giòn rụm thơm lừng ăn kèm tương",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Khoai tây củ tuyển chọn",
+        "Bơ mặn",
+        "Tương cà chua"
+      ],
+      "inStock": true,
+      "orderCount": 135
+    },
+    {
+      "id": "fd-08",
+      "categoryId": "food",
+      "name": "Cá viên chiên",
+      "vietnameseTitle": "Cá Viên Chiên Thập Cẩm",
+      "description": "Những viên chả cá basa dai giòn sần sật chiên phồng chấm sốt tương đen cay nồng.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Đậm đà hương vị đường phố thân quen",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Cá viên basa dai ngọt",
+        "Dưa leo ngâm chua ngọt",
+        "Tương đen, tương ớt"
+      ],
+      "inStock": true,
+      "orderCount": 95
+    },
+    {
+      "id": "fd-09",
+      "categoryId": "food",
+      "name": "Bò viên chiên",
+      "vietnameseTitle": "Bò Viên Chiên Giòn Rụm",
+      "description": "Viên thịt bò thơm đậm đà, chiên căng mọng ăn kèm tương ớt cay cay khó dừng đũa.",
+      "price": 25000,
+      "priceDisplay": "25.000đ",
+      "editorialNote": "Thơm mùi bò nướng, đậm đà",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Thịt bò viên dai giòn",
+        "Rau răm",
+        "Tương chấm đặc biệt"
+      ],
+      "inStock": true,
+      "orderCount": 78
+    },
+    {
+      "id": "fd-10",
+      "categoryId": "food",
+      "name": "Chả cá cốm",
+      "vietnameseTitle": "Chả Cá Cốm Xanh Hà Thành",
+      "description": "Hạt cốm non thơm mùi sữa lúa gói trọn trong miếng chả cá dai ngọt, chiên vàng giòn.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Thơm dẻo hạt cốm non ngọt ngào",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Chả cá tươi",
+        "Cốm xanh mộc thơm lừng",
+        "Tương ớt chua ngọt"
+      ],
+      "inStock": true,
+      "orderCount": 68
+    },
+    {
+      "id": "fd-11",
+      "categoryId": "food",
+      "name": "Hồ lô nướng/chiên",
+      "vietnameseTitle": "Hồ Lô Nướng / Chiên Mật Ong",
+      "description": "Những viên hồ lô tròn xoe đượm vị tiêu đen và gia vị thơm ngậy, xiên que tiện lợi.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Thịt chắc giòn đậm đà gia vị",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Hồ lô thịt heo tươi ướp mật ong",
+        "Tiêu sọ Phú Quốc"
+      ],
+      "inStock": true,
+      "orderCount": 82
+    },
+    {
+      "id": "fd-12",
+      "categoryId": "food",
+      "name": "Xúc xích Đức",
+      "vietnameseTitle": "Xúc Xích Đức Xông Khói",
+      "description": "Xúc xích Đức xông khói gỗ sồi, nướng rạch khía chín vàng thơm giòn lớp da căng mọng.",
+      "price": 28000,
+      "priceDisplay": "28.000đ",
+      "editorialNote": "Chuẩn vị xông khói giòn sần sật",
+      "moodTags": [
+        "food"
+      ],
+      "modelType": "snack-basket",
+      "ingredients": [
+        "Xúc xích xông khói tự nhiên",
+        "Mù tạt vàng dịu nhẹ",
+        "Bánh mì phụ kèm"
+      ],
+      "inStock": true,
+      "orderCount": 94
+    }
+  ],
+  "spatialPlates": [
+    {
+      "id": "FIG. 01",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Hẻm 437 Hùng Vương Buổi Sớm",
+      "locationVi": "Cổng vào Cẩm Cù House, Gia Nghĩa",
+      "descriptionVi": "Rời bỏ nhịp sống ồn ào phố thị, bước xuống con dốc nhỏ phủ bóng mát rượi của những tán cây rừng.",
+      "imageUrl": "/images/gallery/fig-01.jpg"
+    },
+    {
+      "id": "FIG. 02",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Biển Gỗ Mộc Đón Gió",
+      "locationVi": "Cổng đón khách",
+      "descriptionVi": "Biển hiệu khắc thủ công trên phiến gỗ rừng mộc mạc, nơi thiên nhiên bắt đầu cất tiếng chào đón.",
+      "imageUrl": "/images/gallery/fig-02.jpg"
+    },
+    {
+      "id": "FIG. 03",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Bậc Đá Tự Nhiên & Rêu Xanh",
+      "locationVi": "Bậc tam cấp xuống suối",
+      "descriptionVi": "Những bậc đá basalt núi lửa xếp thủ công, viền quanh bởi rêu phong xanh mướt của vùng đất cao nguyên.",
+      "imageUrl": "/images/gallery/fig-03.jpg"
+    },
+    {
+      "id": "FIG. 04",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Giàn Hoa Cẩm Cù Đung Đưa",
+      "locationVi": "Vòm đón lối vào",
+      "descriptionVi": "Những chùm hoa Cẩm Cù hình ngôi sao sáp lấp lánh sương sớm tỏa hương thơm thoang thoảng dịu êm.",
+      "imageUrl": "/images/gallery/fig-04.jpg"
+    },
+    {
+      "id": "FIG. 05",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Tia Nắng Xuyên Kẽ Lá",
+      "locationVi": "Lối đi lát sỏi",
+      "descriptionVi": "Ánh nắng bình minh Tây Nguyên xuyên qua từng tán dừa và cây rừng, rọi xuống thảm cỏ xanh mơn mởn.",
+      "imageUrl": "/images/gallery/fig-05.jpg"
+    },
+    {
+      "id": "FIG. 06",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Góc Cây Cổ Thụ & Phong Lan",
+      "locationVi": "Sân đệm hoa lan",
+      "descriptionVi": "Nơi quy tụ những loài lan rừng quý bản địa cùng hoa Cẩm Cù treo rủ nhẹ nhàng.",
+      "imageUrl": "/images/gallery/fig-06.jpg"
+    },
+    {
+      "id": "FIG. 07",
+      "chapter": 1,
+      "chapterTitleVi": "Chương I — Lối Nhỏ Vào Vườn",
+      "titleVi": "Chạm Vào Vùng Không Gian Xanh",
+      "locationVi": "Cửa ngõ thung lũng suối",
+      "descriptionVi": "Không khí bỗng hạ xuống 3-4 độ C ngay khi bước qua vòm cây, làn hơi nước từ con suối vỗ về giác quan.",
+      "imageUrl": "/images/gallery/fig-07.jpg"
+    },
+    {
+      "id": "FIG. 08",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Dòng Nước Trong Vắt Lững Lờ",
+      "locationVi": "Khu Bàn Suối 01 - 03",
+      "descriptionVi": "Con suối tự nhiên uốn lượn qua lòng quán, những viên sỏi cuội tròn nhẵn nằm yên ắng dưới đáy nước.",
+      "imageUrl": "/uploads/images/fig08_streamside_hd.jpg"
+    },
+    {
+      "id": "FIG. 09",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Sàn Gỗ Mộc Sát Mép Suối",
+      "locationVi": "Bàn Suối 04",
+      "descriptionVi": "Ngồi thả lỏng đôi chân gần làn nước mát lạnh, lắng nghe âm thanh róc rách xua tan mọi mỏi mệt đời thường.",
+      "imageUrl": "/images/gallery/fig-09.jpg"
+    },
+    {
+      "id": "FIG. 10",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Cây Cầu Gỗ Nhỏ Nối Bờ",
+      "locationVi": "Cầu mộc qua suối",
+      "descriptionVi": "Cây cầu gỗ vắt ngang hai bờ đá, điểm check-in đậm chất thơ giữa thiên nhiên hoang sơ Gia Nghĩa.",
+      "imageUrl": "/images/gallery/fig-10.jpg"
+    },
+    {
+      "id": "FIG. 11",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Bóng Cây Râm Mát Trưa Hè",
+      "locationVi": "Bàn Suối 05",
+      "descriptionVi": "Những tàn cây tỏa bóng mát rượi, giữ cho không gian luôn trong lành dễ chịu dẫu là trưa hè oi ả.",
+      "imageUrl": "/images/gallery/fig-11.jpg"
+    },
+    {
+      "id": "FIG. 12",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Bàn Tròn Gỗ & Ghế Mây Thư Giãn",
+      "locationVi": "Bàn Suối 06",
+      "descriptionVi": "Nội thất bằng mây tre và gỗ tự nhiên hòa làm một với khung cảnh rừng suối xung quanh.",
+      "imageUrl": "/images/gallery/fig-12.jpg"
+    },
+    {
+      "id": "FIG. 13",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Đàn Cá Bơi Dưới Làn Nước",
+      "locationVi": "Lòng suối đá cuội",
+      "descriptionVi": "Những chú cá suối nhỏ tinh nghịch bơi lội tung tăng trong dòng nước trong ngần mát lạnh.",
+      "imageUrl": "/images/gallery/fig-13.jpg"
+    },
+    {
+      "id": "FIG. 14",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Góc Tĩnh Lặng Dành Cho Tâm Hồn",
+      "locationVi": "Bàn đơn ngắm suối",
+      "descriptionVi": "Một góc nhỏ chỉ có bạn, cuốn sách yêu thích và ly cà phê muối thơm nồng đượm vị.",
+      "imageUrl": "/images/gallery/fig-14.jpg"
+    },
+    {
+      "id": "FIG. 15",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Sương Mù Buổi Sớm Quanh Lòng Suối",
+      "locationVi": "View toàn cảnh bờ suối",
+      "descriptionVi": "Làn sương mỏng giăng mắc trên mặt suối lúc 7 giờ sáng, tạo nên bức tranh huyền ảo thoát tục.",
+      "imageUrl": "/images/gallery/fig-15.jpg"
+    },
+    {
+      "id": "FIG. 16",
+      "chapter": 2,
+      "chapterTitleVi": "Chương II — Bên Bờ Suối Mát",
+      "titleVi": "Tiếng Nước & Gió Núi Giao Hòa",
+      "locationVi": "Đoạn suối nông",
+      "descriptionVi": "Bản hòa âm kỳ diệu của thiên nhiên làm dịu lại từng nhịp thở của người lữ khách ghé thăm.",
+      "imageUrl": "/images/gallery/fig-16.jpg"
+    },
+    {
+      "id": "FIG. 17",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Cà Phê Muối Cẩm Cù Signature",
+      "locationVi": "Quầy pha chế mở",
+      "descriptionVi": "Lớp kem béo ngậy điểm xuyết hạt muối hồng, từ từ quyện vào dòng cà phê Robusta Đăk Nông đậm đặc.",
+      "imageUrl": "/images/gallery/fig-17.jpg"
+    },
+    {
+      "id": "FIG. 18",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Trà Đào Cam Sả Tươi Vừa Pha",
+      "locationVi": "Bàn phục vụ ngoài trời",
+      "descriptionVi": "Sả tươi thơm nức mũi, cam sành mọng tép và những lát đào giòn ngọt cho buổi trưa nhiều sinh khí.",
+      "imageUrl": "/images/gallery/fig-18.jpg"
+    },
+    {
+      "id": "FIG. 19",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Sinh Tố Bơ Sáp Đăk Nông Dẻo Quánh",
+      "locationVi": "Bàn gỗ mộc bên suối",
+      "descriptionVi": "Trái bơ sáp trứ danh Gia Nghĩa đặc quánh, béo ngậy tự nhiên mà không cần quá nhiều sữa ngọt.",
+      "imageUrl": "/images/gallery/fig-19.jpg"
+    },
+    {
+      "id": "FIG. 20",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Tách Hoa Đu Đủ Chưng Mật Ong Rừng",
+      "locationVi": "Hiên gỗ trên cao",
+      "descriptionVi": "Món nước thảo mộc thanh lọc cơ thể quý báu, hương thơm dịu nhẹ ấm áp từ hoa đu đủ đực và mật hoa cà phê.",
+      "imageUrl": "/images/gallery/fig-20.jpg"
+    },
+    {
+      "id": "FIG. 21",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Cà Phê Dừa Xay Tuyết Mát Lạnh",
+      "locationVi": "Bàn Vườn 02",
+      "descriptionVi": "Cốt dừa Bến Tre xay bông tuyết trắng muốt hòa cùng dòng cà phê sánh đậm sắc nét.",
+      "imageUrl": "/images/gallery/fig-21.jpg"
+    },
+    {
+      "id": "FIG. 22",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Nước Ép Cải Kale Green Detox",
+      "locationVi": "Bàn Sofa máy lạnh",
+      "descriptionVi": "Màu xanh lục thuần khiết từ cải Kale hữu cơ tươi non, tiếp thêm nguồn năng lượng sống dồi dào.",
+      "imageUrl": "/images/gallery/fig-22.jpg"
+    },
+    {
+      "id": "FIG. 23",
+      "chapter": 3,
+      "chapterTitleVi": "Chương III — Hương Vị Xanh Sạch",
+      "titleVi": "Mâm Bánh Mì Bò Kho Nóng Hổi",
+      "locationVi": "Khu vực ẩm thực sáng",
+      "descriptionVi": "Bò nạm gân hầm quế hồi thơm phức bên suối, chấm cùng bánh mì nướng giòn rụm ấm lòng.",
+      "imageUrl": "/images/gallery/fig-23.jpg"
+    },
+    {
+      "id": "FIG. 24",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Hoàng Hôn Dát Vàng Mặt Suối",
+      "locationVi": "Hiên Gỗ ngắm hoàng hôn",
+      "descriptionVi": "Mặt trời lặn sau rặng thông Gia Nghĩa, phủ lên dòng suối Cẩm Cù một lớp ánh sáng dát vàng lộng lẫy.",
+      "imageUrl": "/images/gallery/fig-24.jpg"
+    },
+    {
+      "id": "FIG. 25",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Dây Đèn Vàng Bật Sáng Lung Linh",
+      "locationVi": "Khu vườn hoa Cẩm Cù",
+      "descriptionVi": "Khi trời chập choạng tối, hàng trăm bóng đèn vàng ấm áp thắp sáng không gian như một khu rừng cổ tích.",
+      "imageUrl": "/images/gallery/fig-25.jpg"
+    },
+    {
+      "id": "FIG. 26",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Đêm Nhạc Acoustic Tối Thứ Bảy",
+      "locationVi": "Sân khấu mộc bên suối",
+      "descriptionVi": "Giai điệu guitar mộc và tiếng hát du dương hòa cùng tiếng nước chảy, sưởi ấm những đêm se lạnh vùng cao.",
+      "imageUrl": "/images/gallery/fig-26.jpg"
+    },
+    {
+      "id": "FIG. 27",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Góc Hẹn Hò Dưới Ánh Đèn Dịu",
+      "locationVi": "Bàn Suối 04 ban đêm",
+      "descriptionVi": "Không gian lãng mạn riêng tư cho các cặp đôi bên bờ suối róc rách dưới bầu trời sao đêm.",
+      "imageUrl": "/images/gallery/fig-27.jpg"
+    },
+    {
+      "id": "FIG. 28",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Hương Thảo Mộc Trong Đêm",
+      "locationVi": "Vườn Cẩm Cù về đêm",
+      "descriptionVi": "Những cánh hoa Cẩm Cù bung tỏa hương thơm ngát nhất khi màn đêm buông xuống khu vườn.",
+      "imageUrl": "/images/gallery/fig-28.jpg"
+    },
+    {
+      "id": "FIG. 29",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Nhâm Nhi Cacao Nóng Đêm Muộn",
+      "locationVi": "Hiên gỗ sưởi ấm",
+      "descriptionVi": "Cốc cacao ấm áp trong tay ngắm nhìn mặt nước phản chiếu ánh đèn vàng lấp lánh (mở đến 22:00 cuối tuần).",
+      "imageUrl": "/images/gallery/fig-29.jpg"
+    },
+    {
+      "id": "FIG. 30",
+      "chapter": 4,
+      "chapterTitleVi": "Chương IV — Chiều Buông & Đêm Cuối Tuần",
+      "titleVi": "Hẹn Gặp Lại Ngày Mai Bên Bờ Suối",
+      "locationVi": "Cổng chào về đêm",
+      "descriptionVi": "Một ngày trọn vẹn kết thúc với niềm an yên lắng đọng, Cẩm Cù House chào tạm biệt và hẹn gặp lại bạn.",
+      "imageUrl": "/images/gallery/fig-30.jpg"
+    }
+  ],
+  "bookings": [
+    {
+      "guestName": "Test User",
+      "phone": "0901234567",
+      "email": "",
+      "tableId": "S01",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-27",
+      "timeSlot": "22:00",
+      "notes": "",
+      "id": "BK-822904",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:50:22.904Z"
+    },
+    {
+      "guestName": "Test User",
+      "phone": "0901234567",
+      "email": "",
+      "tableId": "S01",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-27",
+      "timeSlot": "18:01",
+      "notes": "",
+      "id": "BK-822889",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:50:22.889Z"
+    },
+    {
+      "guestName": "Test User",
+      "phone": "0901234567",
+      "email": "",
+      "tableId": "S01",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-23",
+      "timeSlot": "18:00",
+      "notes": "",
+      "id": "BK-822857",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:50:22.857Z"
+    },
+    {
+      "guestName": "Test User",
+      "phone": "0901234567",
+      "email": "",
+      "tableId": "S01",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-23",
+      "timeSlot": "07:00",
+      "notes": "",
+      "id": "BK-822842",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:50:22.842Z"
+    },
+    {
+      "guestName": "Test Khach",
+      "phone": "0987654321",
+      "email": "",
+      "tableId": "S01",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-20",
+      "timeSlot": "10:00",
+      "notes": "Test automated booking",
+      "id": "BK-708450",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:31:48.450Z"
+    },
+    {
+      "guestName": "Bùi Hoàng",
+      "phone": "0944444444",
+      "email": "",
+      "tableId": "H01",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-17",
+      "timeSlot": "10:00",
+      "notes": "",
+      "id": "BK-698280",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T16:58:18.280Z"
+    },
+    {
+      "guestName": "Trần Thị Sen",
+      "phone": "0987654321",
+      "email": "",
+      "tableId": "S05",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-20",
+      "timeSlot": "20:00",
+      "notes": "",
+      "id": "BK-698223",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T16:58:18.223Z"
+    },
+    {
+      "guestName": "Bùi Hoàng",
+      "phone": "0944444444",
+      "email": "",
+      "tableId": "H02",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-17",
+      "timeSlot": "14:00",
+      "notes": "",
+      "id": "BK-371169",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T16:52:51.169Z"
+    },
+    {
+      "guestName": "Trần Thị Sen",
+      "phone": "0987654321",
+      "email": "",
+      "tableId": "S05",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-20",
+      "timeSlot": "20:00",
+      "notes": "",
+      "id": "BK-370872",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T16:52:50.872Z"
+    },
+    {
+      "guestName": "Test Kh�ch H�ng",
+      "phone": "0987654321",
+      "email": "khach@test.com",
+      "tableId": "S02",
+      "zone": "stream",
+      "partySize": 4,
+      "date": "2026-11-20",
+      "timeSlot": "10:00",
+      "notes": "B�n nh�n su?i d?p",
+      "id": "BK-323239",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T16:18:43.239Z"
+    },
+    {
+      "id": "BK-202611-01",
+      "guestName": "Nguyễn Văn Hải",
+      "phone": "0912 345 678",
+      "email": "hai.nguyen@gmail.com",
+      "tableId": "S03",
+      "zone": "stream",
+      "partySize": 5,
+      "date": "2026-11-18",
+      "timeSlot": "09:00",
+      "notes": "Bàn view suối đẹp, gia đình có trẻ em",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T08:30:00.000Z"
+    },
+    {
+      "id": "BK-202611-02",
+      "guestName": "Trần Thị Thu Lan",
+      "phone": "0988 765 432",
+      "email": "lan.tran@outlook.com",
+      "tableId": "V06",
+      "zone": "garden",
+      "partySize": 4,
+      "date": "2026-11-18",
+      "timeSlot": "14:30",
+      "notes": "Họp mặt bạn bè chụp ảnh kỷ niệm",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T09:15:00.000Z"
+    },
+    {
+      "id": "BK-202611-03",
+      "guestName": "Lê Hoàng Tuấn",
+      "phone": "0903 112 233",
+      "tableId": "S04",
+      "zone": "stream",
+      "partySize": 2,
+      "date": "2026-11-17",
+      "timeSlot": "16:00",
+      "notes": "Kỷ niệm ngày cưới, cần bàn yên tĩnh",
+      "status": "cancelled",
+      "createdAt": "2026-11-17T11:00:00.000Z"
+    }
+  ],
+  "orders": [
+    {
+      "orderType": "takeaway",
+      "customerName": "Nguyen Van A",
+      "phone": "0909999999",
+      "address": "",
+      "items": [
+        {
+          "menuItemId": "cf-muoi",
+          "vietnameseTitle": "Cà Phê Muối Cẩm Cù",
+          "price": 35000,
+          "quantity": 2,
+          "total": 70000
+        }
+      ],
+      "subtotal": 70000,
+      "discount": 0,
+      "couponCode": "",
+      "total": 0,
+      "notes": "",
+      "id": "ORD-22970",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:50:22.970Z"
+    },
+    {
+      "orderType": "takeaway",
+      "customerName": "Khach Hang Test",
+      "phone": "0912345678",
+      "address": "",
+      "items": [
+        {
+          "price": 28000,
+          "quantity": 2,
+          "menuItemId": "cf-01",
+          "name": "C� ph� Mu?i C?m C�"
+        }
+      ],
+      "subtotal": 56000,
+      "discount": 0,
+      "couponCode": "",
+      "total": 56000,
+      "notes": "",
+      "id": "ORD-20339",
+      "status": "pending",
+      "createdAt": "2026-11-17T17:32:00.339Z"
+    },
+    {
+      "orderType": "takeaway",
+      "customerName": "Hoàng Lan",
+      "phone": "0966666666",
+      "address": "",
+      "items": [
+        {
+          "menuItemId": "cf-03",
+          "name": "Cà phê muối",
+          "price": 29000,
+          "quantity": 2
+        },
+        {
+          "menuItemId": "ne-09",
+          "name": "Nước ép Mix tùy chọn",
+          "price": 35000,
+          "quantity": 1,
+          "customNote": "Cam + Cà rốt"
+        }
+      ],
+      "subtotal": 93000,
+      "discount": 9300,
+      "couponCode": "CAMCU10",
+      "total": 83700,
+      "notes": "",
+      "id": "ORD-98356",
+      "status": "completed",
+      "createdAt": "2026-11-17T16:58:18.356Z"
+    },
+    {
+      "orderType": "takeaway",
+      "customerName": "Test Kh�ch Order",
+      "phone": "0912345678",
+      "address": "",
+      "items": [
+        {
+          "price": 29000,
+          "quantity": 2,
+          "menuItemId": "cf-03",
+          "name": "C� ph� Mu?i C?m C�"
+        }
+      ],
+      "subtotal": 58000,
+      "discount": 5800,
+      "couponCode": "CAMCU10",
+      "total": 52200,
+      "notes": "�t du?ng �t d�",
+      "id": "ORD-23335",
+      "status": "completed",
+      "createdAt": "2026-11-17T16:18:43.335Z"
+    },
+    {
+      "id": "ORD-101",
+      "orderType": "takeaway",
+      "customerName": "Hoàng Minh Quân",
+      "phone": "0934 567 890",
+      "items": [
+        {
+          "menuItemId": "cf-03",
+          "name": "Cà phê Muối Cẩm Cù",
+          "price": 29000,
+          "quantity": 2
+        },
+        {
+          "menuItemId": "tra-05",
+          "name": "Trà Đào Cam Sả Tươi",
+          "price": 35000,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 93000,
+      "discount": 9300,
+      "couponCode": "CAMCU10",
+      "total": 83700,
+      "notes": "Lấy ngay lúc 10h15, ít đá cho cà phê muối",
+      "status": "completed",
+      "createdAt": "2026-11-17T10:05:00.000Z"
+    },
+    {
+      "id": "ORD-102",
+      "orderType": "delivery",
+      "customerName": "Đặng Ngọc Thảo",
+      "phone": "0977 123 456",
+      "address": "Số 12 Chu Văn An, TP. Gia Nghĩa",
+      "items": [
+        {
+          "menuItemId": "st-05",
+          "name": "Sinh Tố Bơ Sáp Đăk Nông",
+          "price": 38000,
+          "quantity": 2
+        },
+        {
+          "menuItemId": "fd-03",
+          "name": "Bò Kho Đậm Đà + Bánh Mì",
+          "price": 45000,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 121000,
+      "discount": 0,
+      "total": 121000,
+      "notes": "Giao giờ nghỉ trưa trước 11h45",
+      "status": "completed",
+      "createdAt": "2026-11-17T10:45:00.000Z"
+    }
+  ],
+  "events": [
+    {
+      "id": "evt-01",
+      "title": "Đêm Nhạc Acoustic Bên Suối",
+      "subtitle": "Thứ Bảy Hàng Tuần • 19:30 – 21:30",
+      "dateOrSchedule": "Tối Thứ Bảy hàng tuần",
+      "description": "Lắng nghe những giai điệu acoustic mộc mạc bên ánh lửa và dòng suối đêm lấp lánh. Miễn phí phụ thu cho khách đặt bàn trước.",
+      "badge": "Sự kiện định kỳ",
+      "active": true
+    },
+    {
+      "id": "evt-02",
+      "title": "Mùa Bơ Sáp Đăk Nông 2026",
+      "subtitle": "Đặc sản trứ danh từ vườn nhà Gia Nghĩa",
+      "dateOrSchedule": "Đang diễn ra",
+      "description": "Thưởng thức những ly sinh tố bơ sáp và sinh tố bơ sầu riêng béo ngậy được tuyển chọn kỹ càng từ những vườn bơ hữu cơ địa phương.",
+      "badge": "Đặc sản mùa này",
+      "active": true
+    },
+    {
+      "id": "evt-03",
+      "title": "Happy Hour Sáng Bình Minh",
+      "subtitle": "07:00 – 09:00 Mỗi Ngày",
+      "dateOrSchedule": "Mỗi ngày (07:00 – 09:00)",
+      "description": "Giảm ngay 10% cho toàn bộ các món Cà phê Đăk Nông truyền thống để đón chào ngày mới trong lành bên bờ suối.",
+      "badge": "Ưu đãi thường nhật",
+      "active": true
+    }
+  ],
+  "coupons": [
+    {
+      "code": "CAMCU10",
+      "discountPercent": 10,
+      "maxDiscount": 50000,
+      "minOrder": 50000,
+      "description": "Giảm 10% tổng hóa đơn cho khách đặt bàn hoặc đặt món online",
+      "active": true
+    },
+    {
+      "code": "SUOIMAT",
+      "discountPercent": 15,
+      "maxDiscount": 60000,
+      "minOrder": 80000,
+      "description": "Giảm 15% cho các đơn hàng trà thảo mộc & nước ép giải nhiệt",
+      "active": true
+    }
+  ],
+  "lastUpdated": "2026-11-17T17:50:22.970Z"
+}

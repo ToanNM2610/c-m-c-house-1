@@ -1,14 +1,13 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-        disallow: ["/admin", "/admin/", "/api", "/api/"],
-      },
-    ],
-    sitemap: "https://camcuhouse.online/sitemap.xml",
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/admin', '/admin/', '/api/'],
+    },
+    sitemap: 'https://camcuhouse.vn/sitemap.xml',
   };
 }
+

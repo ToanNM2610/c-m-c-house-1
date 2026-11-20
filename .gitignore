@@ -1,54 +1,36 @@
-# dependencies
+# Dependencies
 /node_modules
 /.pnp
-.pnp.*
+.pnp.js
 
-# testing
-/coverage
-
-# next.js
+# Next.js Build Output
 /.next/
 /out/
-
-# production
 /build
+/dist
 
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
+# Production & Cache
 *.tsbuildinfo
 next-env.d.ts
 
-# ide
-.vscode/
-.idea/
+# Misc & OS
+.DS_Store
+Thumbs.db
+*.pem
 
-# Stitch raw export mockups & assets
-/trang_ch_c_m_c_house/
-/trang_qu_n_tr_vi_n_c_m_c_house/
-/gi_i_thi_u_c_m_c_house/
-/kh_ng_gian_su_i_c_m_c_house/
-/li_n_h_t_ch_c_m_c_house/
-/th_c_n_c_m_c_house/
-/c_m_c_house_logo/
-/a_breathtaking_landscape_photo_of_an_eco_sanctuary_wooden_open_air_cafe_deck/
-/artisanal_authentic_vietnamese_robusta_coffee_drink_in_clear_glass_cup_with/
-/artisanal_hand_roasted_robusta_coffee_beans_in_a_rustic_woven_bamboo_tray/
-/refreshing_glass_of_natural_iced_herbal_fruit_tea_and_specialty_salt_cold_brew/
-/serene_eco_friendly_wooden_cafe_terrace_right_beside_a_crystal_clear_pebble/
-/stream_sanctuary/
-test-results/
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# Internal Agents
+.agents/

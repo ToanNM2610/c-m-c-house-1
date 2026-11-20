@@ -1,219 +1,164 @@
-import "./globals.css";
-import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
-import { fraunces, beVietnamPro } from "./fonts";
-import { LanguageProvider } from "@/context/LanguageContext";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { TransitionProvider } from "@/context/TransitionContext";
-import { PreOrderProvider } from "@/context/PreOrderContext";
-import PublicShell from "@/components/PublicShell";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
-import Script from "next/script";
-import { getPublicIntegrations } from "@/lib/integrations";
-import "lenis/dist/lenis.css";
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import {
+  Be_Vietnam_Pro,
+  Plus_Jakarta_Sans,
+  Inter,
+  Cormorant_Garamond,
+  JetBrains_Mono,
+} from 'next/font/google';
+import './globals.css';
+import { AppProvider } from '@/context/AppContext';
+import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
+import Navbar from '@/components/common/Navbar';
+import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
+import LivingNatureCanvas from '@/components/motion/LivingNatureCanvas';
+import GalleryLightboxModal from '@/components/modals/GalleryLightboxModal';
+import QuickChatWidget from '@/components/common/QuickChatWidget';
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["600", "700", "800"],
-  variable: "--font-bricolage",
-  display: "swap",
+const beVietnam = Be_Vietnam_Pro({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-be-vietnam',
+  display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
+const jakarta = Plus_Jakarta_Sans({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-jakarta',
+  display: 'swap',
 });
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F2EDE4" },
-    { media: "(prefers-color-scheme: dark)", color: "#0A0E0C" },
-  ],
-};
+const inter = Inter({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const cormorant = Cormorant_Garamond({
+  weight: ['400', '600', '700'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-cormorant',
+  display: 'swap',
+});
+
+const mono = JetBrains_Mono({
+  weight: ['400', '500'],
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://camcuhouse.online"),
-  title: {
-    default: "Cẩm Cù House coffee & Food | Chốn Dừng Chân Bên Suối Gia Nghĩa",
-    template: "%s | Cẩm Cù House",
-  },
-  description: "Khu nghỉ dưỡng ẩm thực & cà phê sinh thái bên bờ suối mát lạnh miền cao nguyên Đắk Nông. Thưởng thức cà phê Robusta rang củi mộc và thực đơn 50+ món đặc sản bản địa.",
+  title: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
+  description: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Không gian suối mát rượi, 18 bàn view suối, cà phê muối Đăk Nông và thảo mộc xanh.',
   keywords: [
-    "Cẩm Cù House",
-    "cà phê Gia Nghĩa",
-    "quán cà phê bờ suối Đắk Nông",
-    "cà phê muối Đắk Nông",
-    "du lịch Gia Nghĩa"
+    'quán cà phê đẹp Đông Gia Nghĩa Lâm Đồng',
+    'cà phê sinh thái bên suối Lâm Đồng',
+    'quán ăn vặt gần đây',
+    'Cẩm Cù House',
+    'cà phê muối Đông Gia Nghĩa',
+    'quán cà phê bờ suối Lâm Đồng',
   ],
+  authors: [{ name: 'Cẩm Cù House' }],
   openGraph: {
-    title: "Cẩm Cù House coffee & Food • Gia Nghĩa Đắk Nông",
-    description: "Chốn dừng chân mộc mạc bên bờ suối thiên nhiên.",
-    url: "https://camcuhouse.online",
-    siteName: "Cẩm Cù House",
-    locale: "vi_VN",
-    type: "website",
-    images: [
-      {
-        url: "/images/og-home.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Cẩm Cù House coffee & Food",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Cẩm Cù House coffee & Food • Gia Nghĩa Đắk Nông",
-    description: "Chốn dừng chân mộc mạc bên bờ suối thiên nhiên.",
-    images: ["/images/og-home.jpg"],
+    title: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
+    description: 'Xanh sạch, trong lành, hòa mình với thiên nhiên bên bờ suối mát giữa lòng Đông Gia Nghĩa, Lâm Đồng.',
+    url: 'https://camcuhouse.vn',
+    siteName: 'Cẩm Cù House',
+    locale: 'vi_VN',
+    type: 'website',
   },
 };
 
-export default async function RootLayout({
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CafeOrCoffeeShop',
+  name: 'Cẩm Cù House',
+  image: 'https://camcuhouse.vn/images/og-cover.jpg',
+  telephone: ['+84382851688', '+84774659000'],
+  email: 'thuynhu8788@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Hẻm 437 Hùng Vương',
+    addressLocality: 'Đông Gia Nghĩa',
+    addressRegion: 'Lâm Đồng',
+    postalCode: '64000',
+    addressCountry: 'VN',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 11.98634,
+    longitude: 107.69421,
+  },
+  url: 'https://camcuhouse.vn',
+  priceRange: '$',
+  servesCuisine: ['Vietnamese Coffee', 'Botanical Herbal Teas', 'Fresh Tropical Smoothies', 'Healthy Juices', 'Local Snacks'],
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+      opens: '07:00',
+      closes: '18:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Friday', 'Saturday', 'Sunday'],
+      opens: '07:00',
+      closes: '22:00',
+    },
+  ],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '5.0',
+    reviewCount: '8',
+    bestRating: '5',
+    worstRating: '1',
+  },
+  hasMap: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
+};
+
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const integrations = await getPublicIntegrations();
-
   return (
-    <html lang="vi" suppressHydrationWarning className={`${bricolage.variable} ${fraunces.variable} ${beVietnamPro.variable} ${jetbrainsMono.variable} font-sans`}>
+    <html
+      lang="vi"
+      className={`scroll-smooth ${beVietnam.variable} ${jakarta.variable} ${inter.variable} ${cormorant.variable} ${mono.variable}`}
+    >
       <head>
-        {integrations.searchConsoleVerification && (
-          <meta
-            name="google-site-verification"
-            content={integrations.searchConsoleVerification}
-          />
-        )}
-        {integrations.ga4MeasurementId && (
-          <GoogleAnalytics gaId={integrations.ga4MeasurementId} />
-        )}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var cookieMatch = document.cookie.match(/(?:^|;\\s*)camcu_theme=([^;]*)/);
-                  var storedTheme = localStorage.getItem('camcu_theme');
-                  var theme = (cookieMatch ? cookieMatch[1] : null) || storedTheme;
-                  if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                    document.documentElement.setAttribute('data-theme', 'light');
-                  }
-                  if (typeof MutationObserver !== 'undefined') {
-                    var observer = new MutationObserver(function(mutations) {
-                      for (var i = 0; i < mutations.length; i++) {
-                        if (mutations[i].attributeName === 'data-theme') {
-                          var dt = document.documentElement.getAttribute('data-theme');
-                          if (dt === 'light') {
-                            document.documentElement.classList.remove('dark');
-                          } else if (dt === 'dark') {
-                            document.documentElement.classList.add('dark');
-                          }
-                        }
-                      }
-                    });
-                    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-                  }
-                } catch(e) {}
-              })();
-            `,
-          }}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "CafeOrCoffeeShop",
-              "name": "Cẩm Cù House",
-              "image": "https://camcuhouse.online/images/og-home.jpg",
-              "@id": "https://camcuhouse.online/#cafe",
-              "url": "https://camcuhouse.online",
-              "telephone": ["+84382851688", "+84774659000"],
-              "email": "thuynhu8788@gmail.com",
-              "priceRange": "25.000 - 55.000 VNĐ",
-              "servesCuisine": "Vietnamese Coffee, Breakfast & Local Snacks",
-              "description": "Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Gia Nghĩa.",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Hẻm 437 Hùng Vương",
-                "addressLocality": "Phường Nghĩa Trung, TP. Gia Nghĩa",
-                "addressRegion": "Đắk Nông",
-                "postalCode": "64000",
-                "addressCountry": "VN",
-              },
-              "geo": {
-                "@type": "GeoCoordinates",
-                "latitude": 11.99,
-                "longitude": 107.69,
-              },
-              "openingHoursSpecification": [
-                {
-                  "@type": "OpeningHoursSpecification",
-                  "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday"],
-                  "opens": "07:00",
-                  "closes": "18:00",
-                },
-                {
-                  "@type": "OpeningHoursSpecification",
-                  "dayOfWeek": ["Friday", "Saturday", "Sunday"],
-                  "opens": "07:00",
-                  "closes": "22:00",
-                },
-              ],
-              "amenityFeature": [
-                {
-                  "@type": "LocationFeatureSpecification",
-                  "name": "Chỗ ngồi ngoài trời (View bờ suối)",
-                  "value": true
-                },
-                {
-                  "@type": "LocationFeatureSpecification",
-                  "name": "Đặt bàn trước (Reservation)",
-                  "value": true
-                },
-                {
-                  "@type": "LocationFeatureSpecification",
-                  "name": "Phục vụ mang về (Takeaway)",
-                  "value": true
-                }
-              ],
-              "sameAs": [
-                "https://maps.app.goo.gl/G6aP51qJ6aDabp676",
-                "https://www.facebook.com/share/1DVLMySW8H/",
-                "https://www.tiktok.com/@camcuhousedaknong?is_from_webapp=1&sender_device=pc",
-                "https://www.youtube.com/@Cam_Cu_House"
-              ],
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "5.0",
-                "reviewCount": "8",
-                "bestRating": "5"
-              },
-              "hasMenu": "https://camcuhouse.online/menu",
-            }),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body suppressHydrationWarning className="bg-[var(--bg)] text-[var(--text)] antialiased min-h-screen pb-16 lg:pb-0 selection:bg-[var(--basalt)] selection:text-white">
-        <ThemeProvider>
-          <LanguageProvider>
-            <TransitionProvider>
-              <PreOrderProvider>
-                <PublicShell>{children}</PublicShell>
-              </PreOrderProvider>
-            </TransitionProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+      <body className="min-h-screen bg-paper text-ink-primary selection:bg-accent-botanical selection:text-white">
+        <AppProvider>
+          <NavigationDirectionProvider>
+            {/* 120Hz/120fps 8K Cinematic Intro Preloader Overlay (Storefront Only) */}
+            <Suspense fallback={null}>
+              <CinematicIntro8K />
+            </Suspense>
+            {/* Living Nature Ambient 120fps Canvas (Light sunlight bokeh / Dark fireflies) */}
+            <LivingNatureCanvas />
+            <Navbar />
+            {children}
+            {/* Global Interactive Modals & Quick Chat */}
+            <GalleryLightboxModal />
+            <QuickChatWidget />
+          </NavigationDirectionProvider>
+        </AppProvider>
       </body>
     </html>
   );
