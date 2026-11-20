@@ -32,6 +32,9 @@ pnpm-debug.log*
 # Vercel
 .vercel
 
+# SQLite database (local/dev only - ephemeral on Vercel)
+prisma/dev.db
+
 # Internal Agents
 .agents/
 .dsh-acl-recovery/

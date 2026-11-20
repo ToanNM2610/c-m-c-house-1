@@ -3,7 +3,11 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
-  const host = request.headers.get("host") || "";
+  const rawHost =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    "";
+  const host = rawHost.split(":")[0];
   const isLocalhost =
     host.includes("localhost") ||
     host.includes("127.0.0.1") ||
@@ -15,6 +19,12 @@ export function middleware(request: NextRequest) {
     host.startsWith("admin.") ||
     (isLocalhost && host.startsWith("admin."));
 
+  // Pass admin header downstream so layouts and server components recognize admin host
+  const requestHeaders = new Headers(request.headers);
+  if (isAdminSubdomain) {
+    requestHeaders.set("x-is-admin-host", "1");
+  }
+
   let response: NextResponse;
 
   if (isAdminSubdomain) {
@@ -22,16 +32,28 @@ export function middleware(request: NextRequest) {
     // Root path '/' on admin.camcuhouse.online maps to '/admin'
     if (url.pathname === "/") {
       url.pathname = "/admin";
-      response = NextResponse.rewrite(url);
+      response = NextResponse.rewrite(url, {
+        request: {
+          headers: requestHeaders,
+        },
+      });
     } else if (
       !url.pathname.startsWith("/admin") &&
       !url.pathname.startsWith("/api") &&
       !url.pathname.startsWith("/_next")
     ) {
       url.pathname = `/admin${url.pathname}`;
-      response = NextResponse.rewrite(url);
+      response = NextResponse.rewrite(url, {
+        request: {
+          headers: requestHeaders,
+        },
+      });
     } else {
-      response = NextResponse.next();
+      response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     }
   } else {
     // When on main domain (camcuhouse.online or www.camcuhouse.online):
@@ -57,6 +79,7 @@ export function middleware(request: NextRequest) {
   // Security check 1: Protected admin API routes require authenticated session
   if (url.pathname.startsWith("/api/admin") && !url.pathname.startsWith("/api/admin/auth")) {
     const authCookie =
+      request.cookies.get("camcu_admin_session")?.value ||
       request.cookies.get("camcu_admin_auth")?.value ||
       request.cookies.get("camcu_auth_session")?.value;
 
@@ -83,6 +106,7 @@ export function middleware(request: NextRequest) {
 
   if (isProtectedPath) {
     const authCookie =
+      request.cookies.get("camcu_admin_session")?.value ||
       request.cookies.get("camcu_admin_auth")?.value ||
       request.cookies.get("camcu_auth_session")?.value;
 
