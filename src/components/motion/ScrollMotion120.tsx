@@ -32,7 +32,12 @@ export function ScrollReadingProgress120() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, SPRING_120HZ);
 
-  if (pathname?.startsWith('/admin')) return null;
+  if (
+    pathname?.startsWith('/admin') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
+  ) {
+    return null;
+  }
   if (!enableAnimations || motionIntensity === 'OFF') return null;
 
   return (
@@ -93,42 +98,10 @@ interface CurtainPhotoRevealProps {
 export function CurtainPhotoReveal({
   children,
   className = '',
-  delay = 0,
-  duration = 0.72,
 }: CurtainPhotoRevealProps) {
-  const { enableAnimations, motionIntensity } = useApp();
-
-  if (!enableAnimations || motionIntensity === 'OFF') {
-    return <div className={`relative overflow-hidden ${className}`}>{children}</div>;
-  }
-
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      <motion.div
-        initial={{
-          clipPath: 'inset(100% 0% 0% 0%)',
-          scale: 1.08,
-          opacity: 0.85,
-        }}
-        whileInView={{
-          clipPath: 'inset(0% 0% 0% 0%)',
-          scale: 1.0,
-          opacity: 1,
-        }}
-        viewport={{ once: true, amount: 0.12 }}
-        transition={{
-          duration,
-          delay,
-          ease: EDITORIAL_EASE,
-        }}
-        style={{
-          willChange: 'clip-path, transform, opacity',
-          backfaceVisibility: 'hidden',
-        }}
-        className="w-full h-full"
-      >
-        {children}
-      </motion.div>
+    <div className={`relative w-full h-full overflow-hidden ${className}`}>
+      {children}
     </div>
   );
 }

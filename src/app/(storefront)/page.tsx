@@ -58,7 +58,7 @@ function BestSellerCard({ item, isEn }: { item: MenuItem; isEn: boolean }) {
 
   return (
     <InteractiveTiltCard maxTilt={3.5} spotlight={true} className="h-full">
-      <div className="p-5 rounded-2xl bg-white/80 dark:bg-forest-900/60 backdrop-blur-sm border border-forest-100 dark:border-forest-700/60 hover:border-accent-botanical/50 shadow-subtle transition-all duration-200 flex flex-col justify-between group h-full">
+      <div className="p-5 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 hover:border-accent-botanical/50 shadow-subtle transition-all duration-200 flex flex-col justify-between group h-full">
         <div>
           <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex-1">
@@ -234,7 +234,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6, delay: 0.15, ease: EDITORIAL_EASE }}
                 className="lg:col-span-5 flex flex-col items-center justify-center w-full"
               >
-                <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100/50 dark:bg-forest-900/40">
+                <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100 dark:bg-forest-900">
                   <img
                     src="/uploads/gallery/fig-01.jpg"
                     alt={isEn ? 'Cẩm Cù House streamside sanctuary' : 'Không gian bên suối Cẩm Cù House'}
@@ -250,26 +250,26 @@ export default function HomePage() {
           </div>
 
           {/* Bottom Quick Feature Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 mt-10 border-t border-forest-200/60 dark:border-forest-700/40 text-xs font-mono text-ink-muted">
-            <div className="p-3 bg-white/60 dark:bg-forest-900/50 rounded-xl border border-forest-100 dark:border-forest-800">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 mt-10 border-t border-forest-200 dark:border-forest-700 text-xs font-mono text-ink-muted">
+            <div className="p-3 bg-white dark:bg-forest-900 rounded-xl border border-forest-200 dark:border-forest-700">
               <span className="block text-ink-primary font-bold text-base font-serif">
                 {isEn ? '18 Stream Tables' : '18 Bàn View Suối'}
               </span>
               <span>{isEn ? '4 Botanical zones' : '4 Phân khu sinh thái'}</span>
             </div>
-            <div className="p-3 bg-white/60 dark:bg-forest-900/50 rounded-xl border border-forest-100 dark:border-forest-800">
+            <div className="p-3 bg-white dark:bg-forest-900 rounded-xl border border-forest-200 dark:border-forest-700">
               <span className="block text-ink-primary font-bold text-base font-serif">
                 {isEn ? '~67 Craft Drinks' : '~67 Món Đồ Uống'}
               </span>
               <span>{isEn ? 'Basalt Coffee & Teas' : 'Cà phê bazan & Thảo mộc'}</span>
             </div>
-            <div className="p-3 bg-white/60 dark:bg-forest-900/50 rounded-xl border border-forest-100 dark:border-forest-800">
+            <div className="p-3 bg-white dark:bg-forest-900 rounded-xl border border-forest-200 dark:border-forest-700">
               <span className="block text-ink-primary font-bold text-base font-serif">
                 {isEn ? 'Natural Stream' : 'Suối Tự Nhiên'}
               </span>
               <span>{isEn ? 'Dong Gia Nghia, Lam Dong' : 'Đông Gia Nghĩa, Lâm Đồng'}</span>
             </div>
-            <div className="p-3 bg-white/60 dark:bg-forest-900/50 rounded-xl border border-forest-100 dark:border-forest-800">
+            <div className="p-3 bg-white dark:bg-forest-900 rounded-xl border border-forest-200 dark:border-forest-700">
               <span className="block text-ink-primary font-bold text-base font-serif">
                 {isEn ? 'Acoustic Live Nights' : 'Đêm Nhạc Acoustic'}
               </span>
@@ -333,7 +333,7 @@ export default function HomePage() {
               return (
                 <ScrollLayoutCard3D key={idx} delay={idx * 0.08} className="h-full">
                   <InteractiveTiltCard maxTilt={3.5} spotlight={true} className="h-full">
-                    <div className="h-full p-6 rounded-2xl bg-white dark:bg-forest-900/70 border border-forest-200/80 dark:border-forest-700/60 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/50 transition-all duration-300 flex flex-col justify-between">
+                    <div className="h-full p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/50 transition-all duration-300 flex flex-col justify-between">
                       <div className="space-y-4">
                         <div className="w-12 h-12 rounded-xl bg-forest-100 dark:bg-forest-800 flex items-center justify-center">
                           {renderPhilosophyIcon(card.iconName)}
@@ -433,7 +433,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <ScrollLayoutCard3D delay={0.05}>
-              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900/70 border border-forest-200/80 dark:border-forest-700/60 shadow-subtle space-y-3 h-full flex flex-col justify-between">
+              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3 h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center text-amber-500">
                     {[...Array(5)].map((_, i) => (
@@ -455,7 +455,7 @@ export default function HomePage() {
             </ScrollLayoutCard3D>
 
             <ScrollLayoutCard3D delay={0.1}>
-              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900/70 border border-forest-200/80 dark:border-forest-700/60 shadow-subtle space-y-3 h-full flex flex-col justify-between">
+              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3 h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center text-amber-500">
                     {[...Array(5)].map((_, i) => (
@@ -477,7 +477,7 @@ export default function HomePage() {
             </ScrollLayoutCard3D>
 
             <ScrollLayoutCard3D delay={0.15}>
-              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900/70 border border-forest-200/80 dark:border-forest-700/60 shadow-subtle space-y-3 h-full flex flex-col justify-between">
+              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3 h-full flex flex-col justify-between">
                 <div className="space-y-2">
                   <div className="flex items-center text-amber-500">
                     {[...Array(5)].map((_, i) => (
@@ -529,7 +529,7 @@ export default function HomePage() {
 
               return (
                 <ScrollLayoutCard3D key={ev.id} delay={(idx % 3) * 0.08} className="h-full">
-                  <div className="h-full rounded-2xl bg-white dark:bg-forest-900/70 border border-forest-200/80 dark:border-forest-700/60 shadow-subtle flex flex-col justify-between overflow-hidden">
+                  <div className="h-full rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle flex flex-col justify-between overflow-hidden">
                     {ev.imageUrl && (
                       <div className="h-44 w-full bg-forest-100 dark:bg-forest-800 relative overflow-hidden">
                         <img

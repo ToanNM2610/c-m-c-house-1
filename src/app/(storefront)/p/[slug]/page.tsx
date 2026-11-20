@@ -118,7 +118,7 @@ export default async function StaticLegalPage({ params }: StaticPageProps) {
         </div>
 
         {/* Document Footer Notice */}
-        <div className="p-6 rounded-2xl bg-forest-50/70 dark:bg-forest-900/40 border border-forest-200 dark:border-forest-700 text-xs font-mono text-ink-muted space-y-1.5 mt-8">
+        <div className="p-6 rounded-2xl bg-forest-50 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-xs font-mono text-ink-muted space-y-1.5 mt-8">
           <div className="font-bold text-ink-primary flex items-center gap-1.5">
             <Shield className="w-4 h-4 text-accent-botanical" />
             <span>Cam kết minh bạch từ Ban Quản Lý Cẩm Cù House</span>

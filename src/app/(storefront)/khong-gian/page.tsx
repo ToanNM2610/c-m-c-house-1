@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -11,13 +11,9 @@ import {
   UtensilsCrossed,
   BookOpen,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { SpatialPlate } from '@/types';
 import FooterSection from '@/components/home/FooterSection';
-import { SPRING_PILL_TRANSITION, EDITORIAL_EASE } from '@/components/motion/EditorialMotion';
-import { ScrollLayoutCard3D, VelocityScrollGrid, CurtainPhotoReveal } from '@/components/motion/ScrollMotion120';
-import { InteractiveTiltCard, MagneticButton } from '@/components/motion/VividMotion';
 
 function PlateCard({
   plate,
@@ -28,8 +24,28 @@ function PlateCard({
   onOpen: () => void;
   isEn: boolean;
 }) {
-  const [imgError, setImgError] = useState(false);
-  const showImage = Boolean(plate.imageUrl && plate.imageUrl.trim() !== '' && !imgError);
+  const [imgSrc, setImgSrc] = useState(plate.imageUrl);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(plate.imageUrl);
+    setImgFailed(false);
+  }, [plate.imageUrl]);
+
+  const handleImageError = () => {
+    const figNum = plate.id.replace(/[^0-9]/g, '');
+    const fallbackPath = figNum
+      ? `/uploads/gallery/fig-${figNum.padStart(2, '0')}.jpg`
+      : '/uploads/gallery/fig-01.jpg';
+
+    if (imgSrc !== fallbackPath) {
+      setImgSrc(fallbackPath);
+    } else if (imgSrc !== '/uploads/gallery/fig-01.jpg') {
+      setImgSrc('/uploads/gallery/fig-01.jpg');
+    } else {
+      setImgFailed(true);
+    }
+  };
 
   const title = isEn && plate.titleEn ? plate.titleEn : plate.titleVi;
   const chapter = isEn && plate.chapterTitleEn ? plate.chapterTitleEn : plate.chapterTitleVi;
@@ -37,55 +53,57 @@ function PlateCard({
   const description = isEn && plate.descriptionEn ? plate.descriptionEn : plate.descriptionVi;
 
   return (
-    <InteractiveTiltCard maxTilt={3.5} spotlight={true} className="h-full">
-      <ScrollLayoutCard3D
-        onClick={onOpen}
-        className="group relative bg-white dark:bg-forest-900/60 rounded-2xl border border-forest-200/90 dark:border-forest-700/60 overflow-hidden shadow-subtle hover:shadow-elevated transition-all duration-300 cursor-pointer flex flex-col justify-between h-full"
-      >
-        {/* Visual Card Canvas */}
-        <div className="h-56 sm:h-64 bg-gradient-to-br from-[#2E5A3C]/15 to-[#8C5A3C]/15 dark:from-[#2E5A3C]/30 dark:to-[#1A241E]/50 relative overflow-hidden flex flex-col items-center justify-center border-b border-forest-100 dark:border-forest-800">
-          {showImage ? (
-            <CurtainPhotoReveal className="w-full h-full">
-              <img
-                src={plate.imageUrl}
-                alt={title}
-                onError={() => setImgError(true)}
-                className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-600 ease-out"
-              />
-            </CurtainPhotoReveal>
-          ) : (
-            <div className="p-6 text-center space-y-2 max-w-xs transform group-hover:scale-[1.03] transition-transform duration-600 ease-out">
-              <span className="font-mono text-3xl font-light text-forest-300 dark:text-forest-600 block">
-                {plate.id}
-              </span>
-              <h4 className="font-serif text-lg sm:text-xl font-bold text-ink-primary line-clamp-2 leading-snug">
-                {title}
-              </h4>
-            </div>
-          )}
+    <div
+      onClick={onOpen}
+      className="group relative bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 overflow-hidden shadow-subtle hover:shadow-elevated transition-shadow duration-200 cursor-pointer flex flex-col justify-between h-full"
+    >
+      {/* 16:10 Solid Image Container - Direct always-visible rendering with zero clip-path */}
+      <div className="relative w-full aspect-[16/10] overflow-hidden bg-forest-100 dark:bg-forest-800 border-b border-forest-200 dark:border-forest-700">
+        {!imgFailed ? (
+          <img
+            src={imgSrc}
+            alt={title}
+            loading="lazy"
+            decoding="async"
+            onError={handleImageError}
+            className="w-full h-full object-cover block opacity-100 group-hover:scale-105 transition-transform duration-300 ease-out"
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center space-y-2 bg-forest-100 dark:bg-forest-800">
+            <span className="font-mono text-3xl font-bold text-accent-botanical block">
+              {plate.id}
+            </span>
+            <h4 className="font-serif text-base font-bold text-ink-primary line-clamp-2 leading-snug">
+              {title}
+            </h4>
+          </div>
+        )}
 
-        {/* Figure Tag */}
-        <div className="absolute top-3 left-3 bg-white/95 dark:bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-accent-botanical border border-forest-200 dark:border-forest-700 shadow-sm z-10">
+        {/* Figure Tag - Solid Opaque */}
+        <div className="absolute top-3 left-3 bg-white dark:bg-forest-900 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-accent-botanical border border-forest-200 dark:border-forest-700 shadow-sm z-10">
           {plate.id}
         </div>
 
-        {/* Expand Icon */}
-        <div className="absolute top-3 right-3 p-1.5 bg-white/90 dark:bg-black/60 rounded-full text-ink-muted opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10">
+        {/* Expand Icon - Solid Opaque */}
+        <div className="absolute top-3 right-3 p-1.5 bg-white dark:bg-forest-900 rounded-full text-ink-muted opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10">
           <Maximize2 className="w-4 h-4 text-accent-botanical" />
         </div>
 
-        {/* Location badge */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-1.5 text-[11px] font-mono text-ink-muted bg-white/85 dark:bg-black/70 backdrop-blur-sm py-1.5 rounded-lg shadow-sm z-10">
+        {/* Location badge - Solid Opaque */}
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-1.5 text-[11px] font-mono text-ink-primary bg-white dark:bg-forest-900 py-1.5 px-2.5 rounded-lg border border-forest-200 dark:border-forest-700 shadow-sm z-10">
           <MapPin className="w-3.5 h-3.5 text-accent-botanical flex-shrink-0" />
           <span className="truncate">{location}</span>
         </div>
       </div>
 
-      {/* Editorial Card Body */}
-      <div className="p-5 space-y-2">
+      {/* Editorial Card Body - Solid Opaque */}
+      <div className="p-5 space-y-2 bg-white dark:bg-forest-900">
         <div className="text-[10px] font-mono uppercase tracking-wider text-accent-botanical font-semibold">
           {chapter}
         </div>
+        <h3 className="font-serif text-base font-bold text-ink-primary line-clamp-1">
+          {title}
+        </h3>
         <p className="text-xs text-ink-muted leading-relaxed line-clamp-3">
           {description}
         </p>
@@ -93,8 +111,7 @@ function PlateCard({
           {isEn ? 'Enlarge Plate →' : 'Phóng to chi tiết →'}
         </span>
       </div>
-    </ScrollLayoutCard3D>
-  </InteractiveTiltCard>
+    </div>
   );
 }
 
@@ -169,8 +186,8 @@ export default function KhongGianPage() {
 
   return (
     <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
-      {/* Editorial Magazine Hero */}
-      <section className="relative overflow-hidden py-14 sm:py-20 border-b border-forest-200/60 dark:border-forest-700/50">
+      {/* Editorial Magazine Hero - Solid Opaque */}
+      <section className="relative overflow-hidden py-14 sm:py-20 border-b border-forest-200 dark:border-forest-700 bg-paper">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           <div className="max-w-3xl space-y-4">
             <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
@@ -222,24 +239,17 @@ export default function KhongGianPage() {
               </h2>
             </div>
 
-            {/* Interactive Chapter Filter Tabs with Gliding Pill */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-white dark:bg-forest-900/60 p-1.5 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle">
+            {/* Solid Chapter Filter Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-white dark:bg-forest-900 p-1.5 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle">
               <button
                 onClick={() => setSelectedChapter('all')}
-                className={`relative px-3.5 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
                   selectedChapter === 'all'
-                    ? 'text-white font-semibold'
+                    ? 'bg-accent-botanical text-white font-semibold'
                     : 'text-ink-muted hover:text-ink-primary'
                 }`}
               >
-                {selectedChapter === 'all' && (
-                  <motion.span
-                    layoutId="khong-gian-chapter-pill"
-                    className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
-                    transition={SPRING_PILL_TRANSITION}
-                  />
-                )}
-                <span className="relative z-10">{isEn ? `All (${totalCount} Plates)` : `Tất cả (${totalCount} Plates)`}</span>
+                {isEn ? `All (${totalCount} Plates)` : `Tất cả (${totalCount} Plates)`}
               </button>
               {chapters.map((ch) => {
                 const isChActive = selectedChapter === ch.id;
@@ -247,31 +257,22 @@ export default function KhongGianPage() {
                   <button
                     key={ch.id}
                     onClick={() => setSelectedChapter(ch.id)}
-                    className={`relative px-3 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
+                    className={`px-3 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
                       isChActive
-                        ? 'text-white font-semibold'
+                        ? 'bg-accent-botanical text-white font-semibold'
                         : 'text-ink-muted hover:text-ink-primary'
                     }`}
                   >
-                    {isChActive && (
-                      <motion.span
-                        layoutId="khong-gian-chapter-pill"
-                        className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
-                        transition={SPRING_PILL_TRANSITION}
-                      />
-                    )}
-                    <span className="relative z-10">
-                      {isEn ? `Chapter ${ch.id}` : `Chương ${ch.id}`} ({ch.range})
-                    </span>
+                    {isEn ? `Chapter ${ch.id}` : `Chương ${ch.id}`} ({ch.range})
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Active Chapter Overview Banner */}
+          {/* Active Chapter Overview Banner - Solid Opaque */}
           {selectedChapter !== 'all' && (
-            <div className="p-4 sm:p-5 bg-forest-50/80 dark:bg-forest-950/40 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs text-ink-muted flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
+            <div className="p-4 sm:p-5 bg-forest-50 dark:bg-forest-950 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs text-ink-muted flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <span className="font-mono font-bold text-accent-botanical uppercase">
                   {chapters.find((c) => c.id === selectedChapter)?.title}
@@ -287,49 +288,41 @@ export default function KhongGianPage() {
           )}
         </div>
 
-        {/* Clean Responsive Grid with layout reflow and 120fps velocity skew */}
-        <VelocityScrollGrid>
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            <AnimatePresence mode="popLayout">
-              {filteredPlates.map((plate) => (
-                <motion.div
-                  layout
-                  key={plate.id}
-                  initial={{ opacity: 0, scale: 0.97 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.97 }}
-                  transition={{ duration: 0.32, ease: EDITORIAL_EASE }}
-                >
-                  <PlateCard
-                    plate={plate}
-                    onOpen={() => openLightbox(plate)}
-                    isEn={isEn}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </VelocityScrollGrid>
+        {/* Clean Responsive Solid Grid - Direct rendering, no scroll velocity hooks or delays */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filteredPlates.map((plate) => (
+            <PlateCard
+              key={plate.id}
+              plate={plate}
+              onOpen={() => openLightbox(plate)}
+              isEn={isEn}
+            />
+          ))}
+        </div>
 
-        {/* Bottom CTAs */}
+        {/* Bottom CTAs - Solid Opaque */}
         <div className="mt-16 text-center flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/gioi-thieu"
-            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
+            prefetch={true}
+            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 dark:hover:bg-forest-800 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
           >
             <BookOpen className="w-4 h-4 text-accent-botanical" />
             <span>{isEn ? 'Read Sanctuary Story & Origins' : 'Tìm hiểu Câu chuyện Cội Nguồn'}</span>
           </Link>
-          <Link href="/thuc-don">
-            <MagneticButton className="px-6 py-3.5 bg-accent-botanical text-white rounded-xl text-xs font-mono font-bold hover:bg-forest-800 transition-colors shadow-subtle flex items-center gap-2">
-              <UtensilsCrossed className="w-4 h-4" />
-              <span>{isEn ? 'Explore Botanical Menu (~67 Items)' : 'Khám phá Thực đơn (~67 món)'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </MagneticButton>
+          <Link
+            href="/thuc-don"
+            prefetch={true}
+            className="px-6 py-3.5 bg-accent-botanical text-white rounded-xl text-xs font-mono font-bold hover:bg-forest-800 transition-colors shadow-subtle flex items-center gap-2"
+          >
+            <UtensilsCrossed className="w-4 h-4" />
+            <span>{isEn ? 'Explore Botanical Menu (~67 Items)' : 'Khám phá Thực đơn (~67 món)'}</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             href="/lien-he"
-            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
+            prefetch={true}
+            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 dark:hover:bg-forest-800 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
           >
             <Compass className="w-4 h-4 text-accent-botanical" />
             <span>{isEn ? 'Get Directions on Google Maps' : 'Chỉ đường Google Maps đến quán'}</span>

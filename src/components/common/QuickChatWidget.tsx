@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { MessageCircle, Phone, X, ExternalLink, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,9 +13,24 @@ export default function QuickChatWidget() {
   const isEn = language === 'en';
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdminHost, setIsAdminHost] = useState(false);
 
-  // Hidden on admin console or if disabled in CMS
-  if (pathname?.startsWith('/admin') || s.enableQuickChat === false) {
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) {
+      setIsAdminHost(true);
+    }
+  }, []);
+
+  // Strictly enforce BOTH checks:
+  // 1. pathname?.startsWith('/admin')
+  // 2. window.location.hostname.startsWith('admin.')
+  // 3. Or CMS disabled
+  if (
+    pathname?.startsWith('/admin') ||
+    isAdminHost ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) ||
+    s.enableQuickChat === false
+  ) {
     return null;
   }
 
@@ -25,7 +40,7 @@ export default function QuickChatWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
-      {/* Expanded Quick Contact Menu */}
+      {/* Expanded Quick Contact Menu - 100% Solid Non-Transparent Surface */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -60,7 +75,7 @@ export default function QuickChatWidget() {
                 href={zalo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900/50"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900"
               >
                 <span className="font-bold">Zalo Chat ({phone})</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -71,7 +86,7 @@ export default function QuickChatWidget() {
                 href={messenger}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900/50"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900"
               >
                 <span className="font-bold">Messenger (Facebook)</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -109,4 +124,3 @@ export default function QuickChatWidget() {
     </div>
   );
 }
-

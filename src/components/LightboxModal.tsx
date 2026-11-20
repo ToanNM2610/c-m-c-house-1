@@ -138,7 +138,7 @@ export default function LightboxModal({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
         onClick={onClose}
-        className="fixed inset-0 z-[100] flex flex-col items-center justify-between bg-[#0B0F0D]/92 backdrop-blur-xl p-3 sm:p-6 select-none"
+        className="fixed inset-0 z-[100] flex flex-col items-center justify-between bg-[#0B0F0D] p-3 sm:p-6 select-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -225,7 +225,7 @@ export default function LightboxModal({
         {/* Chú thích chữ kem 16px+ trên gradient đen (Mục B6) */}
         <div
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-3xl rounded-[20px] p-5 sm:p-6 text-center text-[#F4EEE2] shadow-2xl z-10 mb-2 border border-[#F4EEE2]/15 bg-gradient-to-t from-black/95 via-black/85 to-black/60 backdrop-blur-md"
+          className="w-full max-w-3xl rounded-[20px] p-5 sm:p-6 text-center text-[#F4EEE2] shadow-2xl z-10 mb-2 border border-[#F4EEE2]/15 bg-black/95"
         >
           <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
             {currentPhoto.subtitle && (

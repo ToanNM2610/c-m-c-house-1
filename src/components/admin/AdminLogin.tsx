@@ -61,7 +61,7 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-800">
         {/* Header Banner */}
         <div className="p-8 bg-gradient-to-br from-emerald-800 to-slate-900 text-white text-center space-y-2">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-white/20 flex items-center justify-center border border-white/20">
             <ShieldCheck className="w-8 h-8 text-emerald-400" />
           </div>
           <h2 className="font-serif text-2xl font-bold tracking-tight">

@@ -53,7 +53,7 @@ export function MorningHeader() {
       }`}
     >
       {/* 1. Thanh trên cùng 13px - Nơi duy nhất hiển thị trạng thái (Mục A7.1) */}
-      <div className="border-b border-[var(--line)] bg-[var(--mist)]/95 text-[13px] font-medium text-[var(--forest)] backdrop-blur-md [data-theme='dark']_&:text-[var(--ink)]">
+      <div className="border-b border-[var(--line)] bg-[var(--mist)] text-[13px] font-medium text-[var(--forest)] [data-theme='dark']_&:text-[var(--ink)]">
         <div className="mx-auto flex max-w-[1240px] items-center justify-between px-5 py-2 lg:px-12">
           <p className="flex items-center gap-2">
             <span
@@ -77,7 +77,7 @@ export function MorningHeader() {
       <div
         className={`transition-all duration-500 ${
           scrolled
-            ? "border-b border-[var(--line)] bg-[var(--cream)]/90 text-[var(--ink)] shadow-sm backdrop-blur-xl"
+            ? "border-b border-[var(--line)] bg-[var(--cream)] text-[var(--ink)] shadow-sm"
             : "bg-transparent text-[#FAF6EE]"
         }`}
       >

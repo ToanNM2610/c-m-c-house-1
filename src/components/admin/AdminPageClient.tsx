@@ -349,7 +349,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
 
         {/* Mobile Navigation Drawer */}
         {mobileDrawerOpen && (
-          <div className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex">
+          <div className="md:hidden fixed inset-0 z-50 bg-black/80 flex">
             <div className="w-72 bg-slate-900 text-slate-300 p-6 flex flex-col justify-between h-full overflow-y-auto">
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">

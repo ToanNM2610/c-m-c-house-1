@@ -48,7 +48,7 @@ export default function CookieConsent() {
     <div
       role="region"
       aria-label="Thông báo sự chấp thuận cookie"
-      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[9999] p-4 sm:p-5 rounded-2xl bg-[#0F1713]/95 border border-[#FAF6EE]/15 text-[#F4EEE2] shadow-2xl backdrop-blur-xl flex flex-col gap-3.5 animate-fadeIn"
+      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[9999] p-4 sm:p-5 rounded-2xl bg-[#0F1713] border border-[#FAF6EE]/20 text-[#F4EEE2] shadow-2xl flex flex-col gap-3.5 animate-fadeIn"
     >
       <div className="flex items-start gap-3">
         <div className="w-8 h-8 rounded-full bg-[#1F3A2A] border border-[#9DC183]/30 text-[#9DC183] flex items-center justify-center shrink-0 mt-0.5">

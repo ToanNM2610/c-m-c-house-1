@@ -53,8 +53,12 @@ export default function CinematicIntro8K() {
 
   // Check eligibility on client mount
   useEffect(() => {
-    // 1. Never run on admin or api routes
-    if (pathname?.startsWith('/admin') || pathname?.startsWith('/api')) {
+    // 1. Never run on admin, admin subdomain or api routes
+    if (
+      pathname?.startsWith('/admin') ||
+      pathname?.startsWith('/api') ||
+      (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
+    ) {
       setIsEligible(false);
       return;
     }
@@ -282,8 +286,14 @@ export default function CinematicIntro8K() {
     };
   }, [isEligible, isUnmounted, isDark, triggerExit]);
 
-  // If on admin/api, not eligible, or unmounted after exit animation, return null
-  if (pathname?.startsWith('/admin') || pathname?.startsWith('/api') || !isEligible || isUnmounted) {
+  // If on admin/api/admin-subdomain, not eligible, or unmounted after exit animation, return null
+  if (
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/api') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) ||
+    !isEligible ||
+    isUnmounted
+  ) {
     return null;
   }
 
@@ -589,7 +599,7 @@ export default function CinematicIntro8K() {
           borderColor: hairlineStroke,
           backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
         }}
-        className="absolute bottom-6 right-6 z-20 px-3.5 py-1.5 rounded-full border text-[11px] font-mono tracking-wider hover:opacity-80 active:scale-95 transition-all flex items-center gap-1.5 backdrop-blur-sm cursor-pointer shadow-xs"
+        className="absolute bottom-6 right-6 z-20 px-3.5 py-1.5 rounded-full border text-[11px] font-mono tracking-wider hover:opacity-80 active:scale-95 transition-all flex items-center gap-1.5 bg-paper cursor-pointer shadow-xs"
       >
         <span>{isEn ? 'Skip' : 'Bỏ qua'}</span>
         <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 font-mono">

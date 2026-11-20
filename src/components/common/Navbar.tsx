@@ -24,8 +24,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Do not render customer navbar inside admin console
-  if (pathname?.startsWith('/admin')) {
+  // Do not render customer navbar inside admin console or on admin subdomain
+  if (
+    pathname?.startsWith('/admin') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
+  ) {
     return null;
   }
 
@@ -55,11 +58,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 h-[72px] flex items-center ${
-          scrolled || pathname !== '/'
-            ? 'bg-paper/95 backdrop-blur-md shadow-subtle border-b border-forest-200/70 dark:border-forest-700/50'
-            : 'bg-paper/85 backdrop-blur-sm border-b border-forest-200/40 dark:border-forest-700/30'
-        }`}
+        className="fixed top-0 left-0 right-0 z-40 transition-colors duration-200 h-[72px] flex items-center bg-paper border-b border-forest-200 dark:border-forest-700 shadow-subtle"
       >
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-6">
           {/* Zone 1: Brand Logo (Left, shrink-0 whitespace-nowrap) */}
@@ -102,7 +101,7 @@ export default function Navbar() {
             {/* Compact Global Search Button (Hidden on tiny mobile, visible sm+) */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="hidden sm:flex h-9 px-3 rounded-full bg-forest-100/90 dark:bg-forest-900/60 border border-forest-200/70 dark:border-forest-700/60 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs font-mono items-center gap-1.5 shrink-0 whitespace-nowrap"
+              className="hidden sm:flex h-9 px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs font-mono items-center gap-1.5 shrink-0 whitespace-nowrap"
               title="Tìm kiếm (Ctrl + K)"
               aria-label="Search"
             >
@@ -111,7 +110,7 @@ export default function Navbar() {
             </button>
 
             {/* Bilingual Switcher Pill (VI / EN) (Hidden on tiny mobile, visible sm+) */}
-            <div className="relative hidden sm:flex h-9 items-center rounded-full bg-forest-100/90 dark:bg-forest-900/60 p-0.5 border border-forest-200/70 dark:border-forest-700/60 text-[11px] font-mono shadow-xs shrink-0 whitespace-nowrap">
+            <div className="relative hidden sm:flex h-9 items-center rounded-full bg-forest-100 dark:bg-forest-900 p-0.5 border border-forest-200 dark:border-forest-700 text-[11px] font-mono shadow-xs shrink-0 whitespace-nowrap">
               <button
                 onClick={() => setLanguage('vi')}
                 className={`relative z-10 px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
@@ -155,7 +154,7 @@ export default function Navbar() {
             {/* Theme Switcher Button (Daylight Sun / Evening Moon - Always visible) */}
             <button
               onClick={toggleTheme}
-              className="h-9 w-9 flex items-center justify-center rounded-full bg-forest-100/90 dark:bg-forest-900/60 border border-forest-200/70 dark:border-forest-700/60 text-ink-primary hover:text-accent-botanical transition-all shadow-xs relative shrink-0 whitespace-nowrap"
+              className="h-9 w-9 flex items-center justify-center rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs relative shrink-0 whitespace-nowrap"
               title={theme === 'dark' ? (language === 'en' ? 'Switch to Light Mode' : 'Chuyển sang chế độ Sáng') : (language === 'en' ? 'Switch to Dark Mode' : 'Chuyển sang chế độ Tối')}
               aria-label="Toggle Theme"
             >
@@ -176,7 +175,7 @@ export default function Navbar() {
             {/* Compact Direct Hotline Button (Visible md+) */}
             <a
               href="tel:0382851688"
-              className="hidden md:flex h-9 w-9 2xl:w-auto 2xl:px-3 items-center justify-center gap-1.5 rounded-full bg-forest-100/90 dark:bg-forest-900/70 border border-forest-200/70 dark:border-forest-700/60 text-accent-botanical hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors shrink-0 whitespace-nowrap text-xs font-mono font-medium shadow-xs"
+              className="hidden md:flex h-9 w-9 2xl:w-auto 2xl:px-3 items-center justify-center gap-1.5 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-accent-botanical hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors shrink-0 whitespace-nowrap text-xs font-mono font-medium shadow-xs"
               title="Hotline: 0382 851 688"
               aria-label="Hotline: 0382 851 688"
             >
@@ -187,7 +186,7 @@ export default function Navbar() {
             {/* Mobile Hamburger Drawer Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="h-9 w-9 flex items-center justify-center rounded-xl border border-forest-200 dark:border-forest-700/60 xl:hidden text-ink-primary bg-paper shadow-xs shrink-0 whitespace-nowrap"
+              className="h-9 w-9 flex items-center justify-center rounded-xl border border-forest-200 dark:border-forest-700 xl:hidden text-ink-primary bg-paper shadow-xs shrink-0 whitespace-nowrap"
               aria-label="Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -195,9 +194,9 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Drawer (Below xl breakpoint) */}
+        {/* Mobile Drawer (Below xl breakpoint) - 100% Solid Opaque */}
         {mobileMenuOpen && (
-          <div className="xl:hidden fixed top-[72px] left-0 right-0 bg-paper/98 backdrop-blur-md border-b border-forest-200 dark:border-forest-700 px-6 py-6 space-y-4 shadow-elevated z-50 animate-fadeIn">
+          <div className="xl:hidden fixed top-[72px] left-0 right-0 bg-paper border-b border-forest-200 dark:border-forest-700 px-6 py-6 space-y-4 shadow-elevated z-50 animate-fadeIn">
             {/* Mobile Quick Controls Bar: Search & Language */}
             <div className="flex items-center justify-between gap-3 pb-3 border-b border-forest-100 dark:border-forest-800">
               <button
@@ -205,13 +204,13 @@ export default function Navbar() {
                   setMobileMenuOpen(false);
                   setSearchOpen(true);
                 }}
-                className="flex-1 h-9 px-3.5 rounded-xl bg-forest-100/80 dark:bg-forest-900/60 border border-forest-200/70 dark:border-forest-700/60 text-ink-muted text-xs font-mono flex items-center gap-2"
+                className="flex-1 h-9 px-3.5 rounded-xl bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-muted text-xs font-mono flex items-center gap-2"
               >
                 <Search className="w-3.5 h-3.5 text-accent-botanical" />
                 <span>{language === 'en' ? 'Search menu, events...' : 'Tìm kiếm món, tin tức...'}</span>
               </button>
 
-              <div className="flex items-center rounded-xl bg-forest-100/80 dark:bg-forest-900/60 p-0.5 border border-forest-200/70 dark:border-forest-700/60 text-xs font-mono">
+              <div className="flex items-center rounded-xl bg-forest-100 dark:bg-forest-900 p-0.5 border border-forest-200 dark:border-forest-700 text-xs font-mono">
                 <button
                   onClick={() => setLanguage('vi')}
                   className={`px-3 py-1 rounded-lg transition-colors font-bold ${

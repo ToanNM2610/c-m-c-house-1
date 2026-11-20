@@ -50,8 +50,11 @@ export default function GalleryLightboxModal() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Strictly skip render on admin console
-  if (pathname?.startsWith('/admin')) {
+  // Strictly skip render on admin console or admin subdomain
+  if (
+    pathname?.startsWith('/admin') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
+  ) {
     return null;
   }
 
@@ -75,7 +78,7 @@ export default function GalleryLightboxModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35, ease: EDITORIAL_EASE }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink-primary/95 backdrop-blur-md p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
         >
           {/* Top Bar */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between text-white z-20">

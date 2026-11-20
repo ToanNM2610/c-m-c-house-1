@@ -199,7 +199,7 @@ export default function StreamSanctuaryPage() {
                           className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                         />
                         {/* Nút Maximize góc trên */}
-                        <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/85 border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <Maximize2 className="w-3.5 h-3.5 text-white" />
                         </div>
                       </div>

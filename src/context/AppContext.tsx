@@ -143,7 +143,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Real-time zero-delay BroadcastChannel sync + background polling fallback
+  // Real-time zero-delay BroadcastChannel sync + single initial fetch on mount
   useEffect(() => {
     fetchData();
 
@@ -152,7 +152,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       try {
         channel = new BroadcastChannel('camcu_cms_sync');
         channel.onmessage = (event) => {
-          if (event.data?.type === 'CMS_UPDATED' || event.data === 'sync') {
+          if (event.data?.type === 'CMS_UPDATED' || event.data === 'sync' || event.data?.action) {
             fetchData();
           }
         };
@@ -161,15 +161,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    const interval = setInterval(() => {
-      fetchData();
-    }, 5000);
-
     return () => {
       if (channel) {
         channel.close();
       }
-      clearInterval(interval);
     };
   }, [fetchData]);
 

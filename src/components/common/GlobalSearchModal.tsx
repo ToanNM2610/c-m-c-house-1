@@ -128,7 +128,7 @@ export default function GlobalSearchModal({
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/80">
           {/* Overlay dismissal */}
           <div className="fixed inset-0" onClick={onClose} />
 
@@ -141,7 +141,7 @@ export default function GlobalSearchModal({
             className="relative w-full max-w-2xl bg-paper dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-2xl overflow-hidden flex flex-col max-h-[82vh] z-10"
           >
             {/* Header Search Input */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-forest-200/80 dark:border-forest-700/80 bg-white/70 dark:bg-forest-950/50">
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-forest-200 dark:border-forest-700 bg-white dark:bg-forest-950">
               <Search className="w-5 h-5 text-accent-botanical flex-shrink-0" />
               <input
                 ref={inputRef}

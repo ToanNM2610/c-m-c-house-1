@@ -512,7 +512,7 @@ export default function IntegrationsTab({ onShowToast }: Props) {
 
       {/* Confirmation & Auth Re-verification Modal */}
       {authModalOpen && pendingAction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in">
           <div className="w-full max-w-md bg-white dark:bg-[#1E2B22] border border-stone-200 dark:border-stone-700 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5">
             <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-3">
               <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100 font-bold text-base">

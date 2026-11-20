@@ -1416,7 +1416,7 @@ export default function AdminInteractionsManager() {
 
       {/* Recipient Add/Edit Modal */}
       {recipientModalOpen && editingRecipient && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <form
             onSubmit={handleSaveRecipient}
             className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 text-xs font-mono"
@@ -1514,7 +1514,7 @@ export default function AdminInteractionsManager() {
 
       {/* Customer Reply Modal */}
       {replyingContact && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <form
             onSubmit={handleSendReply}
             className="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden border border-slate-200 text-xs font-mono"
@@ -1594,7 +1594,7 @@ export default function AdminInteractionsManager() {
 
       {/* Contact Details Modal */}
       {selectedContact && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200">
             <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
               <h3 className="font-serif font-bold text-lg">Chi Tiết Thư Liên Hệ</h3>

@@ -407,7 +407,7 @@ export default function AdminPagesFaqManager() {
 
       {/* Page Modal */}
       {isPageModalOpen && editingPage && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
             <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
               <h3 className="font-serif font-bold text-lg">
@@ -514,7 +514,7 @@ export default function AdminPagesFaqManager() {
 
       {/* FAQ Modal */}
       {isFaqModalOpen && editingFaq && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
             <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
               <h3 className="font-serif font-bold text-lg">

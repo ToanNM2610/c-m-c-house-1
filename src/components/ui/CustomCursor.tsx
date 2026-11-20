@@ -133,7 +133,7 @@ export default function CustomCursor() {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.5, opacity: 0 }}
           transition={{ duration: 0.15, ease: "easeOut" }}
-          className="fixed top-0 left-0 pointer-events-none z-[99999] flex items-center justify-center font-mono select-none w-16 h-16 rounded-full bg-[#121A15]/85 border border-[#FAF6EE]/40 text-[#FAF6EE] backdrop-blur-md shadow-xl"
+          className="fixed top-0 left-0 pointer-events-none z-[99999] flex items-center justify-center font-mono select-none w-16 h-16 rounded-full bg-[#121A15] border border-[#FAF6EE]/40 text-[#FAF6EE] shadow-xl"
           style={{
             x: ringX,
             y: ringY,

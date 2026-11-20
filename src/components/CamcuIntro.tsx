@@ -208,7 +208,7 @@ export default function CamcuIntro() {
       <button
         id="skip-btn"
         type="button"
-        className="absolute top-6 right-6 z-40 px-4 py-2 border border-[rgba(242,237,228,0.2)] bg-[#101714]/80 hover:bg-[var(--ember)] hover:text-[#0A0E0C] text-[12px] font-mono tracking-wider text-[#F2EDE4] transition-all cursor-pointer backdrop-blur-md clip-chamfer-14"
+        className="absolute top-6 right-6 z-40 px-4 py-2 border border-[rgba(242,237,228,0.2)] bg-[#101714] hover:bg-[var(--ember)] hover:text-[#0A0E0C] text-[12px] font-mono tracking-wider text-[#F2EDE4] transition-colors cursor-pointer clip-chamfer-14"
         aria-label="Bỏ qua phần giới thiệu"
       >
         [BỎ QUA · ESC]

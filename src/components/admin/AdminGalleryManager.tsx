@@ -603,7 +603,7 @@ export default function AdminGalleryManager() {
 
                   {/* Loading Spinner Overlay if uploading this card */}
                   {isUploading && (
-                    <div className="absolute inset-0 bg-black/75 backdrop-blur-xs flex flex-col items-center justify-center text-white z-10">
+                    <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center text-white z-10">
                       <RefreshCw className="w-6 h-6 animate-spin text-emerald-400 mb-1.5" />
                       <span className="text-xs font-mono font-medium">Đang lưu ảnh...</span>
                     </div>

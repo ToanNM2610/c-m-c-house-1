@@ -314,7 +314,7 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
       {config.emergencyLockdown && (
         <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-red-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-pulse">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
+            <div className="p-2.5 bg-white/20 rounded-xl">
               <ShieldAlert className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -858,7 +858,7 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
 
       {/* MODAL: MANUAL IP BLOCK FORM */}
       {showManualBlockModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
           <form
             onSubmit={handleManualBlock}
             className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 text-xs font-mono"

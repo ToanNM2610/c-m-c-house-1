@@ -63,7 +63,7 @@ export default function PageDarkHero({
           {badges.map((badge) => (
             <span
               key={badge}
-              className="text-mono-label chamfer-14 border border-[var(--line-on-dark)] bg-[#0A0E0C]/65 px-3.5 py-1.5 text-[var(--ink-on-dark)] backdrop-blur-md"
+              className="text-mono-label chamfer-14 border border-[var(--line-on-dark)] bg-[#0A0E0C] px-3.5 py-1.5 text-[var(--ink-on-dark)]"
             >
               {badge}
             </span>

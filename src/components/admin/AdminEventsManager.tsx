@@ -474,7 +474,7 @@ export default function AdminEventsManager() {
                   alt={ev.title}
                   className="w-full h-full object-cover"
                 />
-                <span className="absolute top-2.5 right-2.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-mono px-2 py-0.5 rounded">
+                <span className="absolute top-2.5 right-2.5 bg-black/85 text-white text-[10px] font-mono px-2 py-0.5 rounded">
                   {ev.badge}
                 </span>
               </div>

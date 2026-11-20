@@ -257,7 +257,7 @@ export default function KhachHangPage() {
           </p>
 
           {/* Trust Banner Badge */}
-          <div className="pt-2 inline-flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-forest-900/60 border border-forest-200 dark:border-forest-700 shadow-subtle">
+          <div className="pt-2 inline-flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle">
             <div className="flex items-center text-amber-500">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
@@ -305,7 +305,7 @@ export default function KhachHangPage() {
               return (
                 <ScrollLayoutCard3D key={story.id} delay={idx * 0.08} className="h-full">
                   <InteractiveTiltCard maxTilt={3.0} spotlight={true} className="h-full">
-                    <div className="h-full bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle hover:shadow-elevated transition-all flex flex-col justify-between overflow-hidden">
+                    <div className="h-full bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated transition-shadow duration-200 flex flex-col justify-between overflow-hidden">
                       <div className="p-7 space-y-4">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-botanical bg-forest-100 dark:bg-forest-800 px-3 py-1 rounded-full">
@@ -330,7 +330,7 @@ export default function KhachHangPage() {
                         </p>
                       </div>
 
-                      <div className="px-7 py-4 bg-forest-50/70 dark:bg-forest-950/40 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between text-xs font-mono text-accent-botanical">
+                      <div className="px-7 py-4 bg-forest-50 dark:bg-forest-950 border-t border-forest-200 dark:border-forest-800 flex items-center justify-between text-xs font-mono text-accent-botanical">
                         <span>Cẩm Cù House Streamside</span>
                         <span className="font-bold"># {category}</span>
                       </div>
@@ -371,7 +371,7 @@ export default function KhachHangPage() {
 
       {/* SECTION 3: FORM GỬI CẢM NHẬN (REVIEW SUBMISSION FORM) */}
       <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-4xl mx-auto">
-        <div className="p-8 sm:p-12 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-elevated space-y-6">
+        <div className="p-8 sm:p-12 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-elevated space-y-6">
           <div className="text-center space-y-2 max-w-md mx-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-accent-botanical text-xs font-mono font-bold">
               <MessageSquarePlus className="w-3.5 h-3.5" />
@@ -444,7 +444,7 @@ export default function KhachHangPage() {
                     value={authorName}
                     onChange={(e) => setAuthorName(e.target.value)}
                     placeholder={isEn ? 'e.g. John Doe' : 'Ví dụ: Nguyễn Văn An'}
-                    className="w-full px-4 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                    className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                   />
                 </div>
 
@@ -458,7 +458,7 @@ export default function KhachHangPage() {
                     value={visitDate}
                     onChange={(e) => setVisitDate(e.target.value)}
                     placeholder={isEn ? 'e.g. November 2026' : 'Ví dụ: Chiều Thứ Bảy vừa qua'}
-                    className="w-full px-4 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                    className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                   />
                 </div>
               </div>
@@ -518,7 +518,7 @@ export default function KhachHangPage() {
                       ? 'Share your thoughts about the natural stream, salted coffee, atmosphere, or staff...'
                       : 'Chia sẻ ấn tượng của bạn về con suối, tách cà phê muối, đĩa sinh tố bơ hay thái độ phục vụ...'
                   }
-                  className="w-full px-4 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                  className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                 />
               </div>
 

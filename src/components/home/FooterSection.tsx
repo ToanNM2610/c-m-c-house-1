@@ -10,7 +10,10 @@ export default function FooterSection() {
   const pathname = usePathname();
   const { data, language } = useApp();
 
-  if (pathname?.startsWith('/admin')) {
+  if (
+    pathname?.startsWith('/admin') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
+  ) {
     return null;
   }
   const s = data.settings;

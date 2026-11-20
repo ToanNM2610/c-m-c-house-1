@@ -76,7 +76,7 @@ export default function GioiThieuPage() {
                 className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
                   activeTab === 'all'
                     ? 'text-white font-semibold'
-                    : 'bg-white dark:bg-forest-900/60 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
+                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
                 }`}
               >
                 {activeTab === 'all' && (
@@ -94,7 +94,7 @@ export default function GioiThieuPage() {
                 className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
                   activeTab === 'story'
                     ? 'text-white font-semibold'
-                    : 'bg-white dark:bg-forest-900/60 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
+                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
                 }`}
               >
                 {activeTab === 'story' && (
@@ -112,7 +112,7 @@ export default function GioiThieuPage() {
                 className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
                   activeTab === 'team'
                     ? 'text-white font-semibold'
-                    : 'bg-white dark:bg-forest-900/60 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
+                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
                 }`}
               >
                 {activeTab === 'team' && (
@@ -144,7 +144,7 @@ export default function GioiThieuPage() {
               <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-line">
                 {brandStoryContent}
               </p>
-              <div className="p-5 bg-forest-100/70 dark:bg-forest-900/50 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs font-mono text-ink-muted leading-relaxed">
+              <div className="p-5 bg-forest-100 dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs font-mono text-ink-muted leading-relaxed">
                 <span className="font-bold text-ink-primary block mb-1">
                   {isEn ? 'Cẩm Cù Philosophy:' : 'Triết lý Cẩm Cù:'}
                 </span>
@@ -167,7 +167,7 @@ export default function GioiThieuPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {/* Pillar 1 */}
                 <ScrollLayoutCard3D delay={0.05} className="h-full">
-                  <div className="p-6 bg-white dark:bg-forest-900/70 rounded-2xl border border-forest-200/80 dark:border-forest-700/60 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
+                  <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
                     <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center">
                       <Droplet className="w-5 h-5" />
                     </div>
@@ -184,8 +184,8 @@ export default function GioiThieuPage() {
 
                 {/* Pillar 2 */}
                 <ScrollLayoutCard3D delay={0.1} className="h-full">
-                  <div className="p-6 bg-white dark:bg-forest-900/70 rounded-2xl border border-forest-200/80 dark:border-forest-700/60 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-accent-earth flex items-center justify-center">
+                  <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-accent-earth flex items-center justify-center">
                       <Sprout className="w-5 h-5" />
                     </div>
                     <h3 className="font-serif text-xl font-bold text-ink-primary">
@@ -201,7 +201,7 @@ export default function GioiThieuPage() {
 
                 {/* Pillar 3 */}
                 <ScrollLayoutCard3D delay={0.15} className="h-full">
-                  <div className="p-6 bg-white dark:bg-forest-900/70 rounded-2xl border border-forest-200/80 dark:border-forest-700/60 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
+                  <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
                     <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center">
                       <Heart className="w-5 h-5" />
                     </div>
@@ -258,7 +258,7 @@ export default function GioiThieuPage() {
 
               return (
                 <ScrollLayoutCard3D key={member.id} delay={idx * 0.08} className="h-full">
-                  <div className="h-full p-6 sm:p-7 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle hover:shadow-elevated transition-all flex flex-col justify-between space-y-4">
+                  <div className="h-full p-6 sm:p-7 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated transition-shadow duration-200 flex flex-col justify-between space-y-4">
                     <div className="space-y-4">
                       {/* Avatar */}
                       <div className="w-20 h-20 rounded-2xl bg-forest-100 dark:bg-forest-800 border border-forest-200 dark:border-forest-700 overflow-hidden flex items-center justify-center">

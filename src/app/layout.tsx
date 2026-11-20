@@ -1,53 +1,11 @@
 import type { Metadata } from 'next';
-import {
-  Be_Vietnam_Pro,
-  Plus_Jakarta_Sans,
-  Inter,
-  Cormorant_Garamond,
-  JetBrains_Mono,
-} from 'next/font/google';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { PreOrderProvider } from '@/context/PreOrderContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
-import StorefrontShell from '@/components/layout/StorefrontShell';
-
-const beVietnam = Be_Vietnam_Pro({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin', 'vietnamese'],
-  variable: '--font-be-vietnam',
-  display: 'swap',
-});
-
-const jakarta = Plus_Jakarta_Sans({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin', 'vietnamese'],
-  variable: '--font-jakarta',
-  display: 'swap',
-});
-
-const inter = Inter({
-  weight: ['400', '500', '600', '700'],
-  subsets: ['latin', 'vietnamese'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const cormorant = Cormorant_Garamond({
-  weight: ['400', '600', '700'],
-  subsets: ['latin', 'vietnamese'],
-  variable: '--font-cormorant',
-  display: 'swap',
-});
-
-const mono = JetBrains_Mono({
-  weight: ['400', '500'],
-  subsets: ['latin', 'vietnamese'],
-  variable: '--font-mono',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://camcuhouse.online'),
   title: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
   description: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Không gian suối mát rượi, 18 bàn view suối, cà phê muối Đăk Nông và thảo mộc xanh.',
   keywords: [
@@ -124,7 +82,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={`scroll-smooth ${beVietnam.variable} ${jakarta.variable} ${inter.variable} ${cormorant.variable} ${mono.variable}`}
+      className="scroll-smooth font-sans"
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -143,9 +101,7 @@ export default function RootLayout({
         <AppProvider>
           <PreOrderProvider>
             <NavigationDirectionProvider>
-              <StorefrontShell>
-                {children}
-              </StorefrontShell>
+              {children}
             </NavigationDirectionProvider>
           </PreOrderProvider>
         </AppProvider>

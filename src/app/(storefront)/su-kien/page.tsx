@@ -106,7 +106,7 @@ export default function SuKienPage() {
               </h2>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted bg-white dark:bg-forest-900/60 p-2 rounded-xl border border-forest-200 dark:border-forest-700 shadow-subtle">
+            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted bg-white dark:bg-forest-900 p-2 rounded-xl border border-forest-200 dark:border-forest-700 shadow-subtle">
               <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               <span>{isEn ? 'Real-time sync from CMS' : 'Đồng bộ thời gian thực từ CMS'}</span>
             </div>
@@ -114,7 +114,7 @@ export default function SuKienPage() {
         </div>
 
         {activeEvents.length === 0 ? (
-          <div className="p-12 text-center bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200 dark:border-forest-700 text-ink-muted space-y-3">
+          <div className="p-12 text-center bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 text-ink-muted space-y-3">
             <Calendar className="w-10 h-10 mx-auto text-forest-300 dark:text-forest-600" />
             <p className="font-serif text-lg font-bold text-ink-primary">
               {isEn ? 'No upcoming events at the moment' : 'Hiện chưa có sự kiện mới'}
@@ -137,7 +137,7 @@ export default function SuKienPage() {
               return (
                 <ScrollLayoutCard3D key={event.id} delay={0.06} className="h-full">
                   <InteractiveTiltCard maxTilt={3.5} spotlight={true} className="h-full">
-                    <article id={event.id} className="h-full bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/60 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+                    <article id={event.id} className="h-full bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/60 transition-all duration-300 flex flex-col justify-between overflow-hidden group">
                       <div>
                         {/* Event Cover Photo if Present */}
                         {event.imageUrl ? (
@@ -147,13 +147,13 @@ export default function SuKienPage() {
                               alt={title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
-                            <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-mono px-3 py-1 rounded-full border border-white/20">
+                            <span className="absolute top-3 right-3 bg-black/85 text-white text-[11px] font-mono px-3 py-1 rounded-full border border-white/20">
                               {badge}
                             </span>
                           </div>
                         ) : (
-                          <div className="h-32 bg-gradient-to-br from-forest-100/70 to-forest-50 dark:from-forest-900/60 dark:to-forest-950 p-6 flex items-center justify-between border-b border-forest-100 dark:border-forest-800">
-                            <span className="text-[11px] font-mono uppercase font-bold text-accent-botanical bg-white/90 dark:bg-black/60 px-3 py-1 rounded-full border border-forest-200 dark:border-forest-700 shadow-xs">
+                          <div className="h-32 bg-forest-100 dark:bg-forest-900 p-6 flex items-center justify-between border-b border-forest-200 dark:border-forest-800">
+                            <span className="text-[11px] font-mono uppercase font-bold text-accent-botanical bg-white dark:bg-forest-800 px-3 py-1 rounded-full border border-forest-200 dark:border-forest-700 shadow-xs">
                               {badge}
                             </span>
                             <Music className="w-6 h-6 text-accent-botanical/40" />
@@ -240,7 +240,7 @@ export default function SuKienPage() {
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-mono transition-colors ${
                   activeFaqCategory === cat.id
                     ? 'bg-accent-botanical text-white font-bold'
-                    : 'bg-white dark:bg-forest-900/60 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
+                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
                 }`}
               >
                 {cat.label}
@@ -259,7 +259,7 @@ export default function SuKienPage() {
             return (
               <div
                 key={faq.id}
-                className="bg-white dark:bg-forest-900/60 rounded-2xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle overflow-hidden transition-colors"
+                className="bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle overflow-hidden transition-colors"
               >
                 <button
                   onClick={() => toggleFaq(faq.id)}
@@ -296,7 +296,7 @@ export default function SuKienPage() {
 
       {/* Bottom Editorial Callout Section */}
       <section className="py-14 sm:py-18 px-4 sm:px-8 max-w-7xl mx-auto">
-        <div className="bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle p-8 sm:p-12 flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div className="bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle p-8 sm:p-12 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-3 max-w-xl">
             <span className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-bold flex items-center gap-2">
               <Sparkles className="w-4 h-4" />

@@ -1,20 +1,32 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Navbar from '@/components/common/Navbar';
 import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
 import GalleryLightboxModal from '@/components/modals/GalleryLightboxModal';
 import QuickChatWidget from '@/components/common/QuickChatWidget';
+import MobileBottomBar from '@/components/MobileBottomBar';
 
 /**
  * StorefrontShell
- * Strictly isolates storefront interactive elements from the /admin management console.
- * When on any /admin route, it renders ONLY children with zero storefront overhead.
+ * Strictly isolates storefront interactive elements from the /admin management console
+ * and admin.camcuhouse.online subdomain.
  */
 export default function StorefrontShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith('/admin');
+  const [isAdminSubdomain, setIsAdminSubdomain] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) {
+      setIsAdminSubdomain(true);
+    }
+  }, []);
+
+  const isAdmin =
+    pathname?.startsWith('/admin') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) ||
+    isAdminSubdomain;
 
   if (isAdmin) {
     return <>{children}</>;
@@ -31,6 +43,7 @@ export default function StorefrontShell({ children }: { children: React.ReactNod
       {/* Global Interactive Modals & Quick Chat */}
       <GalleryLightboxModal />
       <QuickChatWidget />
+      <MobileBottomBar />
     </>
   );
 }

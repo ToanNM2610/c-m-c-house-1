@@ -73,7 +73,7 @@ export default function StoryPage() {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-black/40" />
-          <div className="absolute bottom-6 left-4 sm:left-12 max-w-lg p-4 rounded-xl bg-black/75 backdrop-blur-md border border-white/20 text-[#F3F1EC]">
+          <div className="absolute bottom-6 left-4 sm:left-12 max-w-lg p-4 rounded-xl bg-black/90 border border-white/20 text-[#F3F1EC]">
             <span className="font-mono text-[11px] text-[#E86C3A] uppercase tracking-wider block font-bold">
               FIG. STORY-01 · KHÔNG GIAN BÊN SUỐI
             </span>

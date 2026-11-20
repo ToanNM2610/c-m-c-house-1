@@ -144,7 +144,7 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="p-6 bg-white/90 dark:bg-[#1E2B22] backdrop-blur-sm rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 bg-white dark:bg-[#1E2B22] rounded-2xl border border-stone-200 dark:border-stone-700/60 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="font-mono text-[12px] uppercase tracking-[0.06em] text-[var(--accent)] font-semibold">
             [CÔNG CỤ SEO &amp; CHỈ MỤC TỰ ĐỘNG]

@@ -14,14 +14,17 @@ export default function MobileBottomBar() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
 
-  if (pathname?.startsWith('/admin')) {
+  if (
+    pathname?.startsWith('/admin') ||
+    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
+  ) {
     return null;
   }
 
   return (
     <aside
       aria-label="Thanh liên hệ nhanh"
-      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-[var(--bg)]/95 backdrop-blur-xl border-t border-[var(--line)] px-3 py-2 shadow-2xl pb-[calc(env(safe-area-inset-bottom,0px)+8px)] transition-colors"
+      className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-paper border-t border-forest-200 dark:border-forest-700 px-3 py-2 shadow-2xl pb-[calc(env(safe-area-inset-bottom,0px)+8px)] transition-colors"
     >
       <div className="max-w-md mx-auto grid grid-cols-3 gap-2 h-[44px]">
         {/* Nút 1: Gọi Hotline - Nền ember */}

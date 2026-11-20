@@ -61,7 +61,7 @@ function ReviewCard({
   const text = lang === "VN" ? review.contentVn : review.contentEn;
 
   return (
-    <blockquote className="chamfer-14 flex w-[380px] shrink-0 flex-col justify-between whitespace-normal border border-[var(--line)] bg-[var(--card)]/95 p-7 backdrop-blur-md transition-colors hover:border-[var(--ember)]">
+    <blockquote className="chamfer-14 flex w-[380px] shrink-0 flex-col justify-between whitespace-normal border border-[var(--line)] bg-[var(--card)] p-7 transition-colors hover:border-[var(--ember)]">
       <div>
         <div
           className="text-sm tracking-wider text-[var(--gold)]"

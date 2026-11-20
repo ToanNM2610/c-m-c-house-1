@@ -269,7 +269,7 @@ export default function LienHePage() {
 
             {/* 1. Address Card */}
             <ScrollLayoutCard3D delay={0.05}>
-              <div className="p-6 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle space-y-3">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono text-accent-botanical font-bold uppercase tracking-wider">
                   <MapPin className="w-4 h-4 text-accent-botanical" />
                   <span>{isEn ? 'SANCTUARY ADDRESS' : 'ĐỊA CHỈ QUÁN'}</span>
@@ -287,7 +287,7 @@ export default function LienHePage() {
 
             {/* 2. Hotlines Card */}
             <ScrollLayoutCard3D delay={0.1}>
-              <div className="p-6 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle space-y-3">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono text-accent-botanical font-bold uppercase tracking-wider">
                   <Phone className="w-4 h-4 text-accent-botanical" />
                   <span>{isEn ? 'HOTLINES & GUEST SUPPORT' : 'HOTLINE LIÊN HỆ & HỖ TRỢ'}</span>
@@ -317,7 +317,7 @@ export default function LienHePage() {
 
             {/* 3. Operating Hours Card */}
             <ScrollLayoutCard3D delay={0.15}>
-              <div className="p-6 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle space-y-3">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono text-accent-botanical font-bold uppercase tracking-wider">
                   <Clock className="w-4 h-4 text-accent-botanical" />
                   <span>{isEn ? 'OPERATING HOURS (GMT+7)' : 'GIỜ MỞ CỬA ĐÓN KHÁCH (GMT+7)'}</span>
@@ -344,7 +344,7 @@ export default function LienHePage() {
 
             {/* 4. Social & Email */}
             <ScrollLayoutCard3D delay={0.2}>
-              <div className="p-6 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle space-y-3">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono text-accent-botanical font-bold uppercase tracking-wider">
                   <Share2 className="w-4 h-4 text-accent-botanical" />
                   <span>{isEn ? 'SOCIAL CHANNELS & EMAIL' : 'MẠNG XÃ HỘI & EMAIL'}</span>
@@ -389,7 +389,7 @@ export default function LienHePage() {
           {/* Right Column: Google Maps & Interactive Contact Form (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             <ScrollLayoutCard3D delay={0.1}>
-              <div className="p-8 sm:p-10 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle space-y-6">
+              <div className="p-8 sm:p-10 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-forest-100 dark:border-forest-800">
                   <div>
                     <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2 mb-1">
@@ -490,7 +490,7 @@ export default function LienHePage() {
 
             {/* Interactive Contact & Consultation Form */}
             <ScrollLayoutCard3D delay={0.15}>
-              <div className="p-8 sm:p-10 bg-white dark:bg-forest-900/60 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 shadow-subtle space-y-5">
+              <div className="p-8 sm:p-10 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-5">
                 <div className="space-y-1">
                   <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-accent-botanical" />
@@ -563,7 +563,7 @@ export default function LienHePage() {
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           placeholder={isEn ? 'e.g. David Nguyen' : 'Ví dụ: Nguyễn Văn An'}
-                          className="w-full px-3.5 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                          className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                         />
                       </div>
 
@@ -578,7 +578,7 @@ export default function LienHePage() {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="0382 851 688"
-                          className="w-full px-3.5 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                          className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                         />
                       </div>
                     </div>
@@ -594,7 +594,7 @@ export default function LienHePage() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="example@gmail.com"
-                          className="w-full px-3.5 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                          className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                         />
                       </div>
 
@@ -605,7 +605,7 @@ export default function LienHePage() {
                         <select
                           value={subject}
                           onChange={(e) => setSubject(e.target.value)}
-                          className="w-full px-3.5 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                          className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                         >
                           <option value="Tư vấn chung">{isEn ? 'General Inquiry' : 'Tư vấn chung'}</option>
                           <option value="Chỉ đường & Đỗ xe">{isEn ? 'Directions & Parking' : 'Chỉ đường & Đỗ xe'}</option>
@@ -644,7 +644,7 @@ export default function LienHePage() {
                             ? 'Let us know how we can assist you (minimum 10 characters)...'
                             : 'Nhập nội dung cần hỗ trợ, thời gian dự kiến ghé quán hoặc câu hỏi của bạn (tối thiểu 10 ký tự)...'
                         }
-                        className="w-full px-3.5 py-2.5 bg-forest-50/70 dark:bg-forest-950/60 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                        className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
                       />
                     </div>
 
@@ -701,7 +701,7 @@ export default function LienHePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link
             href="/thuc-don"
-            className="p-8 rounded-3xl bg-white dark:bg-forest-900/60 border border-forest-200/90 dark:border-forest-700/60 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/60 transition-all duration-300 flex items-center justify-between group"
+            className="p-8 rounded-3xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/60 transition-all duration-300 flex items-center justify-between group"
           >
             <div className="space-y-2">
               <span className="text-[11px] font-mono uppercase text-accent-botanical font-bold flex items-center gap-1.5">
@@ -720,7 +720,7 @@ export default function LienHePage() {
 
           <Link
             href="/su-kien"
-            className="p-8 rounded-3xl bg-white dark:bg-forest-900/60 border border-forest-200/90 dark:border-forest-700/60 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/60 transition-all duration-300 flex items-center justify-between group"
+            className="p-8 rounded-3xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated hover:border-accent-botanical/60 transition-all duration-300 flex items-center justify-between group"
           >
             <div className="space-y-2">
               <span className="text-[11px] font-mono uppercase text-accent-botanical font-bold flex items-center gap-1.5">

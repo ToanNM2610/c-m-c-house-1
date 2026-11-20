@@ -313,7 +313,7 @@ export function StreamMarquee120({
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className={`py-3.5 overflow-hidden border-y border-forest-900/10 dark:border-forest-700/30 bg-paper/60 backdrop-blur-xs select-none ${className}`}
+      className={`py-3.5 overflow-hidden border-y border-forest-200 dark:border-forest-700 bg-paper select-none ${className}`}
     >
       <motion.div
         animate={{

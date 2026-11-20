@@ -53,7 +53,7 @@ export default function DishDetailModal({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/70 backdrop-blur-md"
+          className="fixed inset-0 bg-black/85"
         />
 
         {/* Modal Shared Element Container */}
@@ -67,13 +67,13 @@ export default function DishDetailModal({
             damping: 28,
             stiffness: 300,
           }}
-          className="relative w-full max-w-2xl bg-[#FDFBF7] dark:bg-[#16231A] rounded-3xl overflow-hidden shadow-2xl border border-stone-200/80 dark:border-stone-700/80 z-10 my-auto"
+          className="relative w-full max-w-2xl bg-[#FDFBF7] dark:bg-[#16231A] rounded-3xl overflow-hidden shadow-2xl border border-stone-200 dark:border-stone-700 z-10 my-auto"
         >
           {/* Nút đóng góc trên */}
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white backdrop-blur-md flex items-center justify-center transition-all cursor-pointer active:scale-95"
+            className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-black/70 hover:bg-black text-white flex items-center justify-center transition-all cursor-pointer active:scale-95"
             aria-label="Đóng"
           >
             <X className="w-4 h-4" />
