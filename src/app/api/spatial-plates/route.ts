@@ -128,35 +128,5 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
-  try {
-    const user = await getSessionUser(req);
-    if (!user) {
-      return apiError('Yêu cầu xác thực tài khoản quản trị', 401);
-    }
 
-    const { searchParams } = new URL(req.url);
-    let id = searchParams.get('id');
-    if (!id) {
-      const body = await req.json().catch(() => ({}));
-      id = body?.id;
-    }
-
-    if (!id) {
-      return apiError('Thiếu mã ảnh không gian cần xóa (id)', 400);
-    }
-
-    const updated = await prisma.spatialFigure.update({
-      where: { id },
-      data: { imageUrl: '' },
-    });
-
-    revalidatePath('/', 'layout');
-
-    return apiSuccess(updated, { message: `Đã xóa ảnh khung hình ${id} thành công` });
-  } catch (error: any) {
-    console.error('Error deleting spatial plate media:', error);
-    return apiError(error.message || 'Lỗi xóa ảnh khung hình', 500);
-  }
-}
 

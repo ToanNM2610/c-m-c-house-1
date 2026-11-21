@@ -10,6 +10,38 @@ export default function FooterSection() {
   const pathname = usePathname();
   const { data, language } = useApp();
 
+  const [approvedCount, setApprovedCount] = React.useState<number | null>(null);
+  const [recommendedCount, setRecommendedCount] = React.useState<number>(0);
+  const [recommendedPercent, setRecommendedPercent] = React.useState<number>(100);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/comments');
+        if (res.ok) {
+          const json = await res.json();
+          const list: any[] = Array.isArray(json) ? json : json.data || [];
+          const approved = list.filter((c) => c.status === 'APPROVED');
+          if (isMounted) {
+            setApprovedCount(approved.length);
+            if (approved.length > 0) {
+              const rec = approved.filter((c) => (c.rating ?? 5) >= 4).length;
+              setRecommendedCount(rec);
+              setRecommendedPercent(Math.round((rec / approved.length) * 100));
+            }
+          }
+        }
+      } catch {
+        if (isMounted) setApprovedCount(0);
+      }
+    }
+    fetchStats();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   if (
     pathname?.startsWith('/admin') ||
     (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
@@ -20,7 +52,6 @@ export default function FooterSection() {
   const isEn = language === 'en';
 
   const tagline = isEn && s.taglineEn ? s.taglineEn : s.tagline;
-  const socialProof = isEn && s.socialProofEn ? s.socialProofEn : s.socialProof;
   const address = isEn && s.addressEn ? s.addressEn : s.address;
 
   return (
@@ -38,10 +69,17 @@ export default function FooterSection() {
             <p className="text-xs text-forest-200/80 leading-relaxed font-serif italic max-w-sm">
               &ldquo;{tagline}&rdquo;
             </p>
-            <div className="inline-flex items-center gap-1.5 p-3 bg-white/5 rounded-xl border border-white/10 text-xs font-mono text-emerald-400">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>{socialProof}</span>
-            </div>
+            {/* Real verified social proof badge: cleanly hidden if approved review count === 0 */}
+            {approvedCount !== null && approvedCount > 0 && (
+              <div className="inline-flex items-center gap-1.5 p-3 bg-white/5 rounded-xl border border-white/10 text-xs font-mono text-emerald-400">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>
+                  {isEn
+                    ? `${recommendedPercent}% Recommended (${recommendedCount}/${approvedCount} Verified Reviews)`
+                    : `${recommendedPercent}% Đề xuất (${recommendedCount}/${approvedCount} Đánh giá thực khách)`}
+                </span>
+              </div>
+            )}
 
             {/* Social ecosystem */}
             <div className="flex items-center gap-2.5 pt-2">

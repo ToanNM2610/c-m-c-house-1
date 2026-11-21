@@ -57,7 +57,16 @@ export default function KhachHangPage() {
   });
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
 
-  const stories: HighlightStory[] = data.stories || [];
+  const publishedStories = (data.stories || []).filter((st) => st.published);
+  const shouldShowHighlights = (s.showHighlightsSection !== false) && publishedStories.length > 0;
+
+  const approvedComments = comments.filter((c) => c.status === 'APPROVED');
+  const approvedCount = approvedComments.length;
+  const recommendedCount = approvedComments.filter((c) => (c.rating ?? 5) >= 4).length;
+  const recommendedPercent = approvedCount > 0 ? Math.round((recommendedCount / approvedCount) * 100) : 0;
+  const avgRating = approvedCount > 0
+    ? (approvedComments.reduce((acc, c) => acc + (c.rating ?? 5), 0) / approvedCount).toFixed(1)
+    : '5.0';
 
   // Cooldown restoration from localStorage on mount
   useEffect(() => {
@@ -256,27 +265,33 @@ export default function KhachHangPage() {
               : 'Những khoảnh khắc đáng nhớ bên bờ suối mát, câu chuyện mùa vụ nông sản Đăk Nông và những cảm nhận chân thực nhất từ thực khách đã ghé thăm Cẩm Cù House.'}
           </p>
 
-          {/* Trust Banner Badge */}
-          <div className="pt-2 inline-flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle">
-            <div className="flex items-center text-amber-500">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
-              ))}
+          {/* Trust Banner Badge: Dynamically calculated from real approved reviews (Hidden if 0 reviews) */}
+          {approvedCount > 0 && (
+            <div className="pt-2 inline-flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle">
+              <div className="flex items-center text-amber-500">
+                {[...Array(Math.min(5, Math.max(1, Math.round(Number(avgRating)))))].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <div className="border-l border-forest-200 dark:border-forest-700 pl-3">
+                <span className="font-serif font-bold text-base text-ink-primary block leading-none">
+                  {recommendedPercent === 100
+                    ? (isEn ? '100% Recommended' : '100% Đề Xuất Tuyệt Đối')
+                    : `${recommendedPercent}% ${isEn ? 'Recommended' : 'Đề Xuất'}`}
+                </span>
+                <span className="text-[11px] font-mono text-ink-muted">
+                  {isEn
+                    ? `Based on ${recommendedCount}/${approvedCount} verified reviews`
+                    : `Dựa trên ${recommendedCount}/${approvedCount} đánh giá thực khách`}
+                </span>
+              </div>
             </div>
-            <div className="border-l border-forest-200 dark:border-forest-700 pl-3">
-              <span className="font-serif font-bold text-base text-ink-primary block leading-none">
-                {isEn ? '100% Recommended' : '100% Đề Xuất Tuyệt Đối'}
-              </span>
-              <span className="text-[11px] font-mono text-ink-muted">
-                {isEn ? 'Based on 8/8 verified reviews' : 'Dựa trên 8/8 đánh giá thực khách'}
-              </span>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
       {/* SECTION 1: CÁC DẤU ẤN NỔI BẬT (HIGHLIGHT STORIES) */}
-      {stories.length > 0 && (
+      {shouldShowHighlights && (
         <section className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
           <div className="space-y-3 mb-12 max-w-2xl">
             <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
@@ -294,7 +309,7 @@ export default function KhachHangPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {stories.map((story, idx) => {
+            {publishedStories.map((story, idx) => {
               const title = isEn && story.titleEn ? story.titleEn : story.title;
               const category = isEn && story.categoryEn ? story.categoryEn : story.category;
               const date = isEn && story.dateEn ? story.dateEn : story.date;
@@ -370,7 +385,7 @@ export default function KhachHangPage() {
       </section>
 
       {/* SECTION 3: FORM GỬI CẢM NHẬN (REVIEW SUBMISSION FORM) */}
-      <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-4xl mx-auto">
+      <section id="feedback-form" className="py-16 sm:py-24 px-4 sm:px-8 max-w-4xl mx-auto">
         <div className="p-8 sm:p-12 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-elevated space-y-6">
           <div className="text-center space-y-2 max-w-md mx-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-accent-botanical text-xs font-mono font-bold">

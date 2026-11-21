@@ -28,6 +28,7 @@ export default function SuKienPage() {
   const { data, language } = useApp();
   const isEn = language === 'en';
   const activeEvents = (data.events || []).filter((e) => e.active);
+  const shouldShowEvents = (data.settings.showEventsSection !== false) && activeEvents.length > 0;
   const faqs: FaqItem[] = data.faqs || [];
 
   const [activeFaqCategory, setActiveFaqCategory] = useState<string>('all');
@@ -88,44 +89,32 @@ export default function SuKienPage() {
         </div>
       </section>
 
-      {/* SECTION 1: EVENTS GRID */}
-      <section className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
-        <div className="space-y-3 mb-12">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2 mb-1">
-                <Music className="w-4 h-4 text-accent-botanical" />
-                <span>
-                  {isEn
-                    ? `SCHEDULE & HAPPENINGS (${activeEvents.length} PROGRAMS)`
-                    : `LỊCH BIỂU DIỄN & HOẠT ĐỘNG (${activeEvents.length} CHƯƠNG TRÌNH)`}
-                </span>
+      {/* SECTION 1: EVENTS GRID (Auto-hidden if toggle is OFF or 0 active events) */}
+      {shouldShowEvents && (
+        <section className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+          <div className="space-y-3 mb-12">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2 mb-1">
+                  <Music className="w-4 h-4 text-accent-botanical" />
+                  <span>
+                    {isEn
+                      ? `SCHEDULE & HAPPENINGS (${activeEvents.length} PROGRAMS)`
+                      : `LỊCH BIỂU DIỄN & HOẠT ĐỘNG (${activeEvents.length} CHƯƠNG TRÌNH)`}
+                  </span>
+                </div>
+                <h2 className="font-serif text-3xl font-bold text-ink-primary">
+                  {isEn ? 'Ongoing Programs & Activities' : 'Các Hoạt Động Đang Diễn Ra'}
+                </h2>
               </div>
-              <h2 className="font-serif text-3xl font-bold text-ink-primary">
-                {isEn ? 'Ongoing Programs & Activities' : 'Các Hoạt Động Đang Diễn Ra'}
-              </h2>
-            </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-ink-muted bg-white dark:bg-forest-900 p-2 rounded-xl border border-forest-200 dark:border-forest-700 shadow-subtle">
-              <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>{isEn ? 'Real-time sync from CMS' : 'Đồng bộ thời gian thực từ CMS'}</span>
+              <div className="flex items-center gap-2 text-xs font-mono text-ink-muted bg-white dark:bg-forest-900 p-2 rounded-xl border border-forest-200 dark:border-forest-700 shadow-subtle">
+                <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <span>{isEn ? 'Real-time sync from CMS' : 'Đồng bộ thời gian thực từ CMS'}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {activeEvents.length === 0 ? (
-          <div className="p-12 text-center bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 text-ink-muted space-y-3">
-            <Calendar className="w-10 h-10 mx-auto text-forest-300 dark:text-forest-600" />
-            <p className="font-serif text-lg font-bold text-ink-primary">
-              {isEn ? 'No upcoming events at the moment' : 'Hiện chưa có sự kiện mới'}
-            </p>
-            <p className="text-xs">
-              {isEn
-                ? 'Please check back soon or call our hotlines for the nearest upcoming weekend live performance schedule.'
-                : 'Vui lòng quay lại sau hoặc liên hệ quán qua hotline để biết lịch biểu diễn gần nhất.'}
-            </p>
-          </div>
-        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {activeEvents.map((event) => {
               const title = isEn && event.titleEn ? event.titleEn : event.title;
@@ -212,8 +201,8 @@ export default function SuKienPage() {
               );
             })}
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
       {/* SECTION 2: INTERACTIVE FAQ ACCORDION */}
       <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-5xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">

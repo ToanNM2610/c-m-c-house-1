@@ -45,10 +45,10 @@ export default function EditorialHero() {
     },
     {
       icon: <Coins className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
-      titleVi: "Mức giá bình dân $ (100% Đề xuất)",
-      titleEn: "Affordable Price $ (100% Recommended)",
-      descVi: "Mức giá thân thiện từ 20k–45k, nhận 8/8 đánh giá hài lòng tuyệt đối.",
-      descEn: "Honest pricing from 20k–45k, 100% positive ratings across 8/8 reviews.",
+      titleVi: "Mức giá bình dân $",
+      titleEn: "Affordable Price $",
+      descVi: "Mức giá thân thiện từ 20k–45k, cà phê rang mộc và trái cây tươi bên suối.",
+      descEn: "Honest pricing from 20k–45k, wood-roasted coffee and fresh fruit by the stream.",
     },
   ];
 
@@ -210,12 +210,12 @@ export default function EditorialHero() {
                     {isVi ? "TÍN NHIỆM THỰC TẾ" : "AUTHENTIC SOCIAL PROOF"}
                   </span>
                   <p className="font-display font-black text-[22px] text-[var(--text-primary)] leading-tight mt-0.5">
-                    100% Đề Xuất
+                    {isVi ? "Đánh Giá Thực Khách" : "Verified Guest Voices"}
                   </p>
                   <span className="text-[13px] text-[var(--text-secondary)]">
                     {isVi
-                      ? "Dựa trên 8/8 lượt đánh giá hài lòng từ khách trải nghiệm"
-                      : "Based on 8/8 verified authentic customer recommendations"}
+                      ? "Cảm nhận chân thực từ khách trải nghiệm không gian sinh thái"
+                      : "Authentic feedback from visitors experiencing our eco sanctuary"}
                   </span>
                 </div>
               </div>

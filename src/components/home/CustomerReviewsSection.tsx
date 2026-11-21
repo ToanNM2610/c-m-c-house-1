@@ -1,76 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { Star, MessageSquarePlus, ArrowRight } from "lucide-react";
+import { GuestComment } from "@/types";
 
-export interface ReviewItem {
-  id: string;
-  author: string;
-  meta: string;
-  contentVn: string;
-  contentEn: string;
+export interface CustomerReviewsSectionProps {
+  comments?: GuestComment[];
+  lang?: "VN" | "EN";
 }
 
-// Giữ nguyên văn 100% nội dung đánh giá từ bản gốc (Mục 1, 3, 4)
-export const ORIGINAL_REVIEWS: ReviewItem[] = [
-  {
-    id: "rev-1",
-    author: "Minh Anh Nguyễn",
-    meta: "Local Guide · Đánh giá trên Google Maps",
-    contentVn:
-      "Không gian bên suối cực kỳ mát mẻ, tiếng nước chảy nghe rất thư giãn. Đồ uống ngon mà giá bình dân bất ngờ, ngồi cả buổi sáng dưới tán cây rừng nghe tiếng suối đá chảy róc rách thực sự quên hết mệt mỏi nơi phố thị.",
-    contentEn:
-      "The streamside space is wonderfully cool with soothing water sounds. Drinks are delicious at surprisingly affordable prices; sitting under the forest canopy all morning by the basalt stream truly melts away city fatigue.",
-  },
-  {
-    id: "rev-2",
-    author: "Trần Quốc Bảo",
-    meta: "Khách du lịch · Đánh giá trên Google Maps",
-    contentVn:
-      "Đường vào Hẻm 437 Hùng Vương rộng rãi, xe 7 chỗ của gia đình mình vào tận sân đỗ thoải mái. Cà phê đậm vị Tây Nguyên, các bé rất thích khu vực cầu gỗ ngắm dòng suối trong vắt.",
-    contentEn:
-      "Theconcrete road into Alley 437 Hung Vuong is spacious, our family 7-seater drove right into the free parking yard. Strong Central Highlands coffee, and the kids loved the wooden bridge overlooking the clear stream.",
-  },
-  {
-    id: "rev-3",
-    author: "Lê Thu Hương",
-    meta: "Gia Nghĩa · Đánh giá trên Google Maps",
-    contentVn:
-      "Quán giữ được nét mộc mạc tự nhiên, nhiều góc chụp ảnh đẹp bên bờ suối đá bazan, nhân viên nhiệt tình dễ thương. Buổi chiều lên đèn vàng ấm áp nhìn như một thước phim giữa đại ngàn.",
-    contentEn:
-      "The cafe preserves its natural rustic charm with plenty of scenic photo spots along the basalt stream and warm, friendly staff. In the late afternoon, the warm lights look like a cinematic scene in the highlands.",
-  },
-  {
-    id: "rev-4",
-    author: "Hoàng Đình Phong",
-    meta: "Local Guide · Đánh giá trên Google Maps",
-    contentVn:
-      "Một chốn dừng chân đúng nghĩa ở Gia Nghĩa. Ngồi dưới tán cây nghe tiếng suối róc rách, thưởng thức ly cà phê muối và sinh tố bơ sáp Đắk Nông tươi ngon với mức giá chỉ từ 20k đến 45k.",
-    contentEn:
-      "A true retreat in Gia Nghia. Sitting under the trees listening to the babbling stream while enjoying salted coffee and fresh Dak Nong avocado smoothie priced reasonably from 20k to 45k.",
-  },
-];
-
 function ReviewCard({
-  review,
+  comment,
   lang = "VN",
 }: {
-  review: ReviewItem;
+  comment: GuestComment;
   lang?: "VN" | "EN";
 }) {
   const [expanded, setExpanded] = useState(false);
-  const text = lang === "VN" ? review.contentVn : review.contentEn;
+  const text = comment.content;
+  const rating = comment.rating || 5;
 
   return (
-    <blockquote className="chamfer-14 flex w-[380px] shrink-0 flex-col justify-between whitespace-normal border border-[var(--line)] bg-[var(--card)] p-7 transition-colors hover:border-[var(--ember)]">
+    <blockquote className="chamfer-14 flex flex-col justify-between whitespace-normal border border-[var(--line)] bg-[var(--card)] p-7 transition-colors hover:border-[var(--ember)] h-full">
       <div>
         <div
-          className="text-sm tracking-wider text-[var(--gold)]"
-          aria-label="5 trên 5 sao"
+          className="flex items-center gap-1 text-sm tracking-wider text-[var(--gold)]"
+          aria-label={`${rating} trên 5 sao`}
         >
-          ★★★★★
+          {[...Array(rating)].map((_, i) => (
+            <Star key={i} className="w-4 h-4 fill-[var(--gold)] text-[var(--gold)]" />
+          ))}
         </div>
 
-        {/* 4. Chữ >= 15px, tối đa 4 dòng mỗi thẻ + nút "Đọc thêm" */}
+        {/* Chữ >= 15px, tối đa 4 dòng mỗi thẻ + nút "Đọc thêm" */}
         <p
           className={`mt-3 text-[15.5px] leading-relaxed text-[var(--ink)] ${
             expanded ? "" : "line-clamp-4"
@@ -79,44 +42,87 @@ function ReviewCard({
           “{text}”
         </p>
 
-        <button
-          type="button"
-          onClick={() => setExpanded(!expanded)}
-          className="mt-2 inline-flex items-center gap-1 text-[14px] font-semibold text-[var(--ember)] underline underline-offset-4 hover:opacity-85"
-        >
-          {expanded
-            ? lang === "VN"
-              ? "Thu gọn"
-              : "Show less"
-            : lang === "VN"
-            ? "Đọc thêm"
-            : "Read more"}
-        </button>
+        {text.length > 150 && (
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            className="mt-2 inline-flex items-center gap-1 text-[14px] font-semibold text-[var(--ember)] underline underline-offset-4 hover:opacity-85"
+          >
+            {expanded
+              ? lang === "VN"
+                ? "Thu gọn"
+                : "Show less"
+              : lang === "VN"
+              ? "Đọc thêm"
+              : "Read more"}
+          </button>
+        )}
       </div>
 
-      <div className="mt-5 border-t border-[var(--line)] pt-3.5">
-        <cite className="not-italic text-[15.5px] font-semibold text-[var(--ink)]">
-          {review.author}
-        </cite>
-        <p className="text-mono-label mt-1 text-[var(--ink-muted)]">
-          {review.meta}
-        </p>
+      <div className="mt-5 border-t border-[var(--line)] pt-3.5 flex items-center justify-between">
+        <div>
+          <cite className="not-italic text-[15.5px] font-semibold text-[var(--ink)] block">
+            {comment.authorName}
+          </cite>
+          <p className="text-mono-label mt-1 text-[var(--ink-muted)]">
+            {comment.visitDate || (lang === "VN" ? "Ghé thăm gần đây" : "Recent visit")}
+          </p>
+        </div>
+        <span className="text-mono-label text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+          {lang === "VN" ? "Xác thực" : "Verified"}
+        </span>
       </div>
     </blockquote>
   );
 }
 
 export default function CustomerReviewsSection({
+  comments: initialComments,
   lang = "VN",
-}: {
-  lang?: "VN" | "EN";
-}) {
+}: CustomerReviewsSectionProps) {
+  const [comments, setComments] = useState<GuestComment[]>(initialComments || []);
+  const [loading, setLoading] = useState<boolean>(!initialComments);
+
+  useEffect(() => {
+    if (initialComments) {
+      setComments(initialComments);
+      return;
+    }
+    let isMounted = true;
+    async function fetchReviews() {
+      try {
+        const res = await fetch("/api/comments");
+        if (res.ok) {
+          const json = await res.json();
+          const list: GuestComment[] = Array.isArray(json) ? json : json.data || [];
+          if (isMounted) setComments(list);
+        }
+      } catch (err) {
+        console.error("Failed to fetch customer reviews:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    fetchReviews();
+    return () => {
+      isMounted = false;
+    };
+  }, [initialComments]);
+
+  // Only render real approved reviews (status === "APPROVED")
+  const approved = (comments || []).filter((c) => c.status === "APPROVED");
+  const approvedCount = approved.length;
+  const recommendedCount = approved.filter((c) => (c.rating ?? 5) >= 4).length;
+  const recommendedPercent = approvedCount > 0 ? Math.round((recommendedCount / approvedCount) * 100) : 0;
+  const avgRating = approvedCount > 0
+    ? (approved.reduce((acc, c) => acc + (c.rating ?? 5), 0) / approvedCount).toFixed(1)
+    : "5.0";
+
   return (
     <section className="border-y border-[var(--line)] bg-[var(--bg-2)] py-20 lg:py-32">
       <div className="mx-auto max-w-[1360px] px-5 lg:px-14">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <div>
-            {/* 3. Khôi phục đúng tiêu đề gốc từ commit backup */}
             <p className="text-mono-label text-[var(--ember)]">
               {lang === "VN"
                 ? "[05 · ĐÁNH GIÁ TỪ KHÁCH HÀNG]"
@@ -128,57 +134,108 @@ export default function CustomerReviewsSection({
                 : "What Guests Say About Cẩm Cù House"}
             </h2>
 
-            <div className="mt-4 flex items-baseline gap-6">
-              <span className="font-[var(--font-display)] text-[clamp(64px,10vw,136px)] font-extrabold leading-none text-[var(--ember)]">
-                4.9
-              </span>
-              <div>
-                <div className="flex gap-1 text-2xl text-[var(--gold)]">
-                  ★★★★★
+            {/* Dynamic Rating Badge: strictly hidden when approvedCount === 0 */}
+            {approvedCount > 0 && (
+              <div className="mt-4 flex items-baseline gap-6">
+                <span className="font-[var(--font-display)] text-[clamp(64px,10vw,136px)] font-extrabold leading-none text-[var(--ember)]">
+                  {avgRating}
+                </span>
+                <div>
+                  <div className="flex gap-1 text-2xl text-[var(--gold)]">
+                    {[...Array(Math.min(5, Math.max(1, Math.round(Number(avgRating)))))].map((_, i) => (
+                      <Star key={i} className="w-6 h-6 fill-[var(--gold)] text-[var(--gold)]" />
+                    ))}
+                  </div>
+                  <p className="text-mono-label mt-2 text-[var(--ink-muted)]">
+                    {lang === "VN"
+                      ? `${approvedCount} LƯỢT ĐÁNH GIÁ · ${recommendedPercent}% ĐỀ XUẤT HÀI LÒNG`
+                      : `${approvedCount} REVIEWS · ${recommendedPercent}% SATISFACTION RECOMMENDED`}
+                  </p>
                 </div>
-                <p className="text-mono-label mt-2 text-[var(--ink-muted)]">
-                  {lang === "VN"
-                    ? "120+ LƯỢT ĐÁNH GIÁ · 100% ĐỀ XUẤT HÀI LÒNG"
-                    : "120+ REVIEWS · 100% SATISFACTION RECOMMENDED"}
-                </p>
               </div>
-            </div>
+            )}
           </div>
 
-          <a
-            href="https://maps.google.com/?q=11.99,107.69"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-outline chamfer-14"
-          >
-            <span>
-              {lang === "VN"
-                ? "Xem tất cả đánh giá trên Google Maps"
-                : "View all reviews on Google Maps"}
-            </span>
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </div>
-
-      {/* Hai hàng thẻ kính mờ chạy ngược chiều, dừng khi rê chuột/chạm */}
-      <div className="mt-12 space-y-5 overflow-hidden">
-        {[false, true].map((reverse, rowIdx) => (
-          <div key={rowIdx} className="flex whitespace-nowrap">
-            <div
-              className="flex shrink-0 gap-5 px-2.5 hover:[animation-play-state:paused] active:[animation-play-state:paused]"
-              style={{
-                animation: `${
-                  reverse ? "marqueeRight" : "marqueeLeft"
-                } 42s linear infinite`,
-              }}
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/khach-hang#feedback-form"
+              className="btn-outline chamfer-14 inline-flex items-center gap-2"
             >
-              {[...ORIGINAL_REVIEWS, ...ORIGINAL_REVIEWS].map((rev, i) => (
-                <ReviewCard key={`${rev.id}-${rowIdx}-${i}`} review={rev} lang={lang} />
-              ))}
+              <MessageSquarePlus className="w-4 h-4 text-[var(--ember)]" />
+              <span>
+                {lang === "VN" ? "Gửi cảm nhận của bạn" : "Submit your review"}
+              </span>
+            </Link>
+
+            <a
+              href="https://maps.google.com/?q=11.99,107.69"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline chamfer-14 inline-flex items-center gap-2"
+            >
+              <span>
+                {lang === "VN"
+                  ? "Xem tất cả trên Google Maps"
+                  : "View all on Google Maps"}
+              </span>
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Dynamic Reviews Container */}
+        {loading ? (
+          <div className="mt-12 py-12 text-center text-xs font-mono text-[var(--ink-muted)]">
+            {lang === "VN" ? "Đang tải đánh giá thực khách..." : "Loading customer reviews..."}
+          </div>
+        ) : approvedCount === 0 ? (
+          /* Dynamic Empty State: Genuine Invitation */
+          <div className="mt-12 p-8 sm:p-12 text-center rounded-3xl border border-[var(--line)] bg-[var(--card)] max-w-2xl mx-auto space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-[var(--ember)] flex items-center justify-center mx-auto">
+              <MessageSquarePlus className="w-6 h-6" />
+            </div>
+            <div className="space-y-1.5">
+              <p className="font-serif text-lg sm:text-xl font-bold text-[var(--ink)]">
+                {lang === "VN"
+                  ? "Chưa có đánh giá nào từ thực khách — Hãy là người đầu tiên chia sẻ trải nghiệm thực tế của bạn bên dưới!"
+                  : "No reviews from guests yet — Be the first to share your authentic experience below!"}
+              </p>
+              <p className="text-xs sm:text-sm text-[var(--ink-muted)] max-w-md mx-auto">
+                {lang === "VN"
+                  ? "Mỗi lời đóng góp chân thực từ bạn giúp Cẩm Cù House hoàn thiện không gian sinh thái bên bờ suối."
+                  : "Every genuine thought from our guests helps nurture our streamside botanical sanctuary."}
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link
+                href="/khach-hang#feedback-form"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--ember)] text-white font-mono text-xs font-bold hover:opacity-90 transition-opacity"
+              >
+                <span>{lang === "VN" ? "Chia sẻ trải nghiệm ngay" : "Share Your Experience"}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
-        ))}
+        ) : approvedCount === 1 ? (
+          /* 1 Review Clean Layout: Centered without duplicate cards */
+          <div className="mt-12 max-w-lg mx-auto">
+            <ReviewCard comment={approved[0]} lang={lang} />
+          </div>
+        ) : approvedCount === 2 ? (
+          /* 2 Reviews Clean Layout: 2-column without duplicate cards */
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-6 items-stretch">
+            {approved.map((rev) => (
+              <ReviewCard key={rev.id} comment={rev} lang={lang} />
+            ))}
+          </div>
+        ) : (
+          /* >= 3 Reviews: 3-card horizontal layout without duplicate cards */
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            {approved.slice(0, 3).map((rev) => (
+              <ReviewCard key={rev.id} comment={rev} lang={lang} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

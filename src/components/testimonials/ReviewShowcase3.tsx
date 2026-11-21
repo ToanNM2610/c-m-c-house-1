@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, CheckCircle2, Calendar, Quote } from 'lucide-react';
+import { Star, CheckCircle2, Calendar, Quote, MessageSquarePlus } from 'lucide-react';
 import { GuestComment, CafeSettings } from '@/types';
 import { useApp } from '@/context/AppContext';
 import { InteractiveTiltCard } from '@/components/motion/VividMotion';
@@ -26,9 +26,9 @@ export default function ReviewShowcase3({ comments, settings }: ReviewShowcase3P
   const { language } = useApp();
   const isEn = language === 'en';
 
-  // Approved comments only
+  // Approved comments only (100% authentic, status === "APPROVED")
   const approved = useMemo(() => {
-    return comments.filter((c) => c.status === 'APPROVED' || !c.status);
+    return (comments || []).filter((c) => c.status === 'APPROVED');
   }, [comments]);
 
   // Mode and interval strictly controlled by Admin settings
@@ -116,13 +116,43 @@ export default function ReviewShowcase3({ comments, settings }: ReviewShowcase3P
 
   if (approved.length === 0) {
     return (
-      <div className="py-12 text-center text-xs font-mono text-ink-muted">
-        {isEn ? 'No verified reviews yet.' : 'Chưa có đánh giá thực khách.'}
+      <div className="py-12 sm:py-16 px-6 text-center bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle max-w-2xl mx-auto space-y-4">
+        <div className="w-12 h-12 rounded-2xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center mx-auto">
+          <MessageSquarePlus className="w-6 h-6" />
+        </div>
+        <div className="space-y-1.5">
+          <p className="font-serif text-lg sm:text-xl font-bold text-ink-primary">
+            {isEn
+              ? 'No reviews from guests yet — Be the first to share your authentic experience below!'
+              : 'Chưa có đánh giá nào từ thực khách — Hãy là người đầu tiên chia sẻ trải nghiệm thực tế của bạn bên dưới!'}
+          </p>
+          <p className="text-xs sm:text-sm text-ink-muted">
+            {isEn
+              ? 'Every piece of genuine feedback helps us nurture our botanical streamside sanctuary.'
+              : 'Mỗi đánh giá thực tế của bạn là nguồn động viên quý báu giúp Cẩm Cù House ngày càng hoàn thiện.'}
+          </p>
+        </div>
+        <div className="pt-2">
+          <a
+            href="#feedback-form"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-botanical hover:bg-forest-800 text-white font-mono text-xs font-semibold transition-all shadow-subtle active:scale-95"
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            <span>{isEn ? 'Share Your Experience' : 'Gửi Cảm Nhận Ngay'}</span>
+          </a>
+        </div>
       </div>
     );
   }
 
   const transitionKey = activeReviews.map((r) => r.id).join('-');
+
+  const gridLayoutClass =
+    activeReviews.length === 1
+      ? 'max-w-lg mx-auto w-full'
+      : activeReviews.length === 2
+      ? 'grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto gap-6 items-stretch'
+      : 'grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch';
 
   return (
     <div
@@ -137,7 +167,7 @@ export default function ReviewShowcase3({ comments, settings }: ReviewShowcase3P
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -12 }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch"
+          className={gridLayoutClass}
         >
           {activeReviews.map((rev, idx) => (
             <motion.div

@@ -26,6 +26,38 @@ export default function StoryPage() {
   const { locale } = useLanguage();
   const isVi = locale !== "en";
 
+  const [approvedCount, setApprovedCount] = React.useState<number | null>(null);
+  const [recommendedCount, setRecommendedCount] = React.useState<number>(0);
+  const [recommendedPercent, setRecommendedPercent] = React.useState<number>(100);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    async function fetchStats() {
+      try {
+        const res = await fetch("/api/comments");
+        if (res.ok) {
+          const json = await res.json();
+          const list: any[] = Array.isArray(json) ? json : json.data || [];
+          const approved = list.filter((c) => c.status === "APPROVED");
+          if (isMounted) {
+            setApprovedCount(approved.length);
+            if (approved.length > 0) {
+              const rec = approved.filter((c) => (c.rating ?? 5) >= 4).length;
+              setRecommendedCount(rec);
+              setRecommendedPercent(Math.round((rec / approved.length) * 100));
+            }
+          }
+        }
+      } catch {
+        if (isMounted) setApprovedCount(0);
+      }
+    }
+    fetchStats();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans selection:bg-[#E86C3A] selection:text-white transition-colors">
       <AnnouncementBar />
@@ -58,7 +90,13 @@ export default function StoryPage() {
             <div className="flex flex-wrap items-center gap-6 pt-4 text-xs font-mono text-white/60 border-t border-white/10">
               <span>ĐỊA CHỈ: HẺM 437 HÙNG VƯƠNG, NGHĨA TRUNG, GIA NGHĨA</span>
               <span>ĐỘ CAO: 800M+ CAO NGUYÊN</span>
-              <span className="text-[#E86C3A] font-bold">TÍN NHIỆM: 100% ĐỀ XUẤT (8/8 ĐÁNH GIÁ)</span>
+              {approvedCount !== null && approvedCount > 0 && (
+                <span className="text-[#E86C3A] font-bold">
+                  {isVi
+                    ? `TÍN NHIỆM: ${recommendedPercent}% ĐỀ XUẤT (${recommendedCount}/${approvedCount} ĐÁNH GIÁ)`
+                    : `TRUST: ${recommendedPercent}% RECOMMENDED (${recommendedCount}/${approvedCount} REVIEWS)`}
+                </span>
+              )}
             </div>
           </div>
         </section>

@@ -20,8 +20,9 @@ import {
 } from 'lucide-react';
 import OpenStatusBadge from '@/components/common/OpenStatusBadge';
 import FooterSection from '@/components/home/FooterSection';
+import ReviewShowcase3 from '@/components/testimonials/ReviewShowcase3';
 import { useApp } from '@/context/AppContext';
-import { MenuItem } from '@/types';
+import { MenuItem, GuestComment } from '@/types';
 import { motion } from 'framer-motion';
 import {
   EditorialDivider,
@@ -112,6 +113,45 @@ export default function HomePage() {
   const s = data.settings;
   const isEn = language === 'en';
 
+  // Approved reviews & dynamic recommendation metrics
+  const [comments, setComments] = React.useState<GuestComment[]>([]);
+  React.useEffect(() => {
+    let isMounted = true;
+    async function loadComments() {
+      try {
+        const res = await fetch('/api/comments');
+        if (res.ok) {
+          const json = await res.json();
+          const list: GuestComment[] = Array.isArray(json) ? json : json.data || [];
+          if (isMounted) setComments(list);
+        }
+      } catch {}
+    }
+    loadComments();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const approvedComments = React.useMemo(() => {
+    return (comments || []).filter((cm) => cm.status === 'APPROVED');
+  }, [comments]);
+  const approvedCount = approvedComments.length;
+  const recommendedCount = approvedComments.filter((cm) => (cm.rating ?? 5) >= 4).length;
+  const recommendedPercent = approvedCount > 0 ? Math.round((recommendedCount / approvedCount) * 100) : 0;
+
+  // Active events toggle & count check
+  const activeEvents = React.useMemo(() => {
+    return (data.events || []).filter((e) => e.active);
+  }, [data.events]);
+  const shouldShowEvents = (s.showEventsSection !== false) && activeEvents.length > 0;
+
+  // Published highlight stories toggle & count check
+  const publishedStories = React.useMemo(() => {
+    return (data.stories || []).filter((st) => st.published);
+  }, [data.stories]);
+  const shouldShowHighlights = (s.showHighlightsSection !== false) && publishedStories.length > 0;
+
   // Highlights / Signatures
   const highlightedItems = React.useMemo(() => {
     return data.menu.filter((m) => Boolean(m.highlight)).slice(0, 6);
@@ -160,11 +200,17 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-forest-200/60 dark:border-forest-700/40 mb-8 lg:mb-12">
             <OpenStatusBadge />
             <div className="flex items-center gap-2.5 text-xs font-mono text-ink-muted">
-              <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 px-3 py-1 rounded-full font-semibold flex items-center gap-1.5 shadow-subtle">
-                <Sparkles className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
-                {isEn ? '100% Recommended (8/8 Reviews)' : '100% Đề xuất (8/8 Đánh giá)'}
-              </span>
-              <span className="hidden sm:inline text-forest-300 dark:text-forest-700">•</span>
+              {approvedCount > 0 && (
+                <>
+                  <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 px-3 py-1 rounded-full font-semibold flex items-center gap-1.5 shadow-subtle">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
+                    {isEn
+                      ? `${recommendedPercent}% Recommended (${recommendedCount}/${approvedCount} Reviews)`
+                      : `${recommendedPercent}% Đề xuất (${recommendedCount}/${approvedCount} Đánh giá)`}
+                  </span>
+                  <span className="hidden sm:inline text-forest-300 dark:text-forest-700">•</span>
+                </>
+              )}
               <span className="hidden sm:inline">
                 {isEn ? (s.socialProofEn || 'Affordable ($) • Gia Nghia City') : (s.socialProof || 'Giá bình dân ($) • TP. Gia Nghĩa')}
               </span>
@@ -404,7 +450,7 @@ export default function HomePage() {
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 4: COMMUNITY REVIEWS & 100% RECOMMENDATION PREVIEW */}
+      {/* SECTION 4: COMMUNITY REVIEWS                              */}
       {/* ========================================================= */}
       <section className="py-16 sm:py-20 border-b border-forest-200/50 dark:border-forest-700/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
@@ -412,7 +458,13 @@ export default function HomePage() {
             <div className="space-y-2">
               <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
                 <Heart className="w-3.5 h-3.5" />
-                <span>{isEn ? 'VERIFIED GUEST REVIEWS • 100% RECOMMENDED' : 'CẢM NHẬN THỰC KHÁCH • 100% ĐỀ XUẤT'}</span>
+                <span>
+                  {approvedCount > 0
+                    ? (isEn
+                        ? `VERIFIED GUEST REVIEWS • ${recommendedPercent}% RECOMMENDED`
+                        : `CẢM NHẬN THỰC KHÁCH • ${recommendedPercent}% ĐỀ XUẤT`)
+                    : (isEn ? 'VERIFIED GUEST REVIEWS' : 'CẢM NHẬN THỰC KHÁCH')}
+                </span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
                 {isEn ? 'Voices From Beside The Stream' : 'Những Lời Chia Sẻ Ấm Áp Bên Suối'}
@@ -431,174 +483,192 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <ScrollLayoutCard3D delay={0.05}>
-              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3 h-full flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="font-serif italic text-sm text-ink-primary leading-relaxed">
-                    &ldquo;Không gian quán rất thoáng mát, view suối đá tự nhiên cực chill giữa lòng Gia Nghĩa. Cà phê muối béo ngậy đậm đà!&rdquo;
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between text-xs font-mono">
-                  <span className="font-bold text-ink-primary">Nguyễn Hoài An</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 text-[11px]">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>{isEn ? 'Verified' : 'Xác thực'}</span>
-                  </span>
-                </div>
-              </div>
-            </ScrollLayoutCard3D>
-
-            <ScrollLayoutCard3D delay={0.1}>
-              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3 h-full flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="font-serif italic text-sm text-ink-primary leading-relaxed">
-                    &ldquo;Quán nằm dưới dốc yên tĩnh, hoàn toàn tách biệt với khói bụi. Sinh tố bơ sáp Đăk Nông đặc dẻo thơm lừng, rất đáng thử!&rdquo;
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between text-xs font-mono">
-                  <span className="font-bold text-ink-primary">Trần Quốc Bảo</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 text-[11px]">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>{isEn ? 'Verified' : 'Xác thực'}</span>
-                  </span>
-                </div>
-              </div>
-            </ScrollLayoutCard3D>
-
-            <ScrollLayoutCard3D delay={0.15}>
-              <div className="p-6 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3 h-full flex flex-col justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="font-serif italic text-sm text-ink-primary leading-relaxed">
-                    &ldquo;Đêm nhạc acoustic tối thứ Bảy bên bờ suối rất ấm cúng. Tiếng suối róc rách hòa cùng tiếng guitar mộc mạc thư giãn tuyệt vời.&rdquo;
-                  </p>
-                </div>
-                <div className="pt-2 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between text-xs font-mono">
-                  <span className="font-bold text-ink-primary">Lê Thị Kim Ngân</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 text-[11px]">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>{isEn ? 'Verified' : 'Xác thực'}</span>
-                  </span>
-                </div>
-              </div>
-            </ScrollLayoutCard3D>
-          </div>
+          <ReviewShowcase3 comments={comments} settings={s} />
         </div>
       </section>
 
       {/* ========================================================= */}
-      {/* SECTION 5: WEEKEND ACOUSTIC & SEASONAL NEWS               */}
+      {/* SECTION: HIGHLIGHT STORIES (Auto-hidden if toggle is OFF or 0 stories) */}
       {/* ========================================================= */}
-      <section className="py-16 sm:py-20 bg-forest-50/30 dark:bg-forest-950/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-            <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
-              <Music className="w-3.5 h-3.5 text-accent-botanical" />
-              <span>{isEn ? 'STREAMSIDE EVENTS & LIFE' : 'SỰ KIỆN & NHỊP SỐNG BÊN SUỐI'}</span>
+      {shouldShowHighlights && (
+        <section className="py-16 sm:py-20 border-b border-forest-200/50 dark:border-forest-700/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+              <div className="space-y-2">
+                <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent-botanical" />
+                  <span>{isEn ? 'SANCTUARY MILESTONES' : 'DẤU ẤN HOẠT ĐỘNG NỔI BẬT'}</span>
+                </div>
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+                  {isEn ? 'Moments Along The Natural Stream' : 'Nhịp Sống Tự Nhiên Bên Dòng Suối'}
+                </h2>
+                <p className="text-xs sm:text-sm text-ink-muted">
+                  {isEn
+                    ? 'From weekend acoustic music nights to seasonal Dak Nong avocado harvests.'
+                    : 'Từ những đêm nhạc Acoustic mộc mạc cuối tuần đến mùa thu hoạch bơ sáp Đăk Nông trù phú.'}
+                </p>
+              </div>
+
+              <Link
+                href="/khach-hang"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-100 dark:bg-forest-900 text-accent-botanical text-xs font-mono font-medium hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors self-start md:self-auto"
+              >
+                <span>{isEn ? 'View all stories' : 'Xem tất cả dấu ấn'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-              {isEn ? 'Acoustic Live Music & Happenings' : 'Đêm Nhạc Acoustic & Hoạt Động'}
-            </h2>
-            <p className="text-xs sm:text-sm text-ink-muted">
-              {isEn ? 'Stay updated with weekend musical performances and warm happenings by the water.' : 'Cập nhật lịch biểu diễn âm nhạc cuối tuần và những chương trình ấm cúng tại quán.'}
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {publishedStories.slice(0, 2).map((story, idx) => {
+                const title = isEn && story.titleEn ? story.titleEn : story.title;
+                const category = isEn && story.categoryEn ? story.categoryEn : story.category;
+                const date = isEn && story.dateEn ? story.dateEn : story.date;
+                const summary = isEn && story.summaryEn ? story.summaryEn : story.summary;
+                const contentText = isEn && story.contentEn ? story.contentEn : story.content;
+                const badge = isEn && story.badgeEn ? story.badgeEn : story.badge;
+
+                return (
+                  <ScrollLayoutCard3D key={story.id} delay={idx * 0.08} className="h-full">
+                    <InteractiveTiltCard maxTilt={3.0} spotlight={true} className="h-full">
+                      <div className="h-full bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated transition-shadow duration-200 flex flex-col justify-between overflow-hidden">
+                        <div className="p-7 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-botanical bg-forest-100 dark:bg-forest-800 px-3 py-1 rounded-full">
+                              {badge || category}
+                            </span>
+                            <span className="text-xs font-mono text-ink-muted flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5 text-accent-botanical" />
+                              <span>{date}</span>
+                            </span>
+                          </div>
+
+                          <h3 className="font-serif text-2xl font-bold text-ink-primary leading-snug">
+                            {title}
+                          </h3>
+
+                          <p className="font-serif italic text-sm text-accent-earth leading-relaxed">
+                            &ldquo;{summary}&rdquo;
+                          </p>
+
+                          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+                            {contentText}
+                          </p>
+                        </div>
+
+                        <div className="px-7 py-4 bg-forest-50 dark:bg-forest-950 border-t border-forest-200 dark:border-forest-800 flex items-center justify-between text-xs font-mono text-accent-botanical">
+                          <span>Cẩm Cù House Streamside</span>
+                          <span className="font-bold"># {category}</span>
+                        </div>
+                      </div>
+                    </InteractiveTiltCard>
+                  </ScrollLayoutCard3D>
+                );
+              })}
+            </div>
           </div>
+        </section>
+      )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(data.events || []).map((ev, idx) => {
-              const evTitle = isEn && ev.titleEn ? ev.titleEn : ev.title;
-              const evSubtitle = isEn && ev.subtitleEn ? ev.subtitleEn : ev.subtitle;
-              const evBadge = isEn && ev.badgeEn ? ev.badgeEn : (ev.badge || 'Event');
-              const evSchedule = isEn && ev.dateOrScheduleEn ? ev.dateOrScheduleEn : ev.dateOrSchedule;
-              const evDesc = isEn && ev.descriptionEn ? ev.descriptionEn : ev.description;
+      {/* ========================================================= */}
+      {/* SECTION 5: WEEKEND ACOUSTIC & SEASONAL NEWS (Auto-hidden if OFF or 0 events) */}
+      {/* ========================================================= */}
+      {shouldShowEvents && (
+        <section className="py-16 sm:py-20 bg-forest-50/30 dark:bg-forest-950/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+              <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
+                <Music className="w-3.5 h-3.5 text-accent-botanical" />
+                <span>{isEn ? 'STREAMSIDE EVENTS & LIFE' : 'SỰ KIỆN & NHỊP SỐNG BÊN SUỐI'}</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+                {isEn ? 'Acoustic Live Music & Happenings' : 'Đêm Nhạc Acoustic & Hoạt Động'}
+              </h2>
+              <p className="text-xs sm:text-sm text-ink-muted">
+                {isEn ? 'Stay updated with weekend musical performances and warm happenings by the water.' : 'Cập nhật lịch biểu diễn âm nhạc cuối tuần và những chương trình ấm cúng tại quán.'}
+              </p>
+            </div>
 
-              return (
-                <ScrollLayoutCard3D key={ev.id} delay={(idx % 3) * 0.08} className="h-full">
-                  <div className="h-full rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle flex flex-col justify-between overflow-hidden">
-                    {ev.imageUrl && (
-                      <div className="h-44 w-full bg-forest-100 dark:bg-forest-800 relative overflow-hidden">
-                        <img
-                          src={ev.imageUrl}
-                          alt={evTitle}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {activeEvents.map((ev, idx) => {
+                const evTitle = isEn && ev.titleEn ? ev.titleEn : ev.title;
+                const evSubtitle = isEn && ev.subtitleEn ? ev.subtitleEn : ev.subtitle;
+                const evBadge = isEn && ev.badgeEn ? ev.badgeEn : (ev.badge || 'Event');
+                const evSchedule = isEn && ev.dateOrScheduleEn ? ev.dateOrScheduleEn : ev.dateOrSchedule;
+                const evDesc = isEn && ev.descriptionEn ? ev.descriptionEn : ev.description;
 
-                    <div className="p-6 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono uppercase font-bold text-accent-botanical bg-forest-100 dark:bg-forest-800 px-2.5 py-1 rounded-full">
-                          {evBadge}
-                        </span>
-                        <span className="text-xs font-mono text-ink-muted flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-accent-botanical" />
-                          {evSchedule}
-                        </span>
-                      </div>
-
-                      <h3 className="font-serif text-xl font-bold text-ink-primary">
-                        {evTitle}
-                      </h3>
-
-                      {evSubtitle && (
-                        <p className="text-xs font-mono text-accent-earth font-semibold">
-                          {evSubtitle}
-                        </p>
+                return (
+                  <ScrollLayoutCard3D key={ev.id} delay={(idx % 3) * 0.08} className="h-full">
+                    <div className="h-full rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle flex flex-col justify-between overflow-hidden">
+                      {ev.imageUrl && (
+                        <div className="h-44 w-full bg-forest-100 dark:bg-forest-800 relative overflow-hidden">
+                          <img
+                            src={ev.imageUrl}
+                            alt={evTitle}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       )}
 
-                      <p className="text-xs text-ink-muted leading-relaxed">
-                        {evDesc}
-                      </p>
-                    </div>
+                      <div className="p-6 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase font-bold text-accent-botanical bg-forest-100 dark:bg-forest-800 px-2.5 py-1 rounded-full">
+                            {evBadge}
+                          </span>
+                          <span className="text-xs font-mono text-ink-muted flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-accent-botanical" />
+                            {evSchedule}
+                          </span>
+                        </div>
 
-                    <div className="p-6 pt-0">
-                      <div className="pt-4 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between text-xs">
-                        <span className="font-mono text-forest-400">
-                          {isEn ? 'Cẩm Cù House • Beside Stream' : 'Cẩm Cù House • Bên bờ suối'}
-                        </span>
-                        <a
-                          href="tel:0382851688"
-                          className="text-accent-botanical font-medium hover:underline flex items-center gap-1 font-mono"
-                        >
-                          <Phone className="w-3 h-3" />
-                          <span>0382 851 688</span>
-                        </a>
+                        <h3 className="font-serif text-xl font-bold text-ink-primary">
+                          {evTitle}
+                        </h3>
+
+                        {evSubtitle && (
+                          <p className="text-xs font-mono text-accent-earth font-semibold">
+                            {evSubtitle}
+                          </p>
+                        )}
+
+                        <p className="text-xs text-ink-muted leading-relaxed">
+                          {evDesc}
+                        </p>
+                      </div>
+
+                      <div className="p-6 pt-0">
+                        <div className="pt-4 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between text-xs">
+                          <span className="font-mono text-forest-400">
+                            {isEn ? 'Cẩm Cù House • Beside Stream' : 'Cẩm Cù House • Bên bờ suối'}
+                          </span>
+                          <a
+                            href="tel:0382851688"
+                            className="text-accent-botanical font-medium hover:underline flex items-center gap-1 font-mono"
+                          >
+                            <Phone className="w-3 h-3" />
+                            <span>0382 851 688</span>
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </ScrollLayoutCard3D>
-              );
-            })}
-          </div>
+                  </ScrollLayoutCard3D>
+                );
+              })}
+            </div>
 
-          {/* Action Link to /su-kien */}
-          <div className="mt-10 text-center">
-            <Link
-              href="/su-kien"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-white dark:bg-forest-900 border border-forest-300 dark:border-forest-700 text-ink-primary hover:border-accent-botanical hover:text-accent-botanical rounded-xl text-xs font-mono font-semibold transition-all shadow-subtle active:scale-95"
-            >
-              <Music className="w-4 h-4 text-accent-botanical" />
-              <span>{isEn ? 'View all events & acoustic nights by the stream' : 'Xem tất cả sự kiện & đêm nhạc bên suối'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {/* Action Link to /su-kien */}
+            <div className="mt-10 text-center">
+              <Link
+                href="/su-kien"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-white dark:bg-forest-900 border border-forest-300 dark:border-forest-700 text-ink-primary hover:border-accent-botanical hover:text-accent-botanical rounded-xl text-xs font-mono font-semibold transition-all shadow-subtle active:scale-95"
+              >
+                <Music className="w-4 h-4 text-accent-botanical" />
+                <span>{isEn ? 'View all events & acoustic nights by the stream' : 'Xem tất cả sự kiện & đêm nhạc bên suối'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ========================================================= */}
       {/* SECTION 5: COMPLETE BOTANICAL FOOTER                      */}
