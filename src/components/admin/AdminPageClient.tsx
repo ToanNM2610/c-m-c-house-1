@@ -439,7 +439,12 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
             {activeTab === 'seo-url' && <AdminSeoManager />}
 
             {/* Module 3 */}
-            {activeTab === 'users' && <AdminUsersManager currentUser={currentUser} />}
+            {activeTab === 'users' && (
+              <AdminUsersManager
+                currentUser={currentUser}
+                onCurrentUserUpdate={(updatedUser) => setCurrentUser(updatedUser)}
+              />
+            )}
 
             {/* Module 4 */}
             {activeTab === 'interactions' && <AdminInteractionsManager />}

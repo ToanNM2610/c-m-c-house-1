@@ -7,6 +7,9 @@ import {
   ShieldCheck,
   Shield,
   KeyRound,
+  Pencil,
+  Eye,
+  EyeOff,
   Lock,
   Unlock,
   Trash2,
@@ -22,9 +25,10 @@ import { AdminUserSafe, AdminRole } from '@/types';
 
 interface AdminUsersManagerProps {
   currentUser: AdminUserSafe;
+  onCurrentUserUpdate?: (updatedUser: AdminUserSafe) => void;
 }
 
-export default function AdminUsersManager({ currentUser }: AdminUsersManagerProps) {
+export default function AdminUsersManager({ currentUser, onCurrentUserUpdate }: AdminUsersManagerProps) {
   const [users, setUsers] = useState<AdminUserSafe[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -35,6 +39,16 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUserSafe | null>(null);
+
+  // Edit Account Form state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<AdminUserSafe | null>(null);
+  const [editFullName, setEditFullName] = useState('');
+  const [editUsername, setEditUsername] = useState('');
+  const [editPassword, setEditPassword] = useState('');
+  const [editConfirmPassword, setEditConfirmPassword] = useState('');
+  const [showEditPassword, setShowEditPassword] = useState(false);
+  const [editSubmitting, setEditSubmitting] = useState(false);
 
   // Add Form state
   const [newFullName, setNewFullName] = useState('');
@@ -120,6 +134,82 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
       showToast('error', 'Lỗi hệ thống khi tạo tài khoản');
     } finally {
       setAddSubmitting(false);
+    }
+  };
+
+  const handleOpenEdit = (user: AdminUserSafe) => {
+    setEditingUser(user);
+    setEditFullName(user.fullName);
+    setEditUsername(user.username);
+    setEditPassword('');
+    setEditConfirmPassword('');
+    setShowEditPassword(false);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+
+    const trimmedName = editFullName.trim();
+    if (!trimmedName || trimmedName.length < 2) {
+      showToast('error', 'Họ và tên hiển thị phải có tối thiểu 2 ký tự');
+      return;
+    }
+
+    const trimmedUsername = editUsername.trim().toLowerCase();
+    const usernameRegex = /^[a-z0-9._-]{3,32}$/;
+    if (!usernameRegex.test(trimmedUsername)) {
+      showToast('error', 'Tên đăng nhập không hợp lệ (từ 3–32 ký tự, chỉ gồm chữ thường, số, dấu chấm, gạch dưới hoặc gạch ngang)');
+      return;
+    }
+
+    if (editPassword) {
+      if (editPassword.length < 8) {
+        showToast('error', 'Mật khẩu mới phải có tối thiểu 8 ký tự');
+        return;
+      }
+      if (editPassword !== editConfirmPassword) {
+        showToast('error', 'Xác nhận mật khẩu mới không khớp');
+        return;
+      }
+    }
+
+    setEditSubmitting(true);
+    try {
+      const payload: Record<string, string> = {
+        fullName: trimmedName,
+        username: trimmedUsername,
+      };
+      if (editPassword) {
+        payload.password = editPassword;
+      }
+
+      const res = await fetch(`/api/users/${editingUser.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        showToast('success', `Đã cập nhật thông tin tài khoản "${json.data.username}" thành công`);
+        setUsers((prev) => prev.map((u) => (u.id === json.data.id ? json.data : u)));
+        if (json.data.id === currentUser.id) {
+          onCurrentUserUpdate?.(json.data);
+        }
+        setIsEditModalOpen(false);
+        setEditingUser(null);
+        setEditPassword('');
+        setEditConfirmPassword('');
+      } else {
+        showToast('error', json.error || 'Không thể cập nhật tài khoản');
+      }
+    } catch {
+      showToast('error', 'Lỗi hệ thống khi cập nhật thông tin tài khoản');
+    } finally {
+      setEditSubmitting(false);
     }
   };
 
@@ -478,6 +568,15 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
                       {/* Actions column */}
                       <td className="py-4 px-4 sm:px-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {/* Edit Account button (FullName, Username, Password) - enabled for all including self */}
+                          <button
+                            onClick={() => handleOpenEdit(u)}
+                            className="p-1.5 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                            title="Chỉnh sửa thông tin tài khoản (Họ tên, Username, Mật khẩu)"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+
                           {/* Change Password button */}
                           <button
                             onClick={() => {
@@ -485,7 +584,7 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
                               setIsPasswordModalOpen(true);
                             }}
                             className="p-1.5 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
-                            title="Đổi mật khẩu"
+                            title="Đổi mật khẩu nhanh"
                           >
                             <KeyRound className="w-4 h-4" />
                           </button>
@@ -731,6 +830,156 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
                     </>
                   ) : (
                     <span>Lưu Mật Khẩu Mới</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Chỉnh Sửa Tài Khoản (FullName, Username, Password) */}
+      {isEditModalOpen && editingUser && (
+        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+            <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Pencil className="w-5 h-5 text-emerald-400" />
+                <h3 className="font-serif font-bold text-lg">Chỉnh Sửa Tài Khoản</h3>
+              </div>
+              <button
+                onClick={() => {
+                  setIsEditModalOpen(false);
+                  setEditingUser(null);
+                }}
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateUser} className="p-6 space-y-4">
+              {/* User badge */}
+              <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono flex items-center justify-between">
+                <div>
+                  <span className="text-slate-400">Tài khoản: </span>
+                  <span className="text-slate-800 font-semibold">{editingUser.fullName}</span>
+                </div>
+                {editingUser.id === currentUser.id && (
+                  <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">
+                    Tài khoản của bạn
+                  </span>
+                )}
+              </div>
+
+              {/* Full name field */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 mb-1.5 font-medium">
+                  Họ và tên hiển thị:
+                </label>
+                <input
+                  type="text"
+                  value={editFullName}
+                  onChange={(e) => setEditFullName(e.target.value)}
+                  placeholder="Nhập họ và tên hiển thị"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:border-emerald-600 focus:bg-white transition-all text-slate-900 font-medium"
+                  required
+                />
+              </div>
+
+              {/* Username field */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 mb-1.5 font-medium">
+                  Tên đăng nhập (Username):
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-2.5 text-xs font-mono text-slate-400">@</span>
+                  <input
+                    type="text"
+                    value={editUsername}
+                    onChange={(e) => setEditUsername(e.target.value.toLowerCase())}
+                    placeholder="vd: admin"
+                    className="w-full pl-8 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:border-emerald-600 focus:bg-white transition-all text-slate-900 font-medium"
+                    required
+                  />
+                </div>
+                <p className="text-[11px] font-mono text-slate-400 mt-1">
+                  3–32 ký tự, chỉ gồm chữ thường, số, dấu chấm (.), gạch dưới (_) hoặc gạch ngang (-).
+                </p>
+              </div>
+
+              {/* New Password field (Optional) */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 font-medium">
+                    Mật khẩu mới:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowEditPassword(!showEditPassword)}
+                    className="text-[11px] font-mono text-emerald-700 hover:text-emerald-800 flex items-center gap-1 font-medium"
+                  >
+                    {showEditPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    <span>{showEditPassword ? 'Ẩn' : 'Hiện'}</span>
+                  </button>
+                </div>
+                <input
+                  type={showEditPassword ? 'text' : 'password'}
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                  placeholder="Để trống nếu không đổi mật khẩu"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:border-emerald-600 focus:bg-white transition-all text-slate-900"
+                />
+                <p className="text-[11px] font-mono text-slate-400 mt-1">
+                  Để trống để giữ nguyên mật khẩu hiện tại. Tối thiểu 8 ký tự nếu nhập mới.
+                </p>
+              </div>
+
+              {/* Confirm Password field (only shown if new password is typed) */}
+              {editPassword.length > 0 && (
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-slate-500 mb-1.5 font-medium">
+                    Xác nhận mật khẩu mới:
+                  </label>
+                  <input
+                    type={showEditPassword ? 'text' : 'password'}
+                    value={editConfirmPassword}
+                    onChange={(e) => setEditConfirmPassword(e.target.value)}
+                    placeholder="Nhập lại chính xác mật khẩu mới"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:border-emerald-600 focus:bg-white transition-all text-slate-900"
+                    required
+                  />
+                  {editConfirmPassword.length > 0 && editPassword !== editConfirmPassword && (
+                    <p className="text-[11px] font-mono text-red-500 mt-1 font-medium">
+                      Mật khẩu xác nhận chưa khớp.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="pt-2 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    setEditingUser(null);
+                  }}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono text-slate-600 hover:bg-slate-100 transition-colors"
+                >
+                  Hủy bỏ
+                </button>
+                <button
+                  type="submit"
+                  disabled={editSubmitting || (editPassword.length > 0 && editPassword !== editConfirmPassword)}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-mono font-semibold hover:bg-emerald-700 transition-all flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
+                >
+                  {editSubmitting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Đang lưu...</span>
+                    </>
+                  ) : (
+                    <span>Lưu Thay Đổi</span>
                   )}
                 </button>
               </div>
