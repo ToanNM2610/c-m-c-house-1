@@ -39,19 +39,20 @@ export default function SuKienPage() {
     { id: 'all', label: 'All FAQs' },
     { id: 'Đường đi & Đỗ xe', label: 'Directions & Parking' },
     { id: 'Thực đơn xanh sạch', label: 'Botanical Menu' },
-    { id: 'Giờ mở cửa & Acoustic', label: 'Hours & Acoustic' },
+    { id: 'Giờ mở cửa', label: 'Operating Hours' },
     { id: 'Họp nhóm & Mang về', label: 'Gatherings & Takeaway' },
   ] : [
     { id: 'all', label: 'Tất cả' },
     { id: 'Đường đi & Đỗ xe', label: 'Đường đi & Đỗ xe' },
     { id: 'Thực đơn xanh sạch', label: 'Thực đơn xanh sạch' },
-    { id: 'Giờ mở cửa & Acoustic', label: 'Giờ mở cửa & Acoustic' },
+    { id: 'Giờ mở cửa', label: 'Giờ mở cửa' },
     { id: 'Họp nhóm & Mang về', label: 'Họp nhóm & Mang về' },
   ];
 
-  const filteredFaqs = activeFaqCategory === 'all'
+  const filteredFaqs = (activeFaqCategory === 'all'
     ? faqs
-    : faqs.filter((f) => f.category === activeFaqCategory);
+    : faqs.filter((f) => f.category === activeFaqCategory || (activeFaqCategory === 'Giờ mở cửa' && f.category === 'Giờ mở cửa & Acoustic'))
+  ).filter((f) => !f.question?.includes('Đêm nhạc Acoustic') && !f.questionEn?.includes('Acoustic Live sessions'));
 
   const toggleFaq = (id: string) => {
     setOpenFaqId(openFaqId === id ? null : id);

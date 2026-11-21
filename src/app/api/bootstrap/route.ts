@@ -37,9 +37,32 @@ export async function GET() {
       prisma.eventPost.findMany({ orderBy: { createdAt: 'desc' } }),
       prisma.teamMember.findMany({ where: { active: true }, orderBy: { orderIndex: 'asc' } }),
       prisma.highlightStory.findMany({ where: { published: true }, orderBy: { orderIndex: 'asc' } }),
-      prisma.faqItem.findMany({ where: { published: true }, orderBy: { orderIndex: 'asc' } }),
+      prisma.faqItem.findMany({
+        where: {
+          published: true,
+          NOT: {
+            OR: [
+              { id: 'faq-5' },
+              { question: { contains: 'Đêm nhạc Acoustic' } },
+              { questionEn: { contains: 'Acoustic Live sessions' } },
+            ],
+          },
+        },
+        orderBy: { orderIndex: 'asc' },
+      }),
       prisma.staticPage.findMany({ where: { published: true } }),
     ]);
+
+    // Idempotent background cleanup of any legacy Acoustic FAQ item
+    prisma.faqItem.deleteMany({
+      where: {
+        OR: [
+          { id: 'faq-5' },
+          { question: { contains: 'Đêm nhạc Acoustic' } },
+          { questionEn: { contains: 'Acoustic Live sessions' } },
+        ],
+      },
+    }).catch(() => {});
 
     if (!settings) {
       return NextResponse.json({ error: 'Store settings not found' }, { status: 500 });

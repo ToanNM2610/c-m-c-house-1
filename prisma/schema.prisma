@@ -238,7 +238,7 @@ model FaqItem {
   questionEn  String?
   answer      String
   answerEn    String?
-  category    String   @default("Chung") // 'Đường đi & Đỗ xe' | 'Thực đơn xanh sạch' | 'Giờ mở cửa & Acoustic' | 'Họp nhóm & Mang về'
+  category    String   @default("Chung") // 'Đường đi & Đỗ xe' | 'Thực đơn xanh sạch' | 'Giờ mở cửa' | 'Họp nhóm & Mang về'
   categoryEn  String?  @default("General")
   orderIndex  Int      @default(0)
   published   Boolean  @default(true)

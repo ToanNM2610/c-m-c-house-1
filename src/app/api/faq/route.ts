@@ -9,7 +9,27 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    // Exclude Acoustic Night FAQ and trigger background cleanup
+    prisma.faqItem.deleteMany({
+      where: {
+        OR: [
+          { id: 'faq-5' },
+          { question: { contains: 'Đêm nhạc Acoustic' } },
+          { questionEn: { contains: 'Acoustic Live sessions' } },
+        ],
+      },
+    }).catch(() => {});
+
     const list = await prisma.faqItem.findMany({
+      where: {
+        NOT: {
+          OR: [
+            { id: 'faq-5' },
+            { question: { contains: 'Đêm nhạc Acoustic' } },
+            { questionEn: { contains: 'Acoustic Live sessions' } },
+          ],
+        },
+      },
       orderBy: { orderIndex: 'asc' },
     });
     return apiSuccess(list);

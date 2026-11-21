@@ -417,7 +417,18 @@ async function main() {
   });
   console.log('✓ Cleaned up fake/sample guest reviews from database');
 
-  // 10. FAQs across 4 categories (8 items)
+  // 10. FAQs across 4 categories (7 items)
+  // Clean up any legacy Acoustic Night FAQ permanently
+  await prisma.faqItem.deleteMany({
+    where: {
+      OR: [
+        { id: 'faq-5' },
+        { question: { contains: 'Đêm nhạc Acoustic' } },
+        { questionEn: { contains: 'Acoustic Live sessions' } },
+      ],
+    },
+  });
+
   const faqs = [
     {
       id: 'faq-1',
@@ -464,25 +475,14 @@ async function main() {
       published: true,
     },
     {
-      id: 'faq-5',
-      question: 'Đêm nhạc Acoustic diễn ra vào thời gian nào?',
-      questionEn: 'When do the weekend Acoustic Live sessions take place?',
-      answer: 'Chương trình Acoustic mộc bên bờ suối diễn ra định kỳ vào tối Thứ Bảy hàng tuần từ 19:30 đến 21:30. Quán hoàn toàn không phụ thu bất kỳ phụ phí hay vé vào cửa nào.',
-      answerEn: 'Acoustic live music by the stream takes place every Saturday from 19:30 to 21:30 with zero surcharge.',
-      category: 'Giờ mở cửa & Acoustic',
-      categoryEn: 'Hours & Music',
-      orderIndex: 5,
-      published: true,
-    },
-    {
       id: 'faq-6',
       question: 'Giờ mở cửa đón khách của quán như thế nào?',
       questionEn: 'What are the sanctuary operating hours?',
       answer: 'Thứ Hai đến Thứ Năm quán mở từ 07:00 đến 18:00. Thứ Sáu, Thứ Bảy và Chủ Nhật quán mở muộn ngắm suối đêm đến 22:00.',
       answerEn: 'Monday to Thursday: 07:00 - 18:00. Friday to Sunday: 07:00 - 22:00 for evening night stream views.',
-      category: 'Giờ mở cửa & Acoustic',
-      categoryEn: 'Hours & Music',
-      orderIndex: 6,
+      category: 'Giờ mở cửa',
+      categoryEn: 'Operating Hours',
+      orderIndex: 5,
       published: true,
     },
     {
@@ -493,7 +493,7 @@ async function main() {
       answerEn: 'Yes! Call hotlines 0382 851 688 or 0774 659 000 in advance for prompt takeaway preparation.',
       category: 'Họp nhóm & Mang về',
       categoryEn: 'Gatherings & Takeaway',
-      orderIndex: 7,
+      orderIndex: 6,
       published: true,
     },
     {
@@ -504,7 +504,7 @@ async function main() {
       answerEn: 'Yes, with 18 streamside tables and long wooden banquet setups, we comfortably accommodate groups of 10 to 25 guests.',
       category: 'Họp nhóm & Mang về',
       categoryEn: 'Gatherings & Takeaway',
-      orderIndex: 8,
+      orderIndex: 7,
       published: true,
     },
   ];

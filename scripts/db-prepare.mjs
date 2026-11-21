@@ -27,6 +27,29 @@ async function main() {
 
   const prisma = new PrismaClient();
   try {
+    // Permanently remove Acoustic Night FAQ item from PostgreSQL database
+    try {
+      const deletedFaqs = await prisma.faqItem.deleteMany({
+        where: {
+          OR: [
+            { id: 'faq-5' },
+            { question: { contains: 'Đêm nhạc Acoustic' } },
+            { questionEn: { contains: 'Acoustic Live sessions' } },
+          ],
+        },
+      });
+      if (deletedFaqs.count > 0) {
+        console.log(`🧹 [db-prepare] Removed ${deletedFaqs.count} Acoustic Night FAQ record(s) from PostgreSQL.`);
+      }
+
+      await prisma.faqItem.updateMany({
+        where: { category: 'Giờ mở cửa & Acoustic' },
+        data: { category: 'Giờ mở cửa', categoryEn: 'Operating Hours' },
+      });
+    } catch (cleanErr) {
+      console.warn('⚠️ [db-prepare] Note during Acoustic FAQ cleanup:', cleanErr.message);
+    }
+
     const adminCount = await prisma.adminUser.count();
     console.log(`📊 [db-prepare] Current AdminUser count: ${adminCount}`);
 
