@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Users,
   UserPlus,
@@ -51,12 +51,12 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
   // Action loading state (e.g. locking/unlocking user id)
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 4000);
-  };
+  }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setRefreshing(true);
       const res = await fetch('/api/users');
@@ -72,12 +72,11 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [showToast]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();

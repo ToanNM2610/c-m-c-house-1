@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Sparkles,
   Users,
@@ -87,12 +87,12 @@ export default function AdminStoriesTeamManager() {
   // Image upload state
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 3500);
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [storiesRes, teamRes] = await Promise.all([
@@ -109,11 +109,11 @@ export default function AdminStoriesTeamManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, target: 'story' | 'team') => {
     const file = e.target.files?.[0];

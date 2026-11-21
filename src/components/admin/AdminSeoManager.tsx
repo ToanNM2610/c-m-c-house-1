@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Search,
   Globe,
@@ -41,12 +41,12 @@ export default function AdminSeoManager() {
   const [newStatus, setNewStatus] = useState<number>(301);
   const [redirectSubmitting, setRedirectSubmitting] = useState(false);
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 3500);
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [seoRes, redRes] = await Promise.all([
@@ -57,9 +57,13 @@ export default function AdminSeoManager() {
       const redJson = await redRes.json();
 
       if (seoJson.success) {
-        setSeoList(seoJson.data || []);
-        const found = seoJson.data?.find((s: PageSeo) => s.route === selectedRoute);
-        if (found) setSeoForm(found);
+        const list: PageSeo[] = seoJson.data || [];
+        setSeoList(list);
+        setSelectedRoute((currRoute) => {
+          const found = list.find((s: PageSeo) => s.route === currRoute);
+          if (found) setSeoForm(found);
+          return currRoute;
+        });
       }
       if (redJson.success) setRedirects(redJson.data || []);
     } catch {
@@ -67,11 +71,11 @@ export default function AdminSeoManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleSelectRoute = (route: string) => {
     setSelectedRoute(route);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Cpu,
   Database,
@@ -37,12 +37,12 @@ export default function AdminOpsManager() {
   // Cache purge state
   const [purgingCache, setPurgingCache] = useState(false);
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 4000);
-  };
+  }, []);
 
-  const fetchHealthAndLogs = async () => {
+  const fetchHealthAndLogs = useCallback(async () => {
     try {
       setLoading(true);
       const [hRes, lRes] = await Promise.all([
@@ -61,11 +61,11 @@ export default function AdminOpsManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedLogLevel, showToast]);
 
   useEffect(() => {
     fetchHealthAndLogs();
-  }, [selectedLogLevel]);
+  }, [fetchHealthAndLogs]);
 
   const handleExportBackup = async () => {
     setExportingBackup(true);

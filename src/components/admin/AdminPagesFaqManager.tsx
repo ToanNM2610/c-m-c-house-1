@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   FileText,
   HelpCircle,
@@ -37,12 +37,12 @@ export default function AdminPagesFaqManager() {
   const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
   const [faqSubmitting, setFaqSubmitting] = useState(false);
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 3500);
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [pagesRes, faqsRes] = await Promise.all([
@@ -59,11 +59,11 @@ export default function AdminPagesFaqManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleSavePage = async (e: React.FormEvent) => {
     e.preventDefault();

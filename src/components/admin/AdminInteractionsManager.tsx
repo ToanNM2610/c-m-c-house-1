@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   MessageSquare,
   Star,
@@ -77,12 +77,12 @@ export default function AdminInteractionsManager() {
   const [reviewInterval, setReviewInterval] = useState<number>(6);
   const [savingReviewSettings, setSavingReviewSettings] = useState(false);
 
-  const showToast = (type: 'success' | 'error', message: string) => {
+  const showToast = useCallback((type: 'success' | 'error', message: string) => {
     setToast({ type, message });
     setTimeout(() => setToast(null), 4000);
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [contRes, commRes, settRes, gmailCfgRes, gmailRecRes] = await Promise.all([
@@ -120,11 +120,11 @@ export default function AdminInteractionsManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // Update Contact Status
   const handleUpdateContactStatus = async (id: string, status: string) => {
