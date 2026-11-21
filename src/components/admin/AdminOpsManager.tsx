@@ -256,7 +256,7 @@ export default function AdminOpsManager() {
             {/* Database Card with Writable Status */}
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-                <span>DUNG LƯỢNG DATABASE</span>
+                <span>DUNG LƯỢNG DATABASE (POSTGRESQL NEON)</span>
                 <Database className="w-4 h-4 text-emerald-600" />
               </div>
               <div className="text-2xl font-serif font-bold text-slate-900">
@@ -276,7 +276,7 @@ export default function AdminOpsManager() {
                   }
                 >
                   {healthData.storage.databaseWritable
-                    ? 'Sẵn sàng ghi (Read-Write)'
+                    ? 'Sẵn sàng ghi (PostgreSQL Read-Write)'
                     : 'Chỉ đọc (Read-Only) / Khóa ghi'}
                 </span>
               </div>
@@ -428,7 +428,7 @@ export default function AdminOpsManager() {
           {/* Entity Summary Grid */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <h3 className="font-serif font-bold text-base text-slate-900">
-              Tổng Hợp Bản Ghi Dữ Liệu Trong SQLite
+              Tổng Hợp Bản Ghi Dữ Liệu Trong PostgreSQL (Neon)
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-xs font-mono">
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">

@@ -2,10 +2,8 @@ import { prisma } from '../src/lib/prisma';
 
 async function main() {
   console.log('--- 1. VERIFY LIVE SYSTEM STATUS & REAL DB PROBE ---');
-  // Check health data structure directly
-  const dbPath = './prisma/dev.db';
   const superAdmin = await prisma.adminUser.findFirst({ where: { role: 'SUPER_ADMIN' } });
-  console.log('✓ Super Admin found:', superAdmin?.email);
+  console.log('✓ Super Admin found:', superAdmin?.username);
 
   // DB read/write probe
   const probe = await prisma.systemLog.create({

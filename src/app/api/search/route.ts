@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     const lower = query.toLowerCase();
 
-    // Fetch all published candidates from SQLite
+    // Fetch all published candidates from PostgreSQL (Neon)
     const [menuItems, events, faqs, pages, plates] = await Promise.all([
       prisma.menuItem.findMany({
         where: { inStock: true },

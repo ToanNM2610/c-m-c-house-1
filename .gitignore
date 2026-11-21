@@ -12,6 +12,8 @@
 # Production & Cache
 *.tsbuildinfo
 next-env.d.ts
+*.db
+*.db-journal
 
 # Misc & OS
 .DS_Store

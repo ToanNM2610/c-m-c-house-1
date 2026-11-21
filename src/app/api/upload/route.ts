@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { put } from '@vercel/blob';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
@@ -57,21 +58,50 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', targetFolder);
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
     // Collision-proof filename
     const rawBase = path.basename(originalName, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
     const safeBase = rawBase.length > 0 ? rawBase.slice(0, 40) : 'media';
     const safeExt = ext.length > 0 ? ext : '.jpg';
     const uniqueFileName = `${safeBase}-${Date.now()}${safeExt}`;
-    const filePath = path.join(uploadDir, uniqueFileName);
 
-    fs.writeFileSync(filePath, buffer);
+    let publicUrl: string;
 
-    const publicUrl = `/uploads/${targetFolder}/${uniqueFileName}`;
+    // Check if Vercel Blob storage is configured
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      const blobPath = `${targetFolder}/${uniqueFileName}`;
+      const blob = await put(blobPath, buffer, {
+        access: 'public',
+        addRandomSuffix: true,
+        contentType: fileMimeType || undefined,
+      });
+      publicUrl = blob.url;
+    } else {
+      // Local development fallback
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', targetFolder);
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      const filePath = path.join(uploadDir, uniqueFileName);
+      fs.writeFileSync(filePath, buffer);
+      publicUrl = `/uploads/${targetFolder}/${uniqueFileName}`;
+    }
+
+    // Persist to MediaAsset table in database
+    try {
+      await prisma.mediaAsset.create({
+        data: {
+          url: publicUrl,
+          folder: targetFolder,
+          filename: uniqueFileName,
+          fileType: fileMimeType || 'image/jpeg',
+          fileSize: buffer.length,
+          altVi: originalName,
+          altEn: originalName,
+        },
+      });
+    } catch (assetErr) {
+      console.warn('Could not record MediaAsset in DB:', assetErr);
+    }
 
     return apiSuccess({
       url: publicUrl,

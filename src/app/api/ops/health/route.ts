@@ -35,7 +35,7 @@ async function probeDatabaseWrite(): Promise<{ ok: boolean; error?: string; mode
         level: 'INFO',
         category: 'HEALTH_CHECK',
         action: 'DB_WRITE_PROBE',
-        details: 'Runtime write probe to verify SQLite writability',
+        details: 'Runtime write probe to verify PostgreSQL writability',
         ipAddress: '127.0.0.1',
       },
     });
@@ -43,8 +43,7 @@ async function probeDatabaseWrite(): Promise<{ ok: boolean; error?: string; mode
     return { ok: true, mode: 'READ_WRITE' };
   } catch (error: any) {
     const msg = String(error?.message || error || '');
-    const isReadOnly = /read.only|cannot write|attempt to write a readonly database|file is read.only|EACCES|EPERM/i.test(msg);
-    return { ok: false, error: isReadOnly ? 'CSDL đang ở chế độ chỉ đọc (read-only) trên Vercel Serverless' : msg, mode: 'READ_ONLY' };
+    return { ok: false, error: msg, mode: 'READ_ONLY' };
   }
 }
 
@@ -53,13 +52,20 @@ export async function GET(req: NextRequest) {
   if ('errorResponse' in auth) return auth.errorResponse;
 
   try {
-    const dbPath = path.join(process.cwd(), 'prisma', 'dev.db');
     let dbSizeBytes = 0;
-    let dbFileExists = false;
-    if (fs.existsSync(dbPath)) {
-      dbFileExists = true;
+    let dbProvider = 'PostgreSQL (Neon)';
+    try {
+      const sizeResult: any = await prisma.$queryRawUnsafe(`SELECT pg_database_size(current_database()) as size`);
+      if (sizeResult && sizeResult[0] && sizeResult[0].size !== undefined) {
+        dbSizeBytes = Number(sizeResult[0].size);
+      }
+    } catch {
       try {
-        dbSizeBytes = fs.statSync(dbPath).size;
+        const dbPath = path.join(process.cwd(), 'prisma', 'dev.db');
+        if (fs.existsSync(dbPath)) {
+          dbSizeBytes = fs.statSync(dbPath).size;
+          dbProvider = 'SQLite (Local Dev)';
+        }
       } catch {}
     }
 
@@ -134,7 +140,7 @@ export async function GET(req: NextRequest) {
     // Compute dynamic health score
     const checks: { name: string; ok: boolean; detail?: string }[] = [
       { name: 'Đọc CSDL (Read Probe)', ok: dbReadOk, detail: dbReadOk ? `Phản hồi ${dbReadLatencyMs}ms` : dbReadError },
-      { name: 'Ghi CSDL (Write Probe)', ok: writeProbe.ok, detail: writeProbe.ok ? 'Đọc/ghi bình thường' : (writeProbe.error || 'Lỗi ghi') },
+      { name: 'Ghi CSDL (Write Probe)', ok: writeProbe.ok, detail: writeProbe.ok ? 'PostgreSQL Đọc/Ghi bình thường' : (writeProbe.error || 'Lỗi ghi') },
       { name: 'Lỗi hệ thống (24h)', ok: errorCount24h === 0, detail: `${errorCount24h} lỗi` },
       { name: 'Tài khoản Super Admin', ok: superAdminCount > 0, detail: `${superAdminCount} tài khoản` },
     ];
@@ -164,8 +170,8 @@ export async function GET(req: NextRequest) {
         https: isHttps,
       },
       storage: {
-        databaseFile: 'prisma/dev.db',
-        databaseFileExists: dbFileExists,
+        databaseProvider: dbProvider,
+        databaseName: 'camcu_db (PostgreSQL Neon)',
         databaseSizeBytes: dbSizeBytes,
         databaseSizeFormatted: `${(dbSizeBytes / 1024 / 1024).toFixed(2)} MB`,
         databaseReadable: dbReadOk,
@@ -174,6 +180,7 @@ export async function GET(req: NextRequest) {
         databaseWriteError: writeProbe.error,
         uploadsSizeBytes: uploadsSizeBytes,
         uploadsSizeFormatted: `${(uploadsSizeBytes / 1024 / 1024).toFixed(2)} MB`,
+        blobStorageActive: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       },
       counts: {
         menuItems: menuItemCount,

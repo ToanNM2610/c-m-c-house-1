@@ -137,7 +137,7 @@ export default function AdminGalleryManager() {
 
       const uploadedUrl = uploadJson.data.url;
 
-      // Bind to SQLite via /api/spatial-plates
+      // Bind to PostgreSQL via /api/spatial-plates
       const patchRes = await fetch('/api/spatial-plates', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
