@@ -59,7 +59,7 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
   const fetchUsers = useCallback(async () => {
     try {
       setRefreshing(true);
-      const res = await fetch('/api/users');
+      const res = await fetch('/api/users', { credentials: 'include' });
       const json = await res.json();
       if (res.ok && json.success) {
         setUsers(json.data);
@@ -95,6 +95,7 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
       const res = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           fullName: newFullName.trim(),
           username: newUsername.trim(),
@@ -141,6 +142,7 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
       const res = await fetch(`/api/users/${selectedUser.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           password: resetPassword,
         }),
@@ -164,8 +166,14 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
   };
 
   const handleToggleActive = async (targetUser: AdminUserSafe) => {
-    if (targetUser.id === currentUser.id && targetUser.role === 'SUPER_ADMIN') {
+    if (targetUser.id === currentUser.id) {
       showToast('error', 'Không thể tự khóa tài khoản của chính mình');
+      return;
+    }
+
+    const superAdminActiveCount = users.filter((u) => u.role === 'SUPER_ADMIN' && u.isActive).length;
+    if (targetUser.role === 'SUPER_ADMIN' && targetUser.isActive && superAdminActiveCount <= 1) {
+      showToast('error', 'Không thể khóa tài khoản Super Admin duy nhất đang hoạt động');
       return;
     }
 
@@ -174,6 +182,7 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
       const res = await fetch(`/api/users/${targetUser.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           isActive: !targetUser.isActive,
         }),
@@ -201,6 +210,12 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
   const handleDeleteUser = async (targetUser: AdminUserSafe) => {
     if (targetUser.id === currentUser.id) {
       showToast('error', 'Không thể tự xóa tài khoản của chính bạn');
+      return;
+    }
+
+    const superAdminCount = users.filter((u) => u.role === 'SUPER_ADMIN').length;
+    if (targetUser.role === 'SUPER_ADMIN' && superAdminCount <= 1) {
+      showToast('error', 'Không thể xóa tài khoản Quản Trị Cấp Cao (Super Admin) duy nhất trong hệ thống');
       return;
     }
 

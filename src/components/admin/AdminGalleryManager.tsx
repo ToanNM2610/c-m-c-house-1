@@ -77,6 +77,7 @@ export default function AdminGalleryManager() {
       const res = await fetch('/api/spatial-plates', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           id: editingPlateId,
           titleVi: titleVi.trim(),
@@ -89,18 +90,20 @@ export default function AdminGalleryManager() {
           imageUrl: imageUrl.trim(),
         }),
       });
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast('success', `Đã lưu thông tin khung ảnh ${editingPlateId}`);
         await refreshData();
         broadcastCmsSync('gallery');
         // Clear broken image status for this plate if any
         setBrokenImages((prev) => ({ ...prev, [editingPlateId]: false }));
         setEditingPlateId(null);
       } else {
-        alert('Lỗi lưu thông tin ảnh');
+        showToast('error', json.error || 'Lỗi lưu thông tin ảnh');
       }
     } catch (err) {
       console.error(err);
-      alert('Không thể kết nối đến máy chủ');
+      showToast('error', 'Không thể kết nối đến máy chủ khi lưu ảnh');
     } finally {
       setIsSaving(false);
     }
@@ -127,6 +130,7 @@ export default function AdminGalleryManager() {
 
       const uploadRes = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
 
@@ -141,6 +145,7 @@ export default function AdminGalleryManager() {
       const patchRes = await fetch('/api/spatial-plates', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           id: plateId,
           imageUrl: uploadedUrl,
@@ -266,6 +271,7 @@ export default function AdminGalleryManager() {
 
         const uploadRes = await fetch('/api/upload', {
           method: 'POST',
+          credentials: 'include',
           body: formData,
         });
         const uploadJson = await uploadRes.json();
@@ -274,6 +280,7 @@ export default function AdminGalleryManager() {
           await fetch('/api/spatial-plates', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({
               id: targetPlate.id,
               imageUrl: uploadJson.data.url,

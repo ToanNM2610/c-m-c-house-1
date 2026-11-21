@@ -50,11 +50,22 @@ export default function GalleryLightboxModal() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  const [isAdminHost, setIsAdminHost] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isAdm =
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.');
+      if (isAdm) {
+        setIsAdminHost(true);
+      }
+    }
+  }, []);
+
   // Strictly skip render on admin console or admin subdomain
-  if (
-    pathname?.startsWith('/admin') ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
-  ) {
+  if (pathname?.startsWith('/admin') || isAdminHost) {
     return null;
   }
 

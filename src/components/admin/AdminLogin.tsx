@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, User, Lock, Eye, EyeOff, Sparkles, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { ShieldCheck, User, Lock, Eye, EyeOff, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { AdminUserSafe } from '@/types';
 
 interface AdminLoginProps {
@@ -29,6 +29,7 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           username: username.trim(),
           password,
@@ -48,12 +49,6 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAutofillDefault = () => {
-    setUsername('admin');
-    setPassword('admin123');
-    setError('');
   };
 
   return (
@@ -150,21 +145,6 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
               </>
             )}
           </button>
-
-          {/* 1-Click Default Admin Autofill Button */}
-          <div className="pt-2 text-center border-t border-slate-100">
-            <div className="text-[11px] font-mono text-slate-400 mb-2">
-              Tài khoản mặc định: <span className="font-semibold text-slate-700">admin</span> / <span className="font-semibold text-slate-700">admin123</span>
-            </div>
-            <button
-              type="button"
-              onClick={handleAutofillDefault}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 text-emerald-800 rounded-lg text-xs font-mono hover:bg-emerald-100 transition-colors border border-emerald-200"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Điền nhanh tài khoản mặc định</span>
-            </button>
-          </div>
         </form>
       </div>
     </div>

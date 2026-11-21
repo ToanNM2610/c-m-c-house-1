@@ -86,11 +86,11 @@ export default function AdminInteractionsManager() {
     try {
       setLoading(true);
       const [contRes, commRes, settRes, gmailCfgRes, gmailRecRes] = await Promise.all([
-        fetch('/api/contact'),
-        fetch('/api/comments'),
-        fetch('/api/settings'),
-        fetch('/api/gmail/config'),
-        fetch('/api/gmail/recipients'),
+        fetch('/api/contact', { credentials: 'include' }),
+        fetch('/api/comments', { credentials: 'include' }),
+        fetch('/api/settings', { credentials: 'include' }),
+        fetch('/api/gmail/config', { credentials: 'include' }),
+        fetch('/api/gmail/recipients', { credentials: 'include' }),
       ]);
 
       const contJson = await contRes.json();
@@ -132,6 +132,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch('/api/contact', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id, status }),
       });
       const json = await res.json();
@@ -176,7 +177,7 @@ export default function AdminInteractionsManager() {
   const handleRetryEmail = async (id: string) => {
     setRetryingId(id);
     try {
-      const res = await fetch(`/api/gmail/retry/${id}`, { method: 'POST' });
+      const res = await fetch(`/api/gmail/retry/${id}`, { method: 'POST', credentials: 'include' });
       const json = await res.json();
       if (res.ok && json.success) {
         showToast('success', json.message || 'Đã gửi lại email thành công!');
@@ -210,6 +211,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch(`/api/gmail/reply/${replyingContact.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           replySubject,
           replyBody,
@@ -236,6 +238,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch('/api/comments', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id, status, isFeatured }),
       });
       const json = await res.json();
@@ -265,6 +268,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch(`/api/comments/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ isFeatured: !currentFeatured }),
       });
       const json = await res.json();
@@ -292,6 +296,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch('/api/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           reviewDisplayMode: reviewMode,
           reviewAutoIntervalSec: Number(reviewInterval) || 6,
@@ -345,6 +350,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch('/api/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(settings),
       });
       const json = await res.json();
@@ -383,9 +389,9 @@ export default function AdminInteractionsManager() {
       const res = await fetch('/api/gmail/config', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
-
       const json = await res.json();
       if (res.ok && json.success) {
         setGmailConfig(json.data);
@@ -408,11 +414,11 @@ export default function AdminInteractionsManager() {
       const res = await fetch('/api/gmail/test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           targetEmail: targetEmail || testEmailInput || undefined,
         }),
       });
-
       const json = await res.json();
       if (res.ok && json.success) {
         showToast('success', json.message || 'Kết nối Gmail SMTP thành công!');
@@ -440,6 +446,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           email: editingRecipient.email,
           label: editingRecipient.label,
@@ -447,7 +454,6 @@ export default function AdminInteractionsManager() {
           isActive: editingRecipient.isActive ?? true,
         }),
       });
-
       const json = await res.json();
       if (res.ok && json.success) {
         showToast('success', isEdit ? 'Đã cập nhật người nhận!' : 'Đã thêm người nhận mới!');
@@ -470,6 +476,7 @@ export default function AdminInteractionsManager() {
       const res = await fetch(`/api/gmail/recipients/${recipient.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ isActive: !recipient.isActive }),
       });
       const json = await res.json();

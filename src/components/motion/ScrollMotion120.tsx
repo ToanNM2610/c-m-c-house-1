@@ -32,10 +32,21 @@ export function ScrollReadingProgress120() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, SPRING_120HZ);
 
-  if (
-    pathname?.startsWith('/admin') ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
-  ) {
+  const [isAdminHost, setIsAdminHost] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isAdm =
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.');
+      if (isAdm) {
+        setIsAdminHost(true);
+      }
+    }
+  }, []);
+
+  if (pathname?.startsWith('/admin') || isAdminHost) {
     return null;
   }
   if (!enableAnimations || motionIntensity === 'OFF') return null;

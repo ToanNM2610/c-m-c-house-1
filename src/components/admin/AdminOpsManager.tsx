@@ -70,7 +70,7 @@ export default function AdminOpsManager() {
   const handleExportBackup = async () => {
     setExportingBackup(true);
     try {
-      const res = await fetch('/api/ops/backup');
+      const res = await fetch('/api/ops/backup', { credentials: 'include' });
       const json = await res.json();
       if (res.ok && json.success) {
         const { filename, backupPayload } = json.data;
@@ -134,6 +134,7 @@ export default function AdminOpsManager() {
       const res = await fetch('/api/ops/restore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ backupPayload: selectedFileForRestore.payload }),
       });
       const json = await res.json();
@@ -157,6 +158,7 @@ export default function AdminOpsManager() {
       const res = await fetch('/api/ops/revalidate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ path: '/' }),
       });
       const json = await res.json();

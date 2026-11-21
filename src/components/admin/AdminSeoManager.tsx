@@ -50,8 +50,8 @@ export default function AdminSeoManager() {
     try {
       setLoading(true);
       const [seoRes, redRes] = await Promise.all([
-        fetch('/api/seo'),
-        fetch('/api/redirects'),
+        fetch('/api/seo', { credentials: 'include' }),
+        fetch('/api/redirects', { credentials: 'include' }),
       ]);
       const seoJson = await seoRes.json();
       const redJson = await redRes.json();
@@ -105,6 +105,7 @@ export default function AdminSeoManager() {
       const res = await fetch('/api/seo', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ ...seoForm, route: selectedRoute }),
       });
       const json = await res.json();
@@ -135,6 +136,7 @@ export default function AdminSeoManager() {
       const res = await fetch('/api/redirects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           sourcePath: newSource,
           targetPath: newTarget,
@@ -164,7 +166,7 @@ export default function AdminSeoManager() {
   const handleDeleteRedirect = async (id: string, source: string) => {
     if (!confirm(`Bạn có chắc muốn xoá quy tắc điều hướng cho "${source}"?`)) return;
     try {
-      const res = await fetch(`/api/redirects?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/redirects?id=${id}`, { method: 'DELETE', credentials: 'include' });
       const json = await res.json();
       if (res.ok && json.success) {
         showToast('success', 'Đã xoá quy tắc điều hướng');

@@ -32,7 +32,7 @@ export default function AnalyticsTab({ onSwitchToIntegrations, onShowToast }: Pr
     try {
       setLoading(true);
       const url = `/api/admin/analytics?days=${selectedDays}${refresh ? "&refresh=1" : ""}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { credentials: "include" });
       const json = await res.json();
       if (json.success && json.data) {
         setData(json.data);

@@ -90,8 +90,8 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
     try {
       setLoading(true);
       const [configRes, ipsRes] = await Promise.all([
-        fetch('/api/security/antispam'),
-        fetch('/api/security/blocked-ips'),
+        fetch('/api/security/antispam', { credentials: 'include' }),
+        fetch('/api/security/blocked-ips', { credentials: 'include' }),
       ]);
 
       if (configRes.ok) {
@@ -156,6 +156,7 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
       const res = await fetch('/api/security/antispam', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
 
@@ -187,6 +188,7 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
       const res = await fetch('/api/security/antispam', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ emergencyLockdown: nextState }),
       });
 
@@ -223,6 +225,7 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
       const res = await fetch('/api/security/blocked-ips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           ip: manualIp.trim(),
           reason: manualReason.trim() || 'Khóa thủ công',

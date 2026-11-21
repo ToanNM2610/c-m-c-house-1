@@ -96,8 +96,8 @@ export default function AdminStoriesTeamManager() {
     try {
       setLoading(true);
       const [storiesRes, teamRes] = await Promise.all([
-        fetch('/api/stories'),
-        fetch('/api/team'),
+        fetch('/api/stories', { credentials: 'include' }),
+        fetch('/api/team', { credentials: 'include' }),
       ]);
       const storiesJson = await storiesRes.json();
       const teamJson = await teamRes.json();
@@ -127,6 +127,7 @@ export default function AdminStoriesTeamManager() {
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
       const json = await res.json();
@@ -161,6 +162,7 @@ export default function AdminStoriesTeamManager() {
       const res = await fetch('/api/stories', {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(editingStory),
       });
       const json = await res.json();
@@ -218,6 +220,7 @@ export default function AdminStoriesTeamManager() {
       const res = await fetch('/api/team', {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(editingMember),
       });
       const json = await res.json();

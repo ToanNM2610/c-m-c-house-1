@@ -43,6 +43,7 @@ export default function AdminPasswordLogin({ needsFirstLogin, onLoginSuccess }: 
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           password: password.trim(),
           totpCode: require2FA ? totpCode.trim() : undefined,
@@ -88,6 +89,7 @@ export default function AdminPasswordLogin({ needsFirstLogin, onLoginSuccess }: 
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           action: "setup_initial",
           newPassword: newPassword.trim(),

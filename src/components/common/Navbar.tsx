@@ -24,11 +24,22 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const [isAdminHost, setIsAdminHost] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isAdm =
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.');
+      if (isAdm) {
+        setIsAdminHost(true);
+      }
+    }
+  }, []);
+
   // Do not render customer navbar inside admin console or on admin subdomain
-  if (
-    pathname?.startsWith('/admin') ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
-  ) {
+  if (pathname?.startsWith('/admin') || isAdminHost) {
     return null;
   }
 

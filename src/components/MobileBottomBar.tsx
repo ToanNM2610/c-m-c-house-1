@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { PhoneCall, Navigation, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
@@ -14,10 +15,21 @@ export default function MobileBottomBar() {
   const { locale } = useLanguage();
   const isEn = locale === "en";
 
-  if (
-    pathname?.startsWith('/admin') ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
-  ) {
+  const [isAdminHost, setIsAdminHost] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isAdm =
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.');
+      if (isAdm) {
+        setIsAdminHost(true);
+      }
+    }
+  }, []);
+
+  if (pathname?.startsWith('/admin') || isAdminHost) {
     return null;
   }
 

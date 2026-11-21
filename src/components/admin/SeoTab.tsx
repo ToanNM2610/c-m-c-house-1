@@ -127,7 +127,10 @@ export default function SeoTab({ onShowToast }: SeoTabProps) {
   const handleSubmitSitemap = async () => {
     setIsSubmittingSitemap(true);
     try {
-      const res = await fetch("/api/admin/search-console/submit-sitemap", { method: "POST" });
+      const res = await fetch("/api/admin/search-console/submit-sitemap", {
+        method: "POST",
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.success) {
         onShowToast("Đã gửi yêu cầu thu thập sitemap tới Google Search Console thành công!");

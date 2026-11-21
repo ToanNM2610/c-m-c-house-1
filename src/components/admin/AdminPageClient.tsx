@@ -102,7 +102,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
   useEffect(() => {
     const verifySession = async () => {
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
         const json = await res.json();
         if (res.ok && json.success && json.data) {
           const user: AdminUserSafe = json.data;
@@ -124,7 +124,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     } catch (err) {
       console.error('Logout error:', err);
     } finally {

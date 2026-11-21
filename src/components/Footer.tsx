@@ -31,10 +31,21 @@ export default function Footer() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (
-    pathname?.startsWith('/admin') ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.'))
-  ) {
+  const [isAdminHost, setIsAdminHost] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isAdm =
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.');
+      if (isAdm) {
+        setIsAdminHost(true);
+      }
+    }
+  }, []);
+
+  if (pathname?.startsWith('/admin') || isAdminHost) {
     return null;
   }
 

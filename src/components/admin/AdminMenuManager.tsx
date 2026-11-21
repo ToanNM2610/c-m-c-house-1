@@ -50,14 +50,20 @@ export default function AdminMenuManager() {
       const res = await fetch('/api/menu', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id: item.id, inStock: !item.inStock }),
       });
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast('success', `Đã cập nhật trạng thái món "${item.vietnameseTitle}"`);
         await refreshData();
         broadcastCmsSync('menu');
+      } else {
+        showToast('error', json.error || 'Lỗi cập nhật trạng thái kho');
       }
     } catch (err) {
       console.error(err);
+      showToast('error', 'Lỗi kết nối khi cập nhật trạng thái');
     } finally {
       setLoadingItemId(null);
     }
@@ -86,6 +92,7 @@ export default function AdminMenuManager() {
       const res = await fetch(`/api/menu/${editingItem.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           price: editPrice,
           vietnameseTitle: editTitleVi.trim(),
@@ -99,16 +106,18 @@ export default function AdminMenuManager() {
           editorialNoteEn: editNoteEn.trim() || undefined,
         }),
       });
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast('success', `Đã cập nhật món "${editTitleVi}"`);
         await refreshData();
         broadcastCmsSync('menu');
         setEditingItem(null);
       } else {
-        alert('Lỗi cập nhật món');
+        showToast('error', json.error || 'Lỗi cập nhật món');
       }
     } catch (err) {
       console.error(err);
-      alert('Không thể kết nối máy chủ');
+      showToast('error', 'Không thể kết nối máy chủ khi cập nhật món');
     } finally {
       setLoadingItemId(null);
     }
@@ -151,6 +160,7 @@ export default function AdminMenuManager() {
       const res = await fetch('/api/menu', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           categoryId: newItemCategory,
           vietnameseTitle: newItemTitleVi.trim(),
@@ -163,7 +173,9 @@ export default function AdminMenuManager() {
           highlightEn: newItemHighlightEn.trim() || undefined,
         }),
       });
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast('success', `Đã thêm món "${newItemTitleVi}" vào thực đơn`);
         setNewItemTitleVi('');
         setNewItemNameEn('');
         setNewItemDescVi('');
@@ -174,10 +186,11 @@ export default function AdminMenuManager() {
         await refreshData();
         broadcastCmsSync('menu');
       } else {
-        alert('Lỗi tạo món mới');
+        showToast('error', json.error || 'Lỗi tạo món mới');
       }
     } catch (err) {
       console.error(err);
+      showToast('error', 'Lỗi kết nối khi tạo món mới');
     } finally {
       setIsSubmittingItem(false);
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo, Suspense } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
@@ -14,10 +14,10 @@ import { useApp } from '@/context/AppContext';
  * - SEO & SSR safe (page DOM renders underneath; unmounts completely after exit)
  * - Adaptive to Light / Dark mode and VI / EN
  */
-export default function CinematicIntro8K() {
+function CinematicIntro8KContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const isPreview = searchParams.get('previewIntro') === '1';
+  const isPreview = searchParams?.get('previewIntro') === '1';
 
   const { data, language, theme, enableAnimations } = useApp();
   const s = data.settings;
@@ -607,5 +607,13 @@ export default function CinematicIntro8K() {
         </span>
       </motion.button>
     </div>
+  );
+}
+
+export default function CinematicIntro8K() {
+  return (
+    <Suspense fallback={null}>
+      <CinematicIntro8KContent />
+    </Suspense>
   );
 }

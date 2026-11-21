@@ -46,8 +46,8 @@ export default function AdminPagesFaqManager() {
     try {
       setLoading(true);
       const [pagesRes, faqsRes] = await Promise.all([
-        fetch('/api/pages'),
-        fetch('/api/faq'),
+        fetch('/api/pages', { credentials: 'include' }),
+        fetch('/api/faq', { credentials: 'include' }),
       ]);
       const pagesJson = await pagesRes.json();
       const faqsJson = await faqsRes.json();
@@ -79,6 +79,7 @@ export default function AdminPagesFaqManager() {
       const res = await fetch('/api/pages', {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(editingPage),
       });
       const json = await res.json();
@@ -136,6 +137,7 @@ export default function AdminPagesFaqManager() {
       const res = await fetch('/api/faq', {
         method,
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(editingFaq),
       });
       const json = await res.json();

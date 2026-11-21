@@ -104,6 +104,7 @@ export default function AdminCMSHome() {
 
       const res = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
       const json = await res.json();
@@ -138,6 +139,7 @@ export default function AdminCMSHome() {
       const res = await fetch('/api/content', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           heroEyebrow,
           heroEyebrowEn,

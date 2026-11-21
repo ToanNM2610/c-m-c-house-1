@@ -65,7 +65,7 @@ export default function IntegrationsTab({ onShowToast }: Props) {
   const fetchIntegrations = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/integrations");
+      const res = await fetch("/api/admin/integrations", { credentials: "include" });
       const data = await res.json();
       if (data.success) {
         setIntegrations(data.integrations || []);
@@ -93,6 +93,7 @@ export default function IntegrationsTab({ onShowToast }: Props) {
       const res = await fetch("/api/admin/integrations/test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ key }),
       });
       const data = await res.json();
@@ -152,6 +153,7 @@ export default function IntegrationsTab({ onShowToast }: Props) {
         const res = await fetch("/api/admin/integrations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             key: pendingAction.key,
             value: pendingAction.value || "",
@@ -177,6 +179,7 @@ export default function IntegrationsTab({ onShowToast }: Props) {
         const res = await fetch("/api/admin/integrations", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             key: pendingAction.key,
             authCredential: authCredential.trim(),

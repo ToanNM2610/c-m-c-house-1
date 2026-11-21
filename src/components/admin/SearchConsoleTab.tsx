@@ -29,7 +29,7 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
     try {
       setLoading(true);
       const url = `/api/admin/search-console?days=${selectedDays}${refresh ? "&refresh=1" : ""}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { credentials: "include" });
       const json = await res.json();
       if (json.success && json.data) {
         setData(json.data);
@@ -54,6 +54,7 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
       const res = await fetch("/api/admin/search-console/submit-sitemap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ sitemapUrl: "https://camcuhouse.online/sitemap.xml" }),
       });
       const json = await res.json();

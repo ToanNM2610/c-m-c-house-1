@@ -101,6 +101,7 @@ export default function AdminSettingsManager() {
       const res = await fetch('/api/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: name.trim(),
           tagline: tagline.trim(),
@@ -175,6 +176,7 @@ export default function AdminSettingsManager() {
     try {
       const uploadRes = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
       const uploadData = await uploadRes.json();
@@ -191,6 +193,7 @@ export default function AdminSettingsManager() {
           await fetch(`/api/menu/${bindTargetItemId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify(payload),
           });
         }

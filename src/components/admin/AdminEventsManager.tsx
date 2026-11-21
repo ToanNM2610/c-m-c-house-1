@@ -147,17 +147,19 @@ export default function AdminEventsManager() {
 
       const res = await fetch('/api/upload', {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       });
       const json = await res.json();
       if (res.ok && json.data?.url) {
         setImageUrl(json.data.url);
+        showToast('success', 'Tải ảnh sự kiện lên thành công');
       } else {
-        alert(json.error || 'Lỗi tải ảnh sự kiện lên');
+        showToast('error', json.error || 'Lỗi tải ảnh sự kiện lên');
       }
     } catch (err) {
       console.error(err);
-      alert('Không thể kết nối máy chủ để tải ảnh');
+      showToast('error', 'Không thể kết nối máy chủ để tải ảnh');
     } finally {
       setIsUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -169,14 +171,20 @@ export default function AdminEventsManager() {
       const res = await fetch('/api/events', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id: ev.id, active: !ev.active }),
       });
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast('success', `Đã ${!ev.active ? 'kích hoạt' : 'ẩn'} sự kiện "${ev.title}"`);
         await refreshData();
         broadcastCmsSync('events');
+      } else {
+        showToast('error', json.error || 'Lỗi cập nhật trạng thái sự kiện');
       }
     } catch (err) {
       console.error(err);
+      showToast('error', 'Lỗi kết nối khi cập nhật trạng thái sự kiện');
     }
   };
 
@@ -214,6 +222,7 @@ export default function AdminEventsManager() {
         const res = await fetch('/api/events', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             id: editingId,
             title: title.trim(),
@@ -229,17 +238,20 @@ export default function AdminEventsManager() {
             imageUrl: imageUrl.trim(),
           }),
         });
-        if (res.ok) {
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && (json.success || !json.error)) {
+          showToast('success', `Đã cập nhật sự kiện "${title}" thành công`);
           resetForm();
           await refreshData();
           broadcastCmsSync('events');
         } else {
-          alert('Lỗi cập nhật sự kiện');
+          showToast('error', json.error || 'Lỗi cập nhật sự kiện');
         }
       } else {
         const res = await fetch('/api/events', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             title: title.trim(),
             titleEn: titleEn.trim(),
@@ -254,16 +266,19 @@ export default function AdminEventsManager() {
             imageUrl: imageUrl.trim(),
           }),
         });
-        if (res.ok) {
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && (json.success || !json.error)) {
+          showToast('success', `Đã thêm sự kiện "${title}" thành công`);
           resetForm();
           await refreshData();
           broadcastCmsSync('events');
         } else {
-          alert('Lỗi tạo sự kiện mới');
+          showToast('error', json.error || 'Lỗi tạo sự kiện mới');
         }
       }
     } catch (err) {
       console.error(err);
+      showToast('error', 'Lỗi kết nối khi lưu sự kiện');
     } finally {
       setIsSubmitting(false);
     }
