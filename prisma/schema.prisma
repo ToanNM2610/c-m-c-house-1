@@ -67,6 +67,10 @@ model StoreSettings {
   reviewDisplayMode    String   @default("AUTO_RANDOM") // "AUTO_RANDOM" | "MANUAL"
   reviewAutoIntervalSec Int     @default(6)
 
+  // Section visibility toggles (Module 3 - Admin ON/OFF)
+  showEventsSection   Boolean  @default(true)  // Controls "Các Hoạt Động Đang Diễn Ra"
+  showHighlightsSection Boolean @default(true) // Controls "Nhịp Sống Tự Nhiên Bên Dòng Suối"
+
   updatedAt       DateTime @updatedAt
 }
 

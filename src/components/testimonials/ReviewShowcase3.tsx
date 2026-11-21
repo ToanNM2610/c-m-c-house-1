@@ -148,9 +148,9 @@ export default function ReviewShowcase3({ comments, settings }: ReviewShowcase3P
               className="h-full flex"
             >
               <InteractiveTiltCard maxTilt={2.5} spotlight={true} className="w-full h-full flex">
-                <div className="w-full h-full p-7 rounded-3xl border border-forest-200/90 dark:border-forest-700/60 bg-white dark:bg-forest-900/60 shadow-subtle hover:shadow-elevated transition-all flex flex-col justify-between relative group overflow-hidden">
+                <div className="w-full h-full p-7 rounded-3xl border border-forest-200 dark:border-forest-700 bg-white dark:bg-forest-900 shadow-subtle hover:shadow-elevated transition-all flex flex-col justify-between relative group overflow-hidden">
                   {/* Decorative Quote Mark strictly at BOTTOM-RIGHT so it never overlaps top date */}
-                  <Quote className="absolute right-4 bottom-4 w-16 h-16 text-forest-100 dark:text-forest-800/30 pointer-events-none -rotate-12 transition-transform group-hover:scale-110 opacity-30 select-none z-0" />
+                  <Quote className="absolute right-4 bottom-4 w-16 h-16 text-forest-100 dark:text-forest-800 pointer-events-none -rotate-12 transition-transform group-hover:scale-110 opacity-30 select-none z-0" />
 
                   <div className="space-y-4 relative z-10">
                     {/* Top Meta: Stars on Left, Clean Date Badge on Right */}
@@ -163,11 +163,11 @@ export default function ReviewShowcase3({ comments, settings }: ReviewShowcase3P
 
                       <div className="flex items-center gap-1.5">
                         {rev.isFeatured && (
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700">
                             ★ {isEn ? 'Featured' : 'Nổi bật'}
                           </span>
                         )}
-                        <span className="text-[11px] font-mono text-ink-muted flex items-center gap-1 bg-forest-50/80 dark:bg-forest-800/50 px-2 py-0.5 rounded-md border border-forest-100 dark:border-forest-700/50">
+                        <span className="text-[11px] font-mono text-ink-muted flex items-center gap-1 bg-forest-50 dark:bg-forest-800 px-2 py-0.5 rounded-md border border-forest-100 dark:border-forest-700">
                           <Calendar className="w-3 h-3 text-accent-botanical" />
                           <span>{rev.visitDate || (isEn ? 'Recent visit' : 'Gần đây')}</span>
                         </span>

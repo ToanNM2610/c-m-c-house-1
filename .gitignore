@@ -38,3 +38,4 @@ prisma/dev.db
 # Internal Agents
 .agents/
 .dsh-acl-recovery/
+.env*

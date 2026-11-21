@@ -14,12 +14,13 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
-      { source: '/about', destination: '/cau-chuyen', permanent: true },
-      { source: '/space', destination: '/khong-gian-suoi', permanent: true },
-      { source: '/khong-gian', destination: '/khong-gian-suoi', permanent: true },
+      { source: '/about', destination: '/gioi-thieu', permanent: true },
+      { source: '/cau-chuyen', destination: '/gioi-thieu', permanent: true },
+      { source: '/space', destination: '/khong-gian', permanent: true },
+      { source: '/khong-gian-suoi', destination: '/khong-gian', permanent: true },
       { source: '/menu', destination: '/thuc-don', permanent: true },
-      { source: '/contact', destination: '/chi-duong-lien-he', permanent: true },
-      { source: '/lien-he', destination: '/chi-duong-lien-he', permanent: true },
+      { source: '/contact', destination: '/lien-he', permanent: true },
+      { source: '/chi-duong-lien-he', destination: '/lien-he', permanent: true },
     ];
   },
 

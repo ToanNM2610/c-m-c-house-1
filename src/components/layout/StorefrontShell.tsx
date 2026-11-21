@@ -15,18 +15,37 @@ import MobileBottomBar from '@/components/MobileBottomBar';
  */
 export default function StorefrontShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [isAdminSubdomain, setIsAdminSubdomain] = useState(false);
+  const [isAdminHost, setIsAdminHost] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return (
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.') ||
+        window.location.pathname.startsWith('/admin')
+      );
+    }
+    return false;
+  });
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) {
-      setIsAdminSubdomain(true);
+    if (typeof window !== 'undefined') {
+      const isAdm =
+        window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.host.startsWith('admin.') ||
+        window.location.pathname.startsWith('/admin') ||
+        pathname?.startsWith('/admin');
+      setIsAdminHost(Boolean(isAdm));
     }
-  }, []);
+  }, [pathname]);
 
   const isAdmin =
     pathname?.startsWith('/admin') ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) ||
-    isAdminSubdomain;
+    isAdminHost ||
+    (typeof window !== 'undefined' &&
+      (window.location.hostname.startsWith('admin.') ||
+        window.location.hostname === 'admin.camcuhouse.online' ||
+        window.location.pathname.startsWith('/admin')));
 
   if (isAdmin) {
     return <>{children}</>;

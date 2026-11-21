@@ -26,6 +26,28 @@ function getFolderSizeBytes(folderPath: string): number {
   return total;
 }
 
+// Real DB write test: try inserting and deleting a transient probe row
+async function probeDatabaseWrite(): Promise<{ ok: boolean; error?: string; mode?: string }> {
+  try {
+    // Attempt a no-op transactional probe: create then immediately delete a systemLog
+    const probe = await prisma.systemLog.create({
+      data: {
+        level: 'INFO',
+        category: 'HEALTH_CHECK',
+        action: 'DB_WRITE_PROBE',
+        details: 'Runtime write probe to verify SQLite writability',
+        ipAddress: '127.0.0.1',
+      },
+    });
+    await prisma.systemLog.delete({ where: { id: probe.id } });
+    return { ok: true, mode: 'READ_WRITE' };
+  } catch (error: any) {
+    const msg = String(error?.message || error || '');
+    const isReadOnly = /read.only|cannot write|attempt to write a readonly database|file is read.only|EACCES|EPERM/i.test(msg);
+    return { ok: false, error: isReadOnly ? 'CSDL đang ở chế độ chỉ đọc (read-only) trên Vercel Serverless' : msg, mode: 'READ_ONLY' };
+  }
+}
+
 export async function GET(req: NextRequest) {
   const auth = await requireAuth(req, 'SUPER_ADMIN');
   if ('errorResponse' in auth) return auth.errorResponse;
@@ -33,7 +55,9 @@ export async function GET(req: NextRequest) {
   try {
     const dbPath = path.join(process.cwd(), 'prisma', 'dev.db');
     let dbSizeBytes = 0;
+    let dbFileExists = false;
     if (fs.existsSync(dbPath)) {
+      dbFileExists = true;
       try {
         dbSizeBytes = fs.statSync(dbPath).size;
       } catch {}
@@ -41,6 +65,18 @@ export async function GET(req: NextRequest) {
 
     const uploadsPath = path.join(process.cwd(), 'public', 'uploads');
     const uploadsSizeBytes = getFolderSizeBytes(uploadsPath);
+
+    const host = req.headers.get('host') || 'unknown';
+    const isHttps = req.headers.get('x-forwarded-proto') === 'https' || req.url.startsWith('https');
+
+    // Real DB write probe
+    const writeProbe = await probeDatabaseWrite();
+
+    // Real error count in SystemLog (last 24h)
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const errorCount24h = await prisma.systemLog.count({
+      where: { level: 'ERROR', createdAt: { gte: oneDayAgo } },
+    });
 
     const [
       menuItemCount,
@@ -57,6 +93,8 @@ export async function GET(req: NextRequest) {
       commentCount,
       userCount,
       logCount,
+      superAdminCount,
+      approvedCommentCount,
     ] = await Promise.all([
       prisma.menuItem.count(),
       prisma.menuCategory.count(),
@@ -72,10 +110,24 @@ export async function GET(req: NextRequest) {
       prisma.guestComment.count(),
       prisma.adminUser.count(),
       prisma.systemLog.count(),
+      prisma.adminUser.count({ where: { role: 'SUPER_ADMIN' } }),
+      prisma.guestComment.count({ where: { status: 'APPROVED' } }),
     ]);
 
+    // Compute real health score
+    const checks: { name: string; ok: boolean; detail?: string }[] = [
+      { name: 'Kết nối CSDL', ok: true, detail: `Có ${logCount} bản ghi hệ thống` },
+      { name: 'Ghi CSDL', ok: writeProbe.ok, detail: writeProbe.ok ? 'Đọc/ghi bình thường' : (writeProbe.error || 'Lỗi ghi') },
+      { name: 'Lỗi hệ thống 24h', ok: errorCount24h === 0, detail: `${errorCount24h} lỗi` },
+      { name: 'Tài khoản Super Admin', ok: superAdminCount > 0, detail: `${superAdminCount} tài khoản` },
+    ];
+
+    const failedCount = checks.filter((c) => !c.ok).length;
+    const status = failedCount > 0 ? (failedCount >= 2 ? 'ERROR' : 'WARNING') : 'HEALTHY';
+
     const healthData = {
-      status: 'HEALTHY',
+      status,
+      statusVi: status === 'HEALTHY' ? 'TỐT' : status === 'WARNING' ? 'CẢNH BÁO' : 'LỖI',
       timestamp: new Date().toISOString(),
       system: {
         nodeVersion: process.version,
@@ -83,11 +135,17 @@ export async function GET(req: NextRequest) {
         arch: process.arch,
         uptimeSeconds: Math.floor(process.uptime()),
         memoryUsageMb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        host,
+        https: isHttps,
       },
       storage: {
         databaseFile: 'prisma/dev.db',
+        databaseFileExists: dbFileExists,
         databaseSizeBytes: dbSizeBytes,
         databaseSizeFormatted: `${(dbSizeBytes / 1024 / 1024).toFixed(2)} MB`,
+        databaseWritable: writeProbe.ok,
+        databaseMode: writeProbe.mode || (writeProbe.ok ? 'READ_WRITE' : 'READ_ONLY'),
+        databaseWriteError: writeProbe.error,
         uploadsSizeBytes: uploadsSizeBytes,
         uploadsSizeFormatted: `${(uploadsSizeBytes / 1024 / 1024).toFixed(2)} MB`,
       },
@@ -104,6 +162,7 @@ export async function GET(req: NextRequest) {
         redirectRules: redirectCount,
         contacts: contactCount,
         comments: commentCount,
+        approvedComments: approvedCommentCount,
         adminUsers: userCount,
         systemLogs: logCount,
       },
@@ -112,12 +171,16 @@ export async function GET(req: NextRequest) {
         cookieHttpOnly: true,
         honeypotActive: true,
         rateLimitReady: true,
-        superAdminCount: await prisma.adminUser.count({ where: { role: 'SUPER_ADMIN' } }),
+        superAdminCount,
+      },
+      checks,
+      gmail: {
+        configured: Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD),
       },
     };
 
     return apiSuccess(healthData);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching health stats:', error);
     return apiError('Lỗi kiểm tra tình trạng hệ thống', 500);
   }

@@ -24,26 +24,27 @@ function PlateCard({
   onOpen: () => void;
   isEn: boolean;
 }) {
-  const [imgSrc, setImgSrc] = useState(plate.imageUrl);
-  const [imgFailed, setImgFailed] = useState(false);
+  const figNum = plate.id.replace(/[^0-9]/g, '').padStart(2, '0');
+  const defaultUrl = plate.imageUrl || `/uploads/gallery/fig-${figNum || '01'}.jpg`;
+  const [imgSrc, setImgSrc] = useState(defaultUrl);
 
   useEffect(() => {
-    setImgSrc(plate.imageUrl);
-    setImgFailed(false);
-  }, [plate.imageUrl]);
+    if (plate.imageUrl) {
+      setImgSrc(plate.imageUrl);
+    } else {
+      setImgSrc(`/uploads/gallery/fig-${figNum || '01'}.jpg`);
+    }
+  }, [plate.imageUrl, figNum]);
 
   const handleImageError = () => {
-    const figNum = plate.id.replace(/[^0-9]/g, '');
     const fallbackPath = figNum
-      ? `/uploads/gallery/fig-${figNum.padStart(2, '0')}.jpg`
+      ? `/uploads/gallery/fig-${figNum}.jpg`
       : '/uploads/gallery/fig-01.jpg';
 
     if (imgSrc !== fallbackPath) {
       setImgSrc(fallbackPath);
     } else if (imgSrc !== '/uploads/gallery/fig-01.jpg') {
       setImgSrc('/uploads/gallery/fig-01.jpg');
-    } else {
-      setImgFailed(true);
     }
   };
 
@@ -59,25 +60,14 @@ function PlateCard({
     >
       {/* 16:10 Solid Image Container - Direct always-visible rendering with zero clip-path */}
       <div className="relative w-full aspect-[16/10] overflow-hidden bg-forest-100 dark:bg-forest-800 border-b border-forest-200 dark:border-forest-700">
-        {!imgFailed ? (
-          <img
-            src={imgSrc}
-            alt={title}
-            loading="lazy"
-            decoding="async"
-            onError={handleImageError}
-            className="w-full h-full object-cover block opacity-100 group-hover:scale-105 transition-transform duration-300 ease-out"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center space-y-2 bg-forest-100 dark:bg-forest-800">
-            <span className="font-mono text-3xl font-bold text-accent-botanical block">
-              {plate.id}
-            </span>
-            <h4 className="font-serif text-base font-bold text-ink-primary line-clamp-2 leading-snug">
-              {title}
-            </h4>
-          </div>
-        )}
+        <img
+          src={imgSrc}
+          alt={title}
+          loading="lazy"
+          decoding="async"
+          onError={handleImageError}
+          className="w-full h-full object-cover block opacity-100 group-hover:scale-105 transition-transform duration-300 ease-out"
+        />
 
         {/* Figure Tag - Solid Opaque */}
         <div className="absolute top-3 left-3 bg-white dark:bg-forest-900 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-accent-botanical border border-forest-200 dark:border-forest-700 shadow-sm z-10">

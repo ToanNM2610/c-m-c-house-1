@@ -13,13 +13,23 @@ export default function QuickChatWidget() {
   const isEn = language === 'en';
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isAdminHost, setIsAdminHost] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) {
-      setIsAdminHost(true);
-    }
+    setMounted(true);
   }, []);
+
+  // Prevent SSR render leak on admin subdomain / admin console
+  if (!mounted) {
+    return null;
+  }
+
+  const isClientAdmin =
+    typeof window !== 'undefined' &&
+    (window.location.hostname.startsWith('admin.') ||
+      window.location.hostname === 'admin.camcuhouse.online' ||
+      window.location.host.startsWith('admin.') ||
+      window.location.pathname.startsWith('/admin'));
 
   // Strictly enforce BOTH checks:
   // 1. pathname?.startsWith('/admin')
@@ -27,8 +37,7 @@ export default function QuickChatWidget() {
   // 3. Or CMS disabled
   if (
     pathname?.startsWith('/admin') ||
-    isAdminHost ||
-    (typeof window !== 'undefined' && window.location.hostname.startsWith('admin.')) ||
+    isClientAdmin ||
     s.enableQuickChat === false
   ) {
     return null;
