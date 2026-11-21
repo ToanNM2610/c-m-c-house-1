@@ -9,13 +9,11 @@ import {
   getDecryptedIntegrationValue,
   logIntegrationAudit,
   getIntegrationAuditLogs,
-  verifyAdminCredentials,
-  getTotpConfig,
 } from "@/data/store";
 import { maskSecret } from "@/lib/crypto";
-import { verifyTotpCode } from "@/lib/totp";
 import { revalidateIntegrationsCache } from "@/lib/integrations";
 import { testIntegrationConnection } from "@/lib/google-apis";
+import { requireAuth } from "@/lib/auth";
 
 // Rate limiting in memory (max 15 modification requests per 60 seconds per IP)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -48,31 +46,18 @@ const SaveIntegrationSchema = z.object({
   value: z.string(),
   name: z.string().optional(),
   isSecret: z.boolean().optional(),
-  authCredential: z.string().min(1, "Bắt buộc nhập mật khẩu quản trị hoặc mã TOTP để lưu khóa"),
 });
 
 const DeleteIntegrationSchema = z.object({
   key: z.string().min(1, "Key không được để trống"),
-  authCredential: z.string().min(1, "Bắt buộc nhập mật khẩu quản trị hoặc mã TOTP để xóa khóa"),
 });
 
-function verifyAuthorization(credential: string): boolean {
-  const clean = credential.trim();
-  // 1. Check password
-  if (verifyAdminCredentials(clean)) {
-    return true;
+export async function GET(request: NextRequest) {
+  const auth = await requireAuth(request, ['SUPER_ADMIN', 'EDITOR']);
+  if ('errorResponse' in auth) {
+    return auth.errorResponse;
   }
-  // 2. Check TOTP if enabled
-  const totpConfig = getTotpConfig();
-  if (totpConfig.totpEnabled && totpConfig.totpSecret) {
-    if (verifyTotpCode(totpConfig.totpSecret, clean)) {
-      return true;
-    }
-  }
-  return false;
-}
 
-export async function GET() {
   try {
     const rawList = getAllIntegrations();
     // Mask all secret values before returning to browser.
@@ -108,6 +93,11 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth(request, 'SUPER_ADMIN');
+  if ('errorResponse' in auth) {
+    return auth.errorResponse;
+  }
+
   const ip = getClientIp(request);
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
@@ -126,18 +116,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { key, value, name, isSecret, authCredential } = parsed.data;
-
-    // Verify TOTP or Password
-    if (!verifyAuthorization(authCredential)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Xác thực bảo mật thất bại! Mật khẩu hoặc mã 2FA TOTP không chính xác.",
-        },
-        { status: 401 }
-      );
-    }
+    const { key, value, name, isSecret } = parsed.data;
 
     // Key-specific validation
     if (key === "ga4_measurement_id" && value.trim()) {
@@ -190,7 +169,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Write audit log (NEVER logs secret values!)
-    logIntegrationAudit("admin", "update", key, ip);
+    logIntegrationAudit(auth.user.username, "update", key, ip);
 
     // Trigger immediate Next.js ISR/Cache revalidation for public site
     revalidateIntegrationsCache();
@@ -211,6 +190,11 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  const auth = await requireAuth(request, 'SUPER_ADMIN');
+  if ('errorResponse' in auth) {
+    return auth.errorResponse;
+  }
+
   const ip = getClientIp(request);
   if (!checkRateLimit(ip)) {
     return NextResponse.json(
@@ -229,21 +213,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { key, authCredential } = parsed.data;
-
-    // Verify TOTP or Password
-    if (!verifyAuthorization(authCredential)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Xác thực bảo mật thất bại! Mật khẩu hoặc mã 2FA TOTP không chính xác.",
-        },
-        { status: 401 }
-      );
-    }
+    const { key } = parsed.data;
 
     deleteIntegration(key);
-    logIntegrationAudit("admin", "delete", key, ip);
+    logIntegrationAudit(auth.user.username, "delete", key, ip);
     revalidateIntegrationsCache();
 
     return NextResponse.json({

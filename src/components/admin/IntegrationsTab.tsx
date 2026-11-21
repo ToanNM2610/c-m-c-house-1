@@ -13,7 +13,6 @@ import {
   Lock,
   History,
   Activity,
-  X,
 } from "lucide-react";
 
 export interface IntegrationItem {
@@ -50,17 +49,9 @@ export default function IntegrationsTab({ onShowToast }: Props) {
   const [editValues, setEditValues] = useState<Record<string, string>>({});
   const [showJsonGuide, setShowJsonGuide] = useState(true);
 
-  // Auth Confirm Modal State
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [pendingAction, setPendingAction] = useState<{
-    type: "save" | "delete";
-    key: string;
-    value?: string;
-    name?: string;
-  } | null>(null);
-  const [authCredential, setAuthCredential] = useState("");
-  const [authError, setAuthError] = useState("");
-  const [isSubmittingAuth, setIsSubmittingAuth] = useState(false);
+  // Inline loading states per key
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [deletingKey, setDeletingKey] = useState<string | null>(null);
 
   const fetchIntegrations = async () => {
     try {
@@ -110,94 +101,78 @@ export default function IntegrationsTab({ onShowToast }: Props) {
     }
   };
 
-  const openSaveModal = (item: IntegrationItem) => {
-    const val = editValues[item.key] !== undefined ? editValues[item.key] : "";
-    if (item.isSecret && !val && !item.hasValue) {
+  const handleSave = async (item: IntegrationItem) => {
+    const currentInput =
+      editValues[item.key] !== undefined
+        ? editValues[item.key]
+        : item.isSecret
+        ? ""
+        : item.value;
+
+    if (item.isSecret && !currentInput && !item.hasValue) {
       onShowToast("Vui lòng nhập giá trị khóa mới để lưu");
       return;
     }
-    setPendingAction({
-      type: "save",
-      key: item.key,
-      value: val,
-      name: item.name,
-    });
-    setAuthCredential("");
-    setAuthError("");
-    setAuthModalOpen(true);
-  };
 
-  const openDeleteModal = (item: IntegrationItem) => {
-    setPendingAction({
-      type: "delete",
-      key: item.key,
-      name: item.name,
-    });
-    setAuthCredential("");
-    setAuthError("");
-    setAuthModalOpen(true);
-  };
-
-  const handleConfirmAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!pendingAction || !authCredential.trim()) {
-      setAuthError("Vui lòng nhập mật khẩu hoặc mã 2FA TOTP");
-      return;
-    }
-
-    setIsSubmittingAuth(true);
-    setAuthError("");
-
+    setSavingKey(item.key);
     try {
-      if (pendingAction.type === "save") {
-        const res = await fetch("/api/admin/integrations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            key: pendingAction.key,
-            value: pendingAction.value || "",
-            name: pendingAction.name,
-            authCredential: authCredential.trim(),
-          }),
+      const res = await fetch("/api/admin/integrations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          key: item.key,
+          value: currentInput,
+          name: item.name,
+          isSecret: item.isSecret,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        onShowToast(data.message || "Đã lưu khóa thành công!");
+        setEditValues((prev) => {
+          const next = { ...prev };
+          delete next[item.key];
+          return next;
         });
-        const data = await res.json();
-        if (data.success) {
-          onShowToast(data.message || "Đã lưu khóa thành công!");
-          setAuthModalOpen(false);
-          // Clear edit cache
-          setEditValues((prev) => {
-            const next = { ...prev };
-            delete next[pendingAction.key];
-            return next;
-          });
-          fetchIntegrations();
-        } else {
-          setAuthError(data.error || "Không thể lưu khóa.");
-        }
-      } else if (pendingAction.type === "delete") {
-        const res = await fetch("/api/admin/integrations", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            key: pendingAction.key,
-            authCredential: authCredential.trim(),
-          }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          onShowToast(data.message || "Đã xóa khóa thành công!");
-          setAuthModalOpen(false);
-          fetchIntegrations();
-        } else {
-          setAuthError(data.error || "Không thể xóa khóa.");
-        }
+        fetchIntegrations();
+      } else {
+        onShowToast("Lỗi: " + (data.error || "Không thể lưu khóa."));
       }
     } catch {
-      setAuthError("Lỗi kết nối khi gửi yêu cầu xác thực");
+      onShowToast("Lỗi: Không thể lưu khóa.");
     } finally {
-      setIsSubmittingAuth(false);
+      setSavingKey(null);
+    }
+  };
+
+  const handleDelete = async (item: IntegrationItem) => {
+    setDeletingKey(item.key);
+    try {
+      const res = await fetch("/api/admin/integrations", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          key: item.key,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        onShowToast(data.message || "Đã xóa khóa thành công!");
+        setEditValues((prev) => {
+          const next = { ...prev };
+          delete next[item.key];
+          return next;
+        });
+        fetchIntegrations();
+      } else {
+        onShowToast("Lỗi: " + (data.error || "Không thể xóa khóa."));
+      }
+    } catch {
+      onShowToast("Lỗi: Không thể xóa khóa.");
+    } finally {
+      setDeletingKey(null);
     }
   };
 
@@ -329,6 +304,8 @@ export default function IntegrationsTab({ onShowToast }: Props) {
                   : item.value;
 
               const isTesting = testingKey === item.key;
+              const isSaving = savingKey === item.key;
+              const isDeleting = deletingKey === item.key;
 
               return (
                 <div
@@ -420,9 +397,9 @@ export default function IntegrationsTab({ onShowToast }: Props) {
                     <button
                       type="button"
                       onClick={() => handleTestConnection(item.key)}
-                      disabled={isTesting}
+                      disabled={isTesting || isSaving || isDeleting}
                       title="Kiểm tra kết nối với dịch vụ ngoài"
-                      className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] hover:opacity-90 text-[var(--text)] text-[13px] font-semibold transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] hover:opacity-90 disabled:opacity-50 text-[var(--text)] text-[13px] font-semibold transition-all cursor-pointer"
                     >
                       <Activity className={`w-3.5 h-3.5 ${isTesting ? "animate-spin text-[var(--warn)]" : "text-[var(--accent)]"}`} />
                       <span>{isTesting ? "Đang test..." : "Kiểm tra"}</span>
@@ -430,20 +407,30 @@ export default function IntegrationsTab({ onShowToast }: Props) {
 
                     <button
                       type="button"
-                      onClick={() => openSaveModal(item)}
-                      className="inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-xl bg-[var(--btn-primary)] hover:opacity-90 text-[var(--btn-primary-text)] text-[13px] font-bold transition-all shadow-sm cursor-pointer"
+                      onClick={() => handleSave(item)}
+                      disabled={isTesting || isSaving || isDeleting}
+                      className="inline-flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-xl bg-[var(--btn-primary)] hover:opacity-90 disabled:opacity-50 text-[var(--btn-primary-text)] text-[13px] font-bold transition-all shadow-sm cursor-pointer"
                     >
-                      <Save className="w-3.5 h-3.5" />
-                      <span>Lưu</span>
+                      {isSaving ? (
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <Save className="w-3.5 h-3.5" />
+                      )}
+                      <span>{isSaving ? "Đang lưu..." : "Lưu"}</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => openDeleteModal(item)}
+                      onClick={() => handleDelete(item)}
+                      disabled={isTesting || isSaving || isDeleting}
                       title="Xóa/Làm trống khóa này"
-                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-[var(--text-subtle)] hover:text-[var(--danger)] hover:bg-rose-500/10 transition-colors cursor-pointer"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-[var(--text-subtle)] hover:text-[var(--danger)] hover:bg-rose-500/10 disabled:opacity-50 transition-colors cursor-pointer"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      {isDeleting ? (
+                        <RefreshCw className="w-4 h-4 animate-spin text-[var(--danger)]" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -512,77 +499,6 @@ export default function IntegrationsTab({ onShowToast }: Props) {
           </div>
         )}
       </div>
-
-      {/* Confirmation & Auth Re-verification Modal */}
-      {authModalOpen && pendingAction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-fade-in">
-          <div className="w-full max-w-md bg-white dark:bg-[#1E2B22] border border-stone-200 dark:border-stone-700 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-3">
-              <div className="flex items-center gap-2 text-stone-900 dark:text-stone-100 font-bold text-base">
-                <Shield className="w-5 h-5 text-[#3E5C46] dark:text-[#9DC183]" />
-                <span>Xác Thực Bảo Mật Quản Trị</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setAuthModalOpen(false)}
-                className="p-1 rounded-full text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-              Bạn đang yêu cầu{" "}
-              <strong>{pendingAction.type === "save" ? "lưu/cập nhật" : "xóa"}</strong> khóa{" "}
-              <code className="px-1.5 py-0.5 bg-stone-100 dark:bg-stone-800 rounded font-mono text-[#3E5C46] dark:text-[#9DC183]">
-                {pendingAction.name || pendingAction.key}
-              </code>
-              . Vui lòng nhập lại <strong>Mật khẩu quản trị</strong> hoặc <strong>Mã 2FA (TOTP)</strong> để xác thực.
-            </p>
-
-            <form onSubmit={handleConfirmAuth} className="flex flex-col gap-4">
-              <input
-                type="password"
-                autoFocus
-                placeholder="Nhập mật khẩu quản trị hoặc mã TOTP 6 số"
-                value={authCredential}
-                onChange={(e) => setAuthCredential(e.target.value)}
-                className="w-full py-3 px-4 text-sm bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#3E5C46]"
-              />
-
-              {authError && (
-                <div className="text-xs text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 px-3 py-2 rounded-xl font-medium">
-                  {authError}
-                </div>
-              )}
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setAuthModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-                >
-                  Hủy bỏ
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmittingAuth || !authCredential.trim()}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#3E5C46] hover:bg-[#2D4233] disabled:opacity-50 transition-all shadow-md cursor-pointer flex items-center gap-2"
-                >
-                  {isSubmittingAuth ? (
-                    <>
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      <span>Đang xác thực...</span>
-                    </>
-                  ) : (
-                    <span>Xác Nhận Thực Hiện</span>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

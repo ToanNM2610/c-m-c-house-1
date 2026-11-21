@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { testIntegrationConnection } from "@/lib/google-apis";
 import { getIntegration, saveIntegration, logIntegrationAudit } from "@/data/store";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth(request, ['SUPER_ADMIN', 'EDITOR']);
+  if ('errorResponse' in auth) {
+    return auth.errorResponse;
+  }
+
   try {
     const body = await request.json();
     const { key } = body;
@@ -38,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "127.0.0.1";
-    logIntegrationAudit("admin", "test", key, ip);
+    logIntegrationAudit(auth.user.username, "test", key, ip);
 
     return NextResponse.json({
       success: result.success,
