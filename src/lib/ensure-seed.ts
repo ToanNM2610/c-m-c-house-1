@@ -87,7 +87,7 @@ export async function ensureDatabaseSeeded(): Promise<void> {
         darkAccentHex: defaultSettingsEn.darkAccentHex,
         enableAnimations: true,
         gaMeasurementId: '',
-        gtmContainerId: '',
+        gtmContainerId: 'GTM-M78P32L4',
         gscVerification: '',
         facebookPixelId: '',
         tiktokPixelId: '',

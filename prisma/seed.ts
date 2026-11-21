@@ -79,7 +79,7 @@ async function main() {
 
     // Module 4 Fields
     gaMeasurementId: '',
-    gtmContainerId: '',
+    gtmContainerId: 'GTM-M78P32L4',
     gscVerification: '',
     facebookPixelId: '',
     tiktokPixelId: '',

@@ -19,8 +19,9 @@ export function middleware(request: NextRequest) {
     host.startsWith("admin.") ||
     (isLocalhost && host.startsWith("admin."));
 
-  // Pass admin header downstream so layouts and server components recognize admin host
+  // Pass admin header and current pathname downstream so layouts and server components recognize host & route
   const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", url.pathname);
   if (isAdminSubdomain) {
     requestHeaders.set("x-is-admin-host", "1");
   }

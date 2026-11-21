@@ -83,6 +83,13 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error: any) {
     console.error('Error in login handler:', error);
+    const dbUrl = process.env.DATABASE_URL || '';
+    if (!dbUrl || dbUrl.includes('dummy:dummy@localhost') || error?.code === 'P1001' || error?.code === 'P1000') {
+      return apiError(
+        'Hệ thống chưa kết nối CSDL PostgreSQL (thiếu hoặc sai biến môi trường DATABASE_URL trên Vercel). Vui lòng thêm DATABASE_URL trong Vercel Project Settings.',
+        500
+      );
+    }
     return apiError('Lỗi xác thực hệ thống. Vui lòng kiểm tra kết nối CSDL và thử lại sau.', 500);
   }
 }

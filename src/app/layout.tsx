@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { PreOrderProvider } from '@/context/PreOrderContext';
@@ -79,6 +80,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = headers();
+  const rawHost = headersList.get('x-forwarded-host') || headersList.get('host') || '';
+  const host = rawHost.split(',')[0].trim().split(':')[0].toLowerCase();
+  const pathname = headersList.get('x-pathname') || '';
+  const isAdminHeader = headersList.get('x-is-admin-host') === '1';
+  const isAdmin =
+    host.startsWith('admin.') ||
+    host === 'admin.camcuhouse.online' ||
+    isAdminHeader ||
+    pathname.startsWith('/admin');
+
   return (
     <html
       lang="vi"
@@ -92,6 +104,22 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        {!isAdmin && (
+          <>
+            {/* Google Tag (gtm.js) - GTM-M78P32L4 */}
+            <script
+              async
+              src="https://www.googletagmanager.com/gtm.js?id=GTM-M78P32L4"
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());`,
+              }}
+            />
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

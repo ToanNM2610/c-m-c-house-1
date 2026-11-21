@@ -7,6 +7,8 @@ import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
 import GalleryLightboxModal from '@/components/modals/GalleryLightboxModal';
 import QuickChatWidget from '@/components/common/QuickChatWidget';
 import MobileBottomBar from '@/components/MobileBottomBar';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import { useApp } from '@/context/AppContext';
 
 /**
  * StorefrontShell
@@ -14,6 +16,7 @@ import MobileBottomBar from '@/components/MobileBottomBar';
  * and admin.camcuhouse.online subdomain.
  */
 export default function StorefrontShell({ children }: { children: React.ReactNode }) {
+  const { data } = useApp();
   const pathname = usePathname();
   const [isAdminHost, setIsAdminHost] = useState<boolean>(false);
 
@@ -35,6 +38,11 @@ export default function StorefrontShell({ children }: { children: React.ReactNod
 
   return (
     <>
+      {/* Zero duplicate Google Tag Manager sync */}
+      <GoogleAnalytics
+        gaId={data?.settings?.gaMeasurementId}
+        gtmId={data?.settings?.gtmContainerId}
+      />
       {/* 120Hz/120fps 8K Cinematic Intro Preloader Overlay (Storefront Home Only) */}
       <Suspense fallback={null}>
         <CinematicIntro8K />
