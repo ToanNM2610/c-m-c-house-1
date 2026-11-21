@@ -55,6 +55,9 @@ model StoreSettings {
   messengerUrl    String?  @default("https://m.me/camcuhousedaknong")
   quickChatPhone  String?  @default("0382851688")
   enableSocialShare Boolean @default(true)
+  whatsappUrl     String?  @default("https://wa.me/84382851688")
+  instagramUrl    String?  @default("https://instagram.com/camcuhousedaknong")
+  usdExchangeRate Int?     @default(25000)
 
   // Cinematic Intro Overlay Configuration (120fps)
   enableIntro     Boolean  @default(true)

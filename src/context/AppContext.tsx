@@ -34,12 +34,18 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({
+  children,
+  initialLanguage = 'vi',
+}: {
+  children: React.ReactNode;
+  initialLanguage?: Language;
+}) {
   const [data, setData] = useState<DatabaseSchema>(initialDbData);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Language & Theme State
-  const [language, setLanguageState] = useState<Language>('vi');
+  const [language, setLanguageState] = useState<Language>(initialLanguage);
   const [theme, setThemeState] = useState<Theme>('light');
 
   // Lightbox modal state
@@ -107,6 +113,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setLanguageState(lang);
     try {
       localStorage.setItem('camcu_language', lang);
+      localStorage.setItem('camcu_locale', lang);
+      document.cookie = `NEXT_LOCALE=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+      document.cookie = `camcu_locale=${lang}; path=/; max-age=31536000; SameSite=Lax`;
       document.documentElement.lang = lang;
     } catch {
       // ignore

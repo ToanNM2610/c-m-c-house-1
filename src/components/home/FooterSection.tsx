@@ -72,7 +72,7 @@ export default function FooterSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
           {/* Brand Info (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <Link href="/" className="inline-block">
+            <Link href={isEn ? '/en' : '/'} className="inline-block">
               <span className="font-serif text-3xl font-bold tracking-tight text-white">
                 CẨM CÙ <span className="font-normal italic text-accent-botanical">HOUSE</span>
               </span>
@@ -93,7 +93,7 @@ export default function FooterSection() {
             )}
 
             {/* Social ecosystem */}
-            <div className="flex items-center gap-2.5 pt-2">
+            <div className="flex flex-wrap items-center gap-2 pt-2">
               <a
                 href={s.links.facebook}
                 target="_blank"
@@ -118,6 +118,26 @@ export default function FooterSection() {
               >
                 YouTube
               </a>
+              {s.whatsappUrl && (
+                <a
+                  href={s.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
+                >
+                  WhatsApp
+                </a>
+              )}
+              {s.instagramUrl && (
+                <a
+                  href={s.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
+                >
+                  Instagram
+                </a>
+              )}
             </div>
           </div>
 
@@ -128,37 +148,37 @@ export default function FooterSection() {
             </h4>
             <ul className="space-y-2.5 text-xs font-mono">
               <li>
-                <Link href="/" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en' : '/'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'Home' : 'Trang chủ'}
                 </Link>
               </li>
               <li>
-                <Link href="/gioi-thieu" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en/about' : '/gioi-thieu'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'About Us' : 'Giới thiệu Cẩm Cù'}
                 </Link>
               </li>
               <li>
-                <Link href="/khong-gian" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en/space' : '/khong-gian'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'Sanctuary (30 Plates)' : 'Không gian (30 Plates)'}
                 </Link>
               </li>
               <li>
-                <Link href="/thuc-don" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en/menu' : '/thuc-don'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'Menu (~67 Items)' : 'Thực đơn (~67 món)'}
                 </Link>
               </li>
               <li>
-                <Link href="/khach-hang" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en/reviews' : '/khach-hang'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'Reviews & Stories' : 'Dấu ấn & Đánh giá'}
                 </Link>
               </li>
               <li>
-                <Link href="/su-kien" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en/news' : '/su-kien'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'News & FAQ' : 'Tin tức & FAQ'}
                 </Link>
               </li>
               <li>
-                <Link href="/lien-he" className="text-forest-200/80 hover:text-white transition-colors">
+                <Link href={isEn ? '/en/contact' : '/lien-he'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'Contact & Map' : 'Liên hệ & Chỉ đường'}
                 </Link>
               </li>
@@ -187,7 +207,9 @@ export default function FooterSection() {
                           href={`tel:${h.rawNumber || h.number?.replace(/\s+/g, '') || ''}`}
                           className="font-mono text-emerald-300 hover:text-white underline font-semibold"
                         >
-                          {h.number}
+                          {isEn && (h.number?.includes('038') || h.number?.includes('077'))
+                            ? h.number.replace(/^0/, '+84 ')
+                            : h.number}
                         </a>
                       </React.Fragment>
                     ))
@@ -197,14 +219,14 @@ export default function FooterSection() {
                         href="tel:0382851688"
                         className="font-mono text-emerald-300 hover:text-white underline font-semibold"
                       >
-                        0382 851 688
+                        {isEn ? '+84 382 851 688' : '0382 851 688'}
                       </a>
                       <span>—</span>
                       <a
                         href="tel:0774659000"
                         className="font-mono text-emerald-300 hover:text-white underline font-semibold"
                       >
-                        0774 659 000
+                        {isEn ? '+84 774 659 000' : '0774 659 000'}
                       </a>
                     </>
                   )}

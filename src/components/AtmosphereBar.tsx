@@ -81,10 +81,10 @@ export default function AtmosphereBar() {
   // Construct status string
   const openLabel = storeStatus.isOpen
     ? isEn
-      ? `OPEN NOW · CLOSES AT ${storeStatus.closingTime}`
+      ? `OPEN NOW · CLOSES AT ${storeStatus.closingTime} (GMT+7)`
       : `ĐANG MỞ CỬA · ĐÓNG LÚC ${storeStatus.closingTime}`
     : isEn
-    ? `CLOSED · OPENS AT 07:00`
+    ? `CLOSED · OPENS AT 07:00 (GMT+7)`
     : `ĐÃ ĐÓNG CỬA · MỞ LÚC 07:00`;
 
   const weatherDisplay = weather.connected

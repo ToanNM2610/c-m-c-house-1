@@ -90,19 +90,23 @@ export default function ContactSection() {
 
               <div className="flex flex-col gap-1.5 font-mono text-xs">
                 <div className="flex items-center justify-between text-[var(--text-secondary)]">
-                  <span>Thứ 2 – Thứ 5:</span>
+                  <span>{isVi ? "Thứ 2 – Thứ 5:" : "Mon – Thu:"}</span>
                   <span className="font-bold text-[var(--text-primary)]">07:00 – 18:00</span>
                 </div>
                 <div className="flex items-center justify-between text-[var(--text-secondary)]">
-                  <span>Thứ 6 – Chủ Nhật:</span>
+                  <span>{isVi ? "Thứ 6 – Chủ Nhật:" : "Fri – Sun:"}</span>
                   <span className="font-bold text-[var(--accent-warm)]">07:00 – 22:00</span>
                 </div>
               </div>
 
               <div className="pt-2 border-t border-[var(--border-subtle)] flex flex-col gap-1">
-                <span className="text-xs text-[var(--text-secondary)]">Hotline hỗ trợ:</span>
+                <span className="text-xs text-[var(--text-secondary)]">
+                  {isVi ? "Hotline hỗ trợ:" : "Support Hotline:"}
+                </span>
                 <span className="font-mono font-bold text-[16px] text-[var(--text-primary)]">
-                  {CAM_CU_HOUSE_INFO.contacts.formattedPhones[0]} — {CAM_CU_HOUSE_INFO.contacts.formattedPhones[1]}
+                  {isVi
+                    ? `${CAM_CU_HOUSE_INFO.contacts.formattedPhones[0]} — ${CAM_CU_HOUSE_INFO.contacts.formattedPhones[1]}`
+                    : `+84 382 851 688 — +84 774 659 000`}
                 </span>
                 <span className="text-xs text-[var(--text-secondary)]">
                   Email: {CAM_CU_HOUSE_INFO.contacts.email}
@@ -116,7 +120,7 @@ export default function ContactSection() {
                 className="btn-cta-primary flex-1 py-3 text-xs justify-center inline-flex items-center gap-1.5 rounded-xl"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>Gọi 0382 851 688</span>
+                <span>{isVi ? "Gọi 0382 851 688" : "Call +84 382 851 688"}</span>
               </a>
 
               <a
@@ -124,7 +128,7 @@ export default function ContactSection() {
                 className="btn-cta-secondary flex-1 py-3 text-xs justify-center inline-flex items-center gap-1.5 rounded-xl"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>Gọi 0774 659 000</span>
+                <span>{isVi ? "Gọi 0774 659 000" : "Call +84 774 659 000"}</span>
               </a>
             </div>
           </div>

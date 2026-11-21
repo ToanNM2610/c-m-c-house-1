@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function SpacePage() {
-  redirect("/khong-gian-suoi");
+  redirect("/en/space");
 }

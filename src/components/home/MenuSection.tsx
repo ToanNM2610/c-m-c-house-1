@@ -8,13 +8,22 @@ import { CategoryId, MenuItem } from '@/types';
 import { SPRING_PILL_TRANSITION, EDITORIAL_EASE } from '@/components/motion/EditorialMotion';
 import { InteractiveTiltCard } from '@/components/motion/VividMotion';
 
-function MenuItemCard({ item, isEn }: { item: MenuItem; isEn: boolean }) {
+function MenuItemCard({
+  item,
+  isEn,
+  usdRate = 25000,
+}: {
+  item: MenuItem;
+  isEn: boolean;
+  usdRate?: number;
+}) {
   const inStock = item.inStock;
   const name = isEn && item.nameEn ? item.nameEn : item.vietnameseTitle;
   const highlight = isEn && item.highlightEn ? item.highlightEn : item.highlight;
   const note = isEn && item.editorialNoteEn ? item.editorialNoteEn : item.editorialNote;
   const desc = isEn && item.descriptionEn ? item.descriptionEn : item.description;
   const variants = isEn && item.variantsEn && item.variantsEn.length > 0 ? item.variantsEn : item.variants;
+  const usdPrice = (item.price / (usdRate || 25000)).toFixed(2);
 
   return (
     <InteractiveTiltCard maxTilt={2.8} spotlight={true} className="h-full">
@@ -53,8 +62,15 @@ function MenuItemCard({ item, isEn }: { item: MenuItem; isEn: boolean }) {
             </div>
 
             {/* Price */}
-            <div className="font-mono text-base font-bold text-accent-botanical whitespace-nowrap">
-              {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
+            <div className="font-mono text-right whitespace-nowrap shrink-0">
+              <span className="text-base font-bold text-accent-botanical">
+                {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
+              </span>
+              {isEn && (
+                <span className="block text-[11px] font-normal text-ink-muted">
+                  ~ ${usdPrice} USD
+                </span>
+              )}
             </div>
           </div>
 
@@ -75,6 +91,7 @@ function MenuItemCard({ item, isEn }: { item: MenuItem; isEn: boolean }) {
                   className="px-2 py-0.5 rounded-md bg-forest-50 dark:bg-forest-800/80 text-forest-700 dark:text-forest-200 text-[11px] font-mono border border-forest-200/60 dark:border-forest-700"
                 >
                   {v.name} • {v.price.toLocaleString('vi-VN')}đ
+                  {isEn && ` (~$${(v.price / (usdRate || 25000)).toFixed(2)})`}
                 </span>
               ))}
             </div>
@@ -255,7 +272,7 @@ export default function MenuSection() {
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.28, ease: EDITORIAL_EASE }}
             >
-              <MenuItemCard item={item} isEn={isEn} />
+              <MenuItemCard item={item} isEn={isEn} usdRate={data.settings.usdExchangeRate} />
             </motion.div>
           ))}
         </AnimatePresence>
@@ -295,14 +312,14 @@ export default function MenuSection() {
               className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white text-xs font-mono font-medium transition-all shadow-sm active:scale-95 whitespace-nowrap"
             >
               <Phone className="w-4 h-4" />
-              <span>0382 851 688</span>
+              <span>{isEn ? '+84 382 851 688' : '0382 851 688'}</span>
             </a>
             <a
               href="tel:0774659000"
               className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white dark:bg-forest-900 hover:bg-forest-100 dark:hover:bg-forest-800 text-ink-primary text-xs font-mono font-medium border border-forest-200 dark:border-forest-700 transition-all shadow-subtle active:scale-95 whitespace-nowrap"
             >
               <Phone className="w-4 h-4 text-accent-botanical" />
-              <span>0774 659 000</span>
+              <span>{isEn ? '+84 774 659 000' : '0774 659 000'}</span>
             </a>
           </div>
         </div>

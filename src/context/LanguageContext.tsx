@@ -41,8 +41,14 @@ const LanguageContext = createContext<LanguageContextType>({
 
 export const CAMCU_LOCALE_KEY = "camcu_locale";
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("vi");
+export function LanguageProvider({
+  children,
+  initialLocale = "vi",
+}: {
+  children: ReactNode;
+  initialLocale?: Locale;
+}) {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
   const [mounted, setMounted] = useState(false);
 
   // Dynamic Content Blocks synced in real-time (1ms) from syncStore / Admin

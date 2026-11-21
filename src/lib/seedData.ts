@@ -69,6 +69,9 @@ export const initialDbData: DatabaseSchema = {
     reviewAutoIntervalSec: 6,
     showEventsSection: true,
     showHighlightsSection: true,
+    whatsappUrl: 'https://wa.me/84382851688',
+    instagramUrl: 'https://instagram.com/camcuhousedaknong',
+    usdExchangeRate: 25000,
   },
   content: initialSiteContent,
   menu: [

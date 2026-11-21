@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Phone, Sun, Moon, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
@@ -11,6 +11,7 @@ import GlobalSearchModal from '@/components/common/GlobalSearchModal';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { language, setLanguage, theme, toggleTheme } = useApp();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -43,26 +44,102 @@ export default function Navbar() {
     return null;
   }
 
-  const navLinks = language === 'en' ? [
-    { label: 'Home', href: '/' },
-    { label: 'About Us', href: '/gioi-thieu' },
-    { label: 'Sanctuary', href: '/khong-gian' },
-    { label: 'Menu', href: '/thuc-don' },
-    { label: 'Reviews', href: '/khach-hang' },
-    { label: 'News & FAQ', href: '/su-kien' },
-    { label: 'Contact', href: '/lien-he' },
-  ] : [
-    { label: 'Trang chủ', href: '/' },
-    { label: 'Giới thiệu', href: '/gioi-thieu' },
-    { label: 'Không gian', href: '/khong-gian' },
-    { label: 'Thực đơn', href: '/thuc-don' },
-    { label: 'Khách hàng', href: '/khach-hang' },
-    { label: 'Tin tức & FAQ', href: '/su-kien' },
-    { label: 'Liên hệ', href: '/lien-he' },
-  ];
+  const switchLanguage = (targetLang: 'vi' | 'en') => {
+    if (targetLang === language) return;
+    setLanguage(targetLang);
+    const curr = pathname || '/';
+    if (targetLang === 'en') {
+      if (curr === '/' || curr === '') {
+        router.push('/en');
+      } else if (curr === '/gioi-thieu') {
+        router.push('/en/about');
+      } else if (curr === '/khong-gian') {
+        router.push('/en/space');
+      } else if (curr === '/thuc-don') {
+        router.push('/en/menu');
+      } else if (curr === '/khach-hang') {
+        router.push('/en/reviews');
+      } else if (curr === '/tin-tuc' || curr === '/su-kien') {
+        router.push('/en/news');
+      } else if (curr === '/lien-he') {
+        router.push('/en/contact');
+      } else if (!curr.startsWith('/en')) {
+        router.push(`/en${curr}`);
+      }
+    } else {
+      if (curr === '/en' || curr === '/en/') {
+        router.push('/');
+      } else if (curr === '/en/about' || curr === '/about') {
+        router.push('/gioi-thieu');
+      } else if (curr === '/en/space' || curr === '/space') {
+        router.push('/khong-gian');
+      } else if (curr === '/en/menu' || curr === '/menu') {
+        router.push('/thuc-don');
+      } else if (curr === '/en/reviews' || curr === '/reviews') {
+        router.push('/khach-hang');
+      } else if (
+        curr === '/en/news' ||
+        curr === '/en/events' ||
+        curr === '/news' ||
+        curr === '/events'
+      ) {
+        router.push('/su-kien');
+      } else if (curr === '/en/contact' || curr === '/contact') {
+        router.push('/lien-he');
+      } else if (curr.startsWith('/en/')) {
+        router.push(curr.replace(/^\/en/, '') || '/');
+      }
+    }
+  };
+
+  const navLinks =
+    language === 'en'
+      ? [
+          { label: 'Home', href: '/en' },
+          { label: 'About Us', href: '/en/about' },
+          { label: 'Sanctuary', href: '/en/space' },
+          { label: 'Menu', href: '/en/menu' },
+          { label: 'Reviews', href: '/en/reviews' },
+          { label: 'News & FAQ', href: '/en/news' },
+          { label: 'Contact', href: '/en/contact' },
+        ]
+      : [
+          { label: 'Trang chủ', href: '/' },
+          { label: 'Giới thiệu', href: '/gioi-thieu' },
+          { label: 'Không gian', href: '/khong-gian' },
+          { label: 'Thực đơn', href: '/thuc-don' },
+          { label: 'Khách hàng', href: '/khach-hang' },
+          { label: 'Tin tức & FAQ', href: '/su-kien' },
+          { label: 'Liên hệ', href: '/lien-he' },
+        ];
 
   const isActiveLink = (href: string) => {
-    if (href === '/') return pathname === '/';
+    if (href === '/' || href === '/en') {
+      return pathname === '/' || pathname === '/en';
+    }
+    if (href === '/gioi-thieu' || href === '/en/about') {
+      return pathname === '/gioi-thieu' || pathname === '/en/about' || pathname === '/about';
+    }
+    if (href === '/khong-gian' || href === '/en/space') {
+      return pathname === '/khong-gian' || pathname === '/en/space' || pathname === '/space';
+    }
+    if (href === '/thuc-don' || href === '/en/menu') {
+      return pathname === '/thuc-don' || pathname === '/en/menu' || pathname === '/menu';
+    }
+    if (href === '/khach-hang' || href === '/en/reviews') {
+      return pathname === '/khach-hang' || pathname === '/en/reviews' || pathname === '/reviews';
+    }
+    if (href === '/su-kien' || href === '/tin-tuc' || href === '/en/news') {
+      return (
+        pathname === '/su-kien' ||
+        pathname === '/tin-tuc' ||
+        pathname === '/en/news' ||
+        pathname === '/en/events'
+      );
+    }
+    if (href === '/lien-he' || href === '/en/contact') {
+      return pathname === '/lien-he' || pathname === '/en/contact' || pathname === '/contact';
+    }
     return pathname === href || pathname?.startsWith(href + '/');
   };
 
@@ -73,7 +150,11 @@ export default function Navbar() {
       >
         <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-6">
           {/* Zone 1: Brand Logo (Left, shrink-0 whitespace-nowrap) */}
-          <Link href="/" prefetch={true} className="flex items-center gap-2 group shrink-0 whitespace-nowrap mr-4">
+          <Link
+            href={language === 'en' ? '/en' : '/'}
+            prefetch={true}
+            className="flex items-center gap-2 group shrink-0 whitespace-nowrap mr-4"
+          >
             <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-ink-primary whitespace-nowrap">
               CẨM CÙ <span className="font-normal italic text-accent-botanical">HOUSE</span>
             </span>
@@ -123,7 +204,7 @@ export default function Navbar() {
             {/* Bilingual Switcher Pill (VI / EN) (Hidden on tiny mobile, visible sm+) */}
             <div className="relative hidden sm:flex h-9 items-center rounded-full bg-forest-100 dark:bg-forest-900 p-0.5 border border-forest-200 dark:border-forest-700 text-[11px] font-mono shadow-xs shrink-0 whitespace-nowrap">
               <button
-                onClick={() => setLanguage('vi')}
+                onClick={() => switchLanguage('vi')}
                 className={`relative z-10 px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
                   language === 'vi'
                     ? 'text-white font-bold'
@@ -142,7 +223,7 @@ export default function Navbar() {
                 VI
               </button>
               <button
-                onClick={() => setLanguage('en')}
+                onClick={() => switchLanguage('en')}
                 className={`relative z-10 px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
                   language === 'en'
                     ? 'text-white font-bold'
@@ -223,7 +304,7 @@ export default function Navbar() {
 
               <div className="flex items-center rounded-xl bg-forest-100 dark:bg-forest-900 p-0.5 border border-forest-200 dark:border-forest-700 text-xs font-mono">
                 <button
-                  onClick={() => setLanguage('vi')}
+                  onClick={() => switchLanguage('vi')}
                   className={`px-3 py-1 rounded-lg transition-colors font-bold ${
                     language === 'vi' ? 'bg-accent-botanical text-white' : 'text-ink-muted'
                   }`}
@@ -231,7 +312,7 @@ export default function Navbar() {
                   VI
                 </button>
                 <button
-                  onClick={() => setLanguage('en')}
+                  onClick={() => switchLanguage('en')}
                   className={`px-3 py-1 rounded-lg transition-colors font-bold ${
                     language === 'en' ? 'bg-accent-botanical text-white' : 'text-ink-muted'
                   }`}
@@ -269,14 +350,18 @@ export default function Navbar() {
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical text-xs font-mono font-bold whitespace-nowrap"
               >
                 <Phone className="w-4 h-4" />
-                <span>Hotline 1: 0382 851 688</span>
+                <span>
+                  {language === 'en' ? 'Hotline 1: +84 382 851 688' : 'Hotline 1: 0382 851 688'}
+                </span>
               </a>
               <a
                 href="tel:0774659000"
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-forest-50 dark:bg-forest-900 text-accent-botanical text-xs font-mono font-bold border border-forest-200 dark:border-forest-700 whitespace-nowrap"
               >
                 <Phone className="w-4 h-4" />
-                <span>Hotline 2: 0774 659 000</span>
+                <span>
+                  {language === 'en' ? 'Hotline 2: +84 774 659 000' : 'Hotline 2: 0774 659 000'}
+                </span>
               </a>
             </div>
           </div>

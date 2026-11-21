@@ -74,7 +74,94 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(redirectUrl, 307);
     }
 
-    response = NextResponse.next();
+    // Skip internationalization routing for API routes and admin paths
+    if (url.pathname.startsWith("/api") || url.pathname.startsWith("/admin")) {
+      response = NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
+    } else {
+      // 1. Handle standalone English shortcuts (e.g. /about -> /en/about)
+      const standaloneEnglishMap: Record<string, string> = {
+        "/about": "/en/about",
+        "/space": "/en/space",
+        "/menu": "/en/menu",
+        "/reviews": "/en/reviews",
+        "/news": "/en/news",
+        "/events": "/en/events",
+        "/contact": "/en/contact",
+      };
+
+      if (standaloneEnglishMap[url.pathname]) {
+        const targetUrl = new URL(standaloneEnglishMap[url.pathname], request.url);
+        const permRedirect = NextResponse.redirect(targetUrl, 301);
+        permRedirect.cookies.set("NEXT_LOCALE", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
+        permRedirect.cookies.set("camcu_locale", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
+        return permRedirect;
+      }
+
+      // 2. Handle /en Subpath Routing
+      const isEnSubpath = url.pathname === "/en" || url.pathname.startsWith("/en/");
+      if (isEnSubpath) {
+        const subpath = url.pathname.replace(/^\/en/, "") || "/";
+        const enToViTargetMap: Record<string, string> = {
+          "/": "/",
+          "": "/",
+          "/about": "/gioi-thieu",
+          "/space": "/khong-gian",
+          "/menu": "/thuc-don",
+          "/reviews": "/khach-hang",
+          "/news": "/tin-tuc",
+          "/events": "/su-kien",
+          "/contact": "/lien-he",
+        };
+
+        const targetPath = enToViTargetMap[subpath] || subpath;
+        const originalPathname = url.pathname;
+        url.pathname = targetPath;
+
+        requestHeaders.set("x-locale", "en");
+        requestHeaders.set("x-pathname", originalPathname);
+
+        response = NextResponse.rewrite(url, {
+          request: {
+            headers: requestHeaders,
+          },
+        });
+        response.cookies.set("NEXT_LOCALE", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
+        response.cookies.set("camcu_locale", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
+      } else {
+        // 3. First-time foreign visitor auto-detection via Accept-Language (when no cookie is set on root '/')
+        const localeCookie =
+          request.cookies.get("NEXT_LOCALE")?.value ||
+          request.cookies.get("camcu_locale")?.value ||
+          request.cookies.get("camcu_language")?.value;
+
+        if (!localeCookie && url.pathname === "/") {
+          const acceptLang = (request.headers.get("accept-language") || "").toLowerCase();
+          const enIndex = acceptLang.indexOf("en");
+          const viIndex = acceptLang.indexOf("vi");
+          const prefersEnglish = enIndex !== -1 && (viIndex === -1 || enIndex < viIndex);
+
+          if (prefersEnglish) {
+            const redirectUrl = new URL("/en", request.url);
+            const foreignRedirect = NextResponse.redirect(redirectUrl, 307);
+            foreignRedirect.cookies.set("NEXT_LOCALE", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
+            foreignRedirect.cookies.set("camcu_locale", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
+            return foreignRedirect;
+          }
+        }
+
+        // Default Vietnamese Storefront
+        requestHeaders.set("x-locale", "vi");
+        response = NextResponse.next({
+          request: {
+            headers: requestHeaders,
+          },
+        });
+      }
+    }
   }
 
   // Security check 1: Protected admin API routes require authenticated session

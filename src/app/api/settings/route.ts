@@ -84,6 +84,11 @@ export async function GET() {
       // Section visibility toggles (Module 3 - Admin ON/OFF)
       showEventsSection: settings.showEventsSection ?? true,
       showHighlightsSection: settings.showHighlightsSection ?? true,
+
+      // International Contacts & Currency
+      whatsappUrl: settings.whatsappUrl || 'https://wa.me/84382851688',
+      instagramUrl: settings.instagramUrl || 'https://instagram.com/camcuhousedaknong',
+      usdExchangeRate: settings.usdExchangeRate ?? 25000,
     };
 
     return apiSuccess(formatted);
@@ -198,6 +203,11 @@ export async function PATCH(req: NextRequest) {
     if (body.showEventsSection !== undefined) dataToUpdate.showEventsSection = Boolean(body.showEventsSection);
     if (body.showHighlightsSection !== undefined) dataToUpdate.showHighlightsSection = Boolean(body.showHighlightsSection);
 
+    // International Contacts & Currency
+    if (body.whatsappUrl !== undefined) dataToUpdate.whatsappUrl = body.whatsappUrl;
+    if (body.instagramUrl !== undefined) dataToUpdate.instagramUrl = body.instagramUrl;
+    if (body.usdExchangeRate !== undefined) dataToUpdate.usdExchangeRate = Number(body.usdExchangeRate) || 25000;
+
     const updated = await prisma.storeSettings.update({
       where: { id: 'default' },
       data: dataToUpdate,
@@ -305,6 +315,11 @@ export async function PATCH(req: NextRequest) {
       // Section visibility toggles (Module 3 - Admin ON/OFF)
       showEventsSection: updated.showEventsSection ?? true,
       showHighlightsSection: updated.showHighlightsSection ?? true,
+
+      // International Contacts & Currency
+      whatsappUrl: updated.whatsappUrl || 'https://wa.me/84382851688',
+      instagramUrl: updated.instagramUrl || 'https://instagram.com/camcuhousedaknong',
+      usdExchangeRate: updated.usdExchangeRate ?? 25000,
     };
 
     revalidatePath('/', 'layout');

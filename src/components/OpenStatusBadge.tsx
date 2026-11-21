@@ -46,7 +46,7 @@ export default function OpenStatusBadge({ className = "", showDetails = true }: 
           ) : (
             <>
               Open now by the stream
-              {showDetails && ` • Closes at ${closingTime}`}
+              {showDetails && ` • Closes at ${closingTime}`} • Vietnam Time (GMT+7)
             </>
           )
         ) : isVi ? (
@@ -55,7 +55,7 @@ export default function OpenStatusBadge({ className = "", showDetails = true }: 
           </>
         ) : (
           <>
-            Closed • Reopens at 07:00 AM
+            Closed • Reopens at 07:00 AM • Vietnam Time (GMT+7)
           </>
         )}
       </span>

@@ -58,10 +58,10 @@ export default function OpenStatusBadge() {
 
   const message = status.isOpen
     ? language === 'en'
-      ? `Open for cool stream breeze • Closes at ${status.closingTime}`
+      ? `Open for cool stream breeze • Closes at ${status.closingTime} • Vietnam Time (GMT+7)`
       : `Đang mở cửa đón gió bên suối • Đóng cửa lúc ${status.closingTime}`
     : language === 'en'
-      ? 'See you tomorrow morning at 07:00 by the stream'
+      ? 'See you tomorrow morning at 07:00 by the stream • Vietnam Time (GMT+7)'
       : 'Hẹn gặp lại bạn lúc 07:00 sáng mai bên bờ suối';
 
   return (

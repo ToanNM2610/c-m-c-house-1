@@ -41,6 +41,9 @@ export default function AdminSettingsManager() {
   const [facebookUrl, setFacebookUrl] = useState(s.links.facebook);
   const [tiktokUrl, setTiktokUrl] = useState(s.links.tiktok);
   const [youtubeUrl, setYoutubeUrl] = useState(s.links.youtube);
+  const [whatsappUrl, setWhatsappUrl] = useState(s.whatsappUrl || 'https://wa.me/84382851688');
+  const [instagramUrl, setInstagramUrl] = useState(s.instagramUrl || 'https://instagram.com/camcuhousedaknong');
+  const [usdExchangeRate, setUsdExchangeRate] = useState<number>(s.usdExchangeRate || 25000);
   const [announcement, setAnnouncement] = useState(s.announcement || '');
   const [footerDesc, setFooterDesc] = useState(s.footerDesc || 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Gia Nghĩa, Đăk Nông.');
 
@@ -124,6 +127,9 @@ export default function AdminSettingsManager() {
             tiktok: tiktokUrl.trim(),
             youtube: youtubeUrl.trim(),
           },
+          whatsappUrl: whatsappUrl.trim(),
+          instagramUrl: instagramUrl.trim(),
+          usdExchangeRate: Number(usdExchangeRate) || 25000,
           announcement: announcement.trim(),
           announcementEn: announcementEn.trim(),
           footerDesc: footerDesc.trim(),
@@ -1003,6 +1009,39 @@ export default function AdminSettingsManager() {
               type="text"
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
+              className="w-full px-3 py-2 text-xs font-mono border rounded-xl focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Link WhatsApp (Quốc tế):</label>
+            <input
+              type="text"
+              placeholder="https://wa.me/84382851688"
+              value={whatsappUrl}
+              onChange={(e) => setWhatsappUrl(e.target.value)}
+              className="w-full px-3 py-2 text-xs font-mono border rounded-xl focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Link Instagram:</label>
+            <input
+              type="text"
+              placeholder="https://instagram.com/camcuhousedaknong"
+              value={instagramUrl}
+              onChange={(e) => setInstagramUrl(e.target.value)}
+              className="w-full px-3 py-2 text-xs font-mono border rounded-xl focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Tỷ Giá Quy Đổi USD (Mặc định 25.000đ = $1):</label>
+            <input
+              type="number"
+              placeholder="25000"
+              value={usdExchangeRate}
+              onChange={(e) => setUsdExchangeRate(Number(e.target.value) || 25000)}
               className="w-full px-3 py-2 text-xs font-mono border rounded-xl focus:outline-none focus:border-emerald-500"
             />
           </div>

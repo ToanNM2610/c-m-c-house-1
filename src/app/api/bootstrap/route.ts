@@ -142,6 +142,9 @@ export async function GET() {
         reviewAutoIntervalSec: (settings as any).reviewAutoIntervalSec ?? 6,
         showEventsSection: settings.showEventsSection ?? true,
         showHighlightsSection: settings.showHighlightsSection ?? true,
+        whatsappUrl: settings.whatsappUrl || 'https://wa.me/84382851688',
+        instagramUrl: settings.instagramUrl || 'https://instagram.com/camcuhousedaknong',
+        usdExchangeRate: settings.usdExchangeRate ?? 25000,
       },
       content: resolvedContent,
       menu: menuItems.map((m: PrismaMenuItem) => ({

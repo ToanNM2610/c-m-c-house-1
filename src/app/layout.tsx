@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
+import { LanguageProvider } from '@/context/LanguageContext';
 import { PreOrderProvider } from '@/context/PreOrderContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
 import { getPublicIntegrations } from '@/lib/integrations';
@@ -98,6 +99,9 @@ export default async function RootLayout({
     isAdminHeader ||
     pathname.startsWith('/admin');
 
+  const locale = (headersList.get('x-locale') || 'vi') as 'vi' | 'en';
+  const isEn = locale === 'en';
+
   let gscToken = '';
   if (!isAdmin) {
     try {
@@ -113,9 +117,61 @@ export default async function RootLayout({
     }
   }
 
+  const dynamicJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CafeOrCoffeeShop',
+    name: 'Cẩm Cù House',
+    alternateName: 'Cam Cu House Botanical Eco-Coffee & Streamside Sanctuary',
+    description: isEn
+      ? 'Streamside ecological cafe and botanical coffee sanctuary in Dong Gia Nghia, Lam Dong. Natural waterfalls, basalt wood-roasted coffee, and herbal drinks.'
+      : 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Không gian suối mát rượi, 18 bàn view suối, cà phê muối Đăk Nông và thảo mộc xanh.',
+    image: 'https://camcuhouse.online/uploads/gallery/fig-01.jpg',
+    telephone: ['+84-382-851-688', '+84-774-659-000'],
+    email: 'thuynhu8788@gmail.com',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Hẻm 437 Hùng Vương',
+      addressLocality: 'Đông Gia Nghĩa',
+      addressRegion: 'Lâm Đồng',
+      postalCode: '64000',
+      addressCountry: 'VN',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 11.98634,
+      longitude: 107.69421,
+    },
+    url: isEn ? 'https://camcuhouse.online/en' : 'https://camcuhouse.online',
+    priceRange: '$$',
+    currenciesAccepted: 'VND, USD',
+    servesCuisine: ['Vietnamese Coffee', 'Botanical Herbal Teas', 'Fresh Tropical Smoothies', 'Healthy Juices', 'Local Snacks'],
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+        opens: '07:00',
+        closes: '18:00',
+      },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Friday', 'Saturday', 'Sunday'],
+        opens: '07:00',
+        closes: '22:00',
+      },
+    ],
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5.0',
+      reviewCount: '8',
+      bestRating: '5',
+      worstRating: '1',
+    },
+    hasMap: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
+  };
+
   return (
     <html
-      lang="vi"
+      lang={isEn ? 'en' : 'vi'}
       className="scroll-smooth font-sans"
     >
       <head>
@@ -148,16 +204,18 @@ gtag('js', new Date());`,
         )}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(dynamicJsonLd) }}
         />
       </head>
       <body className="min-h-screen bg-paper text-ink-primary selection:bg-accent-botanical selection:text-white">
-        <AppProvider>
-          <PreOrderProvider>
-            <NavigationDirectionProvider>
-              {children}
-            </NavigationDirectionProvider>
-          </PreOrderProvider>
+        <AppProvider initialLanguage={locale}>
+          <LanguageProvider initialLocale={locale}>
+            <PreOrderProvider>
+              <NavigationDirectionProvider>
+                {children}
+              </NavigationDirectionProvider>
+            </PreOrderProvider>
+          </LanguageProvider>
         </AppProvider>
       </body>
     </html>

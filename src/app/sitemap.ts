@@ -6,57 +6,53 @@ export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://camcuhouse.online';
 
-  // 6 Core Corporate Routes
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/gioi-thieu`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/khong-gian`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/thuc-don`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/khach-hang`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/su-kien`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tin-tuc`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/lien-he`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
+  const routePairs = [
+    { vi: '', en: '', priority: 1.0, freq: 'daily' as const },
+    { vi: '/gioi-thieu', en: '/about', priority: 0.9, freq: 'weekly' as const },
+    { vi: '/khong-gian', en: '/space', priority: 0.9, freq: 'weekly' as const },
+    { vi: '/thuc-don', en: '/menu', priority: 0.9, freq: 'daily' as const },
+    { vi: '/khach-hang', en: '/reviews', priority: 0.8, freq: 'weekly' as const },
+    { vi: '/su-kien', en: '/events', priority: 0.8, freq: 'daily' as const },
+    { vi: '/tin-tuc', en: '/news', priority: 0.8, freq: 'daily' as const },
+    { vi: '/lien-he', en: '/contact', priority: 0.8, freq: 'monthly' as const },
   ];
+
+  const sitemapEntries: MetadataRoute.Sitemap = [];
+
+  for (const pair of routePairs) {
+    const viUrl = `${baseUrl}${pair.vi || '/'}`;
+    const enUrl = `${baseUrl}/en${pair.en}`;
+
+    // VI entry
+    sitemapEntries.push({
+      url: viUrl,
+      lastModified: new Date(),
+      changeFrequency: pair.freq,
+      priority: pair.priority,
+      alternates: {
+        languages: {
+          vi: viUrl,
+          en: enUrl,
+          'x-default': viUrl,
+        },
+      },
+    });
+
+    // EN entry
+    sitemapEntries.push({
+      url: enUrl,
+      lastModified: new Date(),
+      changeFrequency: pair.freq,
+      priority: pair.priority,
+      alternates: {
+        languages: {
+          vi: viUrl,
+          en: enUrl,
+          'x-default': viUrl,
+        },
+      },
+    });
+  }
 
   // Dynamic CMS-managed Static Pages
   try {
@@ -65,17 +61,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, updatedAt: true },
     });
 
-    const pageRoutes: MetadataRoute.Sitemap = pages.map((p) => ({
-      url: `${baseUrl}/p/${p.slug}`,
-      lastModified: p.updatedAt,
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    }));
+    for (const p of pages) {
+      const viUrl = `${baseUrl}/p/${p.slug}`;
+      const enUrl = `${baseUrl}/en/p/${p.slug}`;
 
-    return [...staticRoutes, ...pageRoutes];
+      sitemapEntries.push({
+        url: viUrl,
+        lastModified: p.updatedAt,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+        alternates: {
+          languages: {
+            vi: viUrl,
+            en: enUrl,
+            'x-default': viUrl,
+          },
+        },
+      });
+
+      sitemapEntries.push({
+        url: enUrl,
+        lastModified: p.updatedAt,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+        alternates: {
+          languages: {
+            vi: viUrl,
+            en: enUrl,
+            'x-default': viUrl,
+          },
+        },
+      });
+    }
   } catch {
     console.error('[Sitemap] Unable to load CMS pages; returning static routes.');
-    return staticRoutes;
   }
-}
 
+  return sitemapEntries;
+}

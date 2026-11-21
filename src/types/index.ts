@@ -175,6 +175,11 @@ export interface CafeSettings {
   // Section visibility toggles (Module 3 - Admin ON/OFF)
   showEventsSection?: boolean;
   showHighlightsSection?: boolean;
+
+  // International Contacts & Currency
+  whatsappUrl?: string;
+  instagramUrl?: string;
+  usdExchangeRate?: number;
 }
 
 export interface TeamMember {
