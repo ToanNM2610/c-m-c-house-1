@@ -98,7 +98,11 @@ function getInitialIntegrations(): Record<string, IntegrationSettingItem> {
   const placeId = process.env.GOOGLE_PLACE_ID || "ChIJ3yR_c91JnzERl0n0sTjZz2o";
   const gaId = process.env.GA4_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || "";
   const gaPropertyId = process.env.GA4_PROPERTY_ID || "";
-  const scVerification = process.env.SEARCH_CONSOLE_VERIFICATION || "";
+  const scVerification =
+    process.env.SEARCH_CONSOLE_VERIFICATION ||
+    process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+    process.env.GOOGLE_SITE_VERIFICATION ||
+    "";
   const scProperty = process.env.SEARCH_CONSOLE_PROPERTY || "sc-domain:camcuhouse.online";
   const serviceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_JSON || "";
   const mapsEmbed =

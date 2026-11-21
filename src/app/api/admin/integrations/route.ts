@@ -11,9 +11,10 @@ import {
   getIntegrationAuditLogs,
 } from "@/data/store";
 import { maskSecret } from "@/lib/crypto";
-import { revalidateIntegrationsCache } from "@/lib/integrations";
+import { revalidateIntegrationsCache, extractGoogleSiteVerificationToken } from "@/lib/integrations";
 import { testIntegrationConnection } from "@/lib/google-apis";
 import { requireAuth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 // Rate limiting in memory (max 15 modification requests per 60 seconds per IP)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -117,6 +118,20 @@ export async function POST(request: NextRequest) {
     }
 
     const { key, value, name, isSecret } = parsed.data;
+    let cleanValue = value.trim();
+
+    // Auto-extract GSC token if full meta tag was pasted
+    if (key === "search_console_verification") {
+      cleanValue = extractGoogleSiteVerificationToken(cleanValue);
+      // Synchronize with Prisma storeSettings
+      try {
+        await prisma.storeSettings.updateMany({
+          data: { gscVerification: cleanValue },
+        });
+      } catch (err) {
+        console.warn("Could not sync gscVerification to prisma storeSettings:", err);
+      }
+    }
 
     // Key-specific validation
     if (key === "ga4_measurement_id" && value.trim()) {
@@ -155,13 +170,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Save
-    const updated = saveIntegration(key, value.trim(), name, isSecret);
+    const updated = saveIntegration(key, cleanValue, name, isSecret);
 
     // Auto-test connection to set status
     const testResult = await testIntegrationConnection(key);
     saveIntegration(
       key,
-      value.trim(),
+      cleanValue,
       name,
       isSecret,
       testResult.success ? "connected" : "error",

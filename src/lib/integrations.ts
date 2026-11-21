@@ -1,12 +1,35 @@
 import { unstable_cache } from "next/cache";
 import { revalidateTag } from "next/cache";
 import { getDecryptedIntegrationValue, getIntegration } from "@/data/store";
+import { prisma } from "@/lib/prisma";
 
 export interface PublicIntegrations {
   ga4MeasurementId: string;
   searchConsoleVerification: string;
   googleMapsEmbedUrl: string;
   googlePlaceId: string;
+}
+
+/**
+ * Normalizes Google Search Console verification input.
+ * Handles:
+ * - `<meta name="google-site-verification" content="TOKEN" />`
+ * - `<meta content="TOKEN" name="google-site-verification">`
+ * - Raw `TOKEN`
+ * - Surrounding quotes or brackets
+ */
+export function extractGoogleSiteVerificationToken(input: string): string {
+  if (!input) return "";
+  const trimmed = input.trim();
+
+  // Extract content from meta tag if user pasted full HTML tag
+  const metaMatch = trimmed.match(/content=["']([^"']+)["']/i);
+  if (metaMatch && (trimmed.includes("google-site-verification") || trimmed.startsWith("<meta"))) {
+    return metaMatch[1].trim();
+  }
+
+  // Strip enclosing quotes or brackets if present
+  return trimmed.replace(/^["'<>]|["'<>]$/g, "").trim();
 }
 
 /**
@@ -20,6 +43,19 @@ async function fetchPublicIntegrationsInternal(): Promise<PublicIntegrations> {
   const mapsItem = getIntegration("google_maps_embed_url");
   const placeIdItem = getIntegration("google_place_id");
 
+  let dbGsc = "";
+  try {
+    const dbSettings = await prisma.storeSettings.findUnique({
+      where: { id: "default" },
+      select: { gscVerification: true },
+    });
+    if (dbSettings?.gscVerification) {
+      dbGsc = dbSettings.gscVerification;
+    }
+  } catch {
+    // Database fallback
+  }
+
   const ga4MeasurementId = (
     ga4Item?.value ||
     process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ||
@@ -27,12 +63,14 @@ async function fetchPublicIntegrationsInternal(): Promise<PublicIntegrations> {
     ""
   ).trim();
 
-  const searchConsoleVerification = (
+  const searchConsoleVerification = extractGoogleSiteVerificationToken(
     scItem?.value ||
+    dbGsc ||
     process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
     process.env.GOOGLE_SITE_VERIFICATION ||
+    process.env.SEARCH_CONSOLE_VERIFICATION ||
     ""
-  ).trim();
+  );
 
   const googleMapsEmbedUrl = (
     mapsItem?.value ||

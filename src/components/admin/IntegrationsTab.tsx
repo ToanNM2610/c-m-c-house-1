@@ -14,6 +14,7 @@ import {
   History,
   Activity,
 } from "lucide-react";
+import { extractGoogleSiteVerificationToken } from "@/lib/integrations";
 
 export interface IntegrationItem {
   key: string;
@@ -75,7 +76,11 @@ export default function IntegrationsTab({ onShowToast }: Props) {
   }, []);
 
   const handleInputChange = (key: string, val: string) => {
-    setEditValues((prev) => ({ ...prev, [key]: val }));
+    let finalVal = val;
+    if (key === "search_console_verification" && (val.includes("<meta") || val.includes("content="))) {
+      finalVal = extractGoogleSiteVerificationToken(val);
+    }
+    setEditValues((prev) => ({ ...prev, [key]: finalVal }));
   };
 
   const handleTestConnection = async (key: string) => {
@@ -102,12 +107,16 @@ export default function IntegrationsTab({ onShowToast }: Props) {
   };
 
   const handleSave = async (item: IntegrationItem) => {
-    const currentInput =
+    let currentInput =
       editValues[item.key] !== undefined
         ? editValues[item.key]
         : item.isSecret
         ? ""
         : item.value;
+
+    if (item.key === "search_console_verification") {
+      currentInput = extractGoogleSiteVerificationToken(currentInput);
+    }
 
     if (item.isSecret && !currentInput && !item.hasValue) {
       onShowToast("Vui lòng nhập giá trị khóa mới để lưu");

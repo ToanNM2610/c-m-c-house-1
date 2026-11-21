@@ -4,6 +4,7 @@ import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { PreOrderProvider } from '@/context/PreOrderContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
+import { getPublicIntegrations } from '@/lib/integrations';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://camcuhouse.online'),
@@ -75,7 +76,7 @@ const jsonLd = {
   hasMap: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -90,6 +91,21 @@ export default function RootLayout({
     host === 'admin.camcuhouse.online' ||
     isAdminHeader ||
     pathname.startsWith('/admin');
+
+  let gscToken = '';
+  if (!isAdmin) {
+    try {
+      const publicIntegrations = await getPublicIntegrations();
+      gscToken = publicIntegrations?.searchConsoleVerification || '';
+    } catch {
+      gscToken = (
+        process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+        process.env.GOOGLE_SITE_VERIFICATION ||
+        process.env.SEARCH_CONSOLE_VERIFICATION ||
+        ''
+      ).trim();
+    }
+  }
 
   return (
     <html
@@ -106,6 +122,10 @@ export default function RootLayout({
         />
         {!isAdmin && (
           <>
+            {/* Google Search Console HTML Verification Tag */}
+            {gscToken && (
+              <meta name="google-site-verification" content={gscToken} />
+            )}
             {/* Google Tag (gtm.js) - GTM-M78P32L4 */}
             <script
               async

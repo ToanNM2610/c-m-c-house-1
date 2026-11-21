@@ -3,6 +3,8 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
+import { extractGoogleSiteVerificationToken, revalidateIntegrationsCache } from '@/lib/integrations';
+import { saveIntegration } from '@/data/store';
 
 export const dynamic = 'force-dynamic';
 
@@ -145,7 +147,23 @@ export async function PATCH(req: NextRequest) {
     // Marketing & Tracking
     if (body.gaMeasurementId !== undefined) dataToUpdate.gaMeasurementId = body.gaMeasurementId;
     if (body.gtmContainerId !== undefined) dataToUpdate.gtmContainerId = body.gtmContainerId;
-    if (body.gscVerification !== undefined) dataToUpdate.gscVerification = body.gscVerification;
+    if (body.gscVerification !== undefined) {
+      const cleanGsc = extractGoogleSiteVerificationToken(body.gscVerification);
+      dataToUpdate.gscVerification = cleanGsc;
+      try {
+        saveIntegration(
+          'search_console_verification',
+          cleanGsc,
+          'Search Console Mã Xác Minh (google-site-verification)',
+          false,
+          cleanGsc ? 'connected' : 'unconfigured',
+          cleanGsc ? 'Đã xác minh' : 'Chưa cấu hình'
+        );
+        revalidateIntegrationsCache();
+      } catch (e) {
+        console.warn('Could not sync gscVerification to store integrations:', e);
+      }
+    }
     if (body.facebookPixelId !== undefined) dataToUpdate.facebookPixelId = body.facebookPixelId;
     if (body.tiktokPixelId !== undefined) dataToUpdate.tiktokPixelId = body.tiktokPixelId;
 

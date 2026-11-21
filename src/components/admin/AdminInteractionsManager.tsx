@@ -38,6 +38,7 @@ import {
   GmailConfigData,
   GmailRecipientItem,
 } from '@/types';
+import { extractGoogleSiteVerificationToken } from '@/lib/integrations';
 import AdminAntiSpamManager from './AdminAntiSpamManager';
 
 export default function AdminInteractionsManager() {
@@ -1391,12 +1392,12 @@ export default function AdminInteractionsManager() {
                 />
               </div>
               <div>
-                <label className="block text-slate-600 mb-1 font-medium">Google Search Console Verification Token</label>
+                <label className="block text-slate-600 mb-1 font-medium">Google Search Console Verification (Token hoặc Thẻ Meta)</label>
                 <input
                   type="text"
                   value={settings.gscVerification || ''}
-                  onChange={(e) => setSettings({ ...settings, gscVerification: e.target.value })}
-                  placeholder="Mã xác thực chuỗi token meta"
+                  onChange={(e) => setSettings({ ...settings, gscVerification: extractGoogleSiteVerificationToken(e.target.value) })}
+                  placeholder="Dán mã token hoặc toàn bộ thẻ <meta name='google-site-verification' content='...' />"
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
                 />
               </div>
