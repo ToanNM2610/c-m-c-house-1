@@ -192,7 +192,7 @@ export default function EditorialHero() {
                 className="px-4 py-3.5 text-[14px] font-mono font-bold text-[var(--text-primary)] hover:text-[#E86C3A] transition-colors inline-flex items-center gap-2"
               >
                 <PhoneCall className="w-4 h-4 text-[#E86C3A]" />
-                <span>Hotline: 0382 851 688</span>
+                <span>Hotline: {isVi ? "0382 851 688" : "+84 382 851 688"}</span>
               </a>
             </motion.div>
           </div>

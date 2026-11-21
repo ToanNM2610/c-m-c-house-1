@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function ContactRedirectPage() {
-  redirect("/en/contact");
+  redirect("/chi-duong-lien-he");
 }

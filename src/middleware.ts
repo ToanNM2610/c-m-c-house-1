@@ -82,26 +82,7 @@ export function middleware(request: NextRequest) {
         },
       });
     } else {
-      // 1. Handle standalone English shortcuts (e.g. /about -> /en/about)
-      const standaloneEnglishMap: Record<string, string> = {
-        "/about": "/en/about",
-        "/space": "/en/space",
-        "/menu": "/en/menu",
-        "/reviews": "/en/reviews",
-        "/news": "/en/news",
-        "/events": "/en/events",
-        "/contact": "/en/contact",
-      };
-
-      if (standaloneEnglishMap[url.pathname]) {
-        const targetUrl = new URL(standaloneEnglishMap[url.pathname], request.url);
-        const permRedirect = NextResponse.redirect(targetUrl, 301);
-        permRedirect.cookies.set("NEXT_LOCALE", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
-        permRedirect.cookies.set("camcu_locale", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
-        return permRedirect;
-      }
-
-      // 2. Handle /en Subpath Routing
+      // 1. Handle /en Subpath Routing
       const isEnSubpath = url.pathname === "/en" || url.pathname.startsWith("/en/");
       if (isEnSubpath) {
         const subpath = url.pathname.replace(/^\/en/, "") || "/";
@@ -132,7 +113,7 @@ export function middleware(request: NextRequest) {
         response.cookies.set("NEXT_LOCALE", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
         response.cookies.set("camcu_locale", "en", { path: "/", maxAge: 31536000, sameSite: "lax" });
       } else {
-        // 3. First-time foreign visitor auto-detection via Accept-Language (when no cookie is set on root '/')
+        // 2. First-time foreign visitor auto-detection via Accept-Language (when no cookie is set on root '/')
         const localeCookie =
           request.cookies.get("NEXT_LOCALE")?.value ||
           request.cookies.get("camcu_locale")?.value ||

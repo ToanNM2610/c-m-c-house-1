@@ -101,16 +101,31 @@ export default function QuickChatWidget() {
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
+              {/* WhatsApp (International) */}
+              {s.whatsappUrl && (
+                <a
+                  href={s.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors border border-emerald-200 dark:border-emerald-900"
+                >
+                  <span className="font-bold">WhatsApp (+84 382 851 688)</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
+
               {/* Direct Hotline */}
               <a
-                href={`tel:${phone}`}
+                href={`tel:${phone.startsWith('0') ? '+84' + phone.slice(1) : phone}`}
                 className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700 font-bold"
               >
                 <span className="flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5" />
-                  <span>0382 851 688</span>
+                  <span>{isEn ? '+84 382 851 688' : '0382 851 688'}</span>
                 </span>
-                <span className="text-[10px] uppercase font-semibold">Gọi ngay</span>
+                <span className="text-[10px] uppercase font-semibold">
+                  {isEn ? 'Call Now' : 'Gọi ngay'}
+                </span>
               </a>
             </div>
           </motion.div>
