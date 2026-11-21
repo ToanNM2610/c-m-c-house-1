@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 // GET /api/security/blocked-ips - list blocked IPs
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await requireAuth(request, 'SUPER_ADMIN');
+    const authResult = await requireAuth(request, ['SUPER_ADMIN', 'EDITOR']);
     if ('errorResponse' in authResult) {
       return authResult.errorResponse;
     }
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 // POST /api/security/blocked-ips - manually block an IP
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireAuth(request, 'SUPER_ADMIN');
+    const authResult = await requireAuth(request, ['SUPER_ADMIN', 'EDITOR']);
     if ('errorResponse' in authResult) {
       return authResult.errorResponse;
     }
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
 // DELETE /api/security/blocked-ips - unblock an IP
 export async function DELETE(request: NextRequest) {
   try {
-    const authResult = await requireAuth(request, 'SUPER_ADMIN');
+    const authResult = await requireAuth(request, ['SUPER_ADMIN', 'EDITOR']);
     if ('errorResponse' in authResult) {
       return authResult.errorResponse;
     }

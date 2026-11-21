@@ -257,7 +257,7 @@ async function main() {
       badge: ev.badge,
       badgeEn: trans?.badgeEn || '',
       imageUrl: ev.imageUrl || null,
-      active: ev.active,
+      active: false, // Default sample events marked inactive
     };
 
     await prisma.eventPost.upsert({
@@ -338,7 +338,7 @@ async function main() {
       badge: 'Cuối tuần',
       badgeEn: 'Weekend Live',
       orderIndex: 1,
-      published: true,
+      published: false,
     },
     {
       id: 'story-2',
@@ -356,7 +356,7 @@ async function main() {
       badge: 'Mùa vụ',
       badgeEn: 'Harvest',
       orderIndex: 2,
-      published: true,
+      published: false,
     },
     {
       id: 'story-3',
@@ -374,7 +374,7 @@ async function main() {
       badge: 'Sinh thái',
       badgeEn: 'Eco-Living',
       orderIndex: 3,
-      published: true,
+      published: false,
     },
     {
       id: 'story-4',
@@ -392,7 +392,7 @@ async function main() {
       badge: 'Đặc trưng',
       badgeEn: 'Signature',
       orderIndex: 4,
-      published: true,
+      published: false,
     },
   ];
 
@@ -403,92 +403,19 @@ async function main() {
       create: st,
     });
   }
-  console.log(`✓ ${stories.length} highlight stories upserted`);
+  console.log(`✓ ${stories.length} highlight stories upserted (marked unpublished by default)`);
 
-  // 9. Verified Customer Reviews (8 reviews for 100% Đề xuất)
-  const reviews = [
-    {
-      id: 'rev-1',
-      authorName: 'Nguyễn Hoài An',
-      rating: 5,
-      content: 'Không gian quán rất thoáng mát, view suối đá tự nhiên cực chill giữa lòng Gia Nghĩa. Cà phê muối béo ngậy đậm đà, nhân viên phục vụ rất dễ thương và niềm nở.',
-      visitDate: 'Tháng 11, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
+  // 9. Customer Reviews: ZERO fake/sample reviews seeded. All reviews must be real organic submissions.
+  // Clean up any historical fake seeded reviews (rev-1 to rev-8)
+  await prisma.guestComment.deleteMany({
+    where: {
+      OR: [
+        { id: { startsWith: 'rev-' } },
+        { authorName: { in: ['Nguyễn Hoài An', 'Trần Quốc Bảo', 'Lê Thị Kim Ngân', 'Đặng Minh Trí', 'Vũ Phương Linh', 'Huỳnh Văn Đông', 'Bùi Thanh Hương', 'Hoàng Đức Nam'] } },
+      ],
     },
-    {
-      id: 'rev-2',
-      authorName: 'Trần Quốc Bảo',
-      rating: 5,
-      content: 'Quán nằm dưới dốc yên tĩnh, hoàn toàn tách biệt với khói bụi đường phố. Sinh tố bơ sáp Đăk Nông đặc dẻo thơm lừng, rất đáng thử khi ghé Gia Nghĩa!',
-      visitDate: 'Tháng 11, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-    {
-      id: 'rev-3',
-      authorName: 'Lê Thị Kim Ngân',
-      rating: 5,
-      content: 'Đêm nhạc acoustic tối thứ Bảy bên bờ suối rất ấm cúng. Tiếng suối róc rách hòa cùng tiếng đàn guitar mộc mạc tạo cảm giác bình yên đến lạ kỳ.',
-      visitDate: 'Tháng 10, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-    {
-      id: 'rev-4',
-      authorName: 'Đặng Minh Trí',
-      rating: 5,
-      content: 'Menu đa dạng hơn 60 món mà giá cả rất bình dân, chỉ 20k - 45k. Món trà hoa đu đủ mật ong thơm dịu, uống vào ấm bụng và tốt cho sức khỏe.',
-      visitDate: 'Tháng 10, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-    {
-      id: 'rev-5',
-      authorName: 'Vũ Phương Linh',
-      rating: 5,
-      content: 'Có 18 bàn sát suối view đẹp mê li, nước suối trong vắt nhìn thấy cả đá cuội. Chụp hình góc nào cũng thơ mộng. Chủ quán hướng dẫn đường đi rất tận tình.',
-      visitDate: 'Tháng 09, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-    {
-      id: 'rev-6',
-      authorName: 'Huỳnh Văn Đông',
-      rating: 5,
-      content: 'Đường dốc vào quán cây xanh rợp bóng mát, bãi đậu xe ô tô và xe máy rộng rãi ngay trước cổng. Cà phê rang củi mộc chuẩn vị bazan đậm đà, hậu vị sâu.',
-      visitDate: 'Tháng 09, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-    {
-      id: 'rev-7',
-      authorName: 'Bùi Thanh Hương',
-      rating: 5,
-      content: 'Rất thích không gian sinh thái không có máy lạnh ngột ngạt. Gió suối tự nhiên mát lành sảng khoái. Bánh mì bò kho và spaghetti ăn sáng cũng rất ngon miệng.',
-      visitDate: 'Tháng 08, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-    {
-      id: 'rev-8',
-      authorName: 'Hoàng Đức Nam',
-      rating: 5,
-      content: 'Điểm đến lý tưởng khi ghé thăm Gia Nghĩa. Giàn hoa cẩm cù nở hoa hình sao rất đẹp và thơm ngát. Chấm 10/10 trải nghiệm cho cả gia đình vào dịp cuối tuần.',
-      visitDate: 'Tháng 08, 2026',
-      status: 'APPROVED',
-      isFeatured: true,
-    },
-  ];
-
-  for (const r of reviews) {
-    await prisma.guestComment.upsert({
-      where: { id: r.id },
-      update: r,
-      create: r,
-    });
-  }
-  console.log(`✓ ${reviews.length} verified reviews (100% Đề xuất) upserted`);
+  });
+  console.log('✓ Cleaned up fake/sample guest reviews from database');
 
   // 10. FAQs across 4 categories (8 items)
   const faqs = [

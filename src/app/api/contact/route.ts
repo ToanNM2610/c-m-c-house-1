@@ -145,21 +145,32 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Yêu cầu xác thực tài khoản quản trị' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await request.json();
+        id = body?.id;
+      } catch {}
+    }
 
     if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Thiếu mã thư liên hệ cần xóa (id)' }, { status: 400 });
+    }
+
+    const existing = await prisma.contactSubmission.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: 'Không tìm thấy thư liên hệ cần xóa' }, { status: 404 });
     }
 
     await prisma.contactSubmission.delete({ where: { id } });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
+    return NextResponse.json({ success: true, message: 'Đã xóa thư liên hệ thành công' });
+  } catch (error: any) {
     console.error('DELETE /api/contact error:', error);
-    return NextResponse.json({ error: 'Failed to delete submission' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error?.message || 'Lỗi khi xóa thư liên hệ' }, { status: 500 });
   }
 }

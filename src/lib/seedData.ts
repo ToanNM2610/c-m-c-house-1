@@ -67,6 +67,8 @@ export const initialDbData: DatabaseSchema = {
     introSubtitleEn: 'Streamside Ecological Café — Clean & Lush Sanctuary',
     reviewDisplayMode: 'AUTO_RANDOM',
     reviewAutoIntervalSec: 6,
+    showEventsSection: true,
+    showHighlightsSection: true,
   },
   content: initialSiteContent,
   menu: [
@@ -1400,7 +1402,7 @@ export const initialDbData: DatabaseSchema = {
       dateOrSchedule: 'Tối Thứ Bảy hàng tuần',
       description: 'Lắng nghe những giai điệu acoustic mộc mạc bên ánh lửa và dòng suối đêm lấp lánh.',
       badge: 'Sự kiện định kỳ',
-      active: true,
+      active: false,
     },
     {
       id: 'evt-02',
@@ -1409,7 +1411,7 @@ export const initialDbData: DatabaseSchema = {
       dateOrSchedule: 'Đang diễn ra',
       description: 'Thưởng thức những ly sinh tố bơ sáp và sinh tố bơ sầu riêng béo ngậy được tuyển chọn kỹ càng từ những vườn bơ hữu cơ địa phương.',
       badge: 'Đặc sản mùa này',
-      active: true,
+      active: false,
     },
     {
       id: 'evt-03',
@@ -1418,7 +1420,7 @@ export const initialDbData: DatabaseSchema = {
       dateOrSchedule: 'Mỗi ngày (07:00 – 09:00)',
       description: 'Đón chào ngày mới trong lành bên bờ suối với cà phê Robusta rang củi mộc truyền thống.',
       badge: 'Ưu đãi thường nhật',
-      active: true,
+      active: false,
     },
   ],
   lastUpdated: new Date().toISOString(),

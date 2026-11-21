@@ -151,9 +151,20 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
 
-    if (!id) return apiError('Thiếu ID câu chuyện cần xoá', 400);
+    if (!id) return apiError('Thiếu ID câu chuyện cần xóa', 400);
+
+    const existing = await prisma.highlightStory.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy câu chuyện cần xóa', 404);
+    }
 
     const deleted = await prisma.highlightStory.delete({
       where: { id },
@@ -167,10 +178,10 @@ export async function DELETE(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
-    return apiSuccess(deleted, 'Xoá câu chuyện thành công');
-  } catch (error) {
+    return apiSuccess(deleted, 'Xóa câu chuyện nổi bật thành công');
+  } catch (error: any) {
     console.error('Error deleting highlight story:', error);
-    return apiError('Lỗi xoá câu chuyện', 500);
+    return apiError(error?.message || 'Lỗi khi xóa câu chuyện nổi bật', 500);
   }
 }
 

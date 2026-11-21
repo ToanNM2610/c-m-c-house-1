@@ -121,13 +121,24 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       return apiError('Yêu cầu xác thực tài khoản quản trị', 401);
     }
 
+    const { id } = params;
+    if (!id) {
+      return apiError('Thiếu mã món cần xóa', 400);
+    }
+
+    const existing = await prisma.menuItem.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy món cần xóa', 404);
+    }
+
     await prisma.menuItem.delete({
-      where: { id: params.id },
+      where: { id },
     });
+
     revalidatePath('/', 'layout');
-    return apiSuccess({ deletedId: params.id }, { message: 'Xóa món thành công' });
+    return apiSuccess({ deletedId: id, name: existing.vietnameseTitle }, 'Đã xóa món khỏi thực đơn thành công');
   } catch (error: any) {
     console.error('Error deleting menu item:', error);
-    return apiError(error.message || 'Lỗi xóa món', 500);
+    return apiError(error.message || 'Lỗi khi xóa món khỏi thực đơn', 500);
   }
 }

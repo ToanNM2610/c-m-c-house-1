@@ -49,7 +49,7 @@ async function probeDatabaseWrite(): Promise<{ ok: boolean; error?: string; mode
 }
 
 export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req, 'SUPER_ADMIN');
+  const auth = await requireAuth(req, ['SUPER_ADMIN', 'EDITOR']);
   if ('errorResponse' in auth) return auth.errorResponse;
 
   try {
@@ -69,7 +69,20 @@ export async function GET(req: NextRequest) {
     const host = req.headers.get('host') || 'unknown';
     const isHttps = req.headers.get('x-forwarded-proto') === 'https' || req.url.startsWith('https');
 
-    // Real DB write probe
+    // Real live DB read probe
+    let dbReadOk = false;
+    let dbReadLatencyMs = 0;
+    let dbReadError = '';
+    try {
+      const startRead = Date.now();
+      await prisma.storeSettings.findUnique({ where: { id: 'default' } });
+      dbReadLatencyMs = Date.now() - startRead;
+      dbReadOk = true;
+    } catch (err: any) {
+      dbReadError = err?.message || 'Lỗi đọc CSDL';
+    }
+
+    // Real live DB write probe
     const writeProbe = await probeDatabaseWrite();
 
     // Real error count in SystemLog (last 24h)
@@ -95,6 +108,8 @@ export async function GET(req: NextRequest) {
       logCount,
       superAdminCount,
       approvedCommentCount,
+      blockedIpCount,
+      gmailRecipientCount,
     ] = await Promise.all([
       prisma.menuItem.count(),
       prisma.menuCategory.count(),
@@ -112,18 +127,27 @@ export async function GET(req: NextRequest) {
       prisma.systemLog.count(),
       prisma.adminUser.count({ where: { role: 'SUPER_ADMIN' } }),
       prisma.guestComment.count({ where: { status: 'APPROVED' } }),
+      prisma.blockedIp.count(),
+      prisma.gmailRecipient.count(),
     ]);
 
-    // Compute real health score
+    // Compute dynamic health score
     const checks: { name: string; ok: boolean; detail?: string }[] = [
-      { name: 'Kết nối CSDL', ok: true, detail: `Có ${logCount} bản ghi hệ thống` },
-      { name: 'Ghi CSDL', ok: writeProbe.ok, detail: writeProbe.ok ? 'Đọc/ghi bình thường' : (writeProbe.error || 'Lỗi ghi') },
-      { name: 'Lỗi hệ thống 24h', ok: errorCount24h === 0, detail: `${errorCount24h} lỗi` },
+      { name: 'Đọc CSDL (Read Probe)', ok: dbReadOk, detail: dbReadOk ? `Phản hồi ${dbReadLatencyMs}ms` : dbReadError },
+      { name: 'Ghi CSDL (Write Probe)', ok: writeProbe.ok, detail: writeProbe.ok ? 'Đọc/ghi bình thường' : (writeProbe.error || 'Lỗi ghi') },
+      { name: 'Lỗi hệ thống (24h)', ok: errorCount24h === 0, detail: `${errorCount24h} lỗi` },
       { name: 'Tài khoản Super Admin', ok: superAdminCount > 0, detail: `${superAdminCount} tài khoản` },
     ];
 
-    const failedCount = checks.filter((c) => !c.ok).length;
-    const status = failedCount > 0 ? (failedCount >= 2 ? 'ERROR' : 'WARNING') : 'HEALTHY';
+    // Status: ERROR if DB read/write fails; WARNING if high 24h errors; HEALTHY otherwise
+    let status: 'HEALTHY' | 'WARNING' | 'ERROR' = 'HEALTHY';
+    if (!dbReadOk || !writeProbe.ok || superAdminCount === 0) {
+      status = 'ERROR';
+    } else if (errorCount24h > 10) {
+      status = 'WARNING';
+    }
+
+    const mem = process.memoryUsage();
 
     const healthData = {
       status,
@@ -134,7 +158,8 @@ export async function GET(req: NextRequest) {
         platform: process.platform,
         arch: process.arch,
         uptimeSeconds: Math.floor(process.uptime()),
-        memoryUsageMb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        memoryUsageMb: Math.round(mem.heapUsed / 1024 / 1024),
+        rssMb: Math.round(mem.rss / 1024 / 1024),
         host,
         https: isHttps,
       },
@@ -143,6 +168,7 @@ export async function GET(req: NextRequest) {
         databaseFileExists: dbFileExists,
         databaseSizeBytes: dbSizeBytes,
         databaseSizeFormatted: `${(dbSizeBytes / 1024 / 1024).toFixed(2)} MB`,
+        databaseReadable: dbReadOk,
         databaseWritable: writeProbe.ok,
         databaseMode: writeProbe.mode || (writeProbe.ok ? 'READ_WRITE' : 'READ_ONLY'),
         databaseWriteError: writeProbe.error,
@@ -165,6 +191,8 @@ export async function GET(req: NextRequest) {
         approvedComments: approvedCommentCount,
         adminUsers: userCount,
         systemLogs: logCount,
+        blockedIps: blockedIpCount,
+        gmailRecipients: gmailRecipientCount,
       },
       security: {
         rbacEnforced: true,

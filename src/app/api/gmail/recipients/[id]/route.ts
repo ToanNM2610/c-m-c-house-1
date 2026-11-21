@@ -63,7 +63,7 @@ export async function DELETE(
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Yêu cầu xác thực tài khoản quản trị' }, { status: 401 });
     }
 
     const { id } = params;
@@ -73,7 +73,7 @@ export async function DELETE(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: 'Không tìm thấy người nhận' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Không tìm thấy người nhận email cần xóa' }, { status: 404 });
     }
 
     await prisma.gmailRecipient.delete({
@@ -91,10 +91,10 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json({ success: true, message: 'Đã xóa người nhận thành công' });
+    return NextResponse.json({ success: true, message: 'Đã xóa người nhận email thành công', data: { deletedId: id, email: existing.email } });
   } catch (error: any) {
     console.error('DELETE /api/gmail/recipients/[id] error:', error);
-    return NextResponse.json({ error: error?.message || 'Không thể xóa người nhận' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error?.message || 'Không thể xóa người nhận email' }, { status: 500 });
   }
 }
 

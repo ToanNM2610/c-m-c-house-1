@@ -182,3 +182,40 @@ export async function POST(req: NextRequest) {
     return apiError(error.message || 'Lỗi thêm món', 500);
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = await getSessionUser(req);
+    if (!user) {
+      return apiError('Yêu cầu xác thực tài khoản quản trị', 401);
+    }
+
+    const { searchParams } = new URL(req.url);
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
+
+    if (!id) {
+      return apiError('Thiếu mã món cần xóa (id)', 400);
+    }
+
+    const existing = await prisma.menuItem.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy món cần xóa', 404);
+    }
+
+    await prisma.menuItem.delete({
+      where: { id },
+    });
+
+    revalidatePath('/', 'layout');
+    return apiSuccess({ deletedId: id, name: existing.vietnameseTitle }, 'Đã xóa món khỏi thực đơn thành công');
+  } catch (error: any) {
+    console.error('Error deleting menu item:', error);
+    return apiError(error.message || 'Lỗi khi xóa món khỏi thực đơn', 500);
+  }
+}

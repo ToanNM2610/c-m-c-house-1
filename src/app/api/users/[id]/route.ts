@@ -164,10 +164,10 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       where: { id: params.id },
     });
 
-    return apiSuccess({ message: `Đã xóa tài khoản "${target.username}" thành công` });
-  } catch (error) {
+    return apiSuccess({ deletedId: params.id, username: target.username }, `Đã xóa tài khoản "${target.username}" thành công`);
+  } catch (error: any) {
     console.error('Error deleting admin user:', error);
-    return apiError('Không thể xóa tài khoản', 500);
+    return apiError(error?.message || 'Không thể xóa tài khoản', 500);
   }
 }
 

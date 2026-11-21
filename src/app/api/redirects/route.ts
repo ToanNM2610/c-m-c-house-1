@@ -107,9 +107,20 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
 
-    if (!id) return apiError('Thiếu ID quy tắc cần xoá', 400);
+    if (!id) return apiError('Thiếu ID quy tắc cần xóa', 400);
+
+    const existing = await prisma.redirectRule.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy quy tắc điều hướng cần xóa', 404);
+    }
 
     const deleted = await prisma.redirectRule.delete({
       where: { id },
@@ -123,10 +134,10 @@ export async function DELETE(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
-    return apiSuccess(deleted, 'Xoá quy tắc điều hướng thành công');
-  } catch (error) {
+    return apiSuccess(deleted, 'Xóa quy tắc điều hướng thành công');
+  } catch (error: any) {
     console.error('Error deleting redirect:', error);
-    return apiError('Lỗi xoá quy tắc điều hướng', 500);
+    return apiError(error?.message || 'Lỗi khi xóa quy tắc điều hướng', 500);
   }
 }
 

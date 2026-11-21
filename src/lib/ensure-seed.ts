@@ -96,6 +96,8 @@ export async function ensureDatabaseSeeded(): Promise<void> {
         messengerUrl: 'https://m.me/camcuhousedaknong',
         quickChatPhone: '0382851688',
         enableSocialShare: true,
+        showEventsSection: true,
+        showHighlightsSection: true,
       };
 
       await prisma.storeSettings.upsert({
@@ -231,7 +233,7 @@ export async function ensureDatabaseSeeded(): Promise<void> {
           badge: ev.badge,
           badgeEn: trans?.badgeEn || '',
           imageUrl: ev.imageUrl || null,
-          active: ev.active,
+          active: false,
         };
 
         await prisma.eventPost.upsert({

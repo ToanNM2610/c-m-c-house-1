@@ -114,9 +114,20 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
 
-    if (!id) return apiError('Thiếu ID trang cần xoá', 400);
+    if (!id) return apiError('Thiếu ID trang tĩnh cần xóa', 400);
+
+    const existing = await prisma.staticPage.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy trang tĩnh cần xóa', 404);
+    }
 
     const deleted = await prisma.staticPage.delete({
       where: { id },
@@ -130,10 +141,10 @@ export async function DELETE(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
-    return apiSuccess(deleted, 'Xoá trang tĩnh thành công');
-  } catch (error) {
+    return apiSuccess(deleted, 'Xóa trang tĩnh thành công');
+  } catch (error: any) {
     console.error('Error deleting static page:', error);
-    return apiError('Lỗi xoá trang tĩnh', 500);
+    return apiError(error?.message || 'Lỗi khi xóa trang tĩnh', 500);
   }
 }
 

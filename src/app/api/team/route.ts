@@ -106,9 +106,20 @@ export async function DELETE(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
 
-    if (!id) return apiError('Thiếu ID thành viên cần xoá', 400);
+    if (!id) return apiError('Thiếu ID thành viên cần xóa', 400);
+
+    const existing = await prisma.teamMember.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy thành viên cần xóa', 404);
+    }
 
     const deleted = await prisma.teamMember.delete({
       where: { id },
@@ -122,10 +133,10 @@ export async function DELETE(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
-    return apiSuccess(deleted, 'Xoá thành viên thành công');
-  } catch (error) {
+    return apiSuccess(deleted, 'Xóa thành viên thành công');
+  } catch (error: any) {
     console.error('Error deleting team member:', error);
-    return apiError('Lỗi xoá thành viên', 500);
+    return apiError(error?.message || 'Lỗi khi xóa thành viên', 500);
   }
 }
 

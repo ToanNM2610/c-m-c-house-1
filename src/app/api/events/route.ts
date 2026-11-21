@@ -132,10 +132,21 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
 
     if (!id) {
-      return apiError('Thiếu id sự kiện cần xóa', 400);
+      return apiError('Thiếu mã sự kiện cần xóa (id)', 400);
+    }
+
+    const existing = await prisma.eventPost.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy sự kiện cần xóa', 404);
     }
 
     await prisma.eventPost.delete({
@@ -143,9 +154,9 @@ export async function DELETE(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
-    return apiSuccess({ id }, { message: 'Xóa sự kiện thành công' });
+    return apiSuccess({ id, title: existing.title }, 'Đã xóa sự kiện thành công');
   } catch (error: any) {
     console.error('Error deleting event:', error);
-    return apiError(error.message || 'Lỗi xóa sự kiện', 500);
+    return apiError(error.message || 'Lỗi khi xóa sự kiện', 500);
   }
 }

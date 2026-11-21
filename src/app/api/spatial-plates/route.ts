@@ -88,3 +88,75 @@ export async function PATCH(req: NextRequest) {
     return apiError(error.message || 'Lỗi cập nhật ảnh không gian', 500);
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = await getSessionUser(req);
+    if (!user) {
+      return apiError('Yêu cầu xác thực tài khoản quản trị', 401);
+    }
+
+    const { searchParams } = new URL(req.url);
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await req.json();
+        id = body?.id;
+      } catch {}
+    }
+
+    if (!id) {
+      return apiError('Thiếu mã ảnh không gian cần gỡ (id, vd: FIG. 01)', 400);
+    }
+
+    const existing = await prisma.spatialFigure.findUnique({ where: { id } });
+    if (!existing) {
+      return apiError('Không tìm thấy ảnh không gian tương ứng', 404);
+    }
+
+    // Reset image URL to empty string (fallback graphic mode)
+    const updated = await prisma.spatialFigure.update({
+      where: { id },
+      data: { imageUrl: '', customGlbUrl: null },
+    });
+
+    revalidatePath('/', 'layout');
+    return apiSuccess(updated, `Đã gỡ bỏ ảnh không gian ${id} thành công`);
+  } catch (error: any) {
+    console.error('Error deleting spatial plate:', error);
+    return apiError(error.message || 'Lỗi khi gỡ ảnh không gian', 500);
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = await getSessionUser(req);
+    if (!user) {
+      return apiError('Yêu cầu xác thực tài khoản quản trị', 401);
+    }
+
+    const { searchParams } = new URL(req.url);
+    let id = searchParams.get('id');
+    if (!id) {
+      const body = await req.json().catch(() => ({}));
+      id = body?.id;
+    }
+
+    if (!id) {
+      return apiError('Thiếu mã ảnh không gian cần xóa (id)', 400);
+    }
+
+    const updated = await prisma.spatialFigure.update({
+      where: { id },
+      data: { imageUrl: '' },
+    });
+
+    revalidatePath('/', 'layout');
+
+    return apiSuccess(updated, { message: `Đã xóa ảnh khung hình ${id} thành công` });
+  } catch (error: any) {
+    console.error('Error deleting spatial plate media:', error);
+    return apiError(error.message || 'Lỗi xóa ảnh khung hình', 500);
+  }
+}
+

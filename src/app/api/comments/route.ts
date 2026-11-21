@@ -116,21 +116,32 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Yêu cầu xác thực tài khoản quản trị' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id');
+    if (!id) {
+      try {
+        const body = await request.json();
+        id = body?.id;
+      } catch {}
+    }
 
     if (!id) {
-      return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Thiếu mã đánh giá cần xóa (id)' }, { status: 400 });
+    }
+
+    const existing = await prisma.guestComment.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ success: false, error: 'Không tìm thấy đánh giá cần xóa' }, { status: 404 });
     }
 
     await prisma.guestComment.delete({ where: { id } });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
+    return NextResponse.json({ success: true, message: 'Đã xóa đánh giá thành công' });
+  } catch (error: any) {
     console.error('DELETE /api/comments error:', error);
-    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error?.message || 'Lỗi khi xóa đánh giá' }, { status: 500 });
   }
 }

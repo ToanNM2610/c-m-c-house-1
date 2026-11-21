@@ -171,6 +171,10 @@ export interface CafeSettings {
   // Review Showcase Configuration (Module 4)
   reviewDisplayMode?: 'AUTO_RANDOM' | 'MANUAL' | string;
   reviewAutoIntervalSec?: number;
+
+  // Section visibility toggles (Module 3 - Admin ON/OFF)
+  showEventsSection?: boolean;
+  showHighlightsSection?: boolean;
 }
 
 export interface TeamMember {

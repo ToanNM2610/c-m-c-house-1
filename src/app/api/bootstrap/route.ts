@@ -140,6 +140,8 @@ export async function GET() {
         introSubtitleEn: settings.introSubtitleEn || 'Streamside Ecological Café — Clean & Lush Sanctuary',
         reviewDisplayMode: (settings as any).reviewDisplayMode || 'AUTO_RANDOM',
         reviewAutoIntervalSec: (settings as any).reviewAutoIntervalSec ?? 6,
+        showEventsSection: settings.showEventsSection ?? true,
+        showHighlightsSection: settings.showHighlightsSection ?? true,
       },
       content: resolvedContent,
       menu: menuItems.map((m: PrismaMenuItem) => ({

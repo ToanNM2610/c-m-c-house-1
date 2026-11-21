@@ -9,9 +9,11 @@ export interface ApiResponse<T = unknown> {
 
 export function apiSuccess<T>(data: T, meta?: Record<string, unknown> | string, status = 200, headers?: HeadersInit) {
   const metaObj = typeof meta === 'string' ? { message: meta } : meta;
+  const message = typeof meta === 'string' ? meta : (meta?.message as string | undefined);
   return NextResponse.json(
     {
       success: true,
+      ...(message ? { message } : {}),
       data,
       ...(metaObj ? { meta: metaObj } : {}),
     },

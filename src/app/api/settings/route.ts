@@ -78,6 +78,10 @@ export async function GET() {
       // Review Showcase Configuration (Module 4)
       reviewDisplayMode: (settings as any).reviewDisplayMode || 'AUTO_RANDOM',
       reviewAutoIntervalSec: (settings as any).reviewAutoIntervalSec ?? 6,
+
+      // Section visibility toggles (Module 3 - Admin ON/OFF)
+      showEventsSection: settings.showEventsSection ?? true,
+      showHighlightsSection: settings.showHighlightsSection ?? true,
     };
 
     return apiSuccess(formatted);
@@ -172,10 +176,26 @@ export async function PATCH(req: NextRequest) {
       (dataToUpdate as any).reviewAutoIntervalSec = sec;
     }
 
+    // Section visibility toggles (Module 3 - Admin ON/OFF)
+    if (body.showEventsSection !== undefined) dataToUpdate.showEventsSection = Boolean(body.showEventsSection);
+    if (body.showHighlightsSection !== undefined) dataToUpdate.showHighlightsSection = Boolean(body.showHighlightsSection);
+
     const updated = await prisma.storeSettings.update({
       where: { id: 'default' },
       data: dataToUpdate,
     });
+
+    if (body.showEventsSection !== undefined || body.showHighlightsSection !== undefined) {
+      await prisma.systemLog.create({
+        data: {
+          level: 'INFO',
+          category: 'CMS',
+          action: 'UPDATE_SECTION_VISIBILITY',
+          details: `Cập nhật hiển thị mục: Sự kiện = ${updated.showEventsSection ? 'Bật' : 'Tắt'}, Điểm nổi bật = ${updated.showHighlightsSection ? 'Bật' : 'Tắt'}`,
+          adminUsername: user.username,
+        },
+      });
+    }
 
     if (body.reviewDisplayMode !== undefined || body.reviewAutoIntervalSec !== undefined) {
       await prisma.systemLog.create({
@@ -263,6 +283,10 @@ export async function PATCH(req: NextRequest) {
       // Review Showcase Configuration (Module 4)
       reviewDisplayMode: (updated as any).reviewDisplayMode || 'AUTO_RANDOM',
       reviewAutoIntervalSec: (updated as any).reviewAutoIntervalSec ?? 6,
+
+      // Section visibility toggles (Module 3 - Admin ON/OFF)
+      showEventsSection: updated.showEventsSection ?? true,
+      showHighlightsSection: updated.showHighlightsSection ?? true,
     };
 
     revalidatePath('/', 'layout');
