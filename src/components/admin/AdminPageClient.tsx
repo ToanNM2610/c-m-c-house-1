@@ -73,11 +73,19 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [vnTime, setVnTime] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const mainContentRef = React.useRef<HTMLElement | null>(null);
 
   const showToast = (message: string) => {
     setToastMessage(message);
     window.setTimeout(() => setToastMessage(null), 3500);
   };
+
+  // Auto-scroll main content area back to top when switching modules/tabs
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [activeTab]);
 
   // Clock in Asia/Ho_Chi_Minh (GMT+7)
   useEffect(() => {
@@ -203,13 +211,13 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
+    <div className="h-screen overflow-hidden bg-slate-100 flex flex-col">
       {/* Top Header Operational Bar */}
-      <header className="bg-slate-900 text-white px-4 sm:px-6 py-3 border-b border-slate-800 flex items-center justify-between sticky top-0 z-40">
+      <header className="bg-slate-900 text-white px-4 sm:px-6 py-3 border-b border-slate-800 flex items-center justify-between shrink-0 z-40">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 md:hidden"
+            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 lg:hidden"
             aria-label="Menu"
           >
             {mobileDrawerOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -284,10 +292,10 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
         </div>
       </header>
 
-      {/* Main Layout: Sidebar + Workspace */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Desktop Sidebar Navigation */}
-        <aside className="w-72 bg-slate-900 text-slate-300 hidden md:flex flex-col justify-between p-4 border-r border-slate-800 overflow-y-auto">
+      {/* Main Layout: Fixed Sidebar + Independent Scrolling Workspace */}
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        {/* Desktop Fixed Sidebar Navigation */}
+        <aside className="w-72 bg-slate-900 text-slate-300 hidden lg:flex shrink-0 h-full flex-col justify-between p-4 border-r border-slate-800 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-700/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-600">
           <div className="space-y-4">
             {moduleGroups.map((group, gIdx) => {
               const visibleItems = group.items.filter((item) =>
@@ -326,7 +334,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
           </div>
 
           {/* Footer status card */}
-          <div className="p-3 bg-slate-800/60 rounded-xl text-[11px] font-mono text-slate-400 space-y-1.5 border border-slate-700/50 mt-4">
+          <div className="p-3 bg-slate-800/60 rounded-xl text-[11px] font-mono text-slate-400 space-y-1.5 border border-slate-700/50 mt-4 shrink-0">
             <div className="text-emerald-400 font-semibold flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Phiên làm việc Staff</span>
@@ -349,12 +357,22 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
 
         {/* Mobile Navigation Drawer */}
         {mobileDrawerOpen && (
-          <div className="md:hidden fixed inset-0 z-50 bg-black/80 flex">
-            <div className="w-72 bg-slate-900 text-slate-300 p-6 flex flex-col justify-between h-full overflow-y-auto">
+          <div
+            className="lg:hidden fixed inset-0 z-50 bg-black/80 flex"
+            onClick={() => setMobileDrawerOpen(false)}
+          >
+            <div
+              className="w-72 bg-slate-900 text-slate-300 p-6 flex flex-col justify-between h-full overflow-y-auto shadow-2xl [scrollbar-width:thin] [scrollbar-color:#334155_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-700/60"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                   <span className="font-serif text-lg font-bold text-white">CẨM CÙ HOUSE</span>
-                  <button onClick={() => setMobileDrawerOpen(false)} className="text-slate-400 hover:text-white">
+                  <button
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="text-slate-400 hover:text-white"
+                    aria-label="Đóng menu"
+                  >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -398,10 +416,10 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
                 </div>
               </div>
 
-              <div className="space-y-2 pt-4">
+              <div className="space-y-2 pt-4 shrink-0">
                 <button
                   onClick={handleLogout}
-                  className="w-full py-2.5 text-center bg-red-600/20 text-red-400 rounded-xl text-xs font-mono block"
+                  className="w-full py-2.5 text-center bg-red-600/20 text-red-400 rounded-xl text-xs font-mono block hover:bg-red-600/30 transition-colors"
                 >
                   Đăng xuất
                 </button>
@@ -410,9 +428,12 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
           </div>
         )}
 
-        {/* Workspace Canvas */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
-          <div className="max-w-6xl mx-auto">
+        {/* Workspace Canvas (Independent Scrolling) */}
+        <main
+          ref={mainContentRef}
+          className="flex-1 h-full overflow-y-auto overflow-x-hidden p-4 sm:p-8 [scrollbar-width:thin] [scrollbar-color:#94a3b8_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 hover:[&::-webkit-scrollbar-thumb]:bg-slate-400 [&::-webkit-scrollbar-thumb]:rounded-full"
+        >
+          <div className="max-w-6xl mx-auto pb-16">
             {activeTab === 'analytics' && (
               <AnalyticsTab
                 onSwitchToIntegrations={() => setActiveTab('integrations')}
@@ -461,7 +482,7 @@ export default function AdminPageClient({ initialTab = 'home-cms' }: { initialTa
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-5 right-5 z-[60] rounded-xl bg-slate-900 px-4 py-3 text-sm text-white shadow-lg"
+          className="fixed bottom-5 right-5 z-[70] rounded-xl bg-slate-900 border border-slate-700/80 px-4 py-3 text-sm text-white shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-150"
         >
           {toastMessage}
         </div>
