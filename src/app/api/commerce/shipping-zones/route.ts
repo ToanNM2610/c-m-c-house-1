@@ -17,3 +17,4 @@ export async function GET() {
     return apiError('Không thể tải danh sách khu vực giao hàng', 500);
   }
 }
+

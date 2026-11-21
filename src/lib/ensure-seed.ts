@@ -1,5 +1,12 @@
 import { prisma } from './prisma';
-import { initialDbData } from './seedData';
+import {
+  initialDbData,
+  initialCommerceSettings,
+  initialShippingZones,
+  initialVouchers,
+  initialOptionGroups,
+  initialEcommerceStaticPages,
+} from './seedData';
 import { hashPassword } from './auth';
 import {
   menuItemTranslations,
@@ -314,6 +321,45 @@ export async function ensureDatabaseSeeded(): Promise<void> {
           maxGmailPerHour: 15,
         },
       });
+
+      // 10. Commerce Settings & E-Commerce Defaults
+      await prisma.commerceSettings.upsert({
+        where: { id: 'commerce-settings' },
+        update: {},
+        create: initialCommerceSettings,
+      });
+
+      for (const zone of initialShippingZones) {
+        await prisma.shippingZone.upsert({
+          where: { id: zone.id },
+          update: {},
+          create: zone,
+        });
+      }
+
+      for (const voucher of initialVouchers) {
+        await prisma.voucher.upsert({
+          where: { code: voucher.code },
+          update: {},
+          create: voucher,
+        });
+      }
+
+      for (const opt of initialOptionGroups) {
+        await prisma.productOptionGroup.upsert({
+          where: { id: opt.id },
+          update: {},
+          create: opt,
+        });
+      }
+
+      for (const page of initialEcommerceStaticPages) {
+        await prisma.staticPage.upsert({
+          where: { slug: page.slug },
+          update: {},
+          create: page,
+        });
+      }
 
       console.log('✓ Auto-seed completed successfully');
     })();

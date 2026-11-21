@@ -92,3 +92,4 @@ export async function DELETE(req: NextRequest) {
     return apiError('Lỗi xóa người đăng ký bản tin', 500);
   }
 }
+

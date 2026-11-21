@@ -227,6 +227,12 @@ model MenuItem {
   ingredients     String?       // JSON array of strings
   inStock         Boolean       @default(true)
   orderCount      Int           @default(0)
+  sku             String?
+  productType     String        @default("DRINK_FOOD") // "DRINK_FOOD" | "BBQ_SET" | "PACKAGED_GOODS"
+  trackInventory  Boolean       @default(false)
+  stockQuantity   Int           @default(0)
+  allowOrdering   Boolean       @default(true)
+  optionGroups    Json?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 }
@@ -482,3 +488,167 @@ model AntiSpamConfig {
   maxGmailPerHour             Int      @default(15)
   updatedAt                   DateTime @updatedAt
 }
+
+// ============================================================================
+// E-COMMERCE & CUSTOMER SUITE
+// ============================================================================
+
+model ProductOptionGroup {
+  id        String   @id @default(cuid())
+  nameVi    String
+  nameEn    String?
+  type      String   @default("SINGLE") // "SINGLE" | "MULTIPLE"
+  required  Boolean  @default(false)
+  options   Json     // [{ labelVi, labelEn, priceDelta }]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  phone        String?
+  fullName     String
+  passwordHash String
+  avatarUrl    String?
+  isActive     Boolean           @default(true)
+  totalSpent   Int               @default(0)
+  orderCount   Int               @default(0)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  addresses    CustomerAddress[]
+  wishlists    CustomerWishlist[]
+  orders       Order[]
+}
+
+model CustomerAddress {
+  id           String   @id @default(cuid())
+  customerId   String
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  label        String   @default("Nhà riêng") // "Nhà riêng" | "Cơ quan"
+  recipientName String
+  phone        String
+  addressLine  String
+  wardDistrict String
+  provinceCity String
+  note         String?
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CustomerWishlist {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  menuItemId String
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, menuItemId])
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderCode       String      @unique // e.g. "CCH-261122-XXXX"
+  customerId      String?
+  customer        Customer?   @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  fulfillmentType String      @default("DELIVERY") // "DELIVERY" | "PICKUP" | "DINE_IN_BBQ"
+  scheduledTime   String?     // For Pickup or BBQ reservation time
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  shippingAddress String?
+  customerNote    String?
+  subtotal        Int         // VND integer
+  shippingFee     Int         @default(0)
+  discountAmount  Int         @default(0)
+  totalAmount     Int         // VND integer
+  voucherCode     String?
+  paymentMethod   String      @default("VIETQR") // "VIETQR" | "COD" | "VNPAY" | "MOMO" | "CARD"
+  paymentStatus   String      @default("UNPAID") // "UNPAID" | "PENDING_VERIFY" | "PAID" | "REFUNDED" | "FAILED"
+  paymentRef      String?
+  paidAt          DateTime?
+  orderStatus     String      @default("PENDING") // "PENDING" | "CONFIRMED" | "PREPARING" | "SHIPPING" | "COMPLETED" | "CANCELLED"
+  adminNote       String?
+  cancelReason    String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId      String?
+  itemNameVi      String
+  itemNameEn      String?
+  unitPrice       Int
+  quantity        Int
+  selectedOptions Json?    // [{ groupNameVi, labelVi, priceDelta }]
+  itemNote        String?
+  lineTotal       Int
+}
+
+model Voucher {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  nameVi         String
+  nameEn         String?
+  discountType   String    @default("PERCENT") // "PERCENT" | "FIXED" | "FREE_SHIP"
+  discountValue  Int
+  maxDiscount    Int?
+  minOrderAmount Int       @default(0)
+  usageLimit     Int?
+  usedCount      Int       @default(0)
+  startsAt       DateTime?
+  expiresAt      DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model ShippingZone {
+  id                String   @id @default(cuid())
+  nameVi            String
+  nameEn            String?
+  fee               Int
+  freeShipThreshold Int?
+  estimatedTimeVi   String?
+  estimatedTimeEn   String?
+  sortOrder         Int      @default(0)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CommerceSettings {
+  id                       String   @id @default("commerce-settings")
+  commerceEnabled          Boolean  @default(true)
+  enableDelivery           Boolean  @default(true)
+  enablePickup             Boolean  @default(true)
+  enableDineInBbq          Boolean  @default(true)
+  enableCod                Boolean  @default(true)
+  enableVietQr             Boolean  @default(true)
+  enableEwallet            Boolean  @default(false)
+  enableCard               Boolean  @default(false)
+  bankId                   String   @default("MB")
+  bankAccountNo            String   @default("0382851688")
+  bankAccountName          String   @default("CAM CU HOUSE")
+  vietQrTemplate           String   @default("compact2")
+  webhookSecret            String?
+  defaultFreeShipThreshold Int      @default(300000)
+  orderNotificationEmail   String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  locale    String   @default("vi") // "vi" | "en"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+

@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Sparkles, Coffee, Leaf, Citrus, Sun, Flame, Utensils, Phone, Clock } from 'lucide-react';
+import { Search, Sparkles, Coffee, Leaf, Citrus, Sun, Flame, Utensils, Phone, Clock, Heart, Plus, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
+import { useCart } from '@/context/CartContext';
+import { useCustomerAuth } from '@/context/CustomerAuthContext';
 import { CategoryId, MenuItem } from '@/types';
 import { SPRING_PILL_TRANSITION, EDITORIAL_EASE } from '@/components/motion/EditorialMotion';
 import { InteractiveTiltCard } from '@/components/motion/VividMotion';
@@ -17,7 +19,12 @@ function MenuItemCard({
   isEn: boolean;
   usdRate?: number;
 }) {
-  const inStock = item.inStock;
+  const { openCustomization } = useCart();
+  const { isWishlisted, toggleWishlist } = useCustomerAuth();
+
+  const isSoldOut = !item.inStock || (item.stockQuantity !== undefined && item.stockQuantity !== null && item.stockQuantity <= 0) || item.allowOrdering === false;
+  const isOrderable = !isSoldOut;
+  const wishlisted = isWishlisted(item.id);
   const name = isEn && item.nameEn ? item.nameEn : item.vietnameseTitle;
   const highlight = isEn && item.highlightEn ? item.highlightEn : item.highlight;
   const note = isEn && item.editorialNoteEn ? item.editorialNoteEn : item.editorialNote;
@@ -29,7 +36,7 @@ function MenuItemCard({
     <InteractiveTiltCard maxTilt={2.8} spotlight={true} className="h-full">
       <div
         className={`p-5 sm:p-6 rounded-2xl bg-white dark:bg-forest-900 border transition-all duration-200 flex flex-col justify-between h-full ${
-          inStock
+          isOrderable
             ? 'border-forest-100 dark:border-forest-700/60 hover:border-accent-botanical/50 shadow-subtle'
             : 'border-red-100 dark:border-red-900/40 bg-red-50/20 dark:bg-red-950/20 opacity-75'
         }`}
@@ -48,9 +55,9 @@ function MenuItemCard({
                     {highlight}
                   </span>
                 )}
-                {!inStock && (
+                {isSoldOut && (
                   <span className="text-[10px] font-mono text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 px-2 py-0.5 rounded-full font-bold">
-                    {isEn ? 'Sold Out' : 'Tạm hết'}
+                    {isEn ? 'Sold Out' : 'Tạm hết món'}
                   </span>
                 )}
               </div>
@@ -61,11 +68,28 @@ function MenuItemCard({
               )}
             </div>
 
-            {/* Price */}
-            <div className="font-mono text-right whitespace-nowrap shrink-0">
-              <span className="text-base font-bold text-accent-botanical">
-                {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
-              </span>
+            {/* Price & Wishlist */}
+            <div className="flex flex-col items-end shrink-0 whitespace-nowrap">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleWishlist(item.id);
+                  }}
+                  className={`p-1.5 rounded-full border transition-colors ${
+                    wishlisted
+                      ? 'border-red-200 bg-red-50 text-red-500 dark:bg-red-950/40 dark:border-red-900'
+                      : 'border-forest-200 dark:border-forest-700 text-ink-muted hover:text-red-500 hover:border-red-200'
+                  }`}
+                  aria-label={wishlisted ? 'Bỏ yêu thích' : 'Yêu thích'}
+                >
+                  <Heart className={`w-3.5 h-3.5 ${wishlisted ? 'fill-red-500 text-red-500' : ''}`} />
+                </button>
+                <span className="font-mono text-base font-bold text-accent-botanical">
+                  {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
+                </span>
+              </div>
               {isEn && (
                 <span className="block text-[11px] font-normal text-ink-muted">
                   ~ ${usdPrice} USD
@@ -94,6 +118,24 @@ function MenuItemCard({
                   {isEn && ` (~$${(v.price / (usdRate || 25000)).toFixed(2)})`}
                 </span>
               ))}
+            </div>
+          )}
+        </div>
+
+        {/* Action Button */}
+        <div className="mt-4 pt-3 border-t border-forest-100 dark:border-forest-800">
+          {isOrderable ? (
+            <button
+              type="button"
+              onClick={() => openCustomization(item)}
+              className="w-full py-2 px-3 rounded-xl bg-accent-botanical/10 dark:bg-accent-botanical/20 hover:bg-accent-botanical hover:text-white text-accent-botanical font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>{isEn ? 'Add to Cart / Customize' : 'Thêm vào giỏ / Tùy chọn'}</span>
+            </button>
+          ) : (
+            <div className="w-full py-2 px-3 rounded-xl bg-forest-100/60 dark:bg-forest-800/40 text-ink-muted font-mono text-xs text-center font-medium">
+              {isEn ? 'Temporarily Sold Out' : 'Tạm hết món'}
             </div>
           )}
         </div>

@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, Phone, Sun, Moon, Search } from 'lucide-react';
+import { Menu, X, Phone, Sun, Moon, Search, ShoppingBag, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
+import { useCart } from '@/context/CartContext';
+import { useCustomerAuth } from '@/context/CustomerAuthContext';
 import { SPRING_PILL_TRANSITION } from '@/components/motion/EditorialMotion';
 import GlobalSearchModal from '@/components/common/GlobalSearchModal';
 
@@ -13,6 +15,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { language, setLanguage, theme, toggleTheme } = useApp();
+  const { customer, openAuthModal } = useCustomerAuth();
+  const { openCart, totalCount, subtotal } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -275,6 +279,43 @@ export default function Navbar() {
               <span className="hidden 2xl:inline whitespace-nowrap">0382 851 688</span>
             </a>
 
+            {/* Customer Account Button */}
+            <button
+              onClick={() => {
+                if (customer) {
+                  router.push('/tai-khoan');
+                } else {
+                  openAuthModal('login');
+                }
+              }}
+              className="h-9 px-2.5 sm:px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs font-mono flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              title={customer ? (language === 'en' ? 'Account' : 'Tài khoản') : (language === 'en' ? 'Sign In' : 'Đăng nhập')}
+              aria-label="Tài khoản"
+            >
+              <User className="w-3.5 h-3.5 text-accent-botanical shrink-0" />
+              <span className="hidden md:inline text-[11px] font-medium max-w-[85px] truncate">
+                {customer ? customer.fullName.split(' ').slice(-1)[0] : (language === 'en' ? 'Account' : 'Tài khoản')}
+              </span>
+            </button>
+
+            {/* Cart Button with Live Badge */}
+            <button
+              onClick={openCart}
+              className="relative h-9 px-3 rounded-full bg-accent-botanical text-white hover:bg-forest-800 transition-all shadow-sm text-xs font-mono font-medium flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              title={language === 'en' ? 'Shopping Cart' : 'Giỏ hàng'}
+              aria-label="Giỏ hàng"
+            >
+              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden sm:inline text-[11px] font-bold">
+                {language === 'en' ? 'Cart' : 'Giỏ'}
+              </span>
+              {totalCount > 0 && (
+                <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-amber-400 text-forest-950 rounded-full font-mono shadow-xs">
+                  {totalCount}
+                </span>
+              )}
+            </button>
+
             {/* Mobile Hamburger Drawer Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -367,6 +408,35 @@ export default function Navbar() {
           </div>
         )}
       </header>
+
+      {/* Floating Mobile Cart Bar when cart count > 0 */}
+      {totalCount > 0 && (
+        <div className="fixed bottom-20 left-4 right-4 z-40 sm:hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            onClick={openCart}
+            className="flex items-center justify-between p-3.5 bg-accent-botanical text-white rounded-2xl shadow-2xl border border-emerald-600/40 cursor-pointer active:scale-[0.99] transition-all"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="relative">
+                <ShoppingBag className="w-5 h-5" />
+                <span className="absolute -top-1.5 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold bg-amber-400 text-forest-950 rounded-full font-mono">
+                  {totalCount}
+                </span>
+              </div>
+              <span className="text-xs font-mono font-semibold">
+                {language === 'en' ? 'View Cart' : 'Xem giỏ hàng'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 font-mono text-xs font-bold">
+              <span>{subtotal.toLocaleString('vi-VN')}đ</span>
+              <span className="bg-white/20 px-2 py-0.5 rounded-lg text-[11px]">→</span>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Global Ctrl+K Search Modal */}
       <GlobalSearchModal

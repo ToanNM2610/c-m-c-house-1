@@ -28,6 +28,10 @@ import {
   Mail,
   BarChart3,
   Key,
+  ShoppingBag,
+  PackageCheck,
+  Ticket,
+  TrendingUp,
 } from 'lucide-react';
 import AdminLogin from '@/components/admin/AdminLogin';
 import AdminCMSHome from '@/components/admin/AdminCMSHome';
@@ -44,6 +48,11 @@ import AdminSettingsManager from '@/components/admin/AdminSettingsManager';
 import AnalyticsTab from '@/components/admin/AnalyticsTab';
 import IntegrationsTab from '@/components/admin/IntegrationsTab';
 import SearchConsoleTab from '@/components/admin/SearchConsoleTab';
+import AdminOrdersManager from '@/components/admin/commerce/AdminOrdersManager';
+import AdminInventoryManager from '@/components/admin/commerce/AdminInventoryManager';
+import AdminVouchersShippingManager from '@/components/admin/commerce/AdminVouchersShippingManager';
+import AdminCustomersManager from '@/components/admin/commerce/AdminCustomersManager';
+import AdminCommerceAnalytics from '@/components/admin/commerce/AdminCommerceAnalytics';
 import { AdminUserSafe } from '@/types';
 
 export type AdminTab =
@@ -67,12 +76,18 @@ export type AdminTab =
   | 'interactions-reviews'
   | 'interactions-chat'
   | 'interactions' // legacy alias
-  // 4. SEO & Đo lường Google
+  // 4. Bán hàng & Thương mại
+  | 'commerce-orders'
+  | 'commerce-inventory'
+  | 'commerce-vouchers-shipping'
+  | 'commerce-customers'
+  | 'commerce-analytics'
+  // 5. SEO & Đo lường Google
   | 'seo-url'
   | 'analytics'
   | 'searchConsole'
   | 'integrations'
-  // 5. Hệ thống & Quản trị
+  // 6. Hệ thống & Quản trị
   | 'users'
   | 'settings'
   | 'ops';
@@ -92,7 +107,7 @@ export interface ParentNavGroup {
   children: ChildNavItem[];
 }
 
-// 5 Enterprise Collapsible Parent Groups Definition
+// 6 Enterprise Collapsible Parent Groups Definition
 const parentGroups: ParentNavGroup[] = [
   {
     id: 'group-pages',
@@ -134,6 +149,19 @@ const parentGroups: ParentNavGroup[] = [
     ],
   },
   {
+    id: 'group-commerce',
+    label: 'Bán hàng & Thương mại',
+    icon: ShoppingBag,
+    allowedRoles: ['SUPER_ADMIN', 'EDITOR'],
+    children: [
+      { id: 'commerce-orders', label: 'Quản lý Đơn hàng', icon: ShoppingBag, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'commerce-inventory', label: 'Kho hàng & Biến thể món', icon: PackageCheck, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'commerce-vouchers-shipping', label: 'Mã giảm giá, Ship & Thanh toán', icon: Ticket, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'commerce-customers', label: 'Khách hàng & Bản tin', icon: Users, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'commerce-analytics', label: 'Báo cáo Doanh thu', icon: TrendingUp, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+    ],
+  },
+  {
     id: 'group-seo',
     label: 'SEO & Đo lường Google',
     icon: Globe,
@@ -170,14 +198,45 @@ export default function AdminPageClient({ initialTab = 'page-home' }: { initialT
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const mainContentRef = useRef<HTMLElement | null>(null);
 
-  // Accordion state for 5 collapsible parent groups
+  // Accordion state for 6 collapsible parent groups
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     'group-pages': true,
     'group-cms-data': true,
     'group-interactions': true,
+    'group-commerce': true,
     'group-seo': true,
     'group-system': true,
   });
+
+  // Pending orders live count for sidebar badges
+  const [pendingOrdersCount, setPendingOrdersCount] = useState<number>(0);
+
+  // Live polling for pending orders count (every 30s)
+  useEffect(() => {
+    let mounted = true;
+    const fetchPendingOrdersCount = async () => {
+      try {
+        const res = await fetch('/api/admin/commerce/orders?orderStatus=PENDING', {
+          credentials: 'include',
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!mounted) return;
+        if (res.ok && json.success && Array.isArray(json.data)) {
+          setPendingOrdersCount(json.data.length);
+        } else if (res.ok && Array.isArray(json.orders)) {
+          setPendingOrdersCount(json.orders.filter((o: any) => o.orderStatus === 'PENDING').length);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    fetchPendingOrdersCount();
+    const interval = setInterval(fetchPendingOrdersCount, 30000);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -361,6 +420,11 @@ export default function AdminPageClient({ initialTab = 'page-home' }: { initialT
             <div className="flex items-center gap-2.5 min-w-0">
               <GroupIcon className={`w-4 h-4 shrink-0 ${isGroupActive ? 'text-emerald-400' : 'text-slate-400'}`} />
               <span className="truncate">{group.label}</span>
+              {group.id === 'group-commerce' && pendingOrdersCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-amber-500 text-slate-950 animate-pulse">
+                  {pendingOrdersCount}
+                </span>
+              )}
             </div>
             <ChevronDown
               className={`w-4 h-4 shrink-0 text-slate-400 transition-transform duration-200 ${
@@ -397,6 +461,11 @@ export default function AdminPageClient({ initialTab = 'page-home' }: { initialT
                       className={`w-3.5 h-3.5 shrink-0 ${isChildActive ? 'text-white' : 'text-slate-500'}`}
                     />
                     <span className="truncate">{child.label}</span>
+                    {child.id === 'commerce-orders' && pendingOrdersCount > 0 && (
+                      <span className="ml-auto px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold bg-amber-500 text-slate-950 animate-pulse">
+                        {pendingOrdersCount}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -620,7 +689,14 @@ export default function AdminPageClient({ initialTab = 'page-home' }: { initialT
               />
             )}
 
-            {/* 4. SEO & Đo lường Google */}
+            {/* 4. Bán hàng & Thương mại */}
+            {activeTab === 'commerce-orders' && <AdminOrdersManager />}
+            {activeTab === 'commerce-inventory' && <AdminInventoryManager />}
+            {activeTab === 'commerce-vouchers-shipping' && <AdminVouchersShippingManager />}
+            {activeTab === 'commerce-customers' && <AdminCustomersManager />}
+            {activeTab === 'commerce-analytics' && <AdminCommerceAnalytics />}
+
+            {/* 5. SEO & Đo lường Google */}
             {activeTab === 'seo-url' && <AdminSeoManager />}
             {activeTab === 'analytics' && (
               <AnalyticsTab
@@ -636,7 +712,7 @@ export default function AdminPageClient({ initialTab = 'page-home' }: { initialT
             )}
             {activeTab === 'integrations' && <IntegrationsTab onShowToast={showToast} />}
 
-            {/* 5. Hệ thống & Quản trị */}
+            {/* 6. Hệ thống & Quản trị */}
             {activeTab === 'users' && (
               <AdminUsersManager
                 currentUser={currentUser}

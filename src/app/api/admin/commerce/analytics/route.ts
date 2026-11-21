@@ -171,3 +171,4 @@ export async function GET(req: NextRequest) {
     return apiError('Lỗi tính toán chỉ số báo cáo thương mại', 500);
   }
 }
+

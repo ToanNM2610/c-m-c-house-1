@@ -1,9 +1,29 @@
 export type CategoryId = 'coffee' | 'tea' | 'smoothie' | 'juice' | 'soda-yogurt' | 'other' | 'food';
 
+export type ProductType = 'DRINK_FOOD' | 'BBQ_SET' | 'PACKAGED_GOODS';
+
 export interface MenuItemVariant {
   id: string;
   name: string;
   price: number;
+}
+
+export interface ProductOption {
+  labelVi: string;
+  labelEn?: string;
+  priceDelta: number; // +price in VND
+}
+
+export interface ProductOptionGroup {
+  id: string;
+  nameVi: string;
+  nameEn?: string;
+  type: 'SINGLE' | 'MULTIPLE';
+  required: boolean;
+  options: ProductOption[];
+  isActive: boolean;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface MenuItem {
@@ -29,6 +49,12 @@ export interface MenuItem {
   ingredients?: string[];
   inStock: boolean;
   orderCount?: number;
+  sku?: string;
+  productType?: ProductType;
+  trackInventory?: boolean;
+  stockQuantity?: number;
+  allowOrdering?: boolean;
+  optionGroups?: ProductOptionGroup[] | any;
 }
 
 export interface PhilosophyCard {
@@ -460,4 +486,167 @@ export interface BlockedIpItem {
   createdAt: string | Date;
   updatedAt?: string | Date;
 }
+
+// ==========================================
+// E-COMMERCE SUITE & CUSTOMER TYPES
+// ==========================================
+
+export type FulfillmentType = 'DELIVERY' | 'PICKUP' | 'DINE_IN_BBQ';
+export type PaymentMethod = 'VIETQR' | 'COD' | 'VNPAY' | 'MOMO' | 'CARD';
+export type PaymentStatus = 'UNPAID' | 'PENDING_VERIFY' | 'PAID' | 'REFUNDED' | 'FAILED';
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'SHIPPING' | 'COMPLETED' | 'CANCELLED';
+export type DiscountType = 'PERCENT' | 'FIXED' | 'FREE_SHIP';
+
+export interface CustomerSafe {
+  id: string;
+  email: string;
+  phone?: string | null;
+  fullName: string;
+  avatarUrl?: string | null;
+  isActive: boolean;
+  totalSpent: number;
+  orderCount: number;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface CustomerAddressItem {
+  id: string;
+  customerId: string;
+  label: string;
+  recipientName: string;
+  phone: string;
+  addressLine: string;
+  wardDistrict: string;
+  provinceCity: string;
+  note?: string | null;
+  isDefault: boolean;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface SelectedOptionSnapshot {
+  groupNameVi: string;
+  groupNameEn?: string;
+  labelVi: string;
+  labelEn?: string;
+  priceDelta: number;
+}
+
+export interface CartItem {
+  id: string; // unique cart entry key
+  menuItemId: string;
+  nameVi: string;
+  nameEn?: string;
+  unitPrice: number; // base price + options priceDelta
+  basePrice: number;
+  quantity: number;
+  selectedOptions?: SelectedOptionSnapshot[];
+  itemNote?: string;
+  productType?: ProductType;
+}
+
+export interface OrderItemRecord {
+  id: string;
+  orderId: string;
+  menuItemId?: string | null;
+  itemNameVi: string;
+  itemNameEn?: string | null;
+  unitPrice: number;
+  quantity: number;
+  selectedOptions?: SelectedOptionSnapshot[] | any;
+  itemNote?: string | null;
+  lineTotal: number;
+}
+
+export interface OrderRecord {
+  id: string;
+  orderCode: string;
+  customerId?: string | null;
+  customer?: CustomerSafe | null;
+  fulfillmentType: FulfillmentType;
+  scheduledTime?: string | null;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string | null;
+  shippingAddress?: string | null;
+  customerNote?: string | null;
+  subtotal: number;
+  shippingFee: number;
+  discountAmount: number;
+  totalAmount: number;
+  voucherCode?: string | null;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paymentRef?: string | null;
+  paidAt?: string | Date | null;
+  orderStatus: OrderStatus;
+  adminNote?: string | null;
+  cancelReason?: string | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  items: OrderItemRecord[];
+}
+
+export interface VoucherRecord {
+  id: string;
+  code: string;
+  nameVi: string;
+  nameEn?: string | null;
+  discountType: DiscountType;
+  discountValue: number;
+  maxDiscount?: number | null;
+  minOrderAmount: number;
+  usageLimit?: number | null;
+  usedCount: number;
+  startsAt?: string | Date | null;
+  expiresAt?: string | Date | null;
+  isActive: boolean;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface ShippingZoneRecord {
+  id: string;
+  nameVi: string;
+  nameEn?: string | null;
+  fee: number;
+  freeShipThreshold?: number | null;
+  estimatedTimeVi?: string | null;
+  estimatedTimeEn?: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface CommerceSettingsRecord {
+  id: string;
+  commerceEnabled: boolean;
+  enableDelivery: boolean;
+  enablePickup: boolean;
+  enableDineInBbq: boolean;
+  enableCod: boolean;
+  enableVietQr: boolean;
+  enableEwallet: boolean;
+  enableCard: boolean;
+  bankId: string;
+  bankAccountNo: string;
+  bankAccountName: string;
+  vietQrTemplate: string;
+  webhookSecret?: string | null;
+  defaultFreeShipThreshold: number;
+  orderNotificationEmail?: string | null;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+export interface NewsletterSubscriberRecord {
+  id: string;
+  email: string;
+  locale: string;
+  isActive: boolean;
+  createdAt: string | Date;
+}
+
 

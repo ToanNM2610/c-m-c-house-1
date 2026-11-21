@@ -705,8 +705,17 @@ export const defaultContentEn = {
   brandStoryPhilosophyEn: 'Our philosophy is simple: "Green - Wholesome - Pure". Every cup of wood-roasted coffee carries the volcanic richness of basalt soil; every herbal teapot is carefully harvested from home garden botanicals. No noisy air conditioners or traffic honks—only mountain breeze, babbling water, and warm laughter.',
 };
 
-export const translations: Record<Locale, TranslationDictionary> = {
-  vi: {},
-  en: defaultContentEn,
+export const translations: Record<Locale, any> = {
+  vi: {
+    common: {
+      brandName: 'Cẩm Cù House',
+    },
+  },
+  en: {
+    ...defaultContentEn,
+    common: {
+      brandName: 'Cẩm Cù House',
+    },
+  },
 };
 

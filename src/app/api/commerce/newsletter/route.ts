@@ -49,3 +49,4 @@ export async function POST(req: NextRequest) {
     return apiError('Không thể đăng ký nhận tin vào lúc này', 500);
   }
 }
+

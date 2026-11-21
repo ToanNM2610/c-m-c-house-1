@@ -95,3 +95,4 @@ export async function POST(req: NextRequest) {
     return apiError('Lỗi trong quá trình đăng ký tài khoản', 500);
   }
 }
+

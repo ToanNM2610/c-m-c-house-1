@@ -24,3 +24,4 @@ export async function GET() {
     return apiError('Không thể tải cài đặt thương mại', 500);
   }
 }
+

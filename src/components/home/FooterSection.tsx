@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MapPin, Phone, Mail, Compass, ExternalLink, ShieldCheck } from 'lucide-react';
+import { MapPin, Phone, Mail, Compass, ExternalLink, ShieldCheck, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 export default function FooterSection() {
@@ -13,6 +13,37 @@ export default function FooterSection() {
   const [approvedCount, setApprovedCount] = React.useState<number | null>(null);
   const [recommendedCount, setRecommendedCount] = React.useState<number>(0);
   const [recommendedPercent, setRecommendedPercent] = React.useState<number>(100);
+
+  // Newsletter subscription state
+  const [newsletterEmail, setNewsletterEmail] = React.useState('');
+  const [newsletterStatus, setNewsletterStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [newsletterMessage, setNewsletterMessage] = React.useState('');
+
+  const handleSubscribeNewsletter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail || !newsletterEmail.includes('@')) return;
+    setNewsletterStatus('loading');
+    setNewsletterMessage('');
+    try {
+      const res = await fetch('/api/commerce/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail.trim(), locale: language }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setNewsletterStatus('success');
+        setNewsletterMessage(language === 'en' ? 'Thank you! You have subscribed to our newsletter.' : 'Cảm ơn quý khách đã đăng ký nhận bản tin Cẩm Cù House!');
+        setNewsletterEmail('');
+      } else {
+        setNewsletterStatus('error');
+        setNewsletterMessage(json.error || (language === 'en' ? 'Subscription failed. Please try again.' : 'Đăng ký không thành công. Vui lòng thử lại.'));
+      }
+    } catch {
+      setNewsletterStatus('error');
+      setNewsletterMessage(language === 'en' ? 'Network error. Please try again later.' : 'Lỗi kết nối máy chủ. Vui lòng thử lại sau.');
+    }
+  };
 
   React.useEffect(() => {
     let isMounted = true;
@@ -68,6 +99,52 @@ export default function FooterSection() {
   return (
     <footer id="contact-section" className="bg-[#1A241E] text-[#EBF0EC] pt-16 sm:pt-20 pb-12 relative z-10 border-t border-forest-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        {/* Newsletter Subscription Bar */}
+        <div className="mb-14 p-6 sm:p-8 rounded-3xl bg-forest-900/80 border border-forest-750/70 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-1 text-center md:text-left max-w-md">
+            <h3 className="font-serif text-lg sm:text-xl font-bold text-white tracking-tight">
+              {isEn ? 'Join Our Ecological Sanctuary Journal' : 'Đăng Ký Nhận Bản Tin Cẩm Cù House'}
+            </h3>
+            <p className="text-xs text-forest-300 font-sans leading-relaxed">
+              {isEn
+                ? 'Receive seasonal coffee harvests, acoustic night invites, and exclusive vouchers.'
+                : 'Nhận thông tin mùa hoa cẩm cù nở, lịch acoustic cuối tuần và ưu đãi món mới bên bờ suối.'}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubscribeNewsletter} className="w-full md:w-auto flex flex-col sm:flex-row gap-2.5">
+            <div className="relative flex-1 sm:w-72">
+              <input
+                type="email"
+                required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                placeholder={isEn ? 'Enter your email...' : 'Nhập địa chỉ email...'}
+                className="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-forest-400 text-xs font-mono focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={newsletterStatus === 'loading'}
+              className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>{isEn ? 'Subscribe' : 'Đăng ký'}</span>
+            </button>
+          </form>
+        </div>
+
+        {newsletterMessage && (
+          <div className={`-mt-8 mb-10 p-3.5 rounded-2xl border text-xs font-mono flex items-center gap-2 ${
+            newsletterStatus === 'success'
+              ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300'
+              : 'bg-red-950/60 border-red-800 text-red-300'
+          }`}>
+            {newsletterStatus === 'success' ? <CheckCircle2 className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
+            <span>{newsletterMessage}</span>
+          </div>
+        )}
+
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-14 border-b border-white/10">
           {/* Brand Info (4 cols) */}
@@ -287,7 +364,7 @@ export default function FooterSection() {
           </div>
 
           {/* Legal Policy Links */}
-          <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-mono">
             <Link
               href="/p/chinh-sach-bao-mat"
               className="hover:text-emerald-400 underline transition-colors"
@@ -300,6 +377,27 @@ export default function FooterSection() {
               className="hover:text-emerald-400 underline transition-colors"
             >
               {isEn ? 'Terms of Service' : 'Điều khoản sử dụng'}
+            </Link>
+            <span>•</span>
+            <Link
+              href="/p/chinh-sach-thanh-toan"
+              className="hover:text-emerald-400 underline transition-colors"
+            >
+              {isEn ? 'Payment Policy' : 'Chính sách thanh toán'}
+            </Link>
+            <span>•</span>
+            <Link
+              href="/p/chinh-sach-giao-hang-kiem-hang"
+              className="hover:text-emerald-400 underline transition-colors"
+            >
+              {isEn ? 'Shipping & Inspection' : 'Giao hàng & Kiểm hàng'}
+            </Link>
+            <span>•</span>
+            <Link
+              href="/p/chinh-sach-doi-tra-hoan-tien"
+              className="hover:text-emerald-400 underline transition-colors"
+            >
+              {isEn ? 'Refund & Returns' : 'Đổi trả & Hoàn tiền'}
             </Link>
             <span>•</span>
             <Link
