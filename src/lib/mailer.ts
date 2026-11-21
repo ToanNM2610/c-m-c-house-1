@@ -467,3 +467,341 @@ ${params.replyBody.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
   }
 }
 
+/**
+ * Format currency VND helper
+ */
+function formatVnd(amount: number): string {
+  return (amount || 0).toLocaleString('vi-VN') + ' đ';
+}
+
+/**
+ * Generates editorial HTML template for order confirmation / notification
+ */
+function generateOrderNotificationHtml(order: any, isCustomerCopy = false): string {
+  const dateFormatted = new Date(order.createdAt || Date.now()).toLocaleString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour12: false,
+    dateStyle: 'full',
+    timeStyle: 'medium',
+  });
+
+  const fulfillmentMap: Record<string, string> = {
+    DELIVERY: 'Giao hàng tận nơi',
+    PICKUP: 'Nhận tại quán (Take-away)',
+    DINE_IN_BBQ: 'Thưởng thức tại suối & BBQ',
+  };
+
+  const paymentMethodMap: Record<string, string> = {
+    VIETQR: 'Chuyển khoản VietQR',
+    COD: 'Thanh toán tiền mặt khi nhận hàng (COD)',
+    VNPAY: 'Cổng VNPAY',
+    MOMO: 'Ví MoMo',
+    CARD: 'Thẻ tín dụng / Ghi nợ',
+  };
+
+  const paymentStatusMap: Record<string, string> = {
+    UNPAID: 'Chưa thanh toán',
+    PENDING_VERIFY: 'Đang chờ xác minh chuyển khoản',
+    PAID: 'Đã thanh toán',
+    REFUNDED: 'Đã hoàn tiền',
+    FAILED: 'Thất bại',
+  };
+
+  const itemsHtml = (order.items || [])
+    .map(
+      (item: any) => `
+    <tr>
+      <td style="padding: 10px 0; border-bottom: 1px solid #EAE3D2;">
+        <div style="font-size: 14px; font-weight: 700; color: #1E3A2B;">${item.itemNameVi}</div>
+        ${
+          item.selectedOptions && Array.isArray(item.selectedOptions) && item.selectedOptions.length > 0
+            ? `<div style="font-size: 12px; color: #718096; margin-top: 2px;">
+                ${item.selectedOptions.map((o: any) => `${o.labelVi || o.name || ''} (+${formatVnd(o.priceDelta || 0)})`).join(', ')}
+               </div>`
+            : ''
+        }
+        ${item.itemNote ? `<div style="font-size: 12px; color: #C49B63; font-style: italic;">Ghi chú: ${item.itemNote}</div>` : ''}
+      </td>
+      <td style="padding: 10px 0; font-size: 14px; color: #4A5568; text-align: center; border-bottom: 1px solid #EAE3D2;">
+        x${item.quantity}
+      </td>
+      <td style="padding: 10px 0; font-size: 14px; font-weight: 600; color: #2D3748; text-align: right; border-bottom: 1px solid #EAE3D2;">
+        ${formatVnd(item.lineTotal || (item.unitPrice * item.quantity))}
+      </td>
+    </tr>
+  `
+    )
+    .join('');
+
+  return `
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Đơn Hàng ${order.orderCode} — Cẩm Cù House</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #F6F3EC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2D3748;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #F6F3EC; padding: 32px 16px;">
+    <tr>
+      <td align="center">
+        <table width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; width: 100%; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #E2E8F0;">
+          
+          <!-- Botanical Header -->
+          <tr>
+            <td style="background-color: #1E3A2B; padding: 32px 28px; text-align: center; border-bottom: 3px solid #C49B63;">
+              <div style="font-size: 11px; font-weight: 700; letter-spacing: 3px; color: #C49B63; text-transform: uppercase; margin-bottom: 6px;">
+                STREAMSIDE BOTANICAL SANCTUARY
+              </div>
+              <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #FFFFFF; letter-spacing: 1px; font-family: Georgia, serif;">
+                CẨM CÙ HOUSE
+              </h1>
+              <div style="font-size: 13px; color: #A3B899; margin-top: 4px;">
+                Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
+              </div>
+            </td>
+          </tr>
+
+          <!-- Banner Title -->
+          <tr>
+            <td style="background-color: #F9F6F0; padding: 18px 28px; border-bottom: 1px solid #EAE3D2;">
+              <span style="font-size: 12px; font-weight: 700; color: #2E5A3C; text-transform: uppercase; letter-spacing: 1px; background-color: #E2ECE5; padding: 4px 10px; border-radius: 9999px;">
+                ${isCustomerCopy ? '🌿 XÁC NHẬN ĐƠN HÀNG THÀNH CÔNG' : '🛒 THÔNG BÁO ĐƠN HÀNG MỚI'}
+              </span>
+              <div style="font-size: 18px; font-weight: 800; color: #1E3A2B; margin-top: 8px;">
+                Mã đơn: <span style="color: #8D361D;">${order.orderCode}</span>
+              </div>
+              <div style="font-size: 13px; color: #718096; margin-top: 4px;">
+                Thời gian: <strong>${dateFormatted}</strong>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Customer Info -->
+          <tr>
+            <td style="padding: 24px 28px 12px 28px;">
+              <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 700; color: #1E3A2B; text-transform: uppercase; letter-spacing: 0.5px;">
+                Thông Tin Nhận Hàng
+              </h3>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 14px;">
+                <tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Khách hàng:</td>
+                  <td style="padding: 6px 0; font-weight: 600; color: #1A202C;">${order.customerName}</td>
+                </tr>
+                <tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Số điện thoại:</td>
+                  <td style="padding: 6px 0; font-weight: 600; color: #2E5A3C;">
+                    <a href="tel:${order.customerPhone}" style="color: #2E5A3C; text-decoration: none;">${order.customerPhone}</a>
+                  </td>
+                </tr>
+                ${
+                  order.customerEmail
+                    ? `<tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Email:</td>
+                  <td style="padding: 6px 0; color: #2D3748;">${order.customerEmail}</td>
+                </tr>`
+                    : ''
+                }
+                <tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Hình thức:</td>
+                  <td style="padding: 6px 0; font-weight: 600; color: #8D361D;">${fulfillmentMap[order.fulfillmentType] || order.fulfillmentType}</td>
+                </tr>
+                ${
+                  order.shippingAddress
+                    ? `<tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Địa chỉ giao:</td>
+                  <td style="padding: 6px 0; color: #2D3748;">${order.shippingAddress}</td>
+                </tr>`
+                    : ''
+                }
+                ${
+                  order.scheduledTime
+                    ? `<tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Thời gian hẹn:</td>
+                  <td style="padding: 6px 0; color: #2D3748; font-weight: 600;">${order.scheduledTime}</td>
+                </tr>`
+                    : ''
+                }
+                ${
+                  order.customerNote
+                    ? `<tr>
+                  <td width="130" style="padding: 6px 0; color: #718096;">Ghi chú:</td>
+                  <td style="padding: 6px 0; color: #718096; font-style: italic;">${order.customerNote}</td>
+                </tr>`
+                    : ''
+                }
+              </table>
+            </td>
+          </tr>
+
+          <!-- Items Table -->
+          <tr>
+            <td style="padding: 12px 28px;">
+              <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 700; color: #1E3A2B; text-transform: uppercase; letter-spacing: 0.5px;">
+                Chi Tiết Món
+              </h3>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <thead>
+                  <tr style="border-bottom: 2px solid #2E5A3C;">
+                    <th align="left" style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #718096; text-transform: uppercase;">Món</th>
+                    <th align="center" style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #718096; text-transform: uppercase;">SL</th>
+                    <th align="right" style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #718096; text-transform: uppercase;">Thành tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsHtml}
+                </tbody>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Summary Breakdown -->
+          <tr>
+            <td style="padding: 12px 28px 24px 28px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 14px;">
+                <tr>
+                  <td style="padding: 6px 0; color: #718096;">Tạm tính:</td>
+                  <td align="right" style="padding: 6px 0; color: #2D3748; font-weight: 600;">${formatVnd(order.subtotal)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; color: #718096;">Phí giao hàng:</td>
+                  <td align="right" style="padding: 6px 0; color: #2D3748; font-weight: 600;">
+                    ${order.shippingFee > 0 ? formatVnd(order.shippingFee) : '<span style="color: #2E5A3C;">Miễn phí</span>'}
+                  </td>
+                </tr>
+                ${
+                  order.discountAmount > 0
+                    ? `<tr>
+                  <td style="padding: 6px 0; color: #8D361D;">Giảm giá (${order.voucherCode || 'Ưu đãi'}):</td>
+                  <td align="right" style="padding: 6px 0; color: #8D361D; font-weight: 700;">-${formatVnd(order.discountAmount)}</td>
+                </tr>`
+                    : ''
+                }
+                <tr style="border-top: 2px solid #E2E8F0;">
+                  <td style="padding: 12px 0 6px 0; font-size: 16px; font-weight: 800; color: #1E3A2B;">TỔNG THANH TOÁN:</td>
+                  <td align="right" style="padding: 12px 0 6px 0; font-size: 18px; font-weight: 800; color: #8D361D;">
+                    ${formatVnd(order.totalAmount)}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 4px 0; color: #718096; font-size: 13px;">Phương thức:</td>
+                  <td align="right" style="padding: 4px 0; color: #2D3748; font-size: 13px; font-weight: 600;">
+                    ${paymentMethodMap[order.paymentMethod] || order.paymentMethod}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 4px 0; color: #718096; font-size: 13px;">Trạng thái thanh toán:</td>
+                  <td align="right" style="padding: 4px 0; font-size: 13px; font-weight: 700; color: ${order.paymentStatus === 'PAID' ? '#2E5A3C' : '#D97706'};">
+                    ${paymentStatusMap[order.paymentStatus] || order.paymentStatus}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #F1ECE1; padding: 20px 28px; text-align: center; border-top: 1px solid #E2D9C8;">
+              <div style="font-size: 12px; color: #718096; line-height: 1.5;">
+                Hotline hỗ trợ: <strong style="color: #2E5A3C;">038 285 1688</strong> (Zalo) | <strong style="color: #2E5A3C;">077 465 9000</strong><br>
+                Cẩm Cù House — Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+/**
+ * Sends order confirmation email to customer and notification to store admin
+ */
+export async function sendOrderEmail(
+  order: any,
+  options?: { toCustomer?: boolean; toAdmin?: boolean; customRecipient?: string }
+): Promise<MailerResult> {
+  try {
+    const { config, transporter, isDisabled, isNotConfigured, error } = await getTransporter();
+
+    if (isDisabled || isNotConfigured || !transporter || !config) {
+      return { status: isDisabled ? 'DISABLED' : 'NOT_CONFIGURED', error: error || 'Chưa cấu hình Gmail SMTP' };
+    }
+
+    const breaker = await checkMailCircuitBreaker();
+    if (!breaker.allowed) {
+      return { status: 'DISABLED', error: breaker.error };
+    }
+
+    const senderName = config.senderName || 'Cẩm Cù House';
+    const senderEmail = config.senderEmail;
+
+    // 1. If custom recipient requested
+    if (options?.customRecipient) {
+      await transporter.sendMail({
+        from: `"${senderName}" <${senderEmail}>`,
+        to: options.customRecipient,
+        subject: `[Đơn hàng #${order.orderCode}] Xác nhận chi tiết đơn hàng — Cẩm Cù House`,
+        html: generateOrderNotificationHtml(order, true),
+      });
+      recordSentMail();
+      return { status: 'SENT', sentTo: options.customRecipient };
+    }
+
+    let sentEmails: string[] = [];
+
+    // 2. Send to Customer if email is present
+    if (options?.toCustomer !== false && order.customerEmail) {
+      try {
+        await transporter.sendMail({
+          from: `"${senderName}" <${senderEmail}>`,
+          to: order.customerEmail,
+          subject: `[Cẩm Cù House] Xác nhận đơn hàng #${order.orderCode} (${formatVnd(order.totalAmount)})`,
+          html: generateOrderNotificationHtml(order, true),
+        });
+        recordSentMail();
+        sentEmails.push(order.customerEmail);
+      } catch (custErr) {
+        console.warn('[mailer] Could not send confirmation to customer email:', custErr);
+      }
+    }
+
+    // 3. Send to Admin / Staff Notification
+    if (options?.toAdmin !== false) {
+      try {
+        // Retrieve recipient from CommerceSettings or StoreSettings
+        const commerceSettings = await prisma.commerceSettings.findFirst();
+        const storeSettings = await prisma.storeSettings.findFirst();
+
+        const adminTarget = commerceSettings?.orderNotificationEmail || storeSettings?.email || senderEmail;
+        if (adminTarget) {
+          await transporter.sendMail({
+            from: `"${senderName}" <${senderEmail}>`,
+            to: adminTarget,
+            subject: `[Đơn hàng mới] #${order.orderCode} - ${order.customerName} (${formatVnd(order.totalAmount)})`,
+            html: generateOrderNotificationHtml(order, false),
+          });
+          recordSentMail();
+          sentEmails.push(adminTarget);
+        }
+      } catch (adminErr) {
+        console.warn('[mailer] Could not send notification to store admin:', adminErr);
+      }
+    }
+
+    return {
+      status: 'SENT',
+      sentTo: sentEmails.join(', '),
+    };
+  } catch (err: any) {
+    console.error('Error sending order email:', err);
+    return {
+      status: 'FAILED',
+      error: err?.message || 'Lỗi khi gửi email đơn hàng',
+    };
+  }
+}
+
