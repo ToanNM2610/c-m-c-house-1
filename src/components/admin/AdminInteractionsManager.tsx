@@ -672,7 +672,19 @@ export default function AdminInteractionsManager() {
                       </td>
                       <td className="py-3.5 px-4 max-w-xs text-slate-700">
                         {c.subject && (
-                          <div className="font-semibold text-slate-900 text-[11px] mb-0.5">{c.subject}</div>
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <span
+                              className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+                                c.subject.includes('BBQ')
+                                  ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                                  : c.subject.includes('Góp ý')
+                                  ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              }`}
+                            >
+                              {c.subject}
+                            </span>
+                          </div>
                         )}
                         <div className="line-clamp-2 text-slate-600">{c.message}</div>
                         {c.repliedAt && (
@@ -1492,9 +1504,9 @@ export default function AdminInteractionsManager() {
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
                 >
                   <option value="ALL">Tất cả chủ đề (Mặc định)</option>
-                  <option value="Tư vấn chung">Chỉ nhận: Tư vấn chung</option>
-                  <option value="Hợp tác sự kiện">Chỉ nhận: Hợp tác sự kiện</option>
-                  <option value="Góp ý dịch vụ">Chỉ nhận: Góp ý dịch vụ</option>
+                  <option value="Tư vấn chung">Chỉ nhận: Tư vấn chung (General Inquiry)</option>
+                  <option value="Đặt BBQ">Chỉ nhận: Đặt BBQ (BBQ Reservation)</option>
+                  <option value="Góp ý không gian">Chỉ nhận: Góp ý không gian (Space Feedback)</option>
                 </select>
               </div>
 
@@ -1654,7 +1666,19 @@ export default function AdminInteractionsManager() {
               {selectedContact.subject && (
                 <div>
                   <div className="text-[10px] text-slate-400 uppercase">Chủ đề</div>
-                  <div className="font-bold text-slate-900">{selectedContact.subject}</div>
+                  <div className="mt-0.5">
+                    <span
+                      className={`inline-block px-2.5 py-0.5 rounded text-xs font-mono font-bold ${
+                        selectedContact.subject.includes('BBQ')
+                          ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                          : selectedContact.subject.includes('Góp ý')
+                          ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                          : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      }`}
+                    >
+                      {selectedContact.subject}
+                    </span>
+                  </div>
                 </div>
               )}
 

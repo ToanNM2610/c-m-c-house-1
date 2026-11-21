@@ -57,12 +57,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Normalize contact subject (clean mapping between VI / EN)
+    let normalizedSubject = (subject || 'Tư vấn chung').trim();
+    const lowerSub = normalizedSubject.toLowerCase();
+    if (lowerSub === 'đặt bbq' || lowerSub === 'bbq reservation' || lowerSub.includes('bbq')) {
+      normalizedSubject = 'Đặt BBQ';
+    } else if (lowerSub === 'góp ý không gian' || lowerSub === 'space feedback' || lowerSub.includes('feedback')) {
+      normalizedSubject = 'Góp ý không gian';
+    } else if (lowerSub === 'tư vấn chung' || lowerSub === 'general inquiry') {
+      normalizedSubject = 'Tư vấn chung';
+    }
+
     const submission = await prisma.contactSubmission.create({
       data: {
         fullName: fullName.trim(),
         phone: phone.trim(),
         email: email ? email.trim() : null,
-        subject: subject || 'Tư vấn chung',
+        subject: normalizedSubject,
         message: message.trim(),
         status: 'NEW',
         emailStatus: 'NOT_CONFIGURED',

@@ -188,6 +188,7 @@ export default function LienHePage() {
         setFullName('');
         setPhone('');
         setEmail('');
+        setSubject('Tư vấn chung');
         setMessage('');
         // Start 60s cooldown
         const cooldownMs = 60 * 1000;
@@ -605,13 +606,11 @@ export default function LienHePage() {
                         <select
                           value={subject}
                           onChange={(e) => setSubject(e.target.value)}
-                          className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
+                          className="w-full px-3.5 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical font-medium cursor-pointer"
                         >
                           <option value="Tư vấn chung">{isEn ? 'General Inquiry' : 'Tư vấn chung'}</option>
-                          <option value="Chỉ đường & Đỗ xe">{isEn ? 'Directions & Parking' : 'Chỉ đường & Đỗ xe'}</option>
-                          <option value="Đặt đồ mang về trước">{isEn ? 'Takeaway Order Ahead' : 'Đặt đồ mang về trước'}</option>
-                          <option value="Họp mặt gia đình / nhóm">{isEn ? 'Group / Family Gathering' : 'Họp mặt gia đình / nhóm'}</option>
-                          <option value="Góp ý không gian">{isEn ? 'Feedback / Suggestions' : 'Góp ý không gian'}</option>
+                          <option value="Đặt BBQ">{isEn ? 'BBQ Reservation' : 'Đặt BBQ'}</option>
+                          <option value="Góp ý không gian">{isEn ? 'Space Feedback' : 'Góp ý không gian'}</option>
                         </select>
                       </div>
                     </div>
