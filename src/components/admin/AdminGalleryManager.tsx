@@ -22,6 +22,13 @@ export default function AdminGalleryManager() {
   const { data, refreshData } = useApp();
   const [selectedChapter, setSelectedChapter] = useState<number | 'all'>('all');
   const [editingPlateId, setEditingPlateId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [clearedMediaIds, setClearedMediaIds] = useState<Set<string>>(new Set());
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   // Edit fields
   const [titleVi, setTitleVi] = useState('');
@@ -146,6 +153,12 @@ export default function AdminGalleryManager() {
 
       // Clear broken image state
       setBrokenImages((prev) => ({ ...prev, [plateId]: false }));
+      setClearedMediaIds((prev) => {
+        const next = new Set(prev);
+        next.delete(plateId);
+        return next;
+      });
+      showToast('success', `Đã cập nhật ảnh cho ${plateId}`);
       await refreshData();
       broadcastCmsSync('gallery');
     } catch (err: any) {
@@ -181,25 +194,31 @@ export default function AdminGalleryManager() {
 
     setUploadingPlates((prev) => ({ ...prev, [plate.id]: true }));
     try {
-      const res = await fetch('/api/spatial-plates', {
-        method: 'PATCH',
+      const res = await fetch(`/api/spatial-plates?id=${encodeURIComponent(plate.id)}`, {
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           id: plate.id,
           imageUrl: '',
         }),
       });
 
-      if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        // Immediately remove image from local React state (no stale UI)
+        setClearedMediaIds((prev) => new Set(prev).add(plate.id));
         setBrokenImages((prev) => ({ ...prev, [plate.id]: false }));
+        showToast('success', `Đã xóa ảnh thực tế của khung hình ${plate.id}`);
         await refreshData();
         broadcastCmsSync('gallery');
       } else {
-        alert('Lỗi gỡ bỏ ảnh');
+        const errorMsg = json.error || json.message || 'Lỗi gỡ bỏ ảnh khung hình';
+        showToast('error', errorMsg);
       }
     } catch (err) {
       console.error(err);
-      alert('Không thể kết nối đến máy chủ');
+      showToast('error', 'Không thể kết nối đến máy chủ để xóa ảnh');
     } finally {
       setUploadingPlates((prev) => ({ ...prev, [plate.id]: false }));
     }
@@ -285,6 +304,24 @@ export default function AdminGalleryManager() {
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-16 right-6 z-50 p-4 rounded-xl shadow-lg border flex items-center gap-3 transition-all animate-fadeIn ${
+            toast.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}
+        >
+          {toast.type === 'success' ? (
+            <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+          ) : (
+            <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+          )}
+          <span className="text-xs font-mono font-medium">{toast.message}</span>
+        </div>
+      )}
+
       {/* Top Banner & Bulk Action Bar */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5">
         <div>
@@ -519,7 +556,12 @@ export default function AdminGalleryManager() {
         {filteredPlates.map((plate) => {
           const isUploading = uploadingPlates[plate.id];
           const isDragOver = dragOverPlates[plate.id];
-          const hasImage = Boolean(plate.imageUrl && plate.imageUrl.trim() !== '' && !brokenImages[plate.id]);
+          const hasImage = Boolean(
+            plate.imageUrl &&
+            plate.imageUrl.trim() !== '' &&
+            !brokenImages[plate.id] &&
+            !clearedMediaIds.has(plate.id)
+          );
 
           return (
             <div

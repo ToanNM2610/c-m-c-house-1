@@ -22,12 +22,57 @@ import { useApp } from '@/context/AppContext';
 import { broadcastCmsSync } from '@/lib/cms-sync';
 
 export default function AdminStoriesTeamManager() {
-  const { refreshData } = useApp();
+  const { data, refreshData } = useApp();
   const [tab, setTab] = useState<'stories' | 'team'>('stories');
   const [stories, setStories] = useState<HighlightStory[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Toggle showHighlightsSection setting
+  const [showHighlightsSection, setShowHighlightsSection] = useState<boolean>(() => {
+    return data?.settings?.showHighlightsSection !== false;
+  });
+  const [savingToggle, setSavingToggle] = useState(false);
+
+  useEffect(() => {
+    if (data?.settings?.showHighlightsSection !== undefined) {
+      setShowHighlightsSection(data.settings.showHighlightsSection);
+    }
+  }, [data?.settings?.showHighlightsSection]);
+
+  const handleToggleSectionVisibility = async () => {
+    const nextVal = !showHighlightsSection;
+    setShowHighlightsSection(nextVal);
+    setSavingToggle(true);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ showHighlightsSection: nextVal }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast(
+          'success',
+          nextVal
+            ? 'Đã BẬT hiển thị mục "Nhịp Sống Tự Nhiên Bên Dòng Suối" ngoài web'
+            : 'Đã TẮT hiển thị mục "Nhịp Sống Tự Nhiên Bên Dòng Suối" ngoài web'
+        );
+        await refreshData();
+        broadcastCmsSync('stories-team');
+      } else {
+        setShowHighlightsSection(!nextVal);
+        showToast('error', json.error || json.message || 'Không thể lưu cài đặt hiển thị câu chuyện');
+      }
+    } catch {
+      setShowHighlightsSection(!nextVal);
+      showToast('error', 'Lỗi kết nối máy chủ khi lưu cài đặt');
+    } finally {
+      setSavingToggle(false);
+    }
+  };
 
   // Story Form State
   const [editingStory, setEditingStory] = useState<Partial<HighlightStory> | null>(null);
@@ -139,10 +184,15 @@ export default function AdminStoriesTeamManager() {
   const handleDeleteStory = async (id: string, title: string) => {
     if (!confirm(`Bạn có chắc muốn xoá câu chuyện "${title}"?`)) return;
     try {
-      const res = await fetch(`/api/stories?id=${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/stories?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá câu chuyện');
+        // Immediately remove item from local React state (no stale UI)
+        setStories((prev) => prev.filter((s) => s.id !== id));
+        showToast('success', `Đã xoá câu chuyện "${title}" thành công`);
         fetchData();
         refreshData();
         broadcastCmsSync('stories-team');
@@ -150,7 +200,7 @@ export default function AdminStoriesTeamManager() {
         showToast('error', json.error || 'Lỗi xoá câu chuyện');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá câu chuyện');
     }
   };
 
@@ -191,18 +241,23 @@ export default function AdminStoriesTeamManager() {
   const handleDeleteMember = async (id: string, name: string) => {
     if (!confirm(`Bạn có chắc muốn xoá thành viên "${name}"?`)) return;
     try {
-      const res = await fetch(`/api/team?id=${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/team?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá thành viên');
+        // Immediately remove item from local React state (no stale UI)
+        setTeam((prev) => prev.filter((m) => m.id !== id));
+        showToast('success', `Đã xoá thành viên "${name}" thành công`);
         fetchData();
         refreshData();
         broadcastCmsSync('stories-team');
       } else {
-        showToast('error', json.error || 'Lỗi xoá');
+        showToast('error', json.error || 'Lỗi xoá thành viên');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá thành viên');
     }
   };
 
@@ -314,6 +369,47 @@ export default function AdminStoriesTeamManager() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* Visibility Toggle Card (Bật / Tắt hiển thị mục ngoài web) */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-slate-800 text-sm">
+              Hiển thị mục &quot;Nhịp Sống Tự Nhiên Bên Dòng Suối&quot; ngoài web
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
+                showHighlightsSection
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-slate-100 text-slate-500 border border-slate-200'
+              }`}
+            >
+              {showHighlightsSection ? 'Đang Bật' : 'Đang Tắt'}
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 font-mono">
+            Bật / Tắt hiển thị các câu chuyện nổi bật bên dòng suối tại trang chủ và trang /khach-hang.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleToggleSectionVisibility}
+          disabled={savingToggle}
+          className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 transition-all shadow-sm ${
+            showHighlightsSection
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+          }`}
+        >
+          {savingToggle ? (
+            <RefreshCw className="w-4 h-4 animate-spin" />
+          ) : (
+            <span className={`w-2 h-2 rounded-full ${showHighlightsSection ? 'bg-white' : 'bg-slate-500'}`} />
+          )}
+          <span>{showHighlightsSection ? 'BẬT (Hiển thị ngoài web)' : 'TẮT (Ẩn ngoài web)'}</span>
+        </button>
       </div>
 
       {/* Stories Tab */}

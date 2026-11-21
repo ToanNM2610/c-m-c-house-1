@@ -46,8 +46,10 @@ export default function AdminOpsManager() {
     try {
       setLoading(true);
       const [hRes, lRes] = await Promise.all([
-        fetch('/api/ops/health'),
-        fetch(`/api/ops/logs${selectedLogLevel !== 'ALL' ? `?level=${selectedLogLevel}` : ''}`),
+        fetch('/api/ops/health', { credentials: 'include' }),
+        fetch(`/api/ops/logs${selectedLogLevel !== 'ALL' ? `?level=${selectedLogLevel}` : ''}`, {
+          credentials: 'include',
+        }),
       ]);
       const hJson = await hRes.json();
       const lJson = await lRes.json();
@@ -240,10 +242,18 @@ export default function AdminOpsManager() {
       </div>
 
       {/* HEALTH TAB */}
+      {tab === 'health' && loading && !healthData && (
+        <div className="p-12 text-center text-slate-400 font-mono text-xs flex flex-col items-center justify-center gap-2 bg-white rounded-2xl border border-slate-200">
+          <RefreshCw className="w-6 h-6 animate-spin text-emerald-600" />
+          <span>Đang kiểm tra tình trạng hệ thống thời gian thực...</span>
+        </div>
+      )}
+
       {tab === 'health' && healthData && (
         <div className="space-y-6">
           {/* Main Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Database Card with Writable Status */}
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-slate-400">
                 <span>DUNG LƯỢNG DATABASE</span>
@@ -252,11 +262,27 @@ export default function AdminOpsManager() {
               <div className="text-2xl font-serif font-bold text-slate-900">
                 {healthData.storage.databaseSizeFormatted}
               </div>
-              <div className="text-[11px] font-mono text-emerald-700">
-                {healthData.storage.databaseFile}
+              <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    healthData.storage.databaseWritable ? 'bg-emerald-500' : 'bg-red-500'
+                  }`}
+                />
+                <span
+                  className={
+                    healthData.storage.databaseWritable
+                      ? 'text-emerald-700 font-semibold'
+                      : 'text-red-700 font-semibold'
+                  }
+                >
+                  {healthData.storage.databaseWritable
+                    ? 'Sẵn sàng ghi (Read-Write)'
+                    : 'Chỉ đọc (Read-Only) / Khóa ghi'}
+                </span>
               </div>
             </div>
 
+            {/* Uploads Card */}
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-slate-400">
                 <span>THƯ MỤC UPLOADS</span>
@@ -270,6 +296,7 @@ export default function AdminOpsManager() {
               </div>
             </div>
 
+            {/* RAM Heap Card */}
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-slate-400">
                 <span>BỘ NHỚ RAM HEAP</span>
@@ -283,19 +310,97 @@ export default function AdminOpsManager() {
               </div>
             </div>
 
+            {/* Live System Status Badge (No Hardcoded 100%) */}
             <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-                <span>AN NINH & BẢO VỆ</span>
-                <Shield className="w-4 h-4 text-emerald-600" />
+                <span>TRẠNG THÁI HỆ THỐNG</span>
+                <Shield
+                  className={`w-4 h-4 ${
+                    healthData.status === 'HEALTHY'
+                      ? 'text-emerald-600'
+                      : healthData.status === 'WARNING'
+                      ? 'text-amber-600'
+                      : 'text-red-600'
+                  }`}
+                />
               </div>
-              <div className="text-2xl font-serif font-bold text-emerald-700">
-                TỐT (100%)
+              <div className="flex items-center gap-2">
+                <span
+                  className={`px-3 py-1 rounded-xl text-base font-bold font-mono border ${
+                    healthData.status === 'HEALTHY'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                      : healthData.status === 'WARNING'
+                      ? 'bg-amber-50 text-amber-700 border-amber-300'
+                      : 'bg-red-50 text-red-700 border-red-300'
+                  }`}
+                >
+                  {healthData.statusVi ||
+                    (healthData.status === 'HEALTHY'
+                      ? 'TỐT'
+                      : healthData.status === 'WARNING'
+                      ? 'CẢNH BÁO'
+                      : 'LỖI')}
+                </span>
               </div>
               <div className="text-[11px] font-mono text-slate-500">
-                RBAC 3 Roles & Scrypt Active
+                {healthData.checks?.filter((c: any) => !c.ok).length > 0
+                  ? `${healthData.checks.filter((c: any) => !c.ok).length} chỉ số cần lưu ý`
+                  : 'Tất cả chỉ số vận hành an toàn'}
               </div>
             </div>
           </div>
+
+          {/* Real Live Health Checks from /api/ops/health */}
+          {healthData.checks && healthData.checks.length > 0 && (
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif font-bold text-base text-slate-900 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Chỉ Số Sức Khỏe & Kết Nối Thực Tế (Live Health Checks)</span>
+                </h3>
+                <span className="text-xs font-mono text-slate-400">
+                  Cập nhật: {new Date(healthData.timestamp).toLocaleTimeString('vi-VN')}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {healthData.checks.map((check: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className={`p-3 rounded-xl border flex flex-col justify-between space-y-1 ${
+                      check.ok
+                        ? 'bg-emerald-50/50 border-emerald-200 text-emerald-900'
+                        : 'bg-red-50/50 border-red-200 text-red-900'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-xs font-mono font-bold">
+                      <span>{check.name}</span>
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] ${
+                          check.ok
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {check.ok ? 'ĐẠT' : 'CẢNH BÁO'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] font-mono opacity-80">{check.detail || '—'}</p>
+                  </div>
+                ))}
+              </div>
+
+              {healthData.storage?.databaseWriteError && (
+                <div className="p-3 bg-red-50 border border-red-300 rounded-xl text-xs font-mono text-red-800 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+                  <div>
+                    <span className="font-bold">Lỗi ghi cơ sở dữ liệu:</span>{' '}
+                    {healthData.storage.databaseWriteError}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Quick Actions & Cache Purge */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -487,31 +592,41 @@ export default function AdminOpsManager() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {logs.map((l) => (
-                  <tr key={l.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="py-3 px-4 text-slate-500 whitespace-nowrap">
-                      {new Date(l.createdAt).toLocaleString('vi-VN')}
+                {logs.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-slate-400 font-mono text-xs">
+                      {loading
+                        ? 'Đang tải dữ liệu nhật ký hệ thống...'
+                        : 'Chưa có nhật ký nào được ghi nhận trong cơ sở dữ liệu.'}
                     </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          l.level === 'SECURITY'
-                            ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                            : l.level === 'ERROR'
-                            ? 'bg-red-50 text-red-700 border border-red-200'
-                            : l.level === 'WARN'
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        }`}
-                      >
-                        {l.level}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 font-bold text-slate-800">{l.action}</td>
-                    <td className="py-3 px-4 text-slate-600">@{l.actor || 'system'}</td>
-                    <td className="py-3 px-4 text-slate-600 max-w-md line-clamp-2">{l.details || '—'}</td>
                   </tr>
-                ))}
+                ) : (
+                  logs.map((l) => (
+                    <tr key={l.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-3 px-4 text-slate-500 whitespace-nowrap">
+                        {new Date(l.createdAt).toLocaleString('vi-VN')}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            l.level === 'SECURITY'
+                              ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                              : l.level === 'ERROR'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
+                              : l.level === 'WARN'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          }`}
+                        >
+                          {l.level}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 font-bold text-slate-800">{l.action}</td>
+                      <td className="py-3 px-4 text-slate-600">@{l.actor || 'system'}</td>
+                      <td className="py-3 px-4 text-slate-600 max-w-md line-clamp-2">{l.details || '—'}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

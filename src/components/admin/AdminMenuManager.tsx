@@ -12,6 +12,13 @@ export default function AdminMenuManager() {
   const [selectedCat, setSelectedCat] = useState<CategoryId | 'all'>('all');
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   // Edit item form state
   const [editPrice, setEditPrice] = useState<number>(0);
@@ -112,15 +119,24 @@ export default function AdminMenuManager() {
     if (!confirm(`Bạn có chắc muốn xóa món "${itemTitle}" khỏi thực đơn?`)) return;
     setLoadingItemId(itemId);
     try {
-      const res = await fetch(`/api/menu/${itemId}`, { method: 'DELETE' });
-      if (res.ok) {
+      const res = await fetch(`/api/menu/${itemId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        // Immediately remove item from local React state (no stale UI)
+        setDeletedIds((prev) => new Set(prev).add(itemId));
+        showToast('success', `Đã xóa món "${itemTitle}" khỏi thực đơn`);
         await refreshData();
         broadcastCmsSync('menu');
       } else {
-        alert('Không thể xóa món này');
+        const errorMsg = json.error || json.message || 'Không thể xóa món này. Vui lòng kiểm tra quyền quản trị.';
+        showToast('error', errorMsg);
       }
     } catch (err) {
       console.error(err);
+      showToast('error', 'Lỗi kết nối máy chủ khi xóa món ăn');
     } finally {
       setLoadingItemId(null);
     }
@@ -169,6 +185,7 @@ export default function AdminMenuManager() {
 
   const filteredItems = useMemo(() => {
     return data.menu.filter((item) => {
+      if (deletedIds.has(item.id)) return false;
       if (selectedCat !== 'all' && item.categoryId !== selectedCat) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
@@ -182,10 +199,27 @@ export default function AdminMenuManager() {
       }
       return true;
     });
-  }, [data.menu, selectedCat, searchQuery]);
+  }, [data.menu, selectedCat, searchQuery, deletedIds]);
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-16 right-6 z-50 p-4 rounded-xl shadow-lg border flex items-center gap-3 transition-all animate-fadeIn ${
+            toast.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}
+        >
+          {toast.type === 'success' ? (
+            <Check className="w-5 h-5 text-emerald-600 shrink-0" />
+          ) : (
+            <X className="w-5 h-5 text-red-600 shrink-0" />
+          )}
+          <span className="text-xs font-mono font-medium">{toast.message}</span>
+        </div>
+      )}
       {/* Top Banner */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

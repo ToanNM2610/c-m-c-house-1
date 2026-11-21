@@ -102,18 +102,23 @@ export default function AdminPagesFaqManager() {
   const handleDeletePage = async (id: string, slug: string) => {
     if (!confirm(`Bạn có chắc muốn xoá trang "${slug}"?`)) return;
     try {
-      const res = await fetch(`/api/pages?id=${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/pages?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá trang tĩnh');
+        // Immediately remove item from local React state (no stale UI)
+        setPages((prev) => prev.filter((p) => p.id !== id));
+        showToast('success', `Đã xoá trang tĩnh "${slug}" thành công`);
         fetchData();
         refreshData();
         broadcastCmsSync('pages-faq');
       } else {
-        showToast('error', json.error || 'Lỗi xoá');
+        showToast('error', json.error || 'Lỗi xoá trang tĩnh');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá trang tĩnh');
     }
   };
 
@@ -154,18 +159,23 @@ export default function AdminPagesFaqManager() {
   const handleDeleteFaq = async (id: string, question: string) => {
     if (!confirm(`Bạn có chắc muốn xoá câu hỏi "${question.slice(0, 30)}..."?`)) return;
     try {
-      const res = await fetch(`/api/faq?id=${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/faq?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá câu hỏi FAQ');
+        // Immediately remove item from local React state (no stale UI)
+        setFaqs((prev) => prev.filter((f) => f.id !== id));
+        showToast('success', 'Đã xoá câu hỏi FAQ thành công');
         fetchData();
         refreshData();
         broadcastCmsSync('pages-faq');
       } else {
-        showToast('error', json.error || 'Lỗi xoá');
+        showToast('error', json.error || 'Lỗi xoá câu hỏi FAQ');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá FAQ');
     }
   };
 

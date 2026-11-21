@@ -212,16 +212,19 @@ export default function AdminUsersManager({ currentUser }: AdminUsersManagerProp
 
     setActionLoadingId(targetUser.id);
     try {
-      const res = await fetch(`/api/users/${targetUser.id}`, {
+      const res = await fetch(`/api/users/${encodeURIComponent(targetUser.id)}`, {
         method: 'DELETE',
+        credentials: 'include',
       });
 
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
+        // Immediately remove item from local React state (no stale UI)
+        setUsers((prev) => prev.filter((u) => u.id !== targetUser.id));
         showToast('success', `Đã xóa tài khoản "${targetUser.username}" thành công`);
         fetchUsers();
       } else {
-        showToast('error', json.error || 'Không thể xóa tài khoản');
+        showToast('error', json.error || 'Không thể xóa tài khoản. Vui lòng kiểm tra quyền Super Admin.');
       }
     } catch {
       showToast('error', 'Lỗi hệ thống khi xóa tài khoản');

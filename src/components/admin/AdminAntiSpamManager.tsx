@@ -256,19 +256,21 @@ export default function AdminAntiSpamManager({ onNotify }: AdminAntiSpamManagerP
       const res = await fetch(`/api/security/blocked-ips?id=${encodeURIComponent(id)}&ip=${encodeURIComponent(ip)}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ id, ip }),
       });
 
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (res.ok && (json.success || !json.error)) {
-        notify('success', `Đã gỡ khóa thành công cho IP ${ip}`);
+        // Immediately remove item from local React state (no stale UI)
         setBlockedIps((prev) => prev.filter((item) => item.id !== id && item.ip !== ip));
+        notify('success', `Đã gỡ khóa thành công cho IP ${ip}`);
         fetchData();
       } else {
-        notify('error', json.error || json.message || 'Không thể gỡ khóa IP');
+        notify('error', json.error || json.message || 'Không thể gỡ khóa IP. Vui lòng kiểm tra quyền quản trị.');
       }
     } catch {
-      notify('error', 'Lỗi kết nối khi gỡ khóa IP');
+      notify('error', 'Lỗi kết nối máy chủ khi gỡ khóa IP');
     } finally {
       setUnbanningId(null);
     }

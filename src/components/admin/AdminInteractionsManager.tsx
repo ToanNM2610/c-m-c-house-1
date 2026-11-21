@@ -153,17 +153,22 @@ export default function AdminInteractionsManager() {
   const handleDeleteContact = async (id: string) => {
     if (!confirm('Bạn có chắc muốn xoá thư liên hệ này?')) return;
     try {
-      const res = await fetch(`/api/contact?id=${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/contact?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá thư liên hệ');
+        // Immediately remove item from local React state (no stale UI)
+        setContacts((prev) => prev.filter((c) => c.id !== id));
         if (selectedContact?.id === id) setSelectedContact(null);
+        showToast('success', 'Đã xoá thư liên hệ thành công');
         fetchData();
       } else {
-        showToast('error', json.error || 'Lỗi xoá');
+        showToast('error', json.error || 'Lỗi xoá thư liên hệ');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá thư liên hệ');
     }
   };
 
@@ -314,16 +319,21 @@ export default function AdminInteractionsManager() {
   const handleDeleteComment = async (id: string) => {
     if (!confirm('Bạn có chắc muốn xoá đánh giá này?')) return;
     try {
-      const res = await fetch(`/api/comments?id=${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/comments?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá đánh giá');
+        // Immediately remove item from local React state (no stale UI)
+        setComments((prev) => prev.filter((c) => c.id !== id));
+        showToast('success', 'Đã xoá đánh giá thành công');
         fetchData();
       } else {
-        showToast('error', json.error || 'Lỗi xoá');
+        showToast('error', json.error || 'Lỗi xoá đánh giá');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá đánh giá');
     }
   };
 
@@ -478,16 +488,21 @@ export default function AdminInteractionsManager() {
   const handleDeleteRecipient = async (id: string, email: string) => {
     if (!confirm(`Bạn có chắc muốn xoá ${email} khỏi danh sách nhận thông báo?`)) return;
     try {
-      const res = await fetch(`/api/gmail/recipients/${id}`, { method: 'DELETE' });
-      const json = await res.json();
+      const res = await fetch(`/api/gmail/recipients/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
       if (res.ok && json.success) {
-        showToast('success', 'Đã xoá người nhận thành công');
+        // Immediately remove item from local React state (no stale UI)
+        setGmailRecipients((prev) => prev.filter((r) => r.id !== id));
+        showToast('success', `Đã xoá ${email} khỏi danh sách nhận thông báo`);
         fetchData();
       } else {
-        showToast('error', json.error || 'Lỗi xoá');
+        showToast('error', json.error || 'Lỗi xoá người nhận');
       }
     } catch {
-      showToast('error', 'Lỗi kết nối');
+      showToast('error', 'Lỗi kết nối máy chủ khi xoá người nhận');
     }
   };
 

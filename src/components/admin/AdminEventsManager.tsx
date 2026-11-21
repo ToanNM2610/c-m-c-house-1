@@ -22,6 +22,59 @@ export default function AdminEventsManager() {
   const { data, refreshData } = useApp();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [deletedEventIds, setDeletedEventIds] = useState<Set<string>>(new Set());
+
+  // Toggle showEventsSection setting
+  const [showEventsSection, setShowEventsSection] = useState<boolean>(() => {
+    return data.settings.showEventsSection !== false;
+  });
+  const [savingToggle, setSavingToggle] = useState(false);
+
+  // Sync state if data.settings changes
+  React.useEffect(() => {
+    if (data.settings.showEventsSection !== undefined) {
+      setShowEventsSection(data.settings.showEventsSection);
+    }
+  }, [data.settings.showEventsSection]);
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const handleToggleSectionVisibility = async () => {
+    const nextVal = !showEventsSection;
+    setShowEventsSection(nextVal);
+    setSavingToggle(true);
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ showEventsSection: nextVal }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast(
+          'success',
+          nextVal
+            ? 'Đã BẬT hiển thị mục "Các Hoạt Động Đang Diễn Ra" ngoài web'
+            : 'Đã TẮT hiển thị mục "Các Hoạt Động Đang Diễn Ra" ngoài web'
+        );
+        await refreshData();
+        broadcastCmsSync('events');
+      } else {
+        setShowEventsSection(!nextVal);
+        showToast('error', json.error || json.message || 'Không thể lưu cài đặt hiển thị sự kiện');
+      }
+    } catch {
+      setShowEventsSection(!nextVal);
+      showToast('error', 'Lỗi kết nối máy chủ khi lưu cài đặt');
+    } finally {
+      setSavingToggle(false);
+    }
+  };
 
   // Form fields
   const [title, setTitle] = useState('');
@@ -130,13 +183,24 @@ export default function AdminEventsManager() {
   const handleDelete = async (id: string, evTitle: string) => {
     if (!confirm(`Bạn có chắc muốn xóa sự kiện "${evTitle}"?`)) return;
     try {
-      const res = await fetch(`/api/events?id=${id}`, { method: 'DELETE' });
-      if (res.ok) {
+      const res = await fetch(`/api/events?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        // Immediately remove item from local React state (no stale UI)
+        setDeletedEventIds((prev) => new Set(prev).add(id));
+        showToast('success', `Đã xóa sự kiện "${evTitle}" thành công`);
         await refreshData();
         broadcastCmsSync('events');
+      } else {
+        const errorMsg = json.error || json.message || 'Lỗi khi xóa sự kiện';
+        showToast('error', errorMsg);
       }
     } catch (err) {
       console.error(err);
+      showToast('error', 'Lỗi kết nối máy chủ khi xóa sự kiện');
     }
   };
 
@@ -205,8 +269,23 @@ export default function AdminEventsManager() {
     }
   };
 
+  const visibleEvents = (data.events || []).filter((ev) => !deletedEventIds.has(ev.id));
+
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-16 right-6 z-50 p-4 rounded-xl shadow-lg border flex items-center gap-3 transition-all animate-fadeIn ${
+            toast.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}
+        >
+          <span className="text-xs font-mono font-medium">{toast.message}</span>
+        </div>
+      )}
+
       {/* Top Banner */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -231,6 +310,47 @@ export default function AdminEventsManager() {
         >
           <Plus className="w-4 h-4" />
           <span>Thêm Sự Kiện Mới</span>
+        </button>
+      </div>
+
+      {/* Visibility Toggle Card (Bật / Tắt hiển thị mục ngoài web) */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-slate-800 text-sm">
+              Hiển thị mục &quot;Các Hoạt Động Đang Diễn Ra&quot; ngoài web
+            </span>
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
+                showEventsSection
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-slate-100 text-slate-500 border border-slate-200'
+              }`}
+            >
+              {showEventsSection ? 'Đang Bật' : 'Đang Tắt'}
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 font-mono">
+            Bật / Tắt hiển thị toàn bộ phân khu sự kiện & đêm nhạc tại trang chủ và trang /su-kien.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleToggleSectionVisibility}
+          disabled={savingToggle}
+          className={`px-4 py-2 rounded-xl text-xs font-mono font-bold flex items-center gap-2 transition-all shadow-sm ${
+            showEventsSection
+              ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+          }`}
+        >
+          {savingToggle ? (
+            <RefreshCw className="w-4 h-4 animate-spin" />
+          ) : (
+            <span className={`w-2 h-2 rounded-full ${showEventsSection ? 'bg-white' : 'bg-slate-500'}`} />
+          )}
+          <span>{showEventsSection ? 'BẬT (Hiển thị ngoài web)' : 'TẮT (Ẩn ngoài web)'}</span>
         </button>
       </div>
 
@@ -459,7 +579,7 @@ export default function AdminEventsManager() {
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {(data.events || []).map((ev) => (
+        {visibleEvents.map((ev) => (
           <div
             key={ev.id}
             className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between ${
