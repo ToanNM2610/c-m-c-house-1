@@ -11,6 +11,8 @@ import {
   Send,
   CheckCircle2,
   ArrowUpRight,
+  AlertCircle,
+  ExternalLink,
 } from "lucide-react";
 import { SearchConsoleReportData } from "@/lib/google-apis";
 
@@ -70,7 +72,139 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
     }
   };
 
-  // If not connected, show clean Empty State with icon + text and >=44px button
+  // 1. If tracking/verification IDs ARE configured, but Service Account JSON is missing/empty:
+  if (!loading && data && !data.connected && data.trackingActive && !data.hasServiceAccount) {
+    const scUrl = data.dashboardUrl || "https://search.google.com/search-console?resource_id=https%3A%2F%2Fcamcuhouse.online%2F";
+    const gaUrl = "https://analytics.google.com/analytics/web/#/p552993380/reports/intelligenthome";
+    const property = data.property || "https://camcuhouse.online/";
+
+    return (
+      <div className="flex flex-col gap-6 w-full max-w-[1000px] mx-auto my-6">
+        <div className="p-8 sm:p-12 rounded-2xl bg-gradient-to-br from-emerald-950/70 via-slate-900 to-slate-900 border border-emerald-500/30 shadow-2xl text-center flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mb-5 text-emerald-400">
+            <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-semibold mb-4">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>ĐÃ KẾT NỐI ĐO LƯỜNG (TRACKING ACTIVE)</span>
+          </div>
+
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-3">
+            Google Search Console Đang Hoạt Động
+          </h2>
+
+          <p className="text-slate-300 text-sm max-w-xl leading-relaxed mb-6">
+            Thẻ xác minh quyền sở hữu trang web đã được tích hợp trực tiếp trong SSR &lt;head&gt;. Google Search Console đang tự động theo dõi thứ hạng tìm kiếm, lượt hiển thị và lập chỉ mục website Cẩm Cù House.
+          </p>
+
+          {/* Details Pill Box */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg mb-8 text-left">
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+              <span className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1">
+                Tài sản (Property):
+              </span>
+              <span className="text-sm font-mono font-bold text-emerald-400 truncate block">
+                {property}
+              </span>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+              <span className="block text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1">
+                Trạng thái xác minh:
+              </span>
+              <span className="text-sm font-mono font-bold text-emerald-400 truncate block">
+                Đã xác minh (HTML Tag)
+              </span>
+            </div>
+          </div>
+
+          {/* Direct Primary Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md">
+            <a
+              href={scUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[15px] font-bold transition-all shadow-lg active:scale-95"
+            >
+              <span>Mở Google Search Console</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+            <a
+              href={gaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="min-h-[44px] w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-[15px] font-semibold transition-all shadow-md active:scale-95"
+            >
+              <span>Mở Google Analytics 4</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* Small Optional Note */}
+          <div className="mt-8 pt-6 border-t border-slate-800 w-full max-w-lg text-center">
+            <p className="text-xs text-slate-400 leading-relaxed mb-2">
+              Muốn nhúng biểu đồ trực tiếp ngay tại đây? Thêm Google Service Account JSON trong mục Tích hợp &amp; Khóa.
+            </p>
+            <button
+              type="button"
+              onClick={onSwitchToIntegrations}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 underline underline-offset-4 cursor-pointer"
+            >
+              <span>Mở tab Tích hợp &amp; Khóa để thêm Service Account</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. If Service Account JSON IS present, but auth or API query failed:
+  if (!loading && data && !data.connected && data.hasServiceAccount) {
+    const scUrl = data.dashboardUrl || "https://search.google.com/search-console?resource_id=https%3A%2F%2Fcamcuhouse.online%2F";
+
+    return (
+      <div className="admin-card flex flex-col items-center justify-center p-8 sm:p-14 text-center max-w-2xl mx-auto my-8">
+        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-5 text-amber-500">
+          <AlertCircle className="w-8 h-8 text-amber-500" />
+        </div>
+        <h1 className="admin-h1 font-serif text-[var(--text)] mb-3">
+          Không Thể Tải Dữ Liệu Google Search Console
+        </h1>
+        <p className="admin-body text-[var(--text-muted)] leading-relaxed mb-4 max-w-md">
+          Hệ thống phát hiện Service Account JSON nhưng Google API từ chối quyền truy cập hoặc tài khoản chưa được phân quyền Owner/Full trong Search Console property.
+        </p>
+
+        {/* Exact Google API error message */}
+        <div className="w-full max-w-lg p-4 mb-6 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-mono text-left break-words">
+          <span className="font-bold block text-red-400 mb-1">Chi tiết lỗi từ Google API:</span>
+          {data.error}
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+          <a
+            href={scUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-[15px] font-bold transition-all shadow-md active:scale-95"
+          >
+            <span>Mở Google Search Console</span>
+            <ExternalLink className="w-4 h-4" />
+          </a>
+          <button
+            type="button"
+            onClick={onSwitchToIntegrations}
+            className="min-h-[44px] inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--btn-primary)] text-[var(--btn-primary-text)] text-[15px] font-bold transition-all shadow-sm hover:opacity-95 active:scale-95 cursor-pointer"
+          >
+            <span>Kiểm tra ở Tích hợp &amp; Khóa</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. Fallback: Completely unconfigured
   if (!loading && data && !data.connected) {
     return (
       <div className="admin-card flex flex-col items-center justify-center p-8 sm:p-14 text-center max-w-2xl mx-auto my-8">
@@ -78,18 +212,18 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
           <Search className="w-8 h-8 text-[var(--accent)]" />
         </div>
         <h1 className="admin-h1 font-serif text-[var(--text)] mb-3">
-          Chưa Kết Nối Google Search Console
+          Chưa Cấu Hình Google Search Console
         </h1>
         <p className="admin-body text-[var(--text-muted)] leading-relaxed mb-6 max-w-md">
           {data.error ||
-            "Để theo dõi từ khóa tìm kiếm, lượt nhấp tự nhiên từ Google và trạng thái lập chỉ mục sitemap, vui lòng kết nối Service Account và cấu hình Property."}
+            "Để theo dõi từ khóa tìm kiếm, lượt nhấp tự nhiên từ Google và trạng thái lập chỉ mục sitemap, vui lòng cấu hình mã xác minh google-site-verification hoặc kết nối Service Account."}
         </p>
         <button
           type="button"
           onClick={onSwitchToIntegrations}
           className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--btn-primary)] text-[var(--btn-primary-text)] text-[15px] font-bold transition-all shadow-sm hover:opacity-95 active:scale-95 cursor-pointer"
         >
-          <span>Kết nối ở Tích hợp &amp; Khóa</span>
+          <span>Cấu hình ở Tích hợp &amp; Khóa</span>
           <ArrowUpRight className="w-4 h-4" />
         </button>
       </div>
@@ -145,6 +279,17 @@ export default function SearchConsoleTab({ onSwitchToIntegrations, onShowToast }
               </button>
             ))}
           </div>
+
+          <a
+            href={data?.dashboardUrl || "https://search.google.com/search-console?resource_id=https%3A%2F%2Fcamcuhouse.online%2F"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-h-[44px] inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-400 border border-emerald-500/30 text-xs font-mono font-semibold transition-all shrink-0"
+            title="Mở Google Search Console trên trang chủ Google"
+          >
+            <span>Mở GSC</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
 
           <button
             type="button"

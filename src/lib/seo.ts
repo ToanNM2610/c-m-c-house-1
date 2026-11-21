@@ -62,3 +62,4 @@ export async function getPageSeoMetadata(
     robots: { index: true, follow: true },
   };
 }
+

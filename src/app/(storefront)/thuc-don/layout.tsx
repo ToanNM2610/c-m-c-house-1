@@ -15,3 +15,4 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function ThucDonLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
+

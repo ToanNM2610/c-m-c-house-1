@@ -13,43 +13,58 @@ interface GoogleServiceAccountKey {
 }
 
 let cachedAccessToken: { token: string; expiresAt: number } | null = null;
+let lastGoogleAuthError: string | null = null;
+
+export function getLastGoogleAuthError(): string | null {
+  return lastGoogleAuthError;
+}
 
 /**
  * Parses and validates Google Service Account JSON from store
  */
 export function getServiceAccountCredentials(): GoogleServiceAccountKey | null {
   const raw = getDecryptedIntegrationValue("google_service_account_json");
-  if (!raw || !raw.trim()) {
-    // Fallback to environment variable if present
-    const envRaw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
-    if (envRaw) {
-      try {
-        return JSON.parse(envRaw);
-      } catch {
-        return null;
-      }
+  let parsed: any = null;
+
+  if (raw && raw.trim()) {
+    try {
+      parsed = JSON.parse(raw);
+    } catch (error) {
+      console.error("[GoogleAPIs] Failed to parse Service Account JSON from store:", error);
     }
-    return null;
   }
 
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed.client_email && parsed.private_key) {
-      return parsed;
+  if (!parsed) {
+    // Fallback to environment variable if present
+    const envRaw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    if (envRaw && envRaw.trim()) {
+      try {
+        parsed = JSON.parse(envRaw);
+      } catch (error) {
+        console.error("[GoogleAPIs] Failed to parse Service Account JSON from env:", error);
+      }
     }
-    return null;
-  } catch (error) {
-    console.error("[GoogleAPIs] Failed to parse Service Account JSON:", error);
-    return null;
   }
+
+  if (parsed && parsed.client_email && parsed.private_key) {
+    if (typeof parsed.private_key === "string") {
+      // Normalize literal escaped newlines to real newlines for RSA signer
+      parsed.private_key = parsed.private_key.replace(/\\n/g, "\n");
+    }
+    return parsed;
+  }
+
+  return null;
 }
 
 /**
  * Creates an OAuth2 Access Token using RS256 signed JWT
  */
 export async function getGoogleOAuth2Token(scopes: string[]): Promise<string | null> {
+  lastGoogleAuthError = null;
   const credentials = getServiceAccountCredentials();
   if (!credentials || !credentials.client_email || !credentials.private_key) {
+    lastGoogleAuthError = "Chưa cấu hình hoặc thiếu client_email/private_key trong Google Service Account JSON.";
     return null;
   }
 
@@ -96,6 +111,12 @@ export async function getGoogleOAuth2Token(scopes: string[]): Promise<string | n
     if (!res.ok) {
       const errText = await res.text();
       console.error("[GoogleAPIs] Token exchange failed:", res.status, errText);
+      try {
+        const errJson = JSON.parse(errText);
+        lastGoogleAuthError = `Lỗi Google OAuth2 (${res.status}): ${errJson.error_description || errJson.error || errText}`;
+      } catch {
+        lastGoogleAuthError = `Lỗi Google OAuth2 (${res.status}): ${errText}`;
+      }
       return null;
     }
 
@@ -107,9 +128,11 @@ export async function getGoogleOAuth2Token(scopes: string[]): Promise<string | n
       };
       return tokenData.access_token;
     }
+    lastGoogleAuthError = "Google OAuth2 không trả về access_token.";
     return null;
-  } catch (error) {
+  } catch (error: any) {
     console.error("[GoogleAPIs] Error obtaining Google OAuth2 token:", error);
+    lastGoogleAuthError = `Lỗi tạo chữ ký JWT/xác thực Service Account: ${error?.message || String(error)}`;
     return null;
   }
 }
@@ -120,8 +143,12 @@ export async function getGoogleOAuth2Token(scopes: string[]): Promise<string | n
 
 export interface Ga4ReportData {
   connected: boolean;
-  error?: string;
+  trackingActive?: boolean;
+  hasServiceAccount?: boolean;
+  measurementId?: string;
   propertyId?: string;
+  dashboardUrl?: string;
+  error?: string;
   days: number;
   overview: {
     totalUsers: number;
@@ -163,16 +190,34 @@ export interface Ga4ReportData {
 }
 
 export async function fetchGa4Analytics(days = 7): Promise<Ga4ReportData> {
+  const measurementId = (
+    getDecryptedIntegrationValue("ga4_measurement_id") ||
+    process.env.NEXT_PUBLIC_GA_ID ||
+    "GTM-M78P32L4"
+  ).trim();
+
   const propertyId = (
     getDecryptedIntegrationValue("ga4_property_id") ||
     process.env.GA4_PROPERTY_ID ||
-    ""
+    "552993380"
   ).trim();
 
-  if (!propertyId) {
+  const cleanPropId = propertyId || "552993380";
+  const dashboardUrl = `https://analytics.google.com/analytics/web/#/p${cleanPropId}/reports/intelligenthome`;
+  const hasTrackingId = Boolean(measurementId || propertyId);
+
+  const creds = getServiceAccountCredentials();
+  const hasServiceAccount = Boolean(creds?.client_email && creds?.private_key);
+
+  // If Service Account JSON is missing/empty, do NOT report an error screen if tracking IDs exist
+  if (!hasServiceAccount) {
     return {
       connected: false,
-      error: "Chưa cấu hình GA4 Property ID. Hãy vào mục 'Tích hợp & Khóa' để nhập ID.",
+      trackingActive: hasTrackingId,
+      hasServiceAccount: false,
+      measurementId,
+      propertyId: cleanPropId,
+      dashboardUrl,
       days,
       overview: { totalUsers: 0, totalSessions: 0, screenPageViews: 0, realtimeUsers: 0 },
       dailyMetrics: [],
@@ -184,12 +229,20 @@ export async function fetchGa4Analytics(days = 7): Promise<Ga4ReportData> {
     };
   }
 
+  // If Service Account JSON is present, attempt live API query
   const token = await getGoogleOAuth2Token(["https://www.googleapis.com/auth/analytics.readonly"]);
   if (!token) {
+    const authErr =
+      getLastGoogleAuthError() ||
+      "Không thể xác thực Google Service Account. Vui lòng kiểm tra lại cấu hình.";
     return {
       connected: false,
-      error: "Không thể xác thực Google Service Account. Vui lòng kiểm tra lại JSON Service Account trong 'Tích hợp & Khóa'.",
-      propertyId,
+      trackingActive: hasTrackingId,
+      hasServiceAccount: true,
+      measurementId,
+      propertyId: cleanPropId,
+      dashboardUrl,
+      error: authErr,
       days,
       overview: { totalUsers: 0, totalSessions: 0, screenPageViews: 0, realtimeUsers: 0 },
       dailyMetrics: [],
@@ -358,11 +411,15 @@ export async function fetchGa4Analytics(days = 7): Promise<Ga4ReportData> {
 
     if (!reportRes.ok) {
       const err = await reportRes.json().catch(() => ({}));
-      const msg = err.error?.message || "GA4 Data API trả về lỗi";
+      const msg = err.error?.message || `GA4 Data API trả về lỗi HTTP ${reportRes.status}`;
       return {
         connected: false,
+        trackingActive: hasTrackingId,
+        hasServiceAccount: true,
+        measurementId,
+        propertyId: cleanPropId,
+        dashboardUrl,
         error: `Lỗi kết nối GA4: ${msg}`,
-        propertyId,
         days,
         overview: { totalUsers: 0, totalSessions: 0, screenPageViews: 0, realtimeUsers: 0 },
         dailyMetrics: [],
@@ -452,7 +509,11 @@ export async function fetchGa4Analytics(days = 7): Promise<Ga4ReportData> {
 
     return {
       connected: true,
-      propertyId,
+      trackingActive: true,
+      hasServiceAccount: true,
+      measurementId,
+      propertyId: cleanPropId,
+      dashboardUrl,
       days,
       overview: {
         totalUsers,
@@ -467,12 +528,16 @@ export async function fetchGa4Analytics(days = 7): Promise<Ga4ReportData> {
       geoCities,
       events,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("[GA4] Fetch error:", error);
     return {
       connected: false,
-      error: "Lỗi kết nối mạng hoặc phân tích cú pháp dữ liệu Google Analytics",
-      propertyId,
+      trackingActive: hasTrackingId,
+      hasServiceAccount: true,
+      measurementId,
+      propertyId: cleanPropId,
+      dashboardUrl,
+      error: `Lỗi kết nối mạng hoặc phân tích cú pháp dữ liệu Google Analytics: ${error?.message || String(error)}`,
       days,
       overview: { totalUsers: 0, totalSessions: 0, screenPageViews: 0, realtimeUsers: 0 },
       dailyMetrics: [],
@@ -491,8 +556,12 @@ export async function fetchGa4Analytics(days = 7): Promise<Ga4ReportData> {
 
 export interface SearchConsoleReportData {
   connected: boolean;
-  error?: string;
+  trackingActive?: boolean;
+  hasServiceAccount?: boolean;
+  verificationToken?: string;
   property?: string;
+  dashboardUrl?: string;
+  error?: string;
   days: number;
   overview: {
     totalClicks: number;
@@ -540,11 +609,43 @@ export interface SearchConsoleReportData {
 }
 
 export async function fetchSearchConsoleData(days = 7): Promise<SearchConsoleReportData> {
+  const verificationToken = (
+    getDecryptedIntegrationValue("search_console_verification") ||
+    process.env.GOOGLE_SITE_VERIFICATION ||
+    ""
+  ).trim();
+
   const scProperty = (
     getDecryptedIntegrationValue("search_console_property") ||
     process.env.SEARCH_CONSOLE_PROPERTY ||
-    "sc-domain:camcuhouse.online"
+    "https://camcuhouse.online/"
   ).trim();
+
+  const dashboardUrl = "https://search.google.com/search-console?resource_id=https%3A%2F%2Fcamcuhouse.online%2F";
+  const hasTrackingId = Boolean(verificationToken || scProperty);
+
+  const creds = getServiceAccountCredentials();
+  const hasServiceAccount = Boolean(creds?.client_email && creds?.private_key);
+
+  // If Service Account JSON is missing/empty, do NOT report an error screen if tracking/verification is configured
+  if (!hasServiceAccount) {
+    return {
+      connected: false,
+      trackingActive: hasTrackingId,
+      hasServiceAccount: false,
+      verificationToken,
+      property: scProperty,
+      dashboardUrl,
+      days,
+      overview: { totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0 },
+      dailyMetrics: [],
+      topQueries: [],
+      topPages: [],
+      deviceMetrics: [],
+      countryMetrics: [],
+      urlInspections: [],
+    };
+  }
 
   const token = await getGoogleOAuth2Token([
     "https://www.googleapis.com/auth/webmasters.readonly",
@@ -552,10 +653,17 @@ export async function fetchSearchConsoleData(days = 7): Promise<SearchConsoleRep
   ]);
 
   if (!token) {
+    const authErr =
+      getLastGoogleAuthError() ||
+      "Chưa cấu hình hoặc không thể xác thực Service Account cho Google Search Console.";
     return {
       connected: false,
-      error: "Chưa cấu hình hoặc không thể xác thực Service Account cho Google Search Console.",
+      trackingActive: hasTrackingId,
+      hasServiceAccount: true,
+      verificationToken,
       property: scProperty,
+      dashboardUrl,
+      error: authErr,
       days,
       overview: { totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0 },
       dailyMetrics: [],
@@ -660,11 +768,15 @@ export async function fetchSearchConsoleData(days = 7): Promise<SearchConsoleRep
 
     if (!dailyRes.ok) {
       const err = await dailyRes.json().catch(() => ({}));
-      const msg = err.error?.message || "Search Console API trả về lỗi";
+      const msg = err.error?.message || `Search Console API trả về lỗi HTTP ${dailyRes.status}`;
       return {
         connected: false,
-        error: `Lỗi Search Console: ${msg}`,
+        trackingActive: hasTrackingId,
+        hasServiceAccount: true,
+        verificationToken,
         property: scProperty,
+        dashboardUrl,
+        error: `Lỗi Search Console: ${msg}`,
         days,
         overview: { totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0 },
         dailyMetrics: [],
@@ -790,7 +902,11 @@ export async function fetchSearchConsoleData(days = 7): Promise<SearchConsoleRep
 
     return {
       connected: true,
+      trackingActive: true,
+      hasServiceAccount: true,
+      verificationToken,
       property: scProperty,
+      dashboardUrl,
       days,
       overview: {
         totalClicks,
@@ -807,12 +923,16 @@ export async function fetchSearchConsoleData(days = 7): Promise<SearchConsoleRep
       ],
       urlInspections,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("[SearchConsole] Fetch error:", error);
     return {
       connected: false,
-      error: "Không thể kết nối Search Console API",
+      trackingActive: hasTrackingId,
+      hasServiceAccount: true,
+      verificationToken,
       property: scProperty,
+      dashboardUrl,
+      error: `Không thể kết nối Search Console API: ${error?.message || String(error)}`,
       days,
       overview: { totalClicks: 0, totalImpressions: 0, averageCtr: 0, averagePosition: 0 },
       dailyMetrics: [],
@@ -947,9 +1067,12 @@ export async function testIntegrationConnection(key: string): Promise<{ success:
       }
       const token = await getGoogleOAuth2Token(["https://www.googleapis.com/auth/analytics.readonly"]);
       if (!token) {
+        const authErr = getLastGoogleAuthError();
         return {
           success: false,
-          message: `Không thể ký JWT hoặc xác thực với Google OAuth2 cho tài khoản ${creds.client_email}. Kiểm tra private_key.`,
+          message: authErr
+            ? `Xác thực Google OAuth2 thất bại (${creds.client_email}): ${authErr}`
+            : `Không thể ký JWT hoặc xác thực với Google OAuth2 cho tài khoản ${creds.client_email}. Kiểm tra private_key.`,
         };
       }
       return {
