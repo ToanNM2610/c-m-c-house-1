@@ -103,8 +103,15 @@ function MenuItemCard({
 }
 
 export default function MenuSection() {
-  const { data, language } = useApp();
+  const { data, content, language } = useApp();
+  const c = content || data.content;
   const isEn = language === 'en';
+
+  const menuEyebrow = isEn && c?.menuEyebrowEn ? c.menuEyebrowEn : (c?.menuEyebrow || 'EDITORIAL TEXT-ONLY MENU • 100% CẨM CÙ HOUSE');
+  const menuTitle = isEn && c?.menuTitleEn ? c.menuTitleEn : (c?.menuTitle || (isEn ? 'Botanical Eco-Menu' : 'Thực Đơn Sinh Thái'));
+  const menuSubtitle = isEn && c?.menuSubtitleEn ? c.menuSubtitleEn : c?.menuSubtitle;
+  const menuIntro = isEn && c?.menuIntroEn ? c.menuIntroEn : (c?.menuIntro || (isEn ? 'Carefully crafted from rich Dak Nong agricultural harvests, traditionally wood-roasted and hand-brewed in small artisan batches.' : 'Được tinh tuyển từ nguồn nông sản Đăk Nông trù phú, rang củi mộc và pha chế thủ công tỉ mỉ từng mẻ nhỏ.'));
+  const menuNotice = isEn && c?.menuNoticeEn ? c.menuNoticeEn : (c?.menuNotice || (isEn ? 'Call our baristas directly 15–20 minutes in advance so we can prepare your fresh drinks and hot food with supreme care.' : 'Quý khách có thể gọi điện thoại trực tiếp trước 15–20 phút để quán chuẩn bị chu đáo thức uống và đồ ăn mang về luôn tươi mới.'));
 
   const [activeCategory, setActiveCategory] = useState<CategoryId | 'all'>('coffee');
   const [searchQuery, setSearchQuery] = useState('');
@@ -159,16 +166,19 @@ export default function MenuSection() {
       <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
         <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
           <span className="w-6 h-px bg-accent-botanical" />
-          <span>EDITORIAL TEXT-ONLY MENU • 100% CẨM CÙ HOUSE</span>
+          <span>{menuEyebrow}</span>
           <span className="w-6 h-px bg-accent-botanical" />
         </div>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold text-ink-primary">
-          {isEn ? 'Botanical Eco-Menu' : 'Thực Đơn Sinh Thái'}
+          {menuTitle}
         </h2>
+        {menuSubtitle && (
+          <p className="font-serif text-base italic text-accent-earth">
+            {menuSubtitle}
+          </p>
+        )}
         <p className="text-sm text-ink-muted leading-relaxed">
-          {isEn
-            ? 'Carefully crafted from rich Dak Nong agricultural harvests, traditionally wood-roasted and hand-brewed in small artisan batches.'
-            : 'Được tinh tuyển từ nguồn nông sản Đăk Nông trù phú, rang củi mộc và pha chế thủ công tỉ mỉ từng mẻ nhỏ.'}
+          {menuIntro}
         </p>
       </div>
 
@@ -300,9 +310,7 @@ export default function MenuSection() {
               {isEn ? 'Enjoy Cẩm Cù Flavors at Home or Office' : 'Thưởng Thức Hương Vị Cẩm Cù Tại Nhà Hoặc Cơ Quan'}
             </h3>
             <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-              {isEn
-                ? 'Call our baristas directly 15–20 minutes in advance so we can prepare your fresh drinks and hot food with supreme care.'
-                : 'Quý khách có thể gọi điện thoại trực tiếp trước 15–20 phút để quán chuẩn bị chu đáo thức uống và đồ ăn mang về luôn tươi mới.'}
+              {menuNotice}
             </p>
           </div>
 

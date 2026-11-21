@@ -34,6 +34,79 @@ export const initialSiteContent: SiteContent = {
   brandStoryContent: 'Đông Gia Nghĩa, Lâm Đồng không chỉ có thiên nhiên xanh mát mà còn có những thung lũng xanh tĩnh lặng ẩn mình. Cẩm Cù House được sinh ra từ chính niềm say mê thiên nhiên và khát khao gìn giữ một khoảng trời xanh trong lành giữa lòng Đông Gia Nghĩa. Từng giàn lan Cẩm Cù bung nở những chùm hoa hình ngôi sao sáp dịu dàng soi bóng xuống dòng nước suối trong veo.',
   brandStoryPhilosophy: 'Triết lý của chúng tôi rất giản dị: "Xanh - Lành - Thuần Khiết". Mỗi ly cà phê mộc là hương vị của đất bazan núi lửa, mỗi ấm trà thảo mộc là sự chắt chiu từ hoa lá vườn nhà. Không gian ở đây không có máy lạnh ngột ngạt hay tiếng còi xe, chỉ có gió ngàn, tiếng suối reo và tiếng cười của những buổi chuyện trò ấm cúng.',
   brandStoryImageUrl: '/uploads/gallery/fig-01.jpg',
+  showStoryMilestones: true,
+  showTeamMembers: true,
+  visionTitle: 'Tầm Nhìn & Sứ Mệnh Sinh Thái',
+  visionTitleEn: 'Ecological Vision & Mission',
+  visionDesc: 'Trở thành điểm hẹn sinh thái biểu trưng của Đông Gia Nghĩa, Lâm Đồng — nơi gìn giữ vẻ đẹp nguyên bản của dòng suối rừng và tôn vinh nông sản thảo mộc tự nhiên.',
+  visionDescEn: 'To be the premier ecological destination of Đông Gia Nghĩa, Lâm Đồng — preserving the pristine beauty of natural forest streams and celebrating wholesome organic botanicals.',
+
+  // Page 1 Home Section Toggles
+  showFeaturedMenu: true,
+  showFeaturedSpace: true,
+  showFeaturedReviews: true,
+  showFeaturedEvents: true,
+
+  // Page 3: Không gian (/khong-gian)
+  spaceEyebrow: 'BỘ SƯU TẬP KHÔNG GIAN • BẢN KHẮC THỊ GIÁC',
+  spaceEyebrowEn: 'SPATIAL GALLERY • CURATED VISUAL PLATES',
+  spaceTitle: '30 Bản Khắc Không Gian Bên Bờ Suối Mát',
+  spaceTitleEn: '30 Streamside Spatial Plates',
+  spaceSubtitle: 'Nơi mỗi góc quán mộc mạc ghi lại vẻ đẹp tĩnh lặng của làn nước suối và vòm lá Cẩm Cù',
+  spaceSubtitleEn: 'Where each rustic frame captures the quiet poetry of flowing water and wax plant canopies',
+  spaceIntro: 'Khám phá trọn vẹn các bản khắc thị giác của Cẩm Cù House qua 4 chương không gian: Lối nhỏ vào vườn, Bên bờ suối mát, Hương vị xanh sạch và Hoàng hôn buông.',
+  spaceIntroEn: 'Explore all curated visual plates of Cẩm Cù House organized across 4 chapters: The Wax Flower Path, Beside the Cool Stream, Wholesome Pure Flavors, and Twilight.',
+  spaceHeroBanner: '/uploads/gallery/fig-01.jpg',
+
+  // Page 4: Thực đơn (/thuc-don)
+  menuEyebrow: 'THỰC ĐƠN THẢO MỘC & CÀ PHÊ RANG MỘC',
+  menuEyebrowEn: 'BOTANICAL HERBAL MENU & WOOD-ROASTED COFFEE',
+  menuTitle: 'Thực Đơn Cẩm Cù House',
+  menuTitleEn: 'Cẩm Cù House Botanical Menu',
+  menuSubtitle: 'Hương Vị Bazan Đăk Nông & Thảo Mộc Thanh Mát',
+  menuSubtitleEn: 'Flavors of Basalt Soil & Wholesome Fresh Herbs',
+  menuIntro: '67 món thức uống và điểm tâm được chế biến từ nông sản tự nhiên, cà phê rang củi mộc và thảo mộc tươi mát.',
+  menuIntroEn: '67 drinks and artisanal breakfast dishes crafted from organic botanicals, wood-roasted coffee, and garden herbs.',
+  menuNotice: 'Phục vụ tại bàn sát suối • Không sử dụng phẩm màu hay hương liệu nhân tạo • Thảo mộc tươi hái mỗi sáng',
+  menuNoticeEn: 'Served right beside the stream • Zero artificial flavors or coloring • Fresh herbs harvested every morning',
+
+  // Page 5: Khách hàng (/khach-hang)
+  reviewsEyebrow: 'CẢM NHẬN & ĐÁNH GIÁ THỰC TẾ',
+  reviewsEyebrowEn: 'GENUINE GUEST REVIEWS & STORIES',
+  reviewsTitle: 'Những Lời Gửi Gắm Bên Dòng Suối',
+  reviewsTitleEn: 'Heartfelt Words Beside the Stream',
+  reviewsSubtitle: '100% Đề xuất từ những vị khách quý ghé thăm Cẩm Cù House',
+  reviewsSubtitleEn: '100% Recommended by genuine guests visiting Cẩm Cù House',
+  reviewsIntro: 'Mỗi tách cà phê, mỗi buổi chiều ngồi nghe tiếng suối là một kỷ niệm đẹp. Chúng tôi trân trọng từng chia sẻ và góp ý chân tình của bạn.',
+  reviewsIntroEn: 'Every cup of coffee, every peaceful afternoon listening to the gentle brook is a cherished memory. We treasure every heartfelt guest review.',
+  reviewsPrompt: 'Bạn đã ghé thăm Cẩm Cù House? Hãy để lại cảm nhận của bạn để chúng tôi phục vụ ngày một chu đáo hơn!',
+  reviewsPromptEn: 'Have you visited Cẩm Cù House? Please leave your review so we can welcome you even better!',
+
+  // Page 6: Tin tức & FAQ (/tin-tuc)
+  newsEyebrow: 'BẢN TIN SINH THÁI & GIẢI ĐÁP',
+  newsEyebrowEn: 'ECOLOGICAL DISPATCH & FAQ',
+  newsTitle: 'Tin Tức Hoạt Động & Câu Hỏi Thường Gặp',
+  newsTitleEn: 'Events, News & Frequently Asked Questions',
+  newsSubtitle: 'Cập nhật nhịp sống bên suối và thông tin hướng dẫn chi tiết dành cho bạn',
+  newsSubtitleEn: 'Updates on streamside happenings and helpful guide notes for your visit',
+  newsIntro: 'Xem lịch trình các hoạt động âm nhạc, mùa vụ hoa nở và câu trả lời cho các thắc mắc về đường đi, thực đơn, bãi đỗ xe.',
+  newsIntroEn: 'Check schedules for acoustic sessions, seasonal blooms, and clear answers regarding parking, menu, and directions.',
+  showNewsEvents: true,
+  showNewsFaq: true,
+
+  // Page 7: Liên hệ (/lien-he)
+  contactEyebrow: 'CHỈ ĐƯỜNG & KẾT NỐI',
+  contactEyebrowEn: 'DIRECTIONS & GET IN TOUCH',
+  contactTitle: 'Ghé Thăm Cẩm Cù House',
+  contactTitleEn: 'Visit Cẩm Cù House',
+  contactSubtitle: 'Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông',
+  contactSubtitleEn: 'Alley 437 Hung Vuong, Nghia Trung Ward, Gia Nghia City, Dak Nong',
+  contactIntro: 'Quán nằm dưới con dốc rợp bóng cây xanh mát, chỉ cách trục đường Hùng Vương vài bước chân. Dòng suối tự nhiên uốn lượn ngay sau quán.',
+  contactIntroEn: 'Nestled down a tree-shaded slope just steps away from Hung Vuong street. The gentle natural stream flows right behind the café.',
+  contactBbqCallout: 'Tiệc BBQ bên bờ suối & Đặt chỗ đoàn: Vui lòng liên hệ Hotline trước ít nhất 1 ngày để quán chuẩn bị chu đáo nhất.',
+  contactBbqCalloutEn: 'Streamside BBQ & Group gatherings: Please contact our Hotline at least 1 day in advance for optimal preparation.',
+  contactDirectionsNote: 'Từ đường Hùng Vương rẽ vào Hẻm 437, đi thẳng 50m xuống dốc có biển chỉ dẫn gỗ Cẩm Cù House. Có bãi đỗ xe ô tô và xe máy rộng rãi.',
+  contactDirectionsNoteEn: 'From Hung Vuong street turn into Alley 437, drive 50m down the shaded slope following wooden signs. Spacious parking available for cars and motorcycles.',
 };
 
 export const initialDbData: DatabaseSchema = {

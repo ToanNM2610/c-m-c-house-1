@@ -43,6 +43,8 @@ export default function GioiThieuPage() {
   const visionDesc = isEn && c?.visionDescEn ? c.visionDescEn : (c?.visionDesc || 'Trở thành điểm hẹn sinh thái biểu trưng của TP. Gia Nghĩa — nơi gìn giữ vẻ đẹp nguyên bản của dòng suối rừng và tôn vinh nông sản thảo mộc tự nhiên Đăk Nông.');
 
   const teamMembers = data.teamMembers || [];
+  const showTeam = c?.showTeamMembers !== false && teamMembers.length > 0;
+  const showMilestones = c?.showStoryMilestones !== false;
 
   return (
     <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
@@ -107,23 +109,25 @@ export default function GioiThieuPage() {
                 <span>{isEn ? 'Origin Story' : 'Câu chuyện khởi sinh'}</span>
               </button>
 
-              <button
-                onClick={() => setActiveTab('team')}
-                className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
-                  activeTab === 'team'
-                    ? 'text-white font-semibold'
-                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
-                }`}
-              >
-                {activeTab === 'team' && (
-                  <motion.span
-                    layoutId="gioithieu-tab-pill"
-                    className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
-                    transition={SPRING_PILL_TRANSITION}
-                  />
-                )}
-                <span>{isEn ? 'Core Team' : 'Đội ngũ tâm huyết'}</span>
-              </button>
+              {showTeam && (
+                <button
+                  onClick={() => setActiveTab('team')}
+                  className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
+                    activeTab === 'team'
+                      ? 'text-white font-semibold'
+                      : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
+                  }`}
+                >
+                  {activeTab === 'team' && (
+                    <motion.span
+                      layoutId="gioithieu-tab-pill"
+                      className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
+                      transition={SPRING_PILL_TRANSITION}
+                    />
+                  )}
+                  <span>{isEn ? 'Core Team' : 'Đội ngũ tâm huyết'}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -233,7 +237,7 @@ export default function GioiThieuPage() {
       )}
 
       {/* SECTION 2: ĐỘI NGŨ TÂM HUYẾT (TEAM MEMBERS) */}
-      {(activeTab === 'all' || activeTab === 'team') && teamMembers.length > 0 && (
+      {showTeam && (activeTab === 'all' || activeTab === 'team') && (
         <section className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
           <div className="space-y-3 mb-12 max-w-2xl">
             <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">

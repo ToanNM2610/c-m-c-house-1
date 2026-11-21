@@ -41,8 +41,37 @@ import {
 import { extractGoogleSiteVerificationToken } from '@/lib/integrations';
 import AdminAntiSpamManager from './AdminAntiSpamManager';
 
-export default function AdminInteractionsManager() {
-  const [tab, setTab] = useState<'contacts' | 'comments' | 'gmail' | 'antispam' | 'integrations'>('contacts');
+export interface AdminInteractionsManagerProps {
+  initialTab?: 'inbox' | 'reviews' | 'chat' | 'contacts' | 'comments' | 'gmail' | 'antispam' | 'integrations';
+  initialView?: 'inbox' | 'reviews' | 'chat' | 'contacts' | 'comments' | 'gmail' | 'antispam' | 'integrations';
+}
+
+export default function AdminInteractionsManager({
+  initialTab,
+  initialView,
+}: AdminInteractionsManagerProps = {}) {
+  const getStartingTab = (): 'contacts' | 'comments' | 'gmail' | 'antispam' | 'integrations' => {
+    const raw = initialTab || initialView;
+    if (raw === 'inbox' || raw === 'contacts') return 'contacts';
+    if (raw === 'reviews' || raw === 'comments') return 'comments';
+    if (raw === 'chat' || raw === 'integrations') return 'integrations';
+    if (raw === 'gmail') return 'gmail';
+    if (raw === 'antispam') return 'antispam';
+    return 'contacts';
+  };
+
+  const [tab, setTab] = useState<'contacts' | 'comments' | 'gmail' | 'antispam' | 'integrations'>(getStartingTab);
+
+  // Sync tab if initialTab or initialView changes from parent navigation
+  useEffect(() => {
+    const raw = initialTab || initialView;
+    if (!raw) return;
+    if (raw === 'inbox' || raw === 'contacts') setTab('contacts');
+    else if (raw === 'reviews' || raw === 'comments') setTab('comments');
+    else if (raw === 'chat' || raw === 'integrations') setTab('integrations');
+    else if (raw === 'gmail') setTab('gmail');
+    else if (raw === 'antispam') setTab('antispam');
+  }, [initialTab, initialView]);
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [comments, setComments] = useState<GuestComment[]>([]);
   const [settings, setSettings] = useState<Partial<CafeSettings>>({});

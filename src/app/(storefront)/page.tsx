@@ -144,7 +144,7 @@ export default function HomePage() {
   const activeEvents = React.useMemo(() => {
     return (data.events || []).filter((e) => e.active);
   }, [data.events]);
-  const shouldShowEvents = (s.showEventsSection !== false) && activeEvents.length > 0;
+  const shouldShowEvents = (c?.showFeaturedEvents !== false) && (s.showEventsSection !== false) && activeEvents.length > 0;
 
   // Published highlight stories toggle & count check
   const publishedStories = React.useMemo(() => {
@@ -413,79 +413,83 @@ export default function HomePage() {
       {/* ========================================================= */}
       {/* SECTION 3: SIGNATURE & BEST-SELLERS GRID                  */}
       {/* ========================================================= */}
-      <section className="py-16 sm:py-24 border-b border-forest-200/50 dark:border-forest-700/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div className="space-y-2">
-              <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-                <span className="w-6 h-px bg-accent-botanical" />
-                <span>{isEn ? 'SIGNATURE PICKS • WOOD-ROASTED & HERBAL' : 'SIGNATURE PICKS • RANG MỘC & THẢO MỘC'}</span>
+      {c?.showFeaturedMenu !== false && (
+        <section className="py-16 sm:py-24 border-b border-forest-200/50 dark:border-forest-700/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+              <div className="space-y-2">
+                <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+                  <span className="w-6 h-px bg-accent-botanical" />
+                  <span>{isEn ? (c?.menuEyebrowEn || 'SIGNATURE PICKS • WOOD-ROASTED & HERBAL') : (c?.menuEyebrow || 'SIGNATURE PICKS • RANG MỘC & THẢO MỘC')}</span>
+                </div>
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+                  {isEn ? (c?.menuTitleEn || 'Authentic Dak Nong Flavors') : (c?.menuTitle || 'Hương Vị Đặc Trưng Đăk Nông')}
+                </h2>
+                <p className="text-xs sm:text-sm text-ink-muted">
+                  {isEn ? (c?.menuSubtitleEn || 'Top favorite handcrafted drinks recommended by guests at Cẩm Cù House.') : (c?.menuSubtitle || 'Những món đồ uống được thực khách yêu thích và đề xuất nhiều nhất tại Cẩm Cù House.')}
+                </p>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-                {isEn ? 'Authentic Dak Nong Flavors' : 'Hương Vị Đặc Trưng Đăk Nông'}
-              </h2>
-              <p className="text-xs sm:text-sm text-ink-muted">
-                {isEn ? 'Top favorite handcrafted drinks recommended by guests at Cẩm Cù House.' : 'Những món đồ uống được thực khách yêu thích và đề xuất nhiều nhất tại Cẩm Cù House.'}
-              </p>
+
+              <Link
+                href="/thuc-don"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-100 dark:bg-forest-900 text-accent-botanical text-xs font-mono font-medium hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors self-start md:self-auto"
+              >
+                <span>{isEn ? 'View all 67 items' : 'Xem toàn bộ 67 món'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
-            <Link
-              href="/thuc-don"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-100 dark:bg-forest-900 text-accent-botanical text-xs font-mono font-medium hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors self-start md:self-auto"
-            >
-              <span>{isEn ? 'View all 67 items' : 'Xem toàn bộ 67 món'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {/* Grid of Highlighted Items with 120Hz 3D Scroll Elevation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {highlightedItems.map((item, idx) => (
+                <ScrollLayoutCard3D key={item.id} delay={(idx % 3) * 0.06}>
+                  <BestSellerCard item={item} isEn={isEn} />
+                </ScrollLayoutCard3D>
+              ))}
+            </div>
           </div>
-
-          {/* Grid of Highlighted Items with 120Hz 3D Scroll Elevation */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {highlightedItems.map((item, idx) => (
-              <ScrollLayoutCard3D key={item.id} delay={(idx % 3) * 0.06}>
-                <BestSellerCard item={item} isEn={isEn} />
-              </ScrollLayoutCard3D>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ========================================================= */}
       {/* SECTION 4: COMMUNITY REVIEWS                              */}
       {/* ========================================================= */}
-      <section className="py-16 sm:py-20 border-b border-forest-200/50 dark:border-forest-700/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-            <div className="space-y-2">
-              <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-                <Heart className="w-3.5 h-3.5" />
-                <span>
-                  {approvedCount > 0
-                    ? (isEn
-                        ? `VERIFIED GUEST REVIEWS • ${recommendedPercent}% RECOMMENDED`
-                        : `CẢM NHẬN THỰC KHÁCH • ${recommendedPercent}% ĐỀ XUẤT`)
-                    : (isEn ? 'VERIFIED GUEST REVIEWS' : 'CẢM NHẬN THỰC KHÁCH')}
-                </span>
+      {c?.showFeaturedReviews !== false && (
+        <section className="py-16 sm:py-20 border-b border-forest-200/50 dark:border-forest-700/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+              <div className="space-y-2">
+                <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+                  <Heart className="w-3.5 h-3.5" />
+                  <span>
+                    {approvedCount > 0
+                      ? (isEn
+                          ? `VERIFIED GUEST REVIEWS • ${recommendedPercent}% RECOMMENDED`
+                          : `CẢM NHẬN THỰC KHÁCH • ${recommendedPercent}% ĐỀ XUẤT`)
+                      : (isEn ? (c?.reviewsEyebrowEn || 'VERIFIED GUEST REVIEWS') : (c?.reviewsEyebrow || 'CẢM NHẬN THỰC KHÁCH'))}
+                  </span>
+                </div>
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+                  {isEn ? (c?.reviewsTitleEn || 'Voices From Beside The Stream') : (c?.reviewsTitle || 'Những Lời Chia Sẻ Ấm Áp Bên Suối')}
+                </h2>
+                <p className="text-xs sm:text-sm text-ink-muted">
+                  {isEn ? (c?.reviewsSubtitleEn || 'Verified guest reviews from travelers and locals visiting Cẩm Cù House.') : (c?.reviewsSubtitle || 'Đánh giá chân thực từ thực khách địa phương và du khách gần xa khi ghé thăm quán.')}
+                </p>
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-                {isEn ? 'Voices From Beside The Stream' : 'Những Lời Chia Sẻ Ấm Áp Bên Suối'}
-              </h2>
-              <p className="text-xs sm:text-sm text-ink-muted">
-                {isEn ? 'Verified guest reviews from travelers and locals visiting Cẩm Cù House.' : 'Đánh giá chân thực từ thực khách địa phương và du khách gần xa khi ghé thăm quán.'}
-              </p>
+
+              <Link
+                href="/khach-hang"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-100 dark:bg-forest-900 text-accent-botanical text-xs font-mono font-medium hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors self-start md:self-auto"
+              >
+                <span>{isEn ? 'View all reviews & stories' : 'Xem toàn bộ cảm nhận & dấu ấn'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
-            <Link
-              href="/khach-hang"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-forest-100 dark:bg-forest-900 text-accent-botanical text-xs font-mono font-medium hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors self-start md:self-auto"
-            >
-              <span>{isEn ? 'View all reviews & stories' : 'Xem toàn bộ cảm nhận & dấu ấn'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <ReviewShowcase3 comments={comments} settings={s} />
           </div>
-
-          <ReviewShowcase3 comments={comments} settings={s} />
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ========================================================= */}
       {/* SECTION: HIGHLIGHT STORIES (Auto-hidden if toggle is OFF or 0 stories) */}
@@ -578,13 +582,13 @@ export default function HomePage() {
             <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
               <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
                 <Music className="w-3.5 h-3.5 text-accent-botanical" />
-                <span>{isEn ? 'STREAMSIDE EVENTS & LIFE' : 'SỰ KIỆN & NHỊP SỐNG BÊN SUỐI'}</span>
+                <span>{isEn ? (c?.newsEyebrowEn || 'STREAMSIDE EVENTS & LIFE') : (c?.newsEyebrow || 'SỰ KIỆN & NHỊP SỐNG BÊN SUỐI')}</span>
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-                {isEn ? 'Acoustic Live Music & Happenings' : 'Đêm Nhạc Acoustic & Hoạt Động'}
+                {isEn ? (c?.newsTitleEn || 'Acoustic Live Music & Happenings') : (c?.newsTitle || 'Đêm Nhạc Acoustic & Hoạt Động')}
               </h2>
               <p className="text-xs sm:text-sm text-ink-muted">
-                {isEn ? 'Stay updated with weekend musical performances and warm happenings by the water.' : 'Cập nhật lịch biểu diễn âm nhạc cuối tuần và những chương trình ấm cúng tại quán.'}
+                {isEn ? (c?.newsSubtitleEn || 'Stay updated with weekend musical performances and warm happenings by the water.') : (c?.newsSubtitle || 'Cập nhật lịch biểu diễn âm nhạc cuối tuần và những chương trình ấm cúng tại quán.')}
               </p>
             </div>
 

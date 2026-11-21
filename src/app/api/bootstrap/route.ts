@@ -105,6 +105,77 @@ export async function GET() {
           visionTitleEn: siteContent.visionTitleEn,
           visionDesc: siteContent.visionDesc,
           visionDescEn: siteContent.visionDescEn,
+
+          // Page 1 Home section toggles
+          showFeaturedMenu: siteContent.showFeaturedMenu ?? true,
+          showFeaturedSpace: siteContent.showFeaturedSpace ?? true,
+          showFeaturedReviews: siteContent.showFeaturedReviews ?? true,
+          showFeaturedEvents: siteContent.showFeaturedEvents ?? true,
+
+          // Page 2 Gioi thieu section toggles
+          showStoryMilestones: siteContent.showStoryMilestones ?? true,
+          showTeamMembers: siteContent.showTeamMembers ?? true,
+
+          // Page 3: Khong gian (/khong-gian)
+          spaceEyebrow: siteContent.spaceEyebrow,
+          spaceEyebrowEn: siteContent.spaceEyebrowEn,
+          spaceTitle: siteContent.spaceTitle,
+          spaceTitleEn: siteContent.spaceTitleEn,
+          spaceSubtitle: siteContent.spaceSubtitle,
+          spaceSubtitleEn: siteContent.spaceSubtitleEn,
+          spaceIntro: siteContent.spaceIntro,
+          spaceIntroEn: siteContent.spaceIntroEn,
+          spaceHeroBanner: siteContent.spaceHeroBanner || undefined,
+
+          // Page 4: Thuc don (/thuc-don)
+          menuEyebrow: siteContent.menuEyebrow,
+          menuEyebrowEn: siteContent.menuEyebrowEn,
+          menuTitle: siteContent.menuTitle,
+          menuTitleEn: siteContent.menuTitleEn,
+          menuSubtitle: siteContent.menuSubtitle,
+          menuSubtitleEn: siteContent.menuSubtitleEn,
+          menuIntro: siteContent.menuIntro,
+          menuIntroEn: siteContent.menuIntroEn,
+          menuNotice: siteContent.menuNotice,
+          menuNoticeEn: siteContent.menuNoticeEn,
+
+          // Page 5: Khach hang (/khach-hang)
+          reviewsEyebrow: siteContent.reviewsEyebrow,
+          reviewsEyebrowEn: siteContent.reviewsEyebrowEn,
+          reviewsTitle: siteContent.reviewsTitle,
+          reviewsTitleEn: siteContent.reviewsTitleEn,
+          reviewsSubtitle: siteContent.reviewsSubtitle,
+          reviewsSubtitleEn: siteContent.reviewsSubtitleEn,
+          reviewsIntro: siteContent.reviewsIntro,
+          reviewsIntroEn: siteContent.reviewsIntroEn,
+          reviewsPrompt: siteContent.reviewsPrompt,
+          reviewsPromptEn: siteContent.reviewsPromptEn,
+
+          // Page 6: Tin tuc & FAQ (/tin-tuc)
+          newsEyebrow: siteContent.newsEyebrow,
+          newsEyebrowEn: siteContent.newsEyebrowEn,
+          newsTitle: siteContent.newsTitle,
+          newsTitleEn: siteContent.newsTitleEn,
+          newsSubtitle: siteContent.newsSubtitle,
+          newsSubtitleEn: siteContent.newsSubtitleEn,
+          newsIntro: siteContent.newsIntro,
+          newsIntroEn: siteContent.newsIntroEn,
+          showNewsEvents: siteContent.showNewsEvents ?? true,
+          showNewsFaq: siteContent.showNewsFaq ?? true,
+
+          // Page 7: Lien he (/lien-he)
+          contactEyebrow: siteContent.contactEyebrow,
+          contactEyebrowEn: siteContent.contactEyebrowEn,
+          contactTitle: siteContent.contactTitle,
+          contactTitleEn: siteContent.contactTitleEn,
+          contactSubtitle: siteContent.contactSubtitle,
+          contactSubtitleEn: siteContent.contactSubtitleEn,
+          contactIntro: siteContent.contactIntro,
+          contactIntroEn: siteContent.contactIntroEn,
+          contactBbqCallout: siteContent.contactBbqCallout,
+          contactBbqCalloutEn: siteContent.contactBbqCalloutEn,
+          contactDirectionsNote: siteContent.contactDirectionsNote,
+          contactDirectionsNoteEn: siteContent.contactDirectionsNoteEn,
         }
       : initialSiteContent;
 

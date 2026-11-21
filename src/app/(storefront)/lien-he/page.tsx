@@ -29,11 +29,19 @@ import HumanChallengeBox, {
 } from '@/components/security/HumanChallengeBox';
 
 export default function LienHePage() {
-  const { data, language } = useApp();
+  const { data, content, language } = useApp();
+  const c = content || data.content;
   const s = data.settings;
   const isEn = language === 'en';
 
   const address = isEn && s.addressEn ? s.addressEn : s.address;
+
+  const contactEyebrow = isEn && c?.contactEyebrowEn ? c.contactEyebrowEn : (c?.contactEyebrow || (isEn ? 'MAP & BOTANICAL SANCTUARY CONTACT' : 'BẢN ĐỒ & LIÊN HỆ QUÁN'));
+  const contactTitle = isEn && c?.contactTitleEn ? c.contactTitleEn : (c?.contactTitle || (isEn ? 'Contact & Directions' : 'Liên Hệ & Chỉ Đường'));
+  const contactSubtitle = isEn && c?.contactSubtitleEn ? c.contactSubtitleEn : (c?.contactSubtitle || (isEn ? 'Connect with Cẩm Cù House' : 'Kết Nối Cùng Cẩm Cù House'));
+  const contactIntro = isEn && c?.contactIntroEn ? c.contactIntroEn : (c?.contactIntro || (isEn ? 'Connect with Cẩm Cù House in Dong Gia Nghia, Lam Dong — Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong.' : 'Kết nối cùng Cẩm Cù House tại Đông Gia Nghĩa, Lâm Đồng — Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng.'));
+  const contactBbqCallout = isEn && c?.contactBbqCalloutEn ? c.contactBbqCalloutEn : (c?.contactBbqCallout || (isEn ? 'BBQ sets & streamside dining available upon direct hotline reservation.' : 'Quán phục vụ tiệc nướng BBQ & bàn ăn cạnh suối khi liên hệ trước qua hotline.'));
+  const contactDirectionsNote = isEn && c?.contactDirectionsNoteEn ? c.contactDirectionsNoteEn : (c?.contactDirectionsNote || (isEn ? 'Follow Alley 437 Hung Vuong down the tree-shaded slope; motorbikes and cars can enter straight to the gate with spacious parking.' : 'Men theo hẻm 437 Hùng Vương (con dốc cây xanh mát), xe máy và ô tô vào tận cổng quán có bãi đậu xe rộng rãi.'));
 
   // Contact form state
   const [fullName, setFullName] = useState('');
@@ -232,18 +240,16 @@ export default function LienHePage() {
         <div className="space-y-3 max-w-3xl">
           <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
             <span className="w-8 h-px bg-accent-botanical" />
-            <span>{isEn ? 'MAP & BOTANICAL SANCTUARY CONTACT' : 'BẢN ĐỒ & LIÊN HỆ QUÁN'}</span>
+            <span>{contactEyebrow}</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-            {isEn ? 'Contact & Directions' : 'Liên Hệ & Chỉ Đường'} <br />
+            {contactTitle} <br />
             <span className="italic font-normal text-accent-botanical">
-              {isEn ? 'Connect with Cẩm Cù House' : 'Kết Nối Cùng Cẩm Cù House'}
+              {contactSubtitle}
             </span>
           </h1>
           <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            {isEn
-              ? 'Connect with Cẩm Cù House in Dong Gia Nghia, Lam Dong — Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong.'
-              : 'Kết nối cùng Cẩm Cù House tại Đông Gia Nghĩa, Lâm Đồng — Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng.'}
+            {contactIntro}
           </p>
         </div>
       </section>
@@ -279,9 +285,7 @@ export default function LienHePage() {
                   {address}
                 </p>
                 <p className="text-xs text-ink-muted leading-relaxed">
-                  {isEn
-                    ? 'Follow Alley 437 Hung Vuong down the tree-shaded slope; motorbikes and cars can enter straight to the gate with spacious parking.'
-                    : 'Men theo hẻm 437 Hùng Vương (con dốc cây xanh mát), xe máy và ô tô vào tận cổng quán có bãi đậu xe rộng rãi.'}
+                  {contactDirectionsNote}
                 </p>
               </div>
             </ScrollLayoutCard3D>
@@ -614,6 +618,13 @@ export default function LienHePage() {
                         </select>
                       </div>
                     </div>
+
+                    {contactBbqCallout && (
+                      <div className="p-3 bg-amber-50/80 dark:bg-amber-950/40 rounded-xl border border-amber-200/80 dark:border-amber-800/60 text-xs font-mono text-amber-900 dark:text-amber-200 flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-accent-earth flex-shrink-0" />
+                        <span>{contactBbqCallout}</span>
+                      </div>
+                    )}
 
                     <div>
                       <div className="flex items-center justify-between mb-1">

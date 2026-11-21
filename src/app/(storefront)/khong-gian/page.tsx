@@ -106,7 +106,8 @@ function PlateCard({
 }
 
 export default function KhongGianPage() {
-  const { data, openLightbox, language } = useApp();
+  const { data, content, openLightbox, language } = useApp();
+  const c = content || data.content;
   const isEn = language === 'en';
 
   const [selectedChapter, setSelectedChapter] = useState<number | 'all'>('all');
@@ -114,6 +115,11 @@ export default function KhongGianPage() {
   const totalCount = data.spatialPlates.length || 31;
   const maxFig = `FIG. ${String(totalCount).padStart(2, '0')}`;
   const ch4Range = `FIG. 24 – ${String(totalCount).padStart(2, '0')}`;
+
+  const spaceEyebrow = isEn && c?.spaceEyebrowEn ? c.spaceEyebrowEn : (c?.spaceEyebrow || (isEn ? `SPATIAL GALLERY • FIG. 01 TO ${maxFig}` : `BỘ SƯU TẬP KHÔNG GIAN • FIG. 01 ĐẾN ${maxFig}`));
+  const spaceTitle = isEn && c?.spaceTitleEn ? c.spaceTitleEn : (c?.spaceTitle || (isEn ? `${totalCount} Streamside Spatial Plates` : `${totalCount} Bản Khắc Không Gian Bên Bờ Suối Mát`));
+  const spaceSubtitle = isEn && c?.spaceSubtitleEn ? c.spaceSubtitleEn : (c?.spaceSubtitle || (isEn ? '“Where each rustic frame captures the quiet poetry of flowing water and wax plant canopies”' : '“Nơi mỗi góc quán mộc mạc ghi lại vẻ đẹp tĩnh lặng của làn nước suối và vòm lá Cẩm Cù”'));
+  const spaceIntro = isEn && c?.spaceIntroEn ? c.spaceIntroEn : (c?.spaceIntro || (isEn ? `Explore all ${totalCount} curated visual plates of Cẩm Cù House organized across 4 chapters. Click any frame to inspect details, botanical coordinates, and high-resolution imagery in full-screen lightbox.` : `Khám phá trọn vẹn ${totalCount} bản khắc thị giác của Cẩm Cù House qua 4 chương không gian. Nhấn vào bất kỳ tấm hình nào để xem chi tiết tọa độ, câu chuyện thực vật và chế độ phóng to toàn màn hình.`));
 
   const chapters = isEn
     ? [
@@ -182,34 +188,32 @@ export default function KhongGianPage() {
           <div className="max-w-3xl space-y-4">
             <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
               <span className="w-8 h-px bg-accent-botanical" />
-              <span>{isEn ? `SPATIAL GALLERY • FIG. 01 TO ${maxFig}` : `BỘ SƯU TẬP KHÔNG GIAN • FIG. 01 ĐẾN ${maxFig}`}</span>
+              <span>{spaceEyebrow}</span>
             </div>
 
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-              {isEn ? (
-                <>
-                  {totalCount} Streamside <br />
-                  <span className="italic font-normal text-accent-botanical">Spatial Plates</span>
-                </>
-              ) : (
-                <>
-                  {totalCount} Bản Khắc Không Gian <br />
-                  <span className="italic font-normal text-accent-botanical">Bên Bờ Suối Mát</span>
-                </>
-              )}
+              {spaceTitle}
             </h1>
 
             <p className="font-serif text-lg sm:text-xl text-accent-earth italic">
-              {isEn
-                ? '“Where each rustic frame captures the quiet poetry of flowing water and wax plant canopies”'
-                : '“Nơi mỗi góc quán mộc mạc ghi lại vẻ đẹp tĩnh lặng của làn nước suối và vòm lá Cẩm Cù”'}
+              {spaceSubtitle}
             </p>
 
             <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-              {isEn
-                ? `Explore all ${totalCount} curated visual plates of Cẩm Cù House organized across 4 chapters. Click any frame to inspect details, botanical coordinates, and high-resolution imagery in full-screen lightbox.`
-                : `Khám phá trọn vẹn ${totalCount} bản khắc thị giác của Cẩm Cù House qua 4 chương không gian. Nhấn vào bất kỳ tấm hình nào để xem chi tiết tọa độ, câu chuyện thực vật và chế độ phóng to toàn màn hình.`}
+              {spaceIntro}
             </p>
+
+            {c?.spaceHeroBanner && (
+              <div className="pt-4">
+                <div className="w-full aspect-[21/9] sm:aspect-[24/9] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100 dark:bg-forest-900">
+                  <img
+                    src={c.spaceHeroBanner}
+                    alt={spaceTitle}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

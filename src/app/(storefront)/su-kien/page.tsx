@@ -25,11 +25,18 @@ import { ScrollLayoutCard3D } from '@/components/motion/ScrollMotion120';
 import { InteractiveTiltCard } from '@/components/motion/VividMotion';
 
 export default function SuKienPage() {
-  const { data, language } = useApp();
+  const { data, content, language } = useApp();
+  const c = content || data.content;
   const isEn = language === 'en';
   const activeEvents = (data.events || []).filter((e) => e.active);
-  const shouldShowEvents = (data.settings.showEventsSection !== false) && activeEvents.length > 0;
+  const shouldShowEvents = (c?.showNewsEvents !== false) && (data.settings.showEventsSection !== false) && activeEvents.length > 0;
+  const shouldShowFaq = c?.showNewsFaq !== false;
   const faqs: FaqItem[] = data.faqs || [];
+
+  const newsEyebrow = isEn && c?.newsEyebrowEn ? c.newsEyebrowEn : (c?.newsEyebrow || (isEn ? 'LATEST PROGRAMS, BLOG & FAQS' : 'CHƯƠNG TRÌNH, TIN TỨC & GIẢI ĐÁP THẮC MẮC'));
+  const newsTitle = isEn && c?.newsTitleEn ? c.newsTitleEn : (c?.newsTitle || (isEn ? 'Happenings & News' : 'Nhịp Sống & Sự Kiện'));
+  const newsSubtitle = isEn && c?.newsSubtitleEn ? c.newsSubtitleEn : (c?.newsSubtitle || (isEn ? 'Beside Natural Mountain Stream' : 'Bên Bờ Suối Tự Nhiên'));
+  const newsIntro = isEn && c?.newsIntroEn ? c.newsIntroEn : (c?.newsIntro || (isEn ? 'Direct live updates from sanctuary management — Weekend acoustic live nights by the stream, seasonal agricultural harvests, and comprehensive guest answers.' : 'Cập nhật trực tiếp từ hệ thống quản lý quán — Đêm nhạc Acoustic cuối tuần bên suối, các chương trình nông sản thảo mộc theo mùa và giải đáp chi tiết mọi thắc mắc.'));
 
   const [activeFaqCategory, setActiveFaqCategory] = useState<string>('all');
   const [openFaqId, setOpenFaqId] = useState<string | null>('faq-1');
@@ -74,18 +81,16 @@ export default function SuKienPage() {
         <div className="space-y-3 max-w-3xl">
           <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
             <span className="w-8 h-px bg-accent-botanical" />
-            <span>{isEn ? 'LATEST PROGRAMS, BLOG & FAQS' : 'CHƯƠNG TRÌNH, TIN TỨC & GIẢI ĐÁP THẮC MẮC'}</span>
+            <span>{newsEyebrow}</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-            {isEn ? 'Happenings & News' : 'Nhịp Sống & Sự Kiện'} <br />
+            {newsTitle} <br />
             <span className="italic font-normal text-accent-botanical">
-              {isEn ? 'Beside Natural Mountain Stream' : 'Bên Bờ Suối Tự Nhiên'}
+              {newsSubtitle}
             </span>
           </h1>
           <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            {isEn
-              ? 'Direct live updates from sanctuary management — Weekend acoustic live nights by the stream, seasonal agricultural harvests, and comprehensive guest answers.'
-              : 'Cập nhật trực tiếp từ hệ thống quản lý quán — Đêm nhạc Acoustic cuối tuần bên suối, các chương trình nông sản thảo mộc theo mùa và giải đáp chi tiết mọi thắc mắc.'}
+            {newsIntro}
           </p>
         </div>
       </section>
@@ -206,7 +211,8 @@ export default function SuKienPage() {
       )}
 
       {/* SECTION 2: INTERACTIVE FAQ ACCORDION */}
-      <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-5xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+      {shouldShowFaq && (
+        <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-5xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
         <div className="space-y-4 mb-10 text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-accent-botanical text-xs font-mono font-bold">
             <HelpCircle className="w-3.5 h-3.5" />
@@ -283,6 +289,7 @@ export default function SuKienPage() {
           })}
         </div>
       </section>
+      )}
 
       {/* Bottom Editorial Callout Section */}
       <section className="py-14 sm:py-18 px-4 sm:px-8 max-w-7xl mx-auto">

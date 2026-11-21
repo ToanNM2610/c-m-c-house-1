@@ -28,9 +28,16 @@ import HumanChallengeBox, {
 } from '@/components/security/HumanChallengeBox';
 
 export default function KhachHangPage() {
-  const { data, language } = useApp();
+  const { data, content: ctxContent, language } = useApp();
+  const c = ctxContent || data.content;
   const s = data.settings;
   const isEn = language === 'en';
+
+  const reviewsEyebrow = isEn && c?.reviewsEyebrowEn ? c.reviewsEyebrowEn : (c?.reviewsEyebrow || (isEn ? 'COMMUNITY & GUEST EXPERIENCES' : 'DẤU ẤN NHỊP SỐNG & CẢM NHẬN THỰC KHÁCH'));
+  const reviewsTitle = isEn && c?.reviewsTitleEn ? c.reviewsTitleEn : (c?.reviewsTitle || (isEn ? 'Milestones & Memories' : 'Dấu Ấn Bên Suối'));
+  const reviewsSubtitle = isEn && c?.reviewsSubtitleEn ? c.reviewsSubtitleEn : (c?.reviewsSubtitle || (isEn ? 'Heartfelt Customer Voices' : '& Cảm Nhận Thực Khách'));
+  const reviewsIntro = isEn && c?.reviewsIntroEn ? c.reviewsIntroEn : (c?.reviewsIntro || (isEn ? 'Cherished moments beside the cool stream in Gia Nghia, seasonal local harvests, and verified experiences shared by our visitors.' : 'Những khoảnh khắc đáng nhớ bên bờ suối mát, câu chuyện mùa vụ nông sản Đăk Nông và những cảm nhận chân thực nhất từ thực khách đã ghé thăm Cẩm Cù House.'));
+  const reviewsPrompt = isEn && c?.reviewsPromptEn ? c.reviewsPromptEn : (c?.reviewsPrompt || (isEn ? 'Share Your Streamside Experience' : 'Gửi Cảm Nhận Của Bạn Về Quán'));
 
   const [comments, setComments] = useState<GuestComment[]>([]);
   const [loadingComments, setLoadingComments] = useState(true);
@@ -249,20 +256,18 @@ export default function KhachHangPage() {
         <div className="max-w-3xl space-y-4">
           <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
             <span className="w-8 h-px bg-accent-botanical" />
-            <span>{isEn ? 'COMMUNITY & GUEST EXPERIENCES' : 'DẤU ẤN NHỊP SỐNG & CẢM NHẬN THỰC KHÁCH'}</span>
+            <span>{reviewsEyebrow}</span>
           </div>
 
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-            {isEn ? 'Milestones & Memories' : 'Dấu Ấn Bên Suối'} <br />
+            {reviewsTitle} <br />
             <span className="italic font-normal text-accent-botanical">
-              {isEn ? 'Heartfelt Customer Voices' : '& Cảm Nhận Thực Khách'}
+              {reviewsSubtitle}
             </span>
           </h1>
 
           <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            {isEn
-              ? 'Cherished moments beside the cool stream in Gia Nghia, seasonal local harvests, and verified experiences shared by our visitors.'
-              : 'Những khoảnh khắc đáng nhớ bên bờ suối mát, câu chuyện mùa vụ nông sản Đăk Nông và những cảm nhận chân thực nhất từ thực khách đã ghé thăm Cẩm Cù House.'}
+            {reviewsIntro}
           </p>
 
           {/* Trust Banner Badge: Dynamically calculated from real approved reviews (Hidden if 0 reviews) */}
@@ -393,7 +398,7 @@ export default function KhachHangPage() {
               <span>{isEn ? 'GUEST FEEDBACK' : 'Ý KIẾN ĐÓNG GÓP'}</span>
             </div>
             <h3 className="font-serif text-3xl font-bold text-ink-primary">
-              {isEn ? 'Share Your Streamside Experience' : 'Gửi Cảm Nhận Của Bạn Về Quán'}
+              {reviewsPrompt}
             </h3>
             <p className="text-xs sm:text-sm text-ink-muted">
               {isEn

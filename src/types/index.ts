@@ -71,10 +71,79 @@ export interface SiteContent {
   brandStoryPhilosophy: string;
   brandStoryPhilosophyEn?: string;
   brandStoryImageUrl?: string;
+  showStoryMilestones?: boolean;
+  showTeamMembers?: boolean;
   visionTitle?: string;
   visionTitleEn?: string;
   visionDesc?: string;
   visionDescEn?: string;
+
+  // Page 1 Home Section Toggles
+  showFeaturedMenu?: boolean;
+  showFeaturedSpace?: boolean;
+  showFeaturedReviews?: boolean;
+  showFeaturedEvents?: boolean;
+
+  // Page 3: Không gian (/khong-gian)
+  spaceEyebrow?: string;
+  spaceEyebrowEn?: string;
+  spaceTitle?: string;
+  spaceTitleEn?: string;
+  spaceSubtitle?: string;
+  spaceSubtitleEn?: string;
+  spaceIntro?: string;
+  spaceIntroEn?: string;
+  spaceHeroBanner?: string;
+
+  // Page 4: Thực đơn (/thuc-don)
+  menuEyebrow?: string;
+  menuEyebrowEn?: string;
+  menuTitle?: string;
+  menuTitleEn?: string;
+  menuSubtitle?: string;
+  menuSubtitleEn?: string;
+  menuIntro?: string;
+  menuIntroEn?: string;
+  menuNotice?: string;
+  menuNoticeEn?: string;
+
+  // Page 5: Khách hàng (/khach-hang)
+  reviewsEyebrow?: string;
+  reviewsEyebrowEn?: string;
+  reviewsTitle?: string;
+  reviewsTitleEn?: string;
+  reviewsSubtitle?: string;
+  reviewsSubtitleEn?: string;
+  reviewsIntro?: string;
+  reviewsIntroEn?: string;
+  reviewsPrompt?: string;
+  reviewsPromptEn?: string;
+
+  // Page 6: Tin tức & FAQ (/tin-tuc)
+  newsEyebrow?: string;
+  newsEyebrowEn?: string;
+  newsTitle?: string;
+  newsTitleEn?: string;
+  newsSubtitle?: string;
+  newsSubtitleEn?: string;
+  newsIntro?: string;
+  newsIntroEn?: string;
+  showNewsEvents?: boolean;
+  showNewsFaq?: boolean;
+
+  // Page 7: Liên hệ (/lien-he)
+  contactEyebrow?: string;
+  contactEyebrowEn?: string;
+  contactTitle?: string;
+  contactTitleEn?: string;
+  contactSubtitle?: string;
+  contactSubtitleEn?: string;
+  contactIntro?: string;
+  contactIntroEn?: string;
+  contactBbqCallout?: string;
+  contactBbqCalloutEn?: string;
+  contactDirectionsNote?: string;
+  contactDirectionsNoteEn?: string;
 }
 
 export interface SpatialPlate {
