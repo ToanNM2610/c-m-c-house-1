@@ -179,19 +179,35 @@ export default function FooterSection() {
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div className="flex flex-wrap gap-2">
-                  <a
-                    href="tel:0382851688"
-                    className="font-mono text-emerald-300 hover:text-white underline font-semibold"
-                  >
-                    0382 851 688
-                  </a>
-                  <span>—</span>
-                  <a
-                    href="tel:0774659000"
-                    className="font-mono text-emerald-300 hover:text-white underline font-semibold"
-                  >
-                    0774 659 000
-                  </a>
+                  {s.hotlines && s.hotlines.length > 0 ? (
+                    s.hotlines.map((h: any, idx: number) => (
+                      <React.Fragment key={h.number || idx}>
+                        {idx > 0 && <span>—</span>}
+                        <a
+                          href={`tel:${h.rawNumber || h.number?.replace(/\s+/g, '') || ''}`}
+                          className="font-mono text-emerald-300 hover:text-white underline font-semibold"
+                        >
+                          {h.number}
+                        </a>
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <>
+                      <a
+                        href="tel:0382851688"
+                        className="font-mono text-emerald-300 hover:text-white underline font-semibold"
+                      >
+                        0382 851 688
+                      </a>
+                      <span>—</span>
+                      <a
+                        href="tel:0774659000"
+                        className="font-mono text-emerald-300 hover:text-white underline font-semibold"
+                      >
+                        0774 659 000
+                      </a>
+                    </>
+                  )}
                 </div>
               </div>
 

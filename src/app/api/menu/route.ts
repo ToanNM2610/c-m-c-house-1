@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
+import { logAction } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -116,6 +117,14 @@ export async function PATCH(req: NextRequest) {
 
     revalidatePath('/', 'layout');
 
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'MENU_UPDATE',
+      actor: user.username,
+      details: `Updated menu item: ${id}`,
+    });
+
     return apiSuccess({
       ...updated,
       variants: updated.variants ? JSON.parse(updated.variants) : undefined,
@@ -176,6 +185,14 @@ export async function POST(req: NextRequest) {
 
     revalidatePath('/', 'layout');
 
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'MENU_CREATE',
+      actor: user.username,
+      details: `Created menu item: ${id} (${vietnameseTitle})`,
+    });
+
     return apiSuccess(created, { message: 'Thêm món mới thành công' }, 201);
   } catch (error: any) {
     console.error('Error adding menu item:', error);
@@ -213,6 +230,14 @@ export async function DELETE(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
+
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'MENU_DELETE',
+      actor: user.username,
+      details: `Deleted menu item: ${id} (${existing.vietnameseTitle})`,
+    });
     return apiSuccess({ deletedId: id, name: existing.vietnameseTitle }, 'Đã xóa món khỏi thực đơn thành công');
   } catch (error: any) {
     console.error('Error deleting menu item:', error);

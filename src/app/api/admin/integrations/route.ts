@@ -135,9 +135,9 @@ export async function POST(request: NextRequest) {
 
     // Key-specific validation
     if (key === "ga4_measurement_id" && value.trim()) {
-      if (!/^G-[A-Z0-9]+$/i.test(value.trim())) {
+      if (!/^(G-[A-Z0-9]+|GTM-[A-Z0-9]+)$/i.test(value.trim())) {
         return NextResponse.json(
-          { success: false, error: "GA4 Measurement ID phải có dạng G-XXXXXXXXXX (ví dụ G-ABC1234567)" },
+          { success: false, error: "Google Tag / GA4 ID phải có dạng G-XXXXXXXXXX hoặc GTM-XXXXXXXX (ví dụ: GTM-M78P32L4)" },
           { status: 400 }
         );
       }

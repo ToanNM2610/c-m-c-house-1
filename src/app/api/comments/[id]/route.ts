@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionUser } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
+import { logAction } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,6 +40,17 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       },
     });
 
+    revalidatePath('/', 'layout');
+    revalidatePath('/khach-hang');
+
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'COMMENT_UPDATE',
+      actor: session.username,
+      details: `Updated comment ${id} status/featured`,
+    });
+
     return NextResponse.json({ success: true, comment: updated });
   } catch (error: any) {
     console.error('PATCH /api/comments/[id] error:', error);
@@ -69,6 +82,17 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     await prisma.guestComment.delete({ where: { id } });
+
+    revalidatePath('/', 'layout');
+    revalidatePath('/khach-hang');
+
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'COMMENT_DELETE',
+      actor: session.username,
+      details: `Deleted comment ${id} from ${existing.authorName}`,
+    });
 
     return NextResponse.json({ success: true, message: 'Đã xóa đánh giá thành công' });
   } catch (error: any) {

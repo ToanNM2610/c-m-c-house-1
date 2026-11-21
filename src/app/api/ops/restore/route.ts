@@ -156,6 +156,60 @@ export async function POST(req: NextRequest) {
           });
         }
       }
+
+      // 12. Gmail Config
+      if (data.gmailConfig) {
+        const { id, ...gmailData } = data.gmailConfig;
+        const existingGmail = await tx.gmailConfig.findFirst();
+        if (existingGmail) {
+          await tx.gmailConfig.update({
+            where: { id: existingGmail.id },
+            data: gmailData,
+          });
+        } else {
+          await tx.gmailConfig.create({
+            data: { id: id || 'default', ...gmailData },
+          });
+        }
+      }
+
+      // 13. Gmail Recipients
+      if (Array.isArray(data.gmailRecipients)) {
+        for (const rec of data.gmailRecipients) {
+          await tx.gmailRecipient.upsert({
+            where: { email: rec.email },
+            update: rec,
+            create: rec,
+          });
+        }
+      }
+
+      // 14. Blocked IPs
+      if (Array.isArray(data.blockedIps)) {
+        for (const b of data.blockedIps) {
+          await tx.blockedIp.upsert({
+            where: { ipAddress: b.ipAddress },
+            update: b,
+            create: b,
+          });
+        }
+      }
+
+      // 15. Anti Spam Config
+      if (data.antiSpamConfig) {
+        const { id, ...spamData } = data.antiSpamConfig;
+        const existingSpam = await tx.antiSpamConfig.findFirst();
+        if (existingSpam) {
+          await tx.antiSpamConfig.update({
+            where: { id: existingSpam.id },
+            data: spamData,
+          });
+        } else {
+          await tx.antiSpamConfig.create({
+            data: { id: id || 'default', ...spamData },
+          });
+        }
+      }
     });
 
     // Invalidate caches

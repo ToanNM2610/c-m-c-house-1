@@ -5,29 +5,35 @@ import { AppProvider } from '@/context/AppContext';
 import { PreOrderProvider } from '@/context/PreOrderContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
 import { getPublicIntegrations } from '@/lib/integrations';
+import { getPageSeoMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://camcuhouse.online'),
-  title: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
-  description: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Không gian suối mát rượi, 18 bàn view suối, cà phê muối Đăk Nông và thảo mộc xanh.',
-  keywords: [
-    'quán cà phê đẹp Đông Gia Nghĩa Lâm Đồng',
-    'cà phê sinh thái bên suối Lâm Đồng',
-    'quán ăn vặt gần đây',
-    'Cẩm Cù House',
-    'cà phê muối Đông Gia Nghĩa',
-    'quán cà phê bờ suối Lâm Đồng',
-  ],
-  authors: [{ name: 'Cẩm Cù House' }],
-  openGraph: {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getPageSeoMetadata('/', {
+    metadataBase: new URL('https://camcuhouse.online'),
     title: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
-    description: 'Xanh sạch, trong lành, hòa mình với thiên nhiên bên bờ suối mát giữa lòng Đông Gia Nghĩa, Lâm Đồng.',
-    url: 'https://camcuhouse.vn',
-    siteName: 'Cẩm Cù House',
-    locale: 'vi_VN',
-    type: 'website',
-  },
-};
+    description: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Không gian suối mát rượi, 18 bàn view suối, cà phê muối Đăk Nông và thảo mộc xanh.',
+    keywords: [
+      'quán cà phê đẹp Đông Gia Nghĩa Lâm Đồng',
+      'cà phê sinh thái bên suối Lâm Đồng',
+      'quán ăn vặt gần đây',
+      'Cẩm Cù House',
+      'cà phê muối Đông Gia Nghĩa',
+      'quán cà phê bờ suối Lâm Đồng',
+    ],
+    authors: [{ name: 'Cẩm Cù House' }],
+    openGraph: {
+      title: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
+      description: 'Xanh sạch, trong lành, hòa mình với thiên nhiên bên bờ suối mát giữa lòng Đông Gia Nghĩa, Lâm Đồng.',
+      url: 'https://camcuhouse.online',
+      siteName: 'Cẩm Cù House',
+      locale: 'vi_VN',
+      type: 'website',
+    },
+  });
+}
 
 const jsonLd = {
   '@context': 'https://schema.org',

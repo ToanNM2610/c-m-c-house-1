@@ -132,10 +132,15 @@ export async function GET(req: NextRequest) {
       prisma.gmailRecipient.count(),
     ]);
 
+    const hasBlob = Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+    const hasGmail = Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+
     // Compute dynamic health score
     const checks: { name: string; ok: boolean; detail?: string }[] = [
       { name: 'Đọc CSDL (Read Probe)', ok: dbReadOk, detail: dbReadOk ? `Phản hồi ${dbReadLatencyMs}ms` : dbReadError },
       { name: 'Ghi CSDL (Write Probe)', ok: writeProbe.ok, detail: writeProbe.ok ? 'PostgreSQL Đọc/Ghi bình thường' : (writeProbe.error || 'Lỗi ghi') },
+      { name: 'Lưu trữ Vercel Blob', ok: hasBlob, detail: hasBlob ? 'Đã kết nối' : 'Chưa cấu hình BLOB_READ_WRITE_TOKEN' },
+      { name: 'Dịch vụ Email SMTP', ok: hasGmail, detail: hasGmail ? 'Đã cấu hình' : 'Chưa cấu hình GMAIL_USER/APP_PASSWORD' },
       { name: 'Lỗi hệ thống (24h)', ok: errorCount24h === 0, detail: `${errorCount24h} lỗi` },
       { name: 'Tài khoản Super Admin', ok: superAdminCount > 0, detail: `${superAdminCount} tài khoản` },
     ];

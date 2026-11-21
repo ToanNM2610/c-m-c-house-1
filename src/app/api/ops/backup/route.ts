@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
       contactSubmissions,
       guestComments,
       adminUsers,
+      gmailConfig,
+      gmailRecipients,
+      blockedIps,
+      antiSpamConfig,
     ] = await Promise.all([
       prisma.storeSettings.findFirst(),
       prisma.siteContent.findFirst(),
@@ -54,6 +58,10 @@ export async function GET(req: NextRequest) {
           createdAt: true,
         },
       }),
+      prisma.gmailConfig.findFirst(),
+      prisma.gmailRecipient.findMany(),
+      prisma.blockedIp.findMany(),
+      prisma.antiSpamConfig.findFirst(),
     ]);
 
     const backupPayload = {
@@ -78,6 +86,10 @@ export async function GET(req: NextRequest) {
         contactSubmissions,
         guestComments,
         adminUsers,
+        gmailConfig,
+        gmailRecipients,
+        blockedIps,
+        antiSpamConfig,
       },
     };
 

@@ -883,15 +883,15 @@ export async function testIntegrationConnection(key: string): Promise<{ success:
   switch (key) {
     case "ga4_measurement_id": {
       const id = getDecryptedIntegrationValue("ga4_measurement_id");
-      if (!id || !/^G-[A-Z0-9]+$/i.test(id.trim())) {
+      if (!id || !/^(G-[A-Z0-9]+|GTM-[A-Z0-9]+)$/i.test(id.trim())) {
         return {
           success: false,
-          message: "Định dạng GA4 Measurement ID không hợp lệ (phải bắt đầu bằng G-, ví dụ: G-XXXXXXXXXX).",
+          message: "Định dạng Google Tag / GA4 ID không hợp lệ (phải bắt đầu bằng G- hoặc GTM-, ví dụ: G-XXXXXXXXXX hoặc GTM-M78P32L4).",
         };
       }
       return {
         success: true,
-        message: `Đã xác thực định dạng GA4 ID (${id}). Thẻ theo dõi sẵn sàng thu thập dữ liệu tự động.`,
+        message: `Đã xác thực định dạng Google Tag / GA4 ID (${id}). Sẵn sàng theo dõi và thu thập số liệu tự động.`,
       };
     }
 

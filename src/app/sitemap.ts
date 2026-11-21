@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://camcuhouse.vn';
+  const baseUrl = 'https://camcuhouse.online';
 
   // 6 Core Corporate Routes
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -40,6 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${baseUrl}/su-kien`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/tin-tuc`,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,

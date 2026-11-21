@@ -96,8 +96,8 @@ function getInitialIntegrations(): Record<string, IntegrationSettingItem> {
   const now = new Date().toISOString();
   const placesKey = process.env.GOOGLE_PLACES_API_KEY || "";
   const placeId = process.env.GOOGLE_PLACE_ID || "ChIJ3yR_c91JnzERl0n0sTjZz2o";
-  const gaId = process.env.GA4_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || "";
-  const gaPropertyId = process.env.GA4_PROPERTY_ID || "";
+  const gaId = process.env.GA4_MEASUREMENT_ID || process.env.NEXT_PUBLIC_GA_ID || "GTM-M78P32L4";
+  const gaPropertyId = process.env.GA4_PROPERTY_ID || "552993380";
   const scVerification =
     process.env.SEARCH_CONSOLE_VERIFICATION ||
     process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||

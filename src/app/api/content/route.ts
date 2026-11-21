@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
+import { logAction } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -120,6 +121,14 @@ export async function PATCH(req: NextRequest) {
     });
 
     revalidatePath('/', 'layout');
+
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'CONTENT_UPDATE',
+      actor: user.username,
+      details: 'Updated site content (Hero, Philosophy, Brand Story)',
+    });
 
     return apiSuccess({
       ...updated,

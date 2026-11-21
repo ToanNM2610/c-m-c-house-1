@@ -1,7 +1,9 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { getSessionUser } from '@/lib/auth';
+import { logAction } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,6 +53,17 @@ export async function PATCH(req: NextRequest) {
     const updated = await prisma.spatialFigure.update({
       where: { id },
       data: dataToUpdate,
+    });
+
+    revalidatePath('/', 'layout');
+    revalidatePath('/khong-gian');
+
+    await logAction({
+      level: 'INFO',
+      category: 'CMS',
+      action: 'GALLERY_UPDATE',
+      actor: user.username,
+      details: `Updated spatial figure: ${id}`,
     });
 
     return apiSuccess(updated, { message: `Cập nhật ${id} thành công` });
