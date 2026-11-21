@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     if (!authorName || !content || content.trim().length < 5) {
       return NextResponse.json(
-        { error: 'Vui lòng nhập tên và nội dung cảm nhận (tối thiểu 5 ký tự).' },
+        { success: false, error: 'Vui lòng nhập tên và nội dung cảm nhận (tối thiểu 5 ký tự).' },
         { status: 400 }
       );
     }
@@ -75,9 +75,9 @@ export async function POST(request: NextRequest) {
       message: 'Cảm nhận của bạn đã được gửi thành công và đang chờ ban quản trị kiểm duyệt.',
       comment: newComment,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('POST /api/comments error:', error);
-    return NextResponse.json({ error: 'Failed to submit comment' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể gửi cảm nhận. Vui lòng thử lại sau.' }, { status: 500 });
   }
 }
 
@@ -86,14 +86,14 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Yêu cầu xác thực tài khoản quản trị' }, { status: 401 });
     }
 
     const body = await request.json();
     const { id, status, isFeatured } = body;
 
     if (!id) {
-      return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Thiếu mã đánh giá (id)' }, { status: 400 });
     }
 
     const updated = await prisma.guestComment.update({
@@ -105,9 +105,9 @@ export async function PUT(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true, comment: updated });
-  } catch (error) {
+  } catch (error: any) {
     console.error('PUT /api/comments error:', error);
-    return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể cập nhật đánh giá' }, { status: 500 });
   }
 }
 

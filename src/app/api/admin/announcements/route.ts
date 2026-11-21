@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAnnouncements, addAnnouncement, deleteAnnouncement } from "@/data/store";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const announcements = getAnnouncements();
@@ -67,10 +69,16 @@ export async function DELETE(request: NextRequest) {
     }
 
     const isDeleted = deleteAnnouncement(id);
+    if (!isDeleted) {
+      return NextResponse.json(
+        { success: false, error: "Không tìm thấy bản tin cần xóa" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
-      success: isDeleted,
-      message: isDeleted ? "Đã xóa bản tin thành công" : "Không tìm thấy bản tin cần xóa",
+      success: true,
+      message: "Đã xóa bản tin thành công",
       announcements: getAnnouncements(),
     });
   } catch (error) {

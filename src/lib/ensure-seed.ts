@@ -249,7 +249,8 @@ export async function ensureDatabaseSeeded(): Promise<void> {
       });
 
       if (!existingAdmin) {
-        const passwordHash = hashPassword('admin123');
+        const initialPass = process.env.INITIAL_ADMIN_PASSWORD || 'admin123';
+        const passwordHash = hashPassword(initialPass);
         await prisma.adminUser.create({
           data: {
             username: 'admin',

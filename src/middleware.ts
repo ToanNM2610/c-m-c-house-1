@@ -4,10 +4,10 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const rawHost =
-    request.headers.get("x-forwarded-host") ||
+    request.headers.get("x-forwarded-host")?.split(",")[0].trim() ||
     request.headers.get("host") ||
     "";
-  const host = rawHost.split(":")[0];
+  const host = rawHost.split(":")[0].toLowerCase();
   const isLocalhost =
     host.includes("localhost") ||
     host.includes("127.0.0.1") ||

@@ -107,9 +107,9 @@ export async function POST(request: NextRequest) {
       message: 'Tin nhắn của bạn đã được gửi thành công. Cẩm Cù House sẽ liên hệ sớm nhất!',
       submission,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('POST /api/contact error:', error);
-    return NextResponse.json({ error: 'Failed to submit contact message' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể gửi tin nhắn liên hệ. Vui lòng thử lại sau.' }, { status: 500 });
   }
 }
 
@@ -118,14 +118,14 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Yêu cầu xác thực tài khoản quản trị' }, { status: 401 });
     }
 
     const body = await request.json();
     const { id, status } = body;
 
     if (!id || !status) {
-      return NextResponse.json({ error: 'ID and status are required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Thiếu mã thư (id) hoặc trạng thái (status)' }, { status: 400 });
     }
 
     const updated = await prisma.contactSubmission.update({
@@ -134,9 +134,9 @@ export async function PUT(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true, submission: updated });
-  } catch (error) {
+  } catch (error: any) {
     console.error('PUT /api/contact error:', error);
-    return NextResponse.json({ error: 'Failed to update submission' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể cập nhật trạng thái thư liên hệ' }, { status: 500 });
   }
 }
 

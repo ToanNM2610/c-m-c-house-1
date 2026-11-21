@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
     // Fallback: If no user found and username is admin, auto-bootstrap default Super Admin
     if (!user && cleanUsername === 'admin') {
       try {
-        const passwordHash = hashPassword('admin123');
+        const initialPass = process.env.INITIAL_ADMIN_PASSWORD || 'admin123';
+        const passwordHash = hashPassword(initialPass);
         user = await prisma.adminUser.create({
           data: {
             username: 'admin',
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error: any) {
     console.error('Error in login handler:', error);
-    return apiError(`Lỗi xác thực hệ thống: ${error?.message || 'Không thể kết nối CSDL'}`, 500);
+    return apiError('Lỗi xác thực hệ thống. Vui lòng kiểm tra kết nối CSDL và thử lại sau.', 500);
   }
 }
 

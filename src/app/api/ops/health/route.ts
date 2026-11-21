@@ -53,20 +53,15 @@ export async function GET(req: NextRequest) {
 
   try {
     let dbSizeBytes = 0;
-    let dbProvider = 'PostgreSQL (Neon)';
+    const dbProvider = 'PostgreSQL (Neon)';
     try {
       const sizeResult: any = await prisma.$queryRawUnsafe(`SELECT pg_database_size(current_database()) as size`);
       if (sizeResult && sizeResult[0] && sizeResult[0].size !== undefined) {
         dbSizeBytes = Number(sizeResult[0].size);
       }
     } catch {
-      try {
-        const dbPath = path.join(process.cwd(), 'prisma', 'dev.db');
-        if (fs.existsSync(dbPath)) {
-          dbSizeBytes = fs.statSync(dbPath).size;
-          dbProvider = 'SQLite (Local Dev)';
-        }
-      } catch {}
+      // In Neon pooled connection, pg_database_size query may be restricted; db remains PostgreSQL (Neon)
+      dbSizeBytes = 0;
     }
 
     const uploadsPath = path.join(process.cwd(), 'public', 'uploads');

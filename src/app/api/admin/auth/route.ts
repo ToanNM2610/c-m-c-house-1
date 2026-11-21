@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+
+export const dynamic = 'force-dynamic';
 import {
   verifyAdminCredentials,
   isFirstLoginRequired,
@@ -303,16 +305,24 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const cookie = request.cookies.get("camcu_admin_auth")?.value;
-  if (cookie) {
-    activeSessions.delete(cookie);
+  try {
+    const cookie = request.cookies.get("camcu_admin_auth")?.value;
+    if (cookie) {
+      activeSessions.delete(cookie);
+    }
+
+    const response = NextResponse.json({
+      success: true,
+      message: "Đã đăng xuất phiên làm việc",
+    });
+
+    response.cookies.delete("camcu_admin_auth");
+    return response;
+  } catch (error: any) {
+    console.error("Admin logout error:", error);
+    return NextResponse.json(
+      { success: false, error: "Lỗi hệ thống khi đăng xuất" },
+      { status: 500 }
+    );
   }
-
-  const response = NextResponse.json({
-    success: true,
-    message: "Đã đăng xuất phiên làm việc",
-  });
-
-  response.cookies.delete("camcu_admin_auth");
-  return response;
 }

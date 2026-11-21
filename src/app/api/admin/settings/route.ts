@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStoreSettings, updateStoreSettings, changeAdminPassword } from "@/data/store";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const settings = getStoreSettings();

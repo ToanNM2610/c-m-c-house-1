@@ -76,14 +76,29 @@ export async function POST(request: NextRequest) {
       });
       publicUrl = blob.url;
     } else {
-      // Local development fallback
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads', targetFolder);
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
+      // If running in Vercel serverless environment, local filesystem is read-only (EROFS)
+      const isVercel = Boolean(process.env.VERCEL || process.env.VERCEL_ENV || process.env.NOW_BUILDER);
+      if (isVercel) {
+        console.error('[Upload] BLOB_READ_WRITE_TOKEN is missing on Vercel environment.');
+        return apiError(
+          'Dịch vụ lưu trữ tệp (Vercel Blob) chưa được cấu hình (thiếu biến môi trường BLOB_READ_WRITE_TOKEN). Không thể ghi tệp lên máy chủ serverless.',
+          503
+        );
       }
-      const filePath = path.join(uploadDir, uniqueFileName);
-      fs.writeFileSync(filePath, buffer);
-      publicUrl = `/uploads/${targetFolder}/${uniqueFileName}`;
+
+      // Local development fallback
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', targetFolder);
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        const filePath = path.join(uploadDir, uniqueFileName);
+        fs.writeFileSync(filePath, buffer);
+        publicUrl = `/uploads/${targetFolder}/${uniqueFileName}`;
+      } catch (fsErr: any) {
+        console.error('[Upload] Local filesystem write failed:', fsErr);
+        return apiError('Không thể ghi tệp vào bộ nhớ máy chủ. Vui lòng kiểm tra quyền ghi tệp.', 500);
+      }
     }
 
     // Persist to MediaAsset table in database

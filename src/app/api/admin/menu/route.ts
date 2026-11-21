@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getMenuOverrides, updateMenuItemOverride, batchUpdateMenuOverrides } from "@/data/store";
 import { MENU_ITEMS } from "@/data/menu";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const overrides = getMenuOverrides();

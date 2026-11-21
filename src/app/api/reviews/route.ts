@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import rawBackupData from "@/data/backup/camcu_raw_backup.json";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const reviews = rawBackupData.reviews || [];

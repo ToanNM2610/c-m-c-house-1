@@ -134,7 +134,7 @@ function generateNotificationHtml(payload: ContactPayload, senderName: string): 
                 CẨM CÙ HOUSE
               </h1>
               <div style="font-size: 13px; color: #A3B899; margin-top: 4px;">
-                Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng
+                Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông
               </div>
             </td>
           </tr>
@@ -330,8 +330,8 @@ ${payload.message}
               <div style="font-size: 14px; line-height: 1.6; color: #4A5568; white-space: pre-wrap; margin: 16px 0;">${autoReplyBody}</div>
               <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
               <p style="font-size: 12px; color: #718096; line-height: 1.5;">
-                Địa chỉ: Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng<br>
-                Hotline: 0382 851 688 | Website: camcuhouse.vn
+                Địa chỉ: Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông<br>
+                Hotline: 038 285 1688 | Website: camcuhouse.online
               </p>
             </div>
           `,
@@ -453,8 +453,8 @@ ${params.replyBody.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
           <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
           <p style="font-size: 12px; color: #718096; line-height: 1.5;">
             <strong>Cẩm Cù House — Cà phê sinh thái bên bờ suối</strong><br>
-            Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng<br>
-            Hotline: 0382 851 688 | Website: camcuhouse.vn
+            Hẻm 437 Hùng Vương, Phường Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông<br>
+            Hotline: 038 285 1688 | Website: camcuhouse.online
           </p>
         </div>
       `,

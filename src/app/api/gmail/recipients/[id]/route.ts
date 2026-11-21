@@ -12,7 +12,7 @@ export async function PATCH(
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -24,7 +24,7 @@ export async function PATCH(
     });
 
     if (!existing) {
-      return NextResponse.json({ error: 'Không tìm thấy người nhận' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Không tìm thấy người nhận' }, { status: 404 });
     }
 
     const updateData: any = {};
@@ -38,7 +38,7 @@ export async function PATCH(
         where: { email: cleanEmail },
       });
       if (conflict && conflict.id !== id) {
-        return NextResponse.json({ error: 'Địa chỉ email này đã được sử dụng bởi người nhận khác' }, { status: 400 });
+        return NextResponse.json({ success: false, error: 'Địa chỉ email này đã được sử dụng bởi người nhận khác' }, { status: 400 });
       }
       updateData.email = cleanEmail;
     }
@@ -51,7 +51,7 @@ export async function PATCH(
     return NextResponse.json({ success: true, data: updated });
   } catch (error: any) {
     console.error('PATCH /api/gmail/recipients/[id] error:', error);
-    return NextResponse.json({ error: error?.message || 'Không thể cập nhật người nhận' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error?.message || 'Không thể cập nhật người nhận' }, { status: 500 });
   }
 }
 

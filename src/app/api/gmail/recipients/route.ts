@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const recipients = await prisma.gmailRecipient.findMany({
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: recipients });
   } catch (error) {
     console.error('GET /api/gmail/recipients error:', error);
-    return NextResponse.json({ error: 'Không thể tải danh sách người nhận Gmail' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể tải danh sách người nhận Gmail' }, { status: 500 });
   }
 }
 
@@ -28,14 +28,14 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const { email, label, receiveSubjects, isActive } = body;
 
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Địa chỉ email không hợp lệ' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Địa chỉ email không hợp lệ' }, { status: 400 });
     }
 
     const cleanEmail = email.trim().toLowerCase();
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
-      return NextResponse.json({ error: 'Địa chỉ email này đã tồn tại trong danh sách nhận tin' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Địa chỉ email này đã tồn tại trong danh sách nhận tin' }, { status: 400 });
     }
 
     const recipient = await prisma.gmailRecipient.create({
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, data: recipient });
   } catch (error: any) {
     console.error('POST /api/gmail/recipients error:', error);
-    return NextResponse.json({ error: error?.message || 'Không thể tạo người nhận Gmail' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể tạo người nhận Gmail' }, { status: 500 });
   }
 }
 

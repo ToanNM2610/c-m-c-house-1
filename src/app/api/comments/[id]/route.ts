@@ -15,12 +15,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Yêu cầu xác thực tài khoản quản trị' }, { status: 401 });
     }
 
     const { id } = params;
     if (!id) {
-      return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Thiếu mã đánh giá (id)' }, { status: 400 });
     }
 
     const body = await request.json();
@@ -39,9 +39,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     });
 
     return NextResponse.json({ success: true, comment: updated });
-  } catch (error) {
+  } catch (error: any) {
     console.error('PATCH /api/comments/[id] error:', error);
-    return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Không thể cập nhật đánh giá' }, { status: 500 });
   }
 }
 

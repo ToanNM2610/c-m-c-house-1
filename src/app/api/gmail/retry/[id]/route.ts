@@ -13,7 +13,7 @@ export async function POST(
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -23,7 +23,7 @@ export async function POST(
     });
 
     if (!submission) {
-      return NextResponse.json({ error: 'Không tìm thấy thư liên hệ' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Không tìm thấy thư liên hệ' }, { status: 404 });
     }
 
     const result = await sendContactNotification(submission);
@@ -46,6 +46,7 @@ export async function POST(
     } else {
       return NextResponse.json({
         success: false,
+        error: result.error || 'Gửi lại email không thành công',
         message: result.error || 'Gửi lại email không thành công',
         submission: updated,
       }, { status: 400 });
@@ -53,7 +54,7 @@ export async function POST(
   } catch (error: any) {
     console.error('POST /api/gmail/retry/[id] error:', error);
     return NextResponse.json(
-      { error: error?.message || 'Lỗi khi gửi lại email' },
+      { success: false, error: error?.message || 'Lỗi khi gửi lại email' },
       { status: 500 }
     );
   }

@@ -13,7 +13,7 @@ export async function POST(
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = params;
@@ -22,7 +22,7 @@ export async function POST(
 
     if (!replyBody || replyBody.trim().length < 5) {
       return NextResponse.json(
-        { error: 'Nội dung phản hồi phải có ít nhất 5 ký tự' },
+        { success: false, error: 'Nội dung phản hồi phải có ít nhất 5 ký tự' },
         { status: 400 }
       );
     }
@@ -32,12 +32,12 @@ export async function POST(
     });
 
     if (!submission) {
-      return NextResponse.json({ error: 'Không tìm thấy thư liên hệ' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Không tìm thấy thư liên hệ' }, { status: 404 });
     }
 
     if (!submission.email) {
       return NextResponse.json(
-        { error: 'Khách hàng này không để lại địa chỉ email để phản hồi' },
+        { success: false, error: 'Khách hàng này không để lại địa chỉ email để phản hồi' },
         { status: 400 }
       );
     }
@@ -51,7 +51,7 @@ export async function POST(
     });
 
     if (!result.success) {
-      return NextResponse.json({ error: result.message }, { status: 400 });
+      return NextResponse.json({ success: false, error: result.message }, { status: 400 });
     }
 
     // Update submission repliedAt timestamp and status to RESOLVED
@@ -82,7 +82,7 @@ export async function POST(
   } catch (error: any) {
     console.error('POST /api/gmail/reply/[id] error:', error);
     return NextResponse.json(
-      { error: error?.message || 'Lỗi khi gửi email phản hồi' },
+      { success: false, error: error?.message || 'Lỗi khi gửi email phản hồi' },
       { status: 500 }
     );
   }

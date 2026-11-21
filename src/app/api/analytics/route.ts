@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 interface StoredEvent {
   event: string;
   ts: number;
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    return NextResponse.json({ success: false }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Dữ liệu sự kiện không hợp lệ' }, { status: 400 });
   }
 }
 

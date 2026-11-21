@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import rawBackupData from "@/data/backup/camcu_raw_backup.json";
 
+export const dynamic = 'force-dynamic';
+
 // In-memory overrides store: { [sectionKey: string]: { vi: Record<string, any>; en: Record<string, any> } }
 const sectionOverrides: Record<string, { vi?: Record<string, string>; en?: Record<string, string> }> = {};
 

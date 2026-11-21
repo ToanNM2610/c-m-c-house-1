@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getSessionUser(request);
     if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json().catch(() => ({}));
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     if (!result.success) {
       return NextResponse.json(
-        { success: false, message: result.message },
+        { success: false, error: result.message, message: result.message },
         { status: 400 }
       );
     }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('POST /api/gmail/test error:', error);
     return NextResponse.json(
-      { success: false, message: error?.message || 'Lỗi khi gửi email thử nghiệm' },
+      { success: false, error: error?.message || 'Lỗi khi gửi email thử nghiệm', message: error?.message || 'Lỗi khi gửi email thử nghiệm' },
       { status: 500 }
     );
   }

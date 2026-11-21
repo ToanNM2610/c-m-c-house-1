@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGalleryPhotos, addGalleryPhoto, updateGalleryPhoto, deleteGalleryPhoto } from "@/data/store";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const photos = getGalleryPhotos();
@@ -63,9 +65,16 @@ export async function PATCH(request: NextRequest) {
       ...(url !== undefined ? { url } : {}),
     });
 
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, error: "Không tìm thấy ảnh cần cập nhật" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({
-      success: !!updated,
-      message: updated ? "Cập nhật ảnh thành công" : "Không tìm thấy ảnh",
+      success: true,
+      message: "Cập nhật ảnh thành công",
       photo: updated,
       photos: getGalleryPhotos(),
     });
@@ -95,10 +104,16 @@ export async function DELETE(request: NextRequest) {
     }
 
     const isDeleted = deleteGalleryPhoto(id);
+    if (!isDeleted) {
+      return NextResponse.json(
+        { success: false, error: "Không tìm thấy ảnh cần xóa" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
-      success: isDeleted,
-      message: isDeleted ? "Đã xóa ảnh khỏi thư viện" : "Không tìm thấy ảnh",
+      success: true,
+      message: "Đã xóa ảnh khỏi thư viện",
       photos: getGalleryPhotos(),
     });
   } catch (error) {
