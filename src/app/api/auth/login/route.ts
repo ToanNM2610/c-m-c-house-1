@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
-import { verifyPassword, createSessionToken, getSessionCookieOptions } from '@/lib/auth';
+import { verifyPassword, createSessionToken, getSessionCookieOptions, hashPassword } from '@/lib/auth';
+import { ensureDatabaseSeeded } from '@/lib/ensure-seed';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,9 +16,35 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanUsername = String(username).trim();
-    const user = await prisma.adminUser.findUnique({
+
+    // Ensure database schema and default admin are seeded if fresh/empty
+    try {
+      await ensureDatabaseSeeded();
+    } catch (seedErr) {
+      console.warn('ensureDatabaseSeeded warning in login:', seedErr);
+    }
+
+    let user = await prisma.adminUser.findUnique({
       where: { username: cleanUsername },
     });
+
+    // Fallback: If no user found and username is admin, auto-bootstrap default Super Admin
+    if (!user && cleanUsername === 'admin') {
+      try {
+        const passwordHash = hashPassword('admin123');
+        user = await prisma.adminUser.create({
+          data: {
+            username: 'admin',
+            passwordHash,
+            fullName: 'Quản trị viên Cẩm Cù House',
+            role: 'SUPER_ADMIN',
+            isActive: true,
+          },
+        });
+      } catch (createErr) {
+        console.warn('Auto-create default admin failed:', createErr);
+      }
+    }
 
     if (!user) {
       return apiError('Sai tên đăng nhập hoặc mật khẩu', 401);
@@ -53,9 +80,9 @@ export async function POST(req: NextRequest) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in login handler:', error);
-    return apiError('Lỗi xác thực hệ thống', 500);
+    return apiError(`Lỗi xác thực hệ thống: ${error?.message || 'Không thể kết nối CSDL'}`, 500);
   }
 }
 
