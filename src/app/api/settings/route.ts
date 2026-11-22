@@ -10,9 +10,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const settings = await prisma.storeSettings.findUnique({
-      where: { id: 'default' },
-    });
+    const [settings, siteSettings] = await Promise.all([
+      prisma.storeSettings.findUnique({
+        where: { id: 'default' },
+      }),
+      prisma.siteSettings.findUnique({
+        where: { id: 'default' },
+      }).catch(() => null),
+    ]);
 
     if (!settings) {
       return apiError('Không tìm thấy cấu hình quán', 404);
@@ -62,11 +67,17 @@ export async function GET() {
       facebookPixelId: settings.facebookPixelId || '',
       tiktokPixelId: settings.tiktokPixelId || '',
 
-      // Quick Chat & Social
-      enableQuickChat: settings.enableQuickChat ?? true,
-      zaloUrl: settings.zaloUrl || '',
-      messengerUrl: settings.messengerUrl || '',
-      quickChatPhone: settings.quickChatPhone || '',
+      // Quick Chat & Support Channels
+      enableSupportWidget: siteSettings?.enableSupportWidget ?? settings.enableQuickChat ?? true,
+      enableQuickChat: siteSettings?.enableSupportWidget ?? settings.enableQuickChat ?? true,
+      enableHotline: siteSettings?.enableHotline ?? true,
+      hotlineNumber: siteSettings?.hotlineNumber || settings.quickChatPhone || '0382851688',
+      enableZalo: siteSettings?.enableZalo ?? true,
+      zaloUrl: siteSettings?.zaloUrl || settings.zaloUrl || '',
+      enableMessenger: siteSettings?.enableMessenger ?? true,
+      messengerUrl: siteSettings?.messengerUrl || settings.messengerUrl || '',
+      enableWhatsApp: siteSettings?.enableWhatsApp ?? true,
+      quickChatPhone: siteSettings?.hotlineNumber || settings.quickChatPhone || '',
       enableSocialShare: settings.enableSocialShare ?? true,
 
       // Cinematic Intro Overlay Configuration (120fps)
@@ -172,12 +183,59 @@ export async function PATCH(req: NextRequest) {
     if (body.facebookPixelId !== undefined) dataToUpdate.facebookPixelId = body.facebookPixelId;
     if (body.tiktokPixelId !== undefined) dataToUpdate.tiktokPixelId = body.tiktokPixelId;
 
-    // Quick Chat & Social
-    if (body.enableQuickChat !== undefined) dataToUpdate.enableQuickChat = Boolean(body.enableQuickChat);
-    if (body.zaloUrl !== undefined) dataToUpdate.zaloUrl = body.zaloUrl;
-    if (body.messengerUrl !== undefined) dataToUpdate.messengerUrl = body.messengerUrl;
-    if (body.quickChatPhone !== undefined) dataToUpdate.quickChatPhone = body.quickChatPhone;
+    // Quick Support Widget & Channel Toggles (Sync to SiteSettings)
+    const siteSettingsToUpdate: Record<string, unknown> = {};
+
+    if (body.enableSupportWidget !== undefined) {
+      const val = Boolean(body.enableSupportWidget);
+      siteSettingsToUpdate.enableSupportWidget = val;
+      dataToUpdate.enableQuickChat = val;
+    } else if (body.enableQuickChat !== undefined) {
+      const val = Boolean(body.enableQuickChat);
+      siteSettingsToUpdate.enableSupportWidget = val;
+      dataToUpdate.enableQuickChat = val;
+    }
+    if (body.enableHotline !== undefined) siteSettingsToUpdate.enableHotline = Boolean(body.enableHotline);
+    if (body.hotlineNumber !== undefined) {
+      siteSettingsToUpdate.hotlineNumber = body.hotlineNumber;
+      dataToUpdate.quickChatPhone = body.hotlineNumber;
+    }
+    if (body.enableZalo !== undefined) siteSettingsToUpdate.enableZalo = Boolean(body.enableZalo);
+    if (body.zaloUrl !== undefined) {
+      siteSettingsToUpdate.zaloUrl = body.zaloUrl;
+      dataToUpdate.zaloUrl = body.zaloUrl;
+    }
+    if (body.enableMessenger !== undefined) siteSettingsToUpdate.enableMessenger = Boolean(body.enableMessenger);
+    if (body.messengerUrl !== undefined) {
+      siteSettingsToUpdate.messengerUrl = body.messengerUrl;
+      dataToUpdate.messengerUrl = body.messengerUrl;
+    }
+    if (body.enableWhatsApp !== undefined) siteSettingsToUpdate.enableWhatsApp = Boolean(body.enableWhatsApp);
+    if (body.whatsappUrl !== undefined) {
+      siteSettingsToUpdate.whatsappUrl = body.whatsappUrl;
+      dataToUpdate.whatsappUrl = body.whatsappUrl;
+    }
+    if (body.quickChatPhone !== undefined && !body.hotlineNumber) {
+      siteSettingsToUpdate.hotlineNumber = body.quickChatPhone;
+      dataToUpdate.quickChatPhone = body.quickChatPhone;
+    }
     if (body.enableSocialShare !== undefined) dataToUpdate.enableSocialShare = Boolean(body.enableSocialShare);
+
+    // Sync brand/SEO info if provided
+    if (body.name !== undefined) siteSettingsToUpdate.brandNameVi = body.name;
+    if (body.tagline !== undefined) siteSettingsToUpdate.taglineVi = body.tagline;
+    if (body.taglineEn !== undefined) siteSettingsToUpdate.taglineEn = body.taglineEn;
+    if (body.address !== undefined) siteSettingsToUpdate.addressVi = body.address;
+    if (body.addressEn !== undefined) siteSettingsToUpdate.addressEn = body.addressEn;
+    if (body.email !== undefined) siteSettingsToUpdate.email = body.email;
+    if (body.links?.googleMaps !== undefined) siteSettingsToUpdate.googleMapsUrl = body.links.googleMaps;
+    if (body.links?.facebook !== undefined) siteSettingsToUpdate.facebookUrl = body.links.facebook;
+    if (body.links?.tiktok !== undefined) siteSettingsToUpdate.tiktokUrl = body.links.tiktok;
+    if (body.links?.youtube !== undefined) siteSettingsToUpdate.youtubeUrl = body.links.youtube;
+    if (body.gaMeasurementId !== undefined) siteSettingsToUpdate.ga4MeasurementId = body.gaMeasurementId;
+    if (body.gscVerification !== undefined) siteSettingsToUpdate.gscVerificationCode = body.gscVerification;
+    if (body.facebookPixelId !== undefined) siteSettingsToUpdate.metaPixelId = body.facebookPixelId;
+    if (body.tiktokPixelId !== undefined) siteSettingsToUpdate.tiktokPixelId = body.tiktokPixelId;
 
     // Cinematic Intro Overlay Configuration (120fps)
     if (body.enableIntro !== undefined) dataToUpdate.enableIntro = Boolean(body.enableIntro);
@@ -208,10 +266,24 @@ export async function PATCH(req: NextRequest) {
     if (body.instagramUrl !== undefined) dataToUpdate.instagramUrl = body.instagramUrl;
     if (body.usdExchangeRate !== undefined) dataToUpdate.usdExchangeRate = Number(body.usdExchangeRate) || 25000;
 
-    const updated = await prisma.storeSettings.update({
-      where: { id: 'default' },
-      data: dataToUpdate,
-    });
+    const [updated] = await Promise.all([
+      prisma.storeSettings.update({
+        where: { id: 'default' },
+        data: dataToUpdate,
+      }),
+      Object.keys(siteSettingsToUpdate).length > 0
+        ? prisma.siteSettings.upsert({
+            where: { id: 'default' },
+            update: siteSettingsToUpdate,
+            create: {
+              id: 'default',
+              ...siteSettingsToUpdate,
+            } as any,
+          }).catch((err) => {
+            console.warn('Sync to siteSettings warning:', err);
+          })
+        : Promise.resolve(null),
+    ]);
 
     if (body.showEventsSection !== undefined || body.showHighlightsSection !== undefined) {
       await prisma.systemLog.create({

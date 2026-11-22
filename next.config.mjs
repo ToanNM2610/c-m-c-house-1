@@ -52,6 +52,9 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    webpackBuildWorker: false,
+  },
   webpack: (config) => {
     // Disable disk cache on Windows to prevent pack.gz_ file rename collisions
     config.cache = false;

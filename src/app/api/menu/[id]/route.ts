@@ -40,6 +40,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const body = await req.json();
     const {
       inStock,
+      isAvailable,
+      isVisible,
       price,
       priceDisplay,
       customGlbUrl,
@@ -63,7 +65,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     const dataToUpdate: Record<string, unknown> = {};
-    if (typeof inStock === 'boolean') dataToUpdate.inStock = inStock;
+    if (typeof isAvailable === 'boolean') {
+      dataToUpdate.isAvailable = isAvailable;
+      dataToUpdate.inStock = isAvailable;
+    } else if (typeof inStock === 'boolean') {
+      dataToUpdate.inStock = inStock;
+      dataToUpdate.isAvailable = inStock;
+    }
+    if (typeof isVisible === 'boolean') dataToUpdate.isVisible = isVisible;
     if (customGlbUrl !== undefined) dataToUpdate.customGlbUrl = customGlbUrl;
     if (photoUrl !== undefined) dataToUpdate.photoUrl = photoUrl;
     if (name !== undefined) dataToUpdate.name = name;

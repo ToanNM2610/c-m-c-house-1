@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "postinstall": "prisma generate",
-    "build": "prisma generate && node scripts/db-prepare.mjs && next build",
+    "build": "prisma generate && node scripts/db-prepare.mjs && node -r ./scripts/patch-mkdir.cjs ./node_modules/next/dist/bin/next build",
     "start": "next start",
     "lint": "next lint"
   },

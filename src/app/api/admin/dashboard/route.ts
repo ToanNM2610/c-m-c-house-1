@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
         visiblePhotos: visibleGalleryPlates || 30,
         totalPhotos: totalGalleryPlates || 30,
         publishedPosts,
-        activePages: activePages || 7,
+        activePages: typeof activePages === 'number' ? activePages : 7,
         recentInquiries,
         recentReviews,
       },
@@ -72,3 +72,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+

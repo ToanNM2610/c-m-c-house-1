@@ -19,7 +19,10 @@ export async function GET(req: NextRequest) {
 
     const items = await prisma.menuItem.findMany({
       where,
-      orderBy: { orderCount: 'desc' },
+      orderBy: [
+        { sortOrder: 'asc' },
+        { id: 'asc' },
+      ],
     });
 
     const parsed = items.map((m) => ({
@@ -46,9 +49,37 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
+
+    // Support Category Bulk Actions
+    if (body.bulkAction && body.categoryId) {
+      const { bulkAction, categoryId } = body;
+      const bulkData: Record<string, unknown> = {};
+      if (bulkAction === 'available_all') {
+        bulkData.isAvailable = true;
+        bulkData.inStock = true;
+      } else if (bulkAction === 'unavailable_all') {
+        bulkData.isAvailable = false;
+        bulkData.inStock = false;
+      } else if (bulkAction === 'show_all') {
+        bulkData.isVisible = true;
+      } else if (bulkAction === 'hide_all') {
+        bulkData.isVisible = false;
+      }
+
+      await prisma.menuItem.updateMany({
+        where: categoryId === 'all' ? {} : { categoryId },
+        data: bulkData,
+      });
+
+      revalidatePath('/', 'layout');
+      return apiSuccess({ bulkAction, categoryId }, { message: 'Đã cập nhật hàng loạt thành công' });
+    }
+
     const {
       id,
       inStock,
+      isAvailable,
+      isVisible,
       allowOrdering,
       price,
       priceDisplay,
@@ -77,7 +108,14 @@ export async function PATCH(req: NextRequest) {
     }
 
     const dataToUpdate: Record<string, unknown> = {};
-    if (typeof inStock === 'boolean') dataToUpdate.inStock = inStock;
+    if (typeof isAvailable === 'boolean') {
+      dataToUpdate.isAvailable = isAvailable;
+      dataToUpdate.inStock = isAvailable;
+    } else if (typeof inStock === 'boolean') {
+      dataToUpdate.inStock = inStock;
+      dataToUpdate.isAvailable = inStock;
+    }
+    if (typeof isVisible === 'boolean') dataToUpdate.isVisible = isVisible;
     if (typeof allowOrdering === 'boolean') dataToUpdate.allowOrdering = allowOrdering;
     if (customGlbUrl !== undefined) dataToUpdate.customGlbUrl = customGlbUrl;
     if (photoUrl !== undefined) dataToUpdate.photoUrl = photoUrl;

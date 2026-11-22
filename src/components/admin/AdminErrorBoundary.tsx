@@ -58,3 +58,4 @@ export default class AdminErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+

@@ -347,6 +347,29 @@ export async function PATCH(req: NextRequest) {
       },
     });
 
+    // Dual-sync PageConfig enabled status so dynamic dashboard counts reflect accurately
+    const pageToggles: Record<string, boolean | undefined> = {
+      about: typeof body.showPageAbout === 'boolean' ? body.showPageAbout : undefined,
+      space: typeof body.showPageSpace === 'boolean' ? body.showPageSpace : undefined,
+      menu: typeof body.showPageMenu === 'boolean' ? body.showPageMenu : undefined,
+      reviews: typeof body.showPageReviews === 'boolean' ? body.showPageReviews : undefined,
+      news: typeof body.showPageNews === 'boolean' ? body.showPageNews : undefined,
+      contact: typeof body.showPageContact === 'boolean' ? body.showPageContact : undefined,
+    };
+
+    for (const [pKey, isEn] of Object.entries(pageToggles)) {
+      if (isEn !== undefined) {
+        try {
+          await prisma.pageConfig.updateMany({
+            where: { pageKey: pKey },
+            data: { enabled: isEn },
+          });
+        } catch (e) {
+          console.warn(`Could not sync pageConfig for ${pKey}`, e);
+        }
+      }
+    }
+
     revalidatePath('/', 'layout');
 
     await logAction({

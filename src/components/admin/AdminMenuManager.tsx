@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Check, X, RefreshCw, Plus, Edit2, Trash2, UtensilsCrossed, Globe } from 'lucide-react';
+import { Search, Check, X, RefreshCw, Plus, Edit2, Trash2, UtensilsCrossed, Globe, Eye, EyeOff } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { broadcastCmsSync } from '@/lib/cms-sync';
 import { MenuItem, CategoryId } from '@/types';
@@ -14,6 +14,19 @@ export default function AdminMenuManager() {
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+
+  // Atomic functional item overrides so toggles NEVER cause rows to jump or revert
+  const [itemOverrides, setItemOverrides] = useState<Record<string, Partial<MenuItem>>>({});
+
+  const CATEGORY_ORDER: Record<string, number> = {
+    'coffee': 1,
+    'tea': 2,
+    'smoothie': 3,
+    'juice': 4,
+    'soda-yogurt': 5,
+    'other': 6,
+    'food': 7,
+  };
 
   const showToast = (type: 'success' | 'error', message: string) => {
     setToast({ type, message });
@@ -43,56 +56,130 @@ export default function AdminMenuManager() {
   const [newItemHighlightEn, setNewItemHighlightEn] = useState('');
   const [isSubmittingItem, setIsSubmittingItem] = useState(false);
 
-  // Toggle In Stock / Out of Stock
+  // Toggle Còn món / Tạm hết (Atomic functional state update)
   const handleToggleStock = async (item: MenuItem) => {
+    const currentVal = itemOverrides[item.id]?.isAvailable ?? itemOverrides[item.id]?.inStock ?? item.inStock ?? true;
+    const nextVal = !currentVal;
+
+    // 1. Instant atomic functional state update: zero jumping or reverting
+    setItemOverrides((prev) => ({
+      ...prev,
+      [item.id]: {
+        ...prev[item.id],
+        inStock: nextVal,
+        isAvailable: nextVal,
+      },
+    }));
+
     setLoadingItemId(item.id);
     try {
       const res = await fetch('/api/menu', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ id: item.id, inStock: !item.inStock }),
+        body: JSON.stringify({ id: item.id, inStock: nextVal, isAvailable: nextVal }),
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && (json.success || !json.error)) {
-        showToast('success', `Đã cập nhật trạng thái món "${item.vietnameseTitle}"`);
-        await refreshData();
+        showToast('success', `Đã chuyển món "${item.vietnameseTitle}" sang: ${nextVal ? 'Còn món' : 'Tạm hết'}`);
         broadcastCmsSync('menu');
       } else {
-        showToast('error', json.error || 'Lỗi cập nhật trạng thái kho');
+        // Revert on server error
+        setItemOverrides((prev) => ({
+          ...prev,
+          [item.id]: { ...prev[item.id], inStock: currentVal, isAvailable: currentVal },
+        }));
+        showToast('error', json.error || 'Lỗi cập nhật trạng thái món');
       }
     } catch (err) {
       console.error(err);
+      setItemOverrides((prev) => ({
+        ...prev,
+        [item.id]: { ...prev[item.id], inStock: currentVal, isAvailable: currentVal },
+      }));
       showToast('error', 'Lỗi kết nối khi cập nhật trạng thái');
     } finally {
       setLoadingItemId(null);
     }
   };
 
-  // Toggle Allow Online Ordering
-  const handleToggleAllowOrdering = async (item: MenuItem) => {
+  // Toggle Hiện / Ẩn (Atomic functional state update)
+  const handleToggleVisible = async (item: MenuItem) => {
+    const currentVal = itemOverrides[item.id]?.isVisible ?? item.isVisible ?? true;
+    const nextVal = !currentVal;
+
+    // 1. Instant atomic functional state update: zero jumping or reverting
+    setItemOverrides((prev) => ({
+      ...prev,
+      [item.id]: {
+        ...prev[item.id],
+        isVisible: nextVal,
+      },
+    }));
+
     setLoadingItemId(item.id);
-    const nextVal = item.allowOrdering === false ? true : false;
     try {
       const res = await fetch('/api/menu', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ id: item.id, allowOrdering: nextVal }),
+        body: JSON.stringify({ id: item.id, isVisible: nextVal }),
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && (json.success || !json.error)) {
-        showToast('success', `Đã ${nextVal ? 'mở nhận đơn' : 'tắt nhận đơn'} cho món "${item.vietnameseTitle}"`);
-        await refreshData();
+        showToast('success', `Đã ${nextVal ? 'hiển thị' : 'ẩn'} món "${item.vietnameseTitle}" trên website`);
         broadcastCmsSync('menu');
       } else {
-        showToast('error', json.error || 'Lỗi cập nhật nhận đơn');
+        // Revert on error
+        setItemOverrides((prev) => ({
+          ...prev,
+          [item.id]: { ...prev[item.id], isVisible: currentVal },
+        }));
+        showToast('error', json.error || 'Lỗi cập nhật hiển thị món');
       }
     } catch (err) {
       console.error(err);
-      showToast('error', 'Lỗi kết nối khi cập nhật nhận đơn');
+      setItemOverrides((prev) => ({
+        ...prev,
+        [item.id]: { ...prev[item.id], isVisible: currentVal },
+      }));
+      showToast('error', 'Lỗi kết nối khi cập nhật hiển thị');
     } finally {
       setLoadingItemId(null);
+    }
+  };
+
+  // Bulk actions per category
+  const handleBulkAction = async (action: 'available_all' | 'unavailable_all' | 'show_all' | 'hide_all') => {
+    const actionLabel =
+      action === 'available_all'
+        ? 'Bật còn món tất cả'
+        : action === 'unavailable_all'
+        ? 'Tắt tạm hết tất cả'
+        : action === 'show_all'
+        ? 'Hiển thị tất cả'
+        : 'Ẩn tất cả';
+
+    if (!confirm(`Bạn có chắc muốn thực hiện "${actionLabel}" cho danh mục hiện tại?`)) return;
+
+    try {
+      const res = await fetch('/api/menu', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ bulkAction: action, categoryId: selectedCat }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.success) {
+        showToast('success', `Đã cập nhật hàng loạt: ${actionLabel}`);
+        await refreshData();
+        broadcastCmsSync('menu');
+      } else {
+        showToast('error', json.error || 'Lỗi cập nhật hàng loạt');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Lỗi kết nối khi cập nhật hàng loạt');
     }
   };
 
@@ -238,6 +325,13 @@ export default function AdminMenuManager() {
         );
       }
       return true;
+    }).sort((a, b) => {
+      const catDiff = (CATEGORY_ORDER[a.categoryId] ?? 99) - (CATEGORY_ORDER[b.categoryId] ?? 99);
+      if (catDiff !== 0) return catDiff;
+      const sortA = a.sortOrder ?? 0;
+      const sortB = b.sortOrder ?? 0;
+      if (sortA !== sortB) return sortA - sortB;
+      return a.id.localeCompare(b.id);
     });
   }, [data.menu, selectedCat, searchQuery, deletedIds]);
 
@@ -327,6 +421,45 @@ export default function AdminMenuManager() {
             </div>
           </div>
         </div>
+
+        {/* Category Bulk Actions Bar */}
+        {selectedCat !== 'all' && (
+          <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="font-mono text-slate-600 font-medium">
+              Thao tác hàng loạt cho nhóm <strong className="text-emerald-700 uppercase">{selectedCat}</strong>:
+            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleBulkAction('available_all')}
+                className="px-2.5 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-lg font-mono text-[11px] font-bold transition-colors"
+              >
+                ● Bật còn món tất cả
+              </button>
+              <button
+                type="button"
+                onClick={() => handleBulkAction('unavailable_all')}
+                className="px-2.5 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded-lg font-mono text-[11px] font-bold transition-colors"
+              >
+                ○ Tắt tạm hết tất cả
+              </button>
+              <button
+                type="button"
+                onClick={() => handleBulkAction('show_all')}
+                className="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 text-sky-800 rounded-lg font-mono text-[11px] font-bold transition-colors"
+              >
+                ✓ Hiện trên Menu
+              </button>
+              <button
+                type="button"
+                onClick={() => handleBulkAction('hide_all')}
+                className="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg font-mono text-[11px] font-bold transition-colors"
+              >
+                ✕ Ẩn khỏi Menu
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Add Item Drawer/Form */}
         {isAddingItem && (
@@ -603,14 +736,16 @@ export default function AdminMenuManager() {
                 <th className="p-4">Món Ăn / Đồ Uống</th>
                 <th className="p-4">Nhóm</th>
                 <th className="p-4">Giá Niêm Yết (VND)</th>
-                <th className="p-4 text-center">Trạng Thái Kho</th>
-                <th className="p-4 text-center">Nhận Đơn Online</th>
+                <th className="p-4 text-center">Trạng Thái Phục Vụ</th>
+                <th className="p-4 text-center">Hiển Thị Trên Menu</th>
                 <th className="p-4 text-right">Thao Tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredItems.map((item) => {
                 const isLoading = loadingItemId === item.id;
+                const isItemAvailable = itemOverrides[item.id]?.isAvailable ?? item.isAvailable ?? item.inStock ?? true;
+                const isItemVisible = itemOverrides[item.id]?.isVisible ?? item.isVisible ?? true;
 
                 return (
                   <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
@@ -646,20 +781,21 @@ export default function AdminMenuManager() {
                       </span>
                     </td>
 
-                    {/* Stock Status Switch */}
+                    {/* Available / Sold Out Status Switch */}
                     <td className="p-4 text-center">
                       <button
                         onClick={() => handleToggleStock(item)}
                         disabled={isLoading}
+                        title={isItemAvailable ? 'Đang còn món (Bấm để báo tạm hết)' : 'Đang tạm hết (Bấm để mở phục vụ)'}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[11px] font-bold transition-all ${
-                          item.inStock
+                          isItemAvailable
                             ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
                             : 'bg-red-100 text-red-800 hover:bg-red-200'
                         }`}
                       >
                         {isLoading ? (
                           <RefreshCw className="w-3 h-3 animate-spin" />
-                        ) : item.inStock ? (
+                        ) : isItemAvailable ? (
                           <>
                             <span className="w-2 h-2 rounded-full bg-emerald-600" />
                             <span>Còn món</span>
@@ -673,29 +809,29 @@ export default function AdminMenuManager() {
                       </button>
                     </td>
 
-                    {/* Online Ordering Switch */}
+                    {/* Visibility Switch */}
                     <td className="p-4 text-center">
                       <button
-                        onClick={() => handleToggleAllowOrdering(item)}
+                        onClick={() => handleToggleVisible(item)}
                         disabled={isLoading}
-                        title={item.allowOrdering !== false ? 'Đang mở nhận đơn đặt (Bấm để tạm ngưng)' : 'Đang tắt nhận đơn đặt (Bấm để mở lại)'}
+                        title={isItemVisible ? 'Đang hiển thị trên menu (Bấm để ẩn)' : 'Đang ẩn khỏi menu (Bấm để hiển thị)'}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[11px] font-bold border transition-all ${
-                          item.allowOrdering !== false
+                          isItemVisible
                             ? 'bg-sky-50 text-sky-800 border-sky-300 hover:bg-sky-100'
-                            : 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200'
+                            : 'bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200'
                         }`}
                       >
                         {isLoading ? (
                           <RefreshCw className="w-3 h-3 animate-spin" />
-                        ) : item.allowOrdering !== false ? (
+                        ) : isItemVisible ? (
                           <>
-                            <span className="w-2 h-2 rounded-full bg-sky-600" />
-                            <span>Mở đặt</span>
+                            <Eye className="w-3.5 h-3.5 text-sky-600" />
+                            <span>Đang hiện</span>
                           </>
                         ) : (
                           <>
-                            <span className="w-2 h-2 rounded-full bg-amber-600" />
-                            <span>Tắt đặt</span>
+                            <EyeOff className="w-3.5 h-3.5 text-slate-500" />
+                            <span>Đang ẩn</span>
                           </>
                         )}
                       </button>

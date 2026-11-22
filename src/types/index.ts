@@ -48,6 +48,9 @@ export interface MenuItem {
   photoUrl?: string;
   ingredients?: string[];
   inStock: boolean;
+  isAvailable?: boolean;
+  isVisible?: boolean;
+  sortOrder?: number;
   orderCount?: number;
   sku?: string;
   productType?: ProductType;
@@ -332,11 +335,17 @@ export interface CafeSettings {
   facebookPixelId?: string;
   tiktokPixelId?: string;
 
-  // Quick Chat
+  // Quick Chat & Support Channels
+  enableSupportWidget?: boolean;
   enableQuickChat?: boolean;
+  enableHotline?: boolean;
+  hotlineNumber?: string;
+  enableZalo?: boolean;
   zaloUrl?: string;
+  enableMessenger?: boolean;
   messengerUrl?: string;
   quickChatPhone?: string;
+  enableWhatsApp?: boolean;
   enableSocialShare?: boolean;
 
   // Cinematic Intro Overlay Configuration (120fps)

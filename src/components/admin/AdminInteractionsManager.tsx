@@ -1337,54 +1337,134 @@ export default function AdminInteractionsManager({
       {tab === 'integrations' && (
         <form onSubmit={handleSaveSettings} className="space-y-6">
           {/* Quick Chat Settings */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 text-xs font-mono">
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5 text-xs font-mono">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-5 h-5 text-emerald-600" />
                 <h3 className="font-serif font-bold text-base text-slate-900">
-                  Cấu Hình Nút Chat Nổi Trực Tuyến (Quick-Chat Widget)
+                  Cấu Hình Nút Hỗ Trợ Nổi Trực Tuyến (Quick Support Widget)
                 </h3>
               </div>
               <label className="flex items-center gap-2 cursor-pointer font-bold text-emerald-800">
                 <input
                   type="checkbox"
-                  checked={settings.enableQuickChat ?? true}
-                  onChange={(e) => setSettings({ ...settings, enableQuickChat: e.target.checked })}
+                  checked={settings.enableSupportWidget ?? settings.enableQuickChat ?? true}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setSettings({ ...settings, enableSupportWidget: checked, enableQuickChat: checked });
+                  }}
                   className="rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <span>Kích hoạt nút chat nổi góc phải</span>
+                <span>Kích hoạt nút hỗ trợ nổi (Master Switch)</span>
               </label>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-slate-600 mb-1 font-medium">Link Zalo Chat / OA</label>
+            <p className="text-slate-500 text-[11px] leading-relaxed">
+              Các kênh chỉ hiển thị trong popup hỗ trợ khi công tắc tương ứng được <strong>BẬT</strong> và có đường link/số điện thoại hợp lệ. Tự động ẩn trên trang quản trị.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Hotline Channel */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-accent-botanical" />
+                    Hotline Trực Tiếp
+                  </span>
+                  <label className="flex items-center gap-1.5 cursor-pointer text-emerald-700 font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={settings.enableHotline ?? true}
+                      onChange={(e) => setSettings({ ...settings, enableHotline: e.target.checked })}
+                      className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>{settings.enableHotline ?? true ? 'Bật' : 'Tắt'}</span>
+                  </label>
+                </div>
+                <input
+                  type="text"
+                  value={settings.hotlineNumber || settings.quickChatPhone || ''}
+                  onChange={(e) => setSettings({ ...settings, hotlineNumber: e.target.value, quickChatPhone: e.target.value })}
+                  placeholder="0382851688"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs"
+                />
+              </div>
+
+              {/* Zalo Channel */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-blue-600" />
+                    Zalo Chat / OA
+                  </span>
+                  <label className="flex items-center gap-1.5 cursor-pointer text-emerald-700 font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={settings.enableZalo ?? true}
+                      onChange={(e) => setSettings({ ...settings, enableZalo: e.target.checked })}
+                      className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>{settings.enableZalo ?? true ? 'Bật' : 'Tắt'}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={settings.zaloUrl || ''}
                   onChange={(e) => setSettings({ ...settings, zaloUrl: e.target.value })}
                   placeholder="https://zalo.me/0382851688"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs"
                 />
               </div>
-              <div>
-                <label className="block text-slate-600 mb-1 font-medium">Link Facebook Messenger</label>
+
+              {/* Facebook Messenger */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-sky-600" />
+                    Facebook Messenger
+                  </span>
+                  <label className="flex items-center gap-1.5 cursor-pointer text-emerald-700 font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={settings.enableMessenger ?? true}
+                      onChange={(e) => setSettings({ ...settings, enableMessenger: e.target.checked })}
+                      className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>{settings.enableMessenger ?? true ? 'Bật' : 'Tắt'}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
                   value={settings.messengerUrl || ''}
                   onChange={(e) => setSettings({ ...settings, messengerUrl: e.target.value })}
                   placeholder="https://m.me/camcuhousedaknong"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs"
                 />
               </div>
-              <div>
-                <label className="block text-slate-600 mb-1 font-medium">Hotline Gọi Ngay</label>
+
+              {/* WhatsApp */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                    WhatsApp (Quốc tế)
+                  </span>
+                  <label className="flex items-center gap-1.5 cursor-pointer text-emerald-700 font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={settings.enableWhatsApp ?? true}
+                      onChange={(e) => setSettings({ ...settings, enableWhatsApp: e.target.checked })}
+                      className="rounded text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <span>{settings.enableWhatsApp ?? true ? 'Bật' : 'Tắt'}</span>
+                  </label>
+                </div>
                 <input
                   type="text"
-                  value={settings.quickChatPhone || ''}
-                  onChange={(e) => setSettings({ ...settings, quickChatPhone: e.target.value })}
-                  placeholder="0382851688"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl"
+                  value={settings.whatsappUrl || ''}
+                  onChange={(e) => setSettings({ ...settings, whatsappUrl: e.target.value })}
+                  placeholder="https://wa.me/84382851688"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs"
                 />
               </div>
             </div>
