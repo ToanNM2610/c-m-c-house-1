@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Layout,
   Eye,
+  EyeOff,
   Sparkles,
   BookOpen,
   Upload,
@@ -23,6 +24,11 @@ import {
   HelpCircle,
   Info,
   Layers,
+  ArrowUp,
+  ArrowDown,
+  SlidersHorizontal,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { broadcastCmsSync } from '@/lib/cms-sync';
@@ -58,8 +64,8 @@ const SUB_PAGES: SubPageConfig[] = [
     labelEn: '1. Home',
     route: '/',
     icon: Layout,
-    descriptionVi: 'Quản lý tiêu đề Hero, khẩu hiệu tạp chí, triết lý suối và các section nổi bật trên trang chủ.',
-    descriptionEn: 'Manage Hero headline, magazine tagline, stream philosophy, and featured section toggles.',
+    descriptionVi: 'Quản lý 7 khu vực trang chủ, sắp xếp thứ tự hiển thị, bật/tắt từng section và kiểu bố cục.',
+    descriptionEn: 'Manage 7 homepage sections, vertical ordering, visibility toggles, and layout styles.',
   },
   {
     id: 'page-about',
@@ -67,8 +73,8 @@ const SUB_PAGES: SubPageConfig[] = [
     labelEn: '2. About',
     route: '/gioi-thieu',
     icon: BookOpen,
-    descriptionVi: 'Quản lý câu chuyện thương hiệu hoa Cẩm Cù, tầm nhìn sinh thái, cột mốc và đội ngũ.',
-    descriptionEn: 'Manage wax flower brand story, eco-vision & mission, milestones, and team toggles.',
+    descriptionVi: 'Quản lý câu chuyện thương hiệu hoa Cẩm Cù, cam kết sinh thái, cột mốc và đội ngũ.',
+    descriptionEn: 'Manage wax flower brand story, eco-commitments, milestones, and team sections.',
   },
   {
     id: 'page-space',
@@ -76,8 +82,8 @@ const SUB_PAGES: SubPageConfig[] = [
     labelEn: '3. Space',
     route: '/khong-gian',
     icon: Camera,
-    descriptionVi: 'Quản lý tiêu đề thư viện 30 bản khắc không gian, mô tả và banner hình ảnh.',
-    descriptionEn: 'Manage 30 spatial plates intro, chapter narratives, and hero banner.',
+    descriptionVi: 'Quản lý các phân khu trải nghiệm bờ suối, thư viện 30 bản khắc không gian và banner đặt chỗ.',
+    descriptionEn: 'Manage streamside experience zones, 30 spatial plates gallery, and booking banner.',
   },
   {
     id: 'page-menu',
@@ -85,8 +91,8 @@ const SUB_PAGES: SubPageConfig[] = [
     labelEn: '4. Menu',
     route: '/thuc-don',
     icon: UtensilsCrossed,
-    descriptionVi: 'Quản lý lời dẫn thực đơn 67 món thảo mộc & cà phê mộc bazan cùng thông báo phục vụ tại suối.',
-    descriptionEn: 'Manage 67-item botanical menu intro, basalt coffee narrative, and streamside service notice.',
+    descriptionVi: 'Quản lý triết lý pha chế 67 món thảo mộc & cà phê mộc bazan, tùy chọn hiển thị giá và nút giỏ hàng.',
+    descriptionEn: 'Manage 67 botanical menu philosophy, price visibility, and cart button controls.',
   },
   {
     id: 'page-reviews',
@@ -94,17 +100,17 @@ const SUB_PAGES: SubPageConfig[] = [
     labelEn: '5. Reviews',
     route: '/khach-hang',
     icon: Star,
-    descriptionVi: 'Quản lý tiêu đề trang đánh giá thực tế từ khách, lời cảm ơn và lời kêu gọi gửi đánh giá.',
-    descriptionEn: 'Manage guest feedback showcase headings, thank-you statement, and review submission prompt.',
+    descriptionVi: 'Quản lý chỉ số hài lòng thực tế, danh sách đánh giá của khách và khung gửi cảm nhận mới.',
+    descriptionEn: 'Manage guest satisfaction metrics, reviews showcase, and feedback submission box.',
   },
   {
     id: 'page-news',
     labelVi: '6. Tin tức & FAQ',
     labelEn: '6. News & FAQ',
-    route: '/tin-tuc',
+    route: '/su-kien',
     icon: Newspaper,
-    descriptionVi: 'Quản lý tiêu đề trang sự kiện, giải đáp FAQ và bật/tắt hiển thị từng khu vực.',
-    descriptionEn: 'Manage acoustic events & FAQ header copies, intro note, and visibility switches.',
+    descriptionVi: 'Quản lý bản tin sinh thái, sự kiện hoạt động bên suối và bộ câu hỏi thường gặp FAQ.',
+    descriptionEn: 'Manage eco-journal news, streamside happenings, and FAQ accordion section.',
   },
   {
     id: 'page-contact',
@@ -112,10 +118,203 @@ const SUB_PAGES: SubPageConfig[] = [
     labelEn: '7. Contact',
     route: '/lien-he',
     icon: MapPin,
-    descriptionVi: 'Quản lý thông tin chỉ đường, ghi chú tiệc BBQ suối và bãi đỗ xe ô tô tại Hẻm 437 Hùng Vương.',
-    descriptionEn: 'Manage directions, streamside BBQ gathering notice, and parking guidance at Alley 437 Hung Vuong.',
+    descriptionVi: 'Quản lý hướng dẫn chỉ đường Hẻm 437 Hùng Vương, hotline, form liên hệ BBQ và bản đồ Google Maps.',
+    descriptionEn: 'Manage directions to Alley 437 Hung Vuong, hotline cards, BBQ form, and Google Maps.',
   },
 ];
+
+/**
+ * Universal Section Card with Ordering & Visibility Controls
+ */
+function SectionCard({
+  sectionId,
+  title,
+  subtitle,
+  icon: Icon,
+  enabled,
+  onToggle,
+  canMoveUp,
+  canMoveDown,
+  onMoveUp,
+  onMoveDown,
+  layoutVariant,
+  layoutOptions,
+  onChangeLayout,
+  children,
+}: {
+  sectionId: string;
+  title: string;
+  subtitle?: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  enabled: boolean;
+  onToggle: () => void;
+  canMoveUp?: boolean;
+  canMoveDown?: boolean;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  layoutVariant?: string;
+  layoutOptions?: { value: string; label: string }[];
+  onChangeLayout?: (val: string) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={`rounded-2xl border transition-all duration-200 shadow-sm ${
+        enabled
+          ? 'bg-white border-slate-200'
+          : 'bg-slate-50/70 border-slate-200 opacity-80'
+      }`}
+    >
+      {/* Section Header Toolbar */}
+      <div className="p-4 sm:p-5 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <div
+              className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                enabled ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+            </div>
+          )}
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 className="text-sm font-bold text-slate-800">{title}</h4>
+              {!enabled && (
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+                  Đang ẩn trên web
+                </span>
+              )}
+            </div>
+            {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap shrink-0">
+          {/* Layout Variant Dropdown */}
+          {layoutOptions && layoutOptions.length > 0 && onChangeLayout && (
+            <div className="flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-[11px] text-slate-500 hidden sm:inline">Kiểu bố cục:</span>
+              <select
+                value={layoutVariant || layoutOptions[0].value}
+                onChange={(e) => onChangeLayout(e.target.value)}
+                className="bg-transparent font-medium text-slate-700 text-xs focus:outline-none cursor-pointer"
+              >
+                {layoutOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Move Up / Move Down buttons */}
+          {(onMoveUp || onMoveDown) && (
+            <div className="flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5 text-slate-600">
+              <button
+                type="button"
+                disabled={!canMoveUp}
+                onClick={onMoveUp}
+                className="p-1.5 rounded-lg hover:bg-white hover:text-slate-900 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                title="Di chuyển lên trên"
+                aria-label="Move Up"
+              >
+                <ArrowUp className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                disabled={!canMoveDown}
+                onClick={onMoveDown}
+                className="p-1.5 rounded-lg hover:bg-white hover:text-slate-900 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                title="Di chuyển xuống dưới"
+                aria-label="Move Down"
+              >
+                <ArrowDown className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* ON / OFF Switch */}
+          <button
+            type="button"
+            onClick={onToggle}
+            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              enabled
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 shadow-xs'
+                : 'bg-slate-200 text-slate-600 border border-slate-300 hover:bg-slate-300'
+            }`}
+          >
+            <span className={`w-2 h-2 rounded-full ${enabled ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+            <span>{enabled ? 'Đang hiển thị' : 'Đang ẩn'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Card Content Body */}
+      <div className={`p-5 sm:p-6 space-y-5 transition-opacity ${!enabled ? 'opacity-60' : ''}`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Page-Level Visibility Toggle Card for Pages 2 to 7
+ */
+function PageVisibilityCard({
+  pageTitle,
+  enabled,
+  onToggle,
+}: {
+  pageTitle: string;
+  enabled: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div
+      className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+        enabled
+          ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950'
+          : 'bg-slate-100 border-slate-200 text-slate-600'
+      }`}
+    >
+      <div className="flex items-center gap-3.5">
+        <div
+          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+            enabled ? 'bg-emerald-600 text-white shadow-xs' : 'bg-slate-300 text-slate-600'
+          }`}
+        >
+          {enabled ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+        </div>
+        <div>
+          <h4 className="text-sm font-bold">
+            Hiển thị trang &quot;{pageTitle}&quot; trên Menu Web (Navbar & Footer)
+          </h4>
+          <p className="text-xs text-slate-500 mt-0.5">
+            {enabled
+              ? 'Trang đang hiển thị công khai trên thanh điều hướng chính và chân trang.'
+              : 'Trang đang ẩn khỏi Navbar và Footer (đường dẫn trực tiếp vẫn hoạt động nếu cần truy cập).'}
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shrink-0 ${
+          enabled
+            ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs'
+            : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+        }`}
+      >
+        <span className={`w-2 h-2 rounded-full ${enabled ? 'bg-white' : 'bg-slate-500'}`} />
+        <span>{enabled ? 'Bật (Đang hiện trên Menu)' : 'Tắt (Đang ẩn khỏi Menu)'}</span>
+      </button>
+    </div>
+  );
+}
 
 export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
   const { data, refreshData } = useApp();
@@ -143,6 +342,90 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // ---------------- Page-Level Visibility Toggles (Pages 2-7) ----------------
+  const [showPageAbout, setShowPageAbout] = useState<boolean>(c?.showPageAbout ?? true);
+  const [showPageSpace, setShowPageSpace] = useState<boolean>(c?.showPageSpace ?? true);
+  const [showPageMenu, setShowPageMenu] = useState<boolean>(c?.showPageMenu ?? true);
+  const [showPageReviews, setShowPageReviews] = useState<boolean>(c?.showPageReviews ?? true);
+  const [showPageNews, setShowPageNews] = useState<boolean>(c?.showPageNews ?? true);
+  const [showPageContact, setShowPageContact] = useState<boolean>(c?.showPageContact ?? true);
+
+  // ---------------- Universal Section Orders ----------------
+  const [homeOrder, setHomeOrder] = useState<string[]>(
+    c?.homeSectionOrder?.length
+      ? c.homeSectionOrder
+      : ['hero', 'philosophy', 'featuredMenu', 'featuredSpace', 'featuredReviews', 'featuredEvents', 'ctaBanner']
+  );
+  const [aboutOrder, setAboutOrder] = useState<string[]>(
+    c?.aboutSectionOrder?.length
+      ? c.aboutSectionOrder
+      : ['banner', 'brandStory', 'commitments', 'milestones', 'team']
+  );
+  const [spaceOrder, setSpaceOrder] = useState<string[]>(
+    c?.spaceSectionOrder?.length
+      ? c.spaceSectionOrder
+      : ['header', 'zones', 'gallery', 'cta']
+  );
+  const [menuOrder, setMenuOrder] = useState<string[]>(
+    c?.menuSectionOrder?.length
+      ? c.menuSectionOrder
+      : ['header', 'filterAndSearch', 'dietaryNote', 'bbqBanner']
+  );
+  const [reviewsOrder, setReviewsOrder] = useState<string[]>(
+    c?.reviewsSectionOrder?.length
+      ? c.reviewsSectionOrder
+      : ['header', 'reviewsList', 'submissionForm']
+  );
+  const [newsOrder, setNewsOrder] = useState<string[]>(
+    c?.newsSectionOrder?.length
+      ? c.newsSectionOrder
+      : ['header', 'newsEvents', 'faqAccordion']
+  );
+  const [contactOrder, setContactOrder] = useState<string[]>(
+    c?.contactSectionOrder?.length
+      ? c.contactSectionOrder
+      : ['header', 'quickInfo', 'contactForm', 'mapEmbed']
+  );
+
+  // ---------------- Universal Section Layouts & Visibility Maps ----------------
+  const [sectionLayouts, setSectionLayouts] = useState<Record<string, string>>(
+    (c?.sectionLayouts as Record<string, string>) || {}
+  );
+  const [sectionVisibility, setSectionVisibility] = useState<Record<string, boolean>>(
+    (c?.sectionVisibility as Record<string, boolean>) || {}
+  );
+
+  const moveSection = (
+    list: string[],
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+    index: number,
+    direction: 'up' | 'down'
+  ) => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+    const next = [...list];
+    const temp = next[index];
+    next[index] = next[targetIndex];
+    next[targetIndex] = temp;
+    setList(next);
+  };
+
+  const isSectionEnabled = (key: string) => sectionVisibility[key] !== false;
+
+  const toggleSection = (key: string) => {
+    setSectionVisibility((prev) => ({
+      ...prev,
+      [key]: prev[key] === false ? true : false,
+    }));
+  };
+
+  const changeLayoutVariant = (key: string, variant: string) => {
+    setSectionLayouts((prev) => ({
+      ...prev,
+      [key]: variant,
+    }));
+  };
 
   // ---------------- Page 1: Trang chu (/) ----------------
   const [heroEyebrow, setHeroEyebrow] = useState(c?.heroEyebrow || 'BOTANICAL ECO-COFFEE & STREAMSIDE SANCTUARY');
@@ -221,6 +504,8 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
   const [menuIntroEn, setMenuIntroEn] = useState(c?.menuIntroEn || '67 drinks and artisanal breakfast dishes crafted from organic botanicals, wood-roasted coffee, and garden herbs.');
   const [menuNotice, setMenuNotice] = useState(c?.menuNotice || 'Phục vụ tại bàn sát suối • Không sử dụng phẩm màu hay hương liệu nhân tạo • Thảo mộc tươi hái mỗi sáng');
   const [menuNoticeEn, setMenuNoticeEn] = useState(c?.menuNoticeEn || 'Served right beside the stream • Zero artificial flavors or coloring • Fresh herbs harvested every morning');
+  const [menuShowPrices, setMenuShowPrices] = useState<boolean>(c?.menuShowPrices ?? true);
+  const [menuShowAddToCart, setMenuShowAddToCart] = useState<boolean>(c?.menuShowAddToCart ?? true);
 
   // ---------------- Page 5: Khach hang (/khach-hang) ----------------
   const [reviewsEyebrow, setReviewsEyebrow] = useState(c?.reviewsEyebrow || 'CẢM NHẬN & ĐÁNH GIÁ THỰC TẾ');
@@ -234,7 +519,7 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
   const [reviewsPrompt, setReviewsPrompt] = useState(c?.reviewsPrompt || 'Bạn đã ghé thăm Cẩm Cù House? Hãy để lại cảm nhận của bạn để chúng tôi phục vụ ngày một chu đáo hơn!');
   const [reviewsPromptEn, setReviewsPromptEn] = useState(c?.reviewsPromptEn || 'Have you visited Cẩm Cù House? Please leave your review so we can welcome you even better!');
 
-  // ---------------- Page 6: Tin tuc & FAQ (/tin-tuc) ----------------
+  // ---------------- Page 6: Tin tuc & FAQ (/su-kien) ----------------
   const [newsEyebrow, setNewsEyebrow] = useState(c?.newsEyebrow || 'BẢN TIN SINH THÁI & GIẢI ĐÁP');
   const [newsEyebrowEn, setNewsEyebrowEn] = useState(c?.newsEyebrowEn || 'ECOLOGICAL DISPATCH & FAQ');
   const [newsTitle, setNewsTitle] = useState(c?.newsTitle || 'Tin Tức Hoạt Động & Câu Hỏi Thường Gặp');
@@ -242,7 +527,7 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
   const [newsSubtitle, setNewsSubtitle] = useState(c?.newsSubtitle || 'Cập nhật nhịp sống bên suối và thông tin hướng dẫn chi tiết dành cho bạn');
   const [newsSubtitleEn, setNewsSubtitleEn] = useState(c?.newsSubtitleEn || 'Updates on streamside happenings and helpful guide notes for your visit');
   const [newsIntro, setNewsIntro] = useState(c?.newsIntro || 'Xem lịch trình các hoạt động âm nhạc, mùa vụ hoa nở và câu trả lời cho các thắc mắc về đường đi, thực đơn, bãi đỗ xe.');
-  const [newsIntroEn, setNewsIntroEn] = useState(c?.newsIntroEn || 'Check schedules for acoustic sessions, seasonal blooms, and clear answers regarding parking, menu, and directions.');
+  const [newsIntroEn, setNewsIntroEn] = useState(c?.newsIntroEn || 'Check schedules for music sessions, seasonal blooms, and clear answers regarding parking, menu, and directions.');
   const [showNewsEvents, setShowNewsEvents] = useState<boolean>(c?.showNewsEvents ?? true);
   const [showNewsFaq, setShowNewsFaq] = useState<boolean>(c?.showNewsFaq ?? true);
 
@@ -330,6 +615,27 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
+          // Page-Level Visibility Toggles (Module 1)
+          showPageAbout,
+          showPageSpace,
+          showPageMenu,
+          showPageReviews,
+          showPageNews,
+          showPageContact,
+
+          // Universal Section Orders
+          homeSectionOrder: homeOrder,
+          aboutSectionOrder: aboutOrder,
+          spaceSectionOrder: spaceOrder,
+          menuSectionOrder: menuOrder,
+          reviewsSectionOrder: reviewsOrder,
+          newsSectionOrder: newsOrder,
+          contactSectionOrder: contactOrder,
+
+          // Universal Layout Variants & Visibility
+          sectionLayouts,
+          sectionVisibility,
+
           // Page 1
           heroEyebrow,
           heroEyebrowEn,
@@ -395,6 +701,8 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
           menuIntroEn,
           menuNotice,
           menuNoticeEn,
+          menuShowPrices,
+          menuShowAddToCart,
 
           // Page 5
           reviewsEyebrow,
@@ -468,7 +776,7 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
             Quản Lý Giao Diện & Nội Dung 7 Trang Website
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Biên tập trực quan toàn bộ câu chữ, tiêu đề, đoạn văn và ảnh bìa cho tất cả 7 trang storefront của Cẩm Cù House.
+            Tự do sắp xếp thứ tự khu vực (Move Up/Down), bật/tắt hiển thị từng section, thay đổi kiểu bố cục và biên tập song ngữ 100%.
           </p>
         </div>
 
@@ -613,415 +921,452 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
       ========================================================================= */}
       {currentSubPage === 'page-home' && (
         <div className="space-y-6">
-          {/* Section: Hero Banner */}
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-emerald-600" />
-                  <span>Khu Vực 1: Botanical Magazine Hero ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Dòng chữ thương hiệu lớn, khẩu hiệu suối và đoạn giới thiệu mở đầu trang chủ.
-                </p>
-              </div>
-            </div>
-
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Dòng Eyebrow Nhỏ (Trên cùng):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroEyebrow}
-                      onChange={(e) => setHeroEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Tiêu Đề Lớn (Hero Title):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroTitle}
-                      onChange={(e) => setHeroTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Phụ Đề In Nghiêng (Hero Subtitle):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroSubtitle}
-                      onChange={(e) => setHeroSubtitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Khẩu Hiệu Hero (Tagline):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroTagline}
-                      onChange={(e) => setHeroTagline(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                    Đoạn Văn Mô Tả Giới Thiệu (Hero Description):
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={heroDescription}
-                    onChange={(e) => setHeroDescription(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Eyebrow Top Line (EN):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroEyebrowEn}
-                      onChange={(e) => setHeroEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Hero Title (EN):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroTitleEn}
-                      onChange={(e) => setHeroTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Hero Subtitle Italic (EN):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroSubtitleEn}
-                      onChange={(e) => setHeroSubtitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                      Hero Tagline (EN):
-                    </label>
-                    <input
-                      type="text"
-                      value={heroTaglineEn}
-                      onChange={(e) => setHeroTaglineEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
-                    Hero Description (EN):
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={heroDescriptionEn}
-                    onChange={(e) => setHeroDescriptionEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Toggle Hero 3D Bean / Photo Card */}
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-              <div>
-                <span className="text-xs font-bold text-slate-800 block">
-                  Hiển Thị Khung Ảnh Bìa Hero 01 Bên Suối:
-                </span>
-                <span className="text-[11px] text-slate-500">
-                  Bật/tắt khung ảnh bìa biên tập 2D ở cột bên phải Hero trên trang chủ.
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowHero3DBean(!showHero3DBean)}
-                className={`w-12 h-6 rounded-full transition-colors relative ${
-                  showHero3DBean ? 'bg-emerald-600' : 'bg-slate-300'
-                }`}
-              >
-                <span
-                  className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                    showHero3DBean ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* Section: Homepage Featured Blocks Visibility Toggles */}
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div className="border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-600" />
-                <span>Bật / Tắt Các Khối Nổi Bật Trên Trang Chủ</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Kiểm soát hiển thị các section preview trên trang chủ (`/`).
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Khối Thực Đơn Nổi Bật</span>
-                  <span className="text-[11px] text-slate-500">Menu Preview</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowFeaturedMenu(!showFeaturedMenu)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showFeaturedMenu ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
+          {homeOrder.map((sectionId, idx) => {
+            if (sectionId === 'hero') {
+              return (
+                <SectionCard
+                  key="hero"
+                  sectionId="hero"
+                  title={`Khu Vực ${idx + 1}: Botanical Magazine Hero (${activeLangTab.toUpperCase()})`}
+                  subtitle="Dòng chữ thương hiệu lớn, khẩu hiệu suối và đoạn giới thiệu mở đầu trang chủ."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('home-hero')}
+                  onToggle={() => toggleSection('home-hero')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['home-hero'] || 'split-right'}
+                  layoutOptions={[
+                    { value: 'split-right', label: 'Ảnh bên phải' },
+                    { value: 'split-left', label: 'Ảnh bên trái' },
+                    { value: 'full-cover', label: 'Nền toàn khung' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('home-hero', val)}
                 >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showFeaturedMenu ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                  {activeLangTab === 'vi' ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Dòng Eyebrow Nhỏ (Trên cùng):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroEyebrow}
+                            onChange={(e) => setHeroEyebrow(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Tiêu Đề Lớn (Hero Title):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTitle}
+                            onChange={(e) => setHeroTitle(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
+                          />
+                        </div>
+                      </div>
 
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Khối Bản Khắc Không Gian</span>
-                  <span className="text-[11px] text-slate-500">Spatial Figures Preview</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowFeaturedSpace(!showFeaturedSpace)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showFeaturedSpace ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
-                >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showFeaturedSpace ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Phụ Đề In Nghiêng (Hero Subtitle):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroSubtitle}
+                            onChange={(e) => setHeroSubtitle(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Khẩu Hiệu Hero (Tagline):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTagline}
+                            onChange={(e) => setHeroTagline(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                      </div>
 
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Khối Đánh Giá Khách Hàng</span>
-                  <span className="text-[11px] text-slate-500">Testimonials Carousel</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowFeaturedReviews(!showFeaturedReviews)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showFeaturedReviews ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
-                >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showFeaturedReviews ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Khối Hoạt Động & Sự Kiện</span>
-                  <span className="text-[11px] text-slate-500">Live Acoustic & Events</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowFeaturedEvents(!showFeaturedEvents)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showFeaturedEvents ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
-                >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showFeaturedEvents ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Section: Philosophy */}
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                <Eye className="w-4 h-4 text-emerald-600" />
-                <span>Khu Vực 2: Triết Lý Bên Dòng Suối ({activeLangTab.toUpperCase()})</span>
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Phần giới thiệu không gian bình yên và 3 thẻ giá trị sinh thái cốt lõi.
-              </p>
-            </div>
-
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow:</label>
-                    <input
-                      type="text"
-                      value={philosophyEyebrow}
-                      onChange={(e) => setPhilosophyEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Mục:</label>
-                    <input
-                      type="text"
-                      value={philosophyTitle}
-                      onChange={(e) => setPhilosophyTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Dòng Dẫn Ý Nghĩa (Lead):</label>
-                  <input
-                    type="text"
-                    value={philosophyLead}
-                    onChange={(e) => setPhilosophyLead(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Văn Triết Lý (Story):</label>
-                  <textarea
-                    rows={2}
-                    value={philosophyStory}
-                    onChange={(e) => setPhilosophyStory(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow (EN):</label>
-                    <input
-                      type="text"
-                      value={philosophyEyebrowEn}
-                      onChange={(e) => setPhilosophyEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Section Title (EN):</label>
-                    <input
-                      type="text"
-                      value={philosophyTitleEn}
-                      onChange={(e) => setPhilosophyTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Lead Sentence (EN):</label>
-                  <input
-                    type="text"
-                    value={philosophyLeadEn}
-                    onChange={(e) => setPhilosophyLeadEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Story Paragraph (EN):</label>
-                  <textarea
-                    rows={2}
-                    value={philosophyStoryEn}
-                    onChange={(e) => setPhilosophyStoryEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* 3 Philosophy Cards */}
-            <div className="pt-4 border-t border-slate-100">
-              <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
-                3 Thẻ Triết Lý Sinh Thái (Philosophy Cards):
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {cards.map((card, idx) => (
-                  <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                    <span className="text-[11px] font-mono text-emerald-700 font-bold block">
-                      Thẻ 0{idx + 1}
-                    </span>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                        {activeLangTab === 'vi' ? 'Tiêu đề thẻ (VI):' : 'Card Title (EN):'}
-                      </label>
-                      <input
-                        type="text"
-                        value={activeLangTab === 'vi' ? card.title : (card.titleEn || '')}
-                        onChange={(e) =>
-                          handleCardChange(idx, activeLangTab === 'vi' ? 'title' : 'titleEn', e.target.value)
-                        }
-                        className="w-full px-2.5 py-1.5 text-xs border rounded-lg bg-white"
-                      />
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          Đoạn Văn Mô Tả Giới Thiệu (Hero Description):
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={heroDescription}
+                          onChange={(e) => setHeroDescription(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
+                        />
+                      </div>
                     </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Eyebrow Top Line (EN):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroEyebrowEn}
+                            onChange={(e) => setHeroEyebrowEn(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Hero Title (EN):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTitleEn}
+                            onChange={(e) => setHeroTitleEn(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
+                          />
+                        </div>
+                      </div>
 
-                    <div>
-                      <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                        {activeLangTab === 'vi' ? 'Nội dung mô tả (VI):' : 'Card Description (EN):'}
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={activeLangTab === 'vi' ? card.desc : (card.descEn || '')}
-                        onChange={(e) =>
-                          handleCardChange(idx, activeLangTab === 'vi' ? 'desc' : 'descEn', e.target.value)
-                        }
-                        className="w-full px-2.5 py-1.5 text-xs border rounded-lg bg-white"
-                      />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Hero Subtitle Italic (EN):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroSubtitleEn}
+                            onChange={(e) => setHeroSubtitleEn(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                            Hero Tagline (EN):
+                          </label>
+                          <input
+                            type="text"
+                            value={heroTaglineEn}
+                            onChange={(e) => setHeroTaglineEn(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          Hero Description (EN):
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={heroDescriptionEn}
+                          onChange={(e) => setHeroDescriptionEn(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'philosophy') {
+              return (
+                <SectionCard
+                  key="philosophy"
+                  sectionId="philosophy"
+                  title={`Khu Vực ${idx + 1}: Triết Lý Bên Dòng Suối (${activeLangTab.toUpperCase()})`}
+                  subtitle="Lời dẫn về không gian nguyên bản, 3 thẻ giá trị suối mát & cà phê mộc bazan."
+                  icon={BookOpen}
+                  enabled={isSectionEnabled('home-philosophy')}
+                  onToggle={() => toggleSection('home-philosophy')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['home-philosophy'] || '3-cols'}
+                  layoutOptions={[
+                    { value: '3-cols', label: '3 cột thẻ' },
+                    { value: '2-cols', label: '2 cột tạp chí' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('home-philosophy', val)}
+                >
+                  {activeLangTab === 'vi' ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Dòng Eyebrow:</label>
+                          <input
+                            type="text"
+                            value={philosophyEyebrow}
+                            onChange={(e) => setPhilosophyEyebrow(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Khu Vực:</label>
+                          <input
+                            type="text"
+                            value={philosophyTitle}
+                            onChange={(e) => setPhilosophyTitle(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Câu Dẫn Mở Đầu (Lead):</label>
+                        <input
+                          type="text"
+                          value={philosophyLead}
+                          onChange={(e) => setPhilosophyLead(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Văn Câu Chuyện Suối:</label>
+                        <textarea
+                          rows={2}
+                          value={philosophyStory}
+                          onChange={(e) => setPhilosophyStory(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow (EN):</label>
+                          <input
+                            type="text"
+                            value={philosophyEyebrowEn}
+                            onChange={(e) => setPhilosophyEyebrowEn(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Section Title (EN):</label>
+                          <input
+                            type="text"
+                            value={philosophyTitleEn}
+                            onChange={(e) => setPhilosophyTitleEn(e.target.value)}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-bold"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Lead Sentence (EN):</label>
+                        <input
+                          type="text"
+                          value={philosophyLeadEn}
+                          onChange={(e) => setPhilosophyLeadEn(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 italic"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Story Paragraph (EN):</label>
+                        <textarea
+                          rows={2}
+                          value={philosophyStoryEn}
+                          onChange={(e) => setPhilosophyStoryEn(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 3 Philosophy Cards */}
+                  <div className="pt-4 border-t border-slate-100">
+                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
+                      3 Thẻ Triết Lý Sinh Thái (Philosophy Cards):
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {cards.map((card, cardIdx) => (
+                        <div key={cardIdx} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                          <span className="text-[11px] font-mono text-emerald-700 font-bold block">
+                            Thẻ 0{cardIdx + 1}
+                          </span>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              {activeLangTab === 'vi' ? 'Tiêu đề thẻ (VI):' : 'Card Title (EN):'}
+                            </label>
+                            <input
+                              type="text"
+                              value={activeLangTab === 'vi' ? card.title : (card.titleEn || '')}
+                              onChange={(e) =>
+                                handleCardChange(cardIdx, activeLangTab === 'vi' ? 'title' : 'titleEn', e.target.value)
+                              }
+                              className="w-full px-2.5 py-1.5 text-xs border rounded-lg bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                              {activeLangTab === 'vi' ? 'Nội dung mô tả (VI):' : 'Card Description (EN):'}
+                            </label>
+                            <textarea
+                              rows={3}
+                              value={activeLangTab === 'vi' ? card.desc : (card.descEn || '')}
+                              onChange={(e) =>
+                                handleCardChange(cardIdx, activeLangTab === 'vi' ? 'desc' : 'descEn', e.target.value)
+                              }
+                              className="w-full px-2.5 py-1.5 text-xs border rounded-lg bg-white"
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'featuredMenu') {
+              return (
+                <SectionCard
+                  key="featuredMenu"
+                  sectionId="featuredMenu"
+                  title={`Khu Vực ${idx + 1}: Thực Đơn Nổi Bật (Menu Preview)`}
+                  subtitle="Hiển thị các món cà phê mộc và thức uống thảo mộc best-seller trên trang chủ."
+                  icon={UtensilsCrossed}
+                  enabled={isSectionEnabled('home-featuredMenu') && showFeaturedMenu}
+                  onToggle={() => {
+                    toggleSection('home-featuredMenu');
+                    setShowFeaturedMenu(!showFeaturedMenu);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['home-featuredMenu'] || '3-cols'}
+                  layoutOptions={[
+                    { value: '3-cols', label: 'Lưới 3 cột' },
+                    { value: 'compact', label: 'Danh sách tinh gọn' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('home-featuredMenu', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Phần này tự động lấy các món được đánh dấu nổi bật từ <strong>Thực Đơn 7 Danh Mục (67 món)</strong>. Bạn có thể thay đổi kiểu hiển thị lưới 3 cột hoặc danh sách tinh gọn phía trên.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'featuredSpace') {
+              return (
+                <SectionCard
+                  key="featuredSpace"
+                  sectionId="featuredSpace"
+                  title={`Khu Vực ${idx + 1}: Không Gian 30 Bản Khắc (Gallery Preview)`}
+                  subtitle="Xem trước các bản khắc không gian suối mát và vòm lá Cẩm Cù."
+                  icon={Camera}
+                  enabled={isSectionEnabled('home-featuredSpace') && showFeaturedSpace}
+                  onToggle={() => {
+                    toggleSection('home-featuredSpace');
+                    setShowFeaturedSpace(!showFeaturedSpace);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['home-featuredSpace'] || 'masonry'}
+                  layoutOptions={[
+                    { value: 'masonry', label: 'Lưới tạp chí' },
+                    { value: 'carousel', label: 'Băng chuyền ngang' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('home-featuredSpace', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Khu vực trích xuất 6 bản khắc tiêu biểu từ <strong>Thư Viện 30 Bản Khắc Không Gian</strong> kèm hiệu ứng mở ảnh sắc nét.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'featuredReviews') {
+              return (
+                <SectionCard
+                  key="featuredReviews"
+                  sectionId="featuredReviews"
+                  title={`Khu Vực ${idx + 1}: Đánh Giá Khách Hàng (Testimonials Preview)`}
+                  subtitle="Các lời cảm nhận thực tế từ thực khách ghé quán đã được phê duyệt."
+                  icon={Star}
+                  enabled={isSectionEnabled('home-featuredReviews') && showFeaturedReviews}
+                  onToggle={() => {
+                    toggleSection('home-featuredReviews');
+                    setShowFeaturedReviews(!showFeaturedReviews);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Phần đánh giá hiển thị carousel xoay vòng các nhận xét 5 sao thực tế từ khách hàng kèm chỉ số đề xuất của quán.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'featuredEvents') {
+              return (
+                <SectionCard
+                  key="featuredEvents"
+                  sectionId="featuredEvents"
+                  title={`Khu Vực ${idx + 1}: Bản Tin & Sự Kiện (News Preview)`}
+                  subtitle="Các chương trình nông sản, mùa hoa cẩm cù nở và thông tin hoạt động."
+                  icon={Newspaper}
+                  enabled={isSectionEnabled('home-featuredEvents') && showFeaturedEvents}
+                  onToggle={() => {
+                    toggleSection('home-featuredEvents');
+                    setShowFeaturedEvents(!showFeaturedEvents);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Hiển thị các bài viết và sự kiện đang hoạt động từ danh mục Bản Tin & Sự Kiện.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'ctaBanner') {
+              return (
+                <SectionCard
+                  key="ctaBanner"
+                  sectionId="ctaBanner"
+                  title={`Khu Vực ${idx + 1}: Banner Kêu Gọi Hành Động (CTA Banner)`}
+                  subtitle="Khối banner chân trang kêu gọi khách ghé thăm hoặc gọi điện đặt chỗ BBQ bên suối."
+                  icon={MapPin}
+                  enabled={isSectionEnabled('home-ctaBanner')}
+                  onToggle={() => toggleSection('home-ctaBanner')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < homeOrder.length - 1}
+                  onMoveUp={() => moveSection(homeOrder, setHomeOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(homeOrder, setHomeOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Banner hành động chân trang chứa 2 nút chính: Gọi Hotline (0382 851 688) và Mở Google Maps chỉ đường đến Hẻm 437 Hùng Vương.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            return null;
+          })}
         </div>
       )}
 
@@ -1030,240 +1375,253 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
       ========================================================================= */}
       {currentSubPage === 'page-about' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-emerald-600" />
-                  <span>Câu Chuyện Thương Hiệu & Tầm Nhìn Sinh Thái ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Bài viết về hành trình khởi sinh dưới vòm hoa Cẩm Cù và tầm nhìn bảo tồn suối tự nhiên.
-                </p>
-              </div>
-            </div>
+          <PageVisibilityCard
+            pageTitle="Giới thiệu"
+            enabled={showPageAbout}
+            onToggle={() => setShowPageAbout(!showPageAbout)}
+          />
 
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Bài Viết:</label>
-                    <input
-                      type="text"
-                      value={brandStoryTitle}
-                      onChange={(e) => setBrandStoryTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Phụ Đề Khơi Gợi:</label>
-                    <input
-                      type="text"
-                      value={brandStorySubtitle}
-                      onChange={(e) => setBrandStorySubtitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Nội Dung Chi Tiết:</label>
-                  <textarea
-                    rows={4}
-                    value={brandStoryContent}
-                    onChange={(e) => setBrandStoryContent(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tóm Tắt Triết Lý Hoạt Động:</label>
-                  <textarea
-                    rows={2}
-                    value={brandStoryPhilosophy}
-                    onChange={(e) => setBrandStoryPhilosophy(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Tầm Nhìn Sinh Thái:</label>
-                    <input
-                      type="text"
-                      value={visionTitle}
-                      onChange={(e) => setVisionTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Mô Tả Tầm Nhìn & Sứ Mệnh:</label>
-                    <textarea
-                      rows={2}
-                      value={visionDesc}
-                      onChange={(e) => setVisionDesc(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Article Title (EN):</label>
-                    <input
-                      type="text"
-                      value={brandStoryTitleEn}
-                      onChange={(e) => setBrandStoryTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Subtitle (EN):</label>
-                    <input
-                      type="text"
-                      value={brandStorySubtitleEn}
-                      onChange={(e) => setBrandStorySubtitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Detailed Narrative (EN):</label>
-                  <textarea
-                    rows={4}
-                    value={brandStoryContentEn}
-                    onChange={(e) => setBrandStoryContentEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Philosophy Summary (EN):</label>
-                  <textarea
-                    rows={2}
-                    value={brandStoryPhilosophyEn}
-                    onChange={(e) => setBrandStoryPhilosophyEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Vision Title (EN):</label>
-                    <input
-                      type="text"
-                      value={visionTitleEn}
-                      onChange={(e) => setVisionTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Vision & Mission Description (EN):</label>
-                    <textarea
-                      rows={2}
-                      value={visionDescEn}
-                      onChange={(e) => setVisionDescEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Brand Story Image Upload */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <label className="block text-xs font-mono font-semibold text-slate-700">
-                Ảnh Minh Họa Câu Chuyện Quán:
-              </label>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="w-32 h-20 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0">
-                  {brandStoryImageUrl ? (
-                    <img src={brandStoryImageUrl} alt="Brand Story" className="w-full h-full object-cover" />
-                  ) : (
-                    <ImageIcon className="w-6 h-6 text-slate-400" />
-                  )}
-                </div>
-
-                <div className="space-y-2 flex-1 w-full">
-                  <input
-                    type="text"
-                    value={brandStoryImageUrl}
-                    onChange={(e) => setBrandStoryImageUrl(e.target.value)}
-                    placeholder="/uploads/brand/story-banner.jpg..."
-                    className="w-full px-3 py-2 text-xs border rounded-xl font-mono"
-                  />
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="file"
-                      ref={brandFileInputRef}
-                      onChange={(e) => handleImageUpload(e, 'brand', (url) => setBrandStoryImageUrl(url))}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => brandFileInputRef.current?.click()}
-                      disabled={uploadingField === 'brand'}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-mono flex items-center gap-1.5 border border-slate-200"
-                    >
-                      {uploadingField === 'brand' ? (
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Upload className="w-3.5 h-3.5" />
-                      )}
-                      <span>{uploadingField === 'brand' ? 'Đang tải ảnh lên Blob...' : 'Chọn ảnh từ máy tính'}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section Toggles on Giới thiệu */}
-            <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Hiển Thị Cột Mốc Lịch Sử</span>
-                  <span className="text-[11px] text-slate-500">Milestone timeline</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowStoryMilestones(!showStoryMilestones)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showStoryMilestones ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
+          {aboutOrder.map((sectionId, idx) => {
+            if (sectionId === 'banner') {
+              return (
+                <SectionCard
+                  key="banner"
+                  sectionId="banner"
+                  title={`Khu Vực ${idx + 1}: Banner Đầu Trang Giới Thiệu`}
+                  subtitle="Tiêu đề trang, phụ đề và lời dẫn mở đầu của trang giới thiệu."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('about-banner')}
+                  onToggle={() => toggleSection('about-banner')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < aboutOrder.length - 1}
+                  onMoveUp={() => moveSection(aboutOrder, setAboutOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(aboutOrder, setAboutOrder, idx, 'down')}
                 >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showStoryMilestones ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Tiêu Đề Trang (VI):' : 'Page Title (EN):'}
+                      </label>
+                      <input
+                        type="text"
+                        value={activeLangTab === 'vi' ? brandStoryTitle : brandStoryTitleEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setBrandStoryTitle(e.target.value) : setBrandStoryTitleEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Phụ Đề In Nghiêng (VI):' : 'Subtitle (EN):'}
+                      </label>
+                      <input
+                        type="text"
+                        value={activeLangTab === 'vi' ? brandStorySubtitle : brandStorySubtitleEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setBrandStorySubtitle(e.target.value) : setBrandStorySubtitleEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs italic"
+                      />
+                    </div>
+                  </div>
+                </SectionCard>
+              );
+            }
 
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Hiển Thị Danh Sách Đội Ngũ</span>
-                  <span className="text-[11px] text-slate-500">Team members showcase</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowTeamMembers(!showTeamMembers)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showTeamMembers ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
+            if (sectionId === 'brandStory') {
+              return (
+                <SectionCard
+                  key="brandStory"
+                  sectionId="brandStory"
+                  title={`Khu Vực ${idx + 1}: Câu Chuyện Thương Hiệu Cẩm Cù House`}
+                  subtitle="Đoạn văn tự sự về con suối, giọt cà phê mộc và ảnh đại diện thương hiệu."
+                  icon={BookOpen}
+                  enabled={isSectionEnabled('about-brandStory')}
+                  onToggle={() => toggleSection('about-brandStory')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < aboutOrder.length - 1}
+                  onMoveUp={() => moveSection(aboutOrder, setAboutOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(aboutOrder, setAboutOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['about-brandStory'] || 'split-left'}
+                  layoutOptions={[
+                    { value: 'split-left', label: 'Ảnh trái - Chữ phải' },
+                    { value: 'split-right', label: 'Chữ trái - Ảnh phải' },
+                    { value: 'single-col', label: '1 cột tạp chí' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('about-brandStory', val)}
                 >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showTeamMembers ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Nội dung câu chuyện (VI):' : 'Brand Story Paragraph (EN):'}
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={activeLangTab === 'vi' ? brandStoryContent : brandStoryContentEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setBrandStoryContent(e.target.value) : setBrandStoryContentEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Triết lý sinh thái (VI):' : 'Eco Philosophy (EN):'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={activeLangTab === 'vi' ? brandStoryPhilosophy : brandStoryPhilosophyEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setBrandStoryPhilosophy(e.target.value) : setBrandStoryPhilosophyEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
+
+                    {/* Image uploader */}
+                    <div className="pt-2">
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-2">
+                        Ảnh Minh Họa Câu Chuyện (Vercel Blob):
+                      </label>
+                      <div className="flex items-center gap-4">
+                        {brandStoryImageUrl && (
+                          <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
+                            <img src={brandStoryImageUrl} alt="Story Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <div className="space-y-1">
+                          <input
+                            ref={brandFileInputRef}
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/avif"
+                            className="hidden"
+                            onChange={(e) => handleImageUpload(e, 'story', (url) => setBrandStoryImageUrl(url))}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => brandFileInputRef.current?.click()}
+                            disabled={uploadingField === 'story'}
+                            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono flex items-center gap-1.5 border border-slate-200"
+                          >
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>{uploadingField === 'story' ? 'Đang tải...' : 'Tải ảnh mới'}</span>
+                          </button>
+                          <p className="text-[11px] text-slate-500">Định dạng JPG, PNG, WebP (tối đa 10MB)</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'commitments') {
+              return (
+                <SectionCard
+                  key="commitments"
+                  sectionId="commitments"
+                  title={`Khu Vực ${idx + 1}: Tầm Nhìn & Sứ Mệnh Sinh Thái`}
+                  subtitle="Tuyên ngôn bảo tồn thiên nhiên và cam kết nông sản sạch."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('about-commitments')}
+                  onToggle={() => toggleSection('about-commitments')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < aboutOrder.length - 1}
+                  onMoveUp={() => moveSection(aboutOrder, setAboutOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(aboutOrder, setAboutOrder, idx, 'down')}
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Tiêu Đề Tầm Nhìn (VI):' : 'Vision Title (EN):'}
+                      </label>
+                      <input
+                        type="text"
+                        value={activeLangTab === 'vi' ? visionTitle : visionTitleEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setVisionTitle(e.target.value) : setVisionTitleEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Nội Dung Tầm Nhìn (VI):' : 'Vision Statement (EN):'}
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={activeLangTab === 'vi' ? visionDesc : visionDescEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setVisionDesc(e.target.value) : setVisionDescEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
+                  </div>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'milestones') {
+              return (
+                <SectionCard
+                  key="milestones"
+                  sectionId="milestones"
+                  title={`Khu Vực ${idx + 1}: Cột Mốc Hành Trình (Milestones Block)`}
+                  subtitle="Dòng thời gian các bước phát triển của Cẩm Cù House."
+                  icon={Layers}
+                  enabled={isSectionEnabled('about-milestones') && showStoryMilestones}
+                  onToggle={() => {
+                    toggleSection('about-milestones');
+                    setShowStoryMilestones(!showStoryMilestones);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < aboutOrder.length - 1}
+                  onMoveUp={() => moveSection(aboutOrder, setAboutOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(aboutOrder, setAboutOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['about-milestones'] || 'timeline-vertical'}
+                  layoutOptions={[
+                    { value: 'timeline-vertical', label: 'Dòng thời gian dọc' },
+                    { value: 'cards-horizontal', label: 'Thẻ ngang' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('about-milestones', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Khu vực tự động kết nối và hiển thị dữ liệu từ tab <strong>Cột Mốc & Đội Ngũ</strong> trong Module 1.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'team') {
+              return (
+                <SectionCard
+                  key="team"
+                  sectionId="team"
+                  title={`Khu Vực ${idx + 1}: Đội Ngũ Cẩm Cù (Team Members Block)`}
+                  subtitle="Giới thiệu những người bạn đồng hành bên dòng suối."
+                  icon={BookOpen}
+                  enabled={isSectionEnabled('about-team') && showTeamMembers}
+                  onToggle={() => {
+                    toggleSection('about-team');
+                    setShowTeamMembers(!showTeamMembers);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < aboutOrder.length - 1}
+                  onMoveUp={() => moveSection(aboutOrder, setAboutOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(aboutOrder, setAboutOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Khu vực tự động kết nối và hiển thị các thành viên từ tab <strong>Cột Mốc & Đội Ngũ</strong>.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            return null;
+          })}
         </div>
       )}
 
@@ -1272,155 +1630,170 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
       ========================================================================= */}
       {currentSubPage === 'page-space' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-emerald-600" />
-                  <span>Trang Bộ Sưu Tập 30 Bản Khắc Không Gian ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Tiêu đề, dòng dẫn và banner mở đầu cho trang khám phá 30 bản khắc thị giác 4 chương.
-                </p>
-              </div>
-            </div>
+          <PageVisibilityCard
+            pageTitle="Không gian"
+            enabled={showPageSpace}
+            onToggle={() => setShowPageSpace(!showPageSpace)}
+          />
 
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow:</label>
-                    <input
-                      type="text"
-                      value={spaceEyebrow}
-                      onChange={(e) => setSpaceEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
+          {spaceOrder.map((sectionId, idx) => {
+            if (sectionId === 'header') {
+              return (
+                <SectionCard
+                  key="header"
+                  sectionId="header"
+                  title={`Khu Vực ${idx + 1}: Header & Lời Dẫn Bộ Sưu Tập Không Gian`}
+                  subtitle="Tiêu đề, dòng dẫn và mô tả mở đầu thư viện 30 bản khắc không gian."
+                  icon={Camera}
+                  enabled={isSectionEnabled('space-header')}
+                  onToggle={() => toggleSection('space-header')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < spaceOrder.length - 1}
+                  onMoveUp={() => moveSection(spaceOrder, setSpaceOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(spaceOrder, setSpaceOrder, idx, 'down')}
+                >
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Dòng Eyebrow (VI):' : 'Eyebrow (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? spaceEyebrow : spaceEyebrowEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setSpaceEyebrow(e.target.value) : setSpaceEyebrowEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Tiêu Đề Trang (VI):' : 'Title (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? spaceTitle : spaceTitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setSpaceTitle(e.target.value) : setSpaceTitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Phụ Đề (VI):' : 'Subtitle (EN):'}
+                      </label>
+                      <input
+                        type="text"
+                        value={activeLangTab === 'vi' ? spaceSubtitle : spaceSubtitleEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setSpaceSubtitle(e.target.value) : setSpaceSubtitleEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs italic"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Đoạn Văn Giới Thiệu (VI):' : 'Intro Narrative (EN):'}
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={activeLangTab === 'vi' ? spaceIntro : spaceIntroEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setSpaceIntro(e.target.value) : setSpaceIntroEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Trang:</label>
-                    <input
-                      type="text"
-                      value={spaceTitle}
-                      onChange={(e) => setSpaceTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Phụ (Subtitle):</label>
-                  <input
-                    type="text"
-                    value={spaceSubtitle}
-                    onChange={(e) => setSpaceSubtitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+            if (sectionId === 'zones') {
+              return (
+                <SectionCard
+                  key="zones"
+                  sectionId="zones"
+                  title={`Khu Vực ${idx + 1}: Các Phân Khu Trải Nghiệm (Bờ suối, Nhà gỗ, Sân BBQ, Góc trà)`}
+                  subtitle="Phân khu trực quan hướng dẫn khách chọn vị trí ngồi ưa thích."
+                  icon={Layers}
+                  enabled={isSectionEnabled('space-zones')}
+                  onToggle={() => toggleSection('space-zones')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < spaceOrder.length - 1}
+                  onMoveUp={() => moveSection(spaceOrder, setSpaceOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(spaceOrder, setSpaceOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['space-zones'] || 'alternating'}
+                  layoutOptions={[
+                    { value: 'alternating', label: 'Thẻ xen kẽ' },
+                    { value: '2-cols', label: 'Lưới 2 cột' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('space-zones', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Phần này giới thiệu 4 phân khu chủ đạo: <strong>Bờ Suối Đá</strong>, <strong>Nhà Gỗ Mộc</strong>, <strong>Sân Vườn BBQ</strong> và <strong>Góc Trà Lan Cẩm Cù</strong>.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Dẫn Mở Đầu (Intro Narrative):</label>
-                  <textarea
-                    rows={3}
-                    value={spaceIntro}
-                    onChange={(e) => setSpaceIntro(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow (EN):</label>
-                    <input
-                      type="text"
-                      value={spaceEyebrowEn}
-                      onChange={(e) => setSpaceEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Page Title (EN):</label>
-                    <input
-                      type="text"
-                      value={spaceTitleEn}
-                      onChange={(e) => setSpaceTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
+            if (sectionId === 'gallery') {
+              return (
+                <SectionCard
+                  key="gallery"
+                  sectionId="gallery"
+                  title={`Khu Vực ${idx + 1}: Thư Viện 30 Bản Khắc Không Gian (Spatial Gallery)`}
+                  subtitle="Bộ sưu tập ảnh chất lượng cao 30 góc quán bên suối mát."
+                  icon={Camera}
+                  enabled={isSectionEnabled('space-gallery')}
+                  onToggle={() => toggleSection('space-gallery')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < spaceOrder.length - 1}
+                  onMoveUp={() => moveSection(spaceOrder, setSpaceOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(spaceOrder, setSpaceOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['space-gallery'] || 'masonry'}
+                  layoutOptions={[
+                    { value: 'masonry', label: 'Lưới Masonry' },
+                    { value: 'grid-3', label: 'Lưới đều 3 cột' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('space-gallery', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Dữ liệu 30 bản khắc được quản lý đồng bộ tại tab <strong>Thư Viện 30 Bản Khắc</strong> của Module 1.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Subtitle (EN):</label>
-                  <input
-                    type="text"
-                    value={spaceSubtitleEn}
-                    onChange={(e) => setSpaceSubtitleEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+            if (sectionId === 'cta') {
+              return (
+                <SectionCard
+                  key="cta"
+                  sectionId="cta"
+                  title={`Khu Vực ${idx + 1}: Banner Đặt Chỗ & Chụp Ảnh Nghệ Thuật`}
+                  subtitle="Banner liên hệ đặt góc bàn view suối hoặc chụp hình lưu niệm."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('space-cta')}
+                  onToggle={() => toggleSection('space-cta')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < spaceOrder.length - 1}
+                  onMoveUp={() => moveSection(spaceOrder, setSpaceOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(spaceOrder, setSpaceOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Nút hành động chuyển tiếp nhanh tới hotline 038 285 1688 và chỉ đường Google Maps.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Intro Narrative (EN):</label>
-                  <textarea
-                    rows={3}
-                    value={spaceIntroEn}
-                    onChange={(e) => setSpaceIntroEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Hero Banner Upload for Space Page */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <label className="block text-xs font-mono font-semibold text-slate-700">
-                Ảnh Bìa Hero Trang Không Gian:
-              </label>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="w-32 h-20 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center flex-shrink-0">
-                  {spaceHeroBanner ? (
-                    <img src={spaceHeroBanner} alt="Space Banner" className="w-full h-full object-cover" />
-                  ) : (
-                    <ImageIcon className="w-6 h-6 text-slate-400" />
-                  )}
-                </div>
-
-                <div className="space-y-2 flex-1 w-full">
-                  <input
-                    type="text"
-                    value={spaceHeroBanner}
-                    onChange={(e) => setSpaceHeroBanner(e.target.value)}
-                    placeholder="/uploads/gallery/fig-01.jpg..."
-                    className="w-full px-3 py-2 text-xs border rounded-xl font-mono"
-                  />
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="file"
-                      ref={spaceFileInputRef}
-                      onChange={(e) => handleImageUpload(e, 'gallery', (url) => setSpaceHeroBanner(url))}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => spaceFileInputRef.current?.click()}
-                      disabled={uploadingField === 'gallery'}
-                      className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-mono flex items-center gap-1.5 border border-slate-200"
-                    >
-                      {uploadingField === 'gallery' ? (
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Upload className="w-3.5 h-3.5" />
-                      )}
-                      <span>{uploadingField === 'gallery' ? 'Đang tải ảnh...' : 'Chọn ảnh banner từ máy tính'}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            return null;
+          })}
         </div>
       )}
 
@@ -1429,127 +1802,217 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
       ========================================================================= */}
       {currentSubPage === 'page-menu' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <UtensilsCrossed className="w-4 h-4 text-emerald-600" />
-                  <span>Trang Thực Đơn 67 Món Thảo Mộc & Cà Phê Mộc ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Quản lý các đoạn văn tiêu đề, câu chuyện đất bazan và cam kết phục vụ tại bàn sát suối.
-                </p>
-              </div>
-            </div>
+          <PageVisibilityCard
+            pageTitle="Thực đơn"
+            enabled={showPageMenu}
+            onToggle={() => setShowPageMenu(!showPageMenu)}
+          />
 
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow Thực Đơn:</label>
-                    <input
-                      type="text"
-                      value={menuEyebrow}
-                      onChange={(e) => setMenuEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
+          {menuOrder.map((sectionId, idx) => {
+            if (sectionId === 'header') {
+              return (
+                <SectionCard
+                  key="header"
+                  sectionId="header"
+                  title={`Khu Vực ${idx + 1}: Header & Triết Lý Pha Chế (67 Món)`}
+                  subtitle="Tiêu đề, dòng dẫn và thông báo phục vụ tại suối."
+                  icon={UtensilsCrossed}
+                  enabled={isSectionEnabled('menu-header')}
+                  onToggle={() => toggleSection('menu-header')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < menuOrder.length - 1}
+                  onMoveUp={() => moveSection(menuOrder, setMenuOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(menuOrder, setMenuOrder, idx, 'down')}
+                >
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Dòng Eyebrow (VI):' : 'Eyebrow (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? menuEyebrow : menuEyebrowEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setMenuEyebrow(e.target.value) : setMenuEyebrowEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Tiêu Đề Thực Đơn (VI):' : 'Title (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? menuTitle : menuTitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setMenuTitle(e.target.value) : setMenuTitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Phụ Đề (VI):' : 'Subtitle (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? menuSubtitle : menuSubtitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setMenuSubtitle(e.target.value) : setMenuSubtitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs italic"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Thông Báo Phục Vụ Tại Suối (VI):' : 'Streamside Notice (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? menuNotice : menuNoticeEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setMenuNotice(e.target.value) : setMenuNoticeEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Lời Dẫn Giới Thiệu (VI):' : 'Intro Text (EN):'}
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={activeLangTab === 'vi' ? menuIntro : menuIntroEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setMenuIntro(e.target.value) : setMenuIntroEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Trang:</label>
-                    <input
-                      type="text"
-                      value={menuTitle}
-                      onChange={(e) => setMenuTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'filterAndSearch') {
+              return (
+                <SectionCard
+                  key="filterAndSearch"
+                  sectionId="filterAndSearch"
+                  title={`Khu Vực ${idx + 1}: Thanh Lọc Danh Mục & Tùy Chọn Hiển Thị`}
+                  subtitle="Tùy biến hiển thị giá tiền, nút Thêm vào giỏ và bố cục tab thực đơn."
+                  icon={Layers}
+                  enabled={isSectionEnabled('menu-filterAndSearch')}
+                  onToggle={() => toggleSection('menu-filterAndSearch')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < menuOrder.length - 1}
+                  onMoveUp={() => moveSection(menuOrder, setMenuOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(menuOrder, setMenuOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['menu-filterAndSearch'] || 'tabs-horizontal'}
+                  layoutOptions={[
+                    { value: 'tabs-horizontal', label: 'Tab ngang' },
+                    { value: 'grouped', label: 'Danh sách phân nhóm' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('menu-filterAndSearch', val)}
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <div>
+                        <span className="text-xs font-bold text-slate-800 block">Hiển Thị Giá Tiền Món</span>
+                        <span className="text-[11px] text-slate-500">Show Item Prices (VND/USD)</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setMenuShowPrices(!menuShowPrices)}
+                        className={`w-12 h-6 rounded-full transition-colors relative ${
+                          menuShowPrices ? 'bg-emerald-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span
+                          className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
+                            menuShowPrices ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <div>
+                        <span className="text-xs font-bold text-slate-800 block">Nút &quot;Thêm vào giỏ&quot;</span>
+                        <span className="text-[11px] text-slate-500">Add to Cart Button</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setMenuShowAddToCart(!menuShowAddToCart)}
+                        className={`w-12 h-6 rounded-full transition-colors relative ${
+                          menuShowAddToCart ? 'bg-emerald-600' : 'bg-slate-300'
+                        }`}
+                      >
+                        <span
+                          className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
+                            menuShowAddToCart ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Phụ (Subtitle):</label>
-                  <input
-                    type="text"
-                    value={menuSubtitle}
-                    onChange={(e) => setMenuSubtitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+            if (sectionId === 'dietaryNote') {
+              return (
+                <SectionCard
+                  key="dietaryNote"
+                  sectionId="dietaryNote"
+                  title={`Khu Vực ${idx + 1}: Ghi Chú Nguyên Liệu & Khẩu Vị`}
+                  subtitle="Thông tin nguồn gốc nông sản hữu cơ, cà phê rang củi và thảo mộc tự nhiên."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('menu-dietaryNote')}
+                  onToggle={() => toggleSection('menu-dietaryNote')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < menuOrder.length - 1}
+                  onMoveUp={() => moveSection(menuOrder, setMenuOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(menuOrder, setMenuOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Phần ghi chú khẳng định tiêu chuẩn không phẩm màu hay chất tạo mùi nhân tạo, phục vụ sức khỏe thực khách.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Văn Giới Thiệu (Intro):</label>
-                  <textarea
-                    rows={2}
-                    value={menuIntro}
-                    onChange={(e) => setMenuIntro(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
+            if (sectionId === 'bbqBanner') {
+              return (
+                <SectionCard
+                  key="bbqBanner"
+                  sectionId="bbqBanner"
+                  title={`Khu Vực ${idx + 1}: Banner Đặt Tiệc BBQ & Gọi Mang Về (Takeaway)`}
+                  subtitle="Hộp liên hệ đặt tiệc nướng BBQ bờ suối và đóng gói mang về."
+                  icon={UtensilsCrossed}
+                  enabled={isSectionEnabled('menu-bbqBanner')}
+                  onToggle={() => toggleSection('menu-bbqBanner')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < menuOrder.length - 1}
+                  onMoveUp={() => moveSection(menuOrder, setMenuOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(menuOrder, setMenuOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Chứa số hotline gọi trước để pha chế sẵn hoặc chuẩn bị tiệc BBQ bờ suối không phải chờ đợi.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Cam Kết / Lưu Ý Phục Vụ (Notice):</label>
-                  <input
-                    type="text"
-                    value={menuNotice}
-                    onChange={(e) => setMenuNotice(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Menu Eyebrow (EN):</label>
-                    <input
-                      type="text"
-                      value={menuEyebrowEn}
-                      onChange={(e) => setMenuEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Menu Title (EN):</label>
-                    <input
-                      type="text"
-                      value={menuTitleEn}
-                      onChange={(e) => setMenuTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Menu Subtitle (EN):</label>
-                  <input
-                    type="text"
-                    value={menuSubtitleEn}
-                    onChange={(e) => setMenuSubtitleEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Menu Intro Narrative (EN):</label>
-                  <textarea
-                    rows={2}
-                    value={menuIntroEn}
-                    onChange={(e) => setMenuIntroEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Service & Freshness Notice (EN):</label>
-                  <input
-                    type="text"
-                    value={menuNoticeEn}
-                    onChange={(e) => setMenuNoticeEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+            return null;
+          })}
         </div>
       )}
 
@@ -1558,279 +2021,308 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
       ========================================================================= */}
       {currentSubPage === 'page-reviews' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <Star className="w-4 h-4 text-emerald-600" />
-                  <span>Trang Cảm Nhận & Đánh Giá Khách Hàng ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Tiêu đề tôn vinh cảm nhận thật của thực khách và lời mời viết cảm nhận lưu bút.
-                </p>
-              </div>
-            </div>
+          <PageVisibilityCard
+            pageTitle="Khách hàng"
+            enabled={showPageReviews}
+            onToggle={() => setShowPageReviews(!showPageReviews)}
+          />
 
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow:</label>
-                    <input
-                      type="text"
-                      value={reviewsEyebrow}
-                      onChange={(e) => setReviewsEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
+          {reviewsOrder.map((sectionId, idx) => {
+            if (sectionId === 'header') {
+              return (
+                <SectionCard
+                  key="header"
+                  sectionId="header"
+                  title={`Khu Vực ${idx + 1}: Header & Chỉ Số Hài Lòng`}
+                  subtitle="Tiêu đề trang cảm nhận thực khách và lời mở đầu."
+                  icon={Star}
+                  enabled={isSectionEnabled('reviews-header')}
+                  onToggle={() => toggleSection('reviews-header')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < reviewsOrder.length - 1}
+                  onMoveUp={() => moveSection(reviewsOrder, setReviewsOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(reviewsOrder, setReviewsOrder, idx, 'down')}
+                >
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Dòng Eyebrow (VI):' : 'Eyebrow (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? reviewsEyebrow : reviewsEyebrowEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setReviewsEyebrow(e.target.value) : setReviewsEyebrowEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Tiêu Đề Trang (VI):' : 'Title (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? reviewsTitle : reviewsTitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setReviewsTitle(e.target.value) : setReviewsTitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Phụ Đề (VI):' : 'Subtitle (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? reviewsSubtitle : reviewsSubtitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setReviewsSubtitle(e.target.value) : setReviewsSubtitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs italic"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Lời Kêu Gọi Viết Cảm Nhận (VI):' : 'Review Prompt (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? reviewsPrompt : reviewsPromptEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setReviewsPrompt(e.target.value) : setReviewsPromptEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Đoạn Văn Giới Thiệu (VI):' : 'Intro Text (EN):'}
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={activeLangTab === 'vi' ? reviewsIntro : reviewsIntroEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setReviewsIntro(e.target.value) : setReviewsIntroEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Trang:</label>
-                    <input
-                      type="text"
-                      value={reviewsTitle}
-                      onChange={(e) => setReviewsTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Phụ (Subtitle):</label>
-                  <input
-                    type="text"
-                    value={reviewsSubtitle}
-                    onChange={(e) => setReviewsSubtitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+            if (sectionId === 'reviewsList') {
+              return (
+                <SectionCard
+                  key="reviewsList"
+                  sectionId="reviewsList"
+                  title={`Khu Vực ${idx + 1}: Danh Sách Đánh Giá Thực Tế`}
+                  subtitle="Hiển thị lưới các cảm nhận đã duyệt của khách hàng ghé thăm quán."
+                  icon={Star}
+                  enabled={isSectionEnabled('reviews-reviewsList')}
+                  onToggle={() => toggleSection('reviews-reviewsList')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < reviewsOrder.length - 1}
+                  onMoveUp={() => moveSection(reviewsOrder, setReviewsOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(reviewsOrder, setReviewsOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['reviews-reviewsList'] || '2-cols'}
+                  layoutOptions={[
+                    { value: '2-cols', label: 'Lưới 2 cột' },
+                    { value: '3-cols', label: 'Lưới 3 cột' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('reviews-reviewsList', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Đánh giá được quản lý, duyệt và lọc spam an toàn tại <strong>Hộp Thư, Đánh Giá & Tiếp Thị</strong> (Module 3).
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Dẫn Tri Ân (Intro):</label>
-                  <textarea
-                    rows={3}
-                    value={reviewsIntro}
-                    onChange={(e) => setReviewsIntro(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
+            if (sectionId === 'submissionForm') {
+              return (
+                <SectionCard
+                  key="submissionForm"
+                  sectionId="submissionForm"
+                  title={`Khu Vực ${idx + 1}: Khung Gửi Đánh Giá Mới`}
+                  subtitle="Form cho phép thực khách để lại cảm nhận, xếp hạng sao và ngày ghé thăm."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('reviews-submissionForm')}
+                  onToggle={() => toggleSection('reviews-submissionForm')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < reviewsOrder.length - 1}
+                  onMoveUp={() => moveSection(reviewsOrder, setReviewsOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(reviewsOrder, setReviewsOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Form được tích hợp sẵn Anti-Spam Shield (Honeypot + Proof-of-Work Challenge) để ngăn chặn bot spam tự động.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Lời Mời Gửi Cảm Nhận (Prompt):</label>
-                  <input
-                    type="text"
-                    value={reviewsPrompt}
-                    onChange={(e) => setReviewsPrompt(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow (EN):</label>
-                    <input
-                      type="text"
-                      value={reviewsEyebrowEn}
-                      onChange={(e) => setReviewsEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Title (EN):</label>
-                    <input
-                      type="text"
-                      value={reviewsTitleEn}
-                      onChange={(e) => setReviewsTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Subtitle (EN):</label>
-                  <input
-                    type="text"
-                    value={reviewsSubtitleEn}
-                    onChange={(e) => setReviewsSubtitleEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Gratitude Narrative (EN):</label>
-                  <textarea
-                    rows={3}
-                    value={reviewsIntroEn}
-                    onChange={(e) => setReviewsIntroEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Submission Callout Prompt (EN):</label>
-                  <input
-                    type="text"
-                    value={reviewsPromptEn}
-                    onChange={(e) => setReviewsPromptEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+            return null;
+          })}
         </div>
       )}
 
       {/* =========================================================================
-          PAGE 6: TIN TỨC & FAQ (/tin-tuc)
+          PAGE 6: TIN TỨC & FAQ (/su-kien)
       ========================================================================= */}
       {currentSubPage === 'page-news' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <Newspaper className="w-4 h-4 text-emerald-600" />
-                  <span>Trang Tin Tức Hoạt Động & Câu Hỏi Thường Gặp FAQ ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Cập nhật lịch trình các sự kiện bên suối và các câu hỏi thường gặp về đường đi, giờ mở cửa.
-                </p>
-              </div>
-            </div>
+          <PageVisibilityCard
+            pageTitle="Tin tức & FAQ"
+            enabled={showPageNews}
+            onToggle={() => setShowPageNews(!showPageNews)}
+          />
 
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow:</label>
-                    <input
-                      type="text"
-                      value={newsEyebrow}
-                      onChange={(e) => setNewsEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Trang:</label>
-                    <input
-                      type="text"
-                      value={newsTitle}
-                      onChange={(e) => setNewsTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Phụ (Subtitle):</label>
-                  <input
-                    type="text"
-                    value={newsSubtitle}
-                    onChange={(e) => setNewsSubtitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Văn Hướng Dẫn (Intro):</label>
-                  <textarea
-                    rows={3}
-                    value={newsIntro}
-                    onChange={(e) => setNewsIntro(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow (EN):</label>
-                    <input
-                      type="text"
-                      value={newsEyebrowEn}
-                      onChange={(e) => setNewsEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Title (EN):</label>
-                    <input
-                      type="text"
-                      value={newsTitleEn}
-                      onChange={(e) => setNewsTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Subtitle (EN):</label>
-                  <input
-                    type="text"
-                    value={newsSubtitleEn}
-                    onChange={(e) => setNewsSubtitleEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 italic focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Intro Narrative (EN):</label>
-                  <textarea
-                    rows={3}
-                    value={newsIntroEn}
-                    onChange={(e) => setNewsIntroEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Section Toggles */}
-            <div className="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Hiển Thị Mục Sự Kiện & Hoạt Động</span>
-                  <span className="text-[11px] text-slate-500">Live sessions & activities section</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowNewsEvents(!showNewsEvents)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showNewsEvents ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
+          {newsOrder.map((sectionId, idx) => {
+            if (sectionId === 'header') {
+              return (
+                <SectionCard
+                  key="header"
+                  sectionId="header"
+                  title={`Khu Vực ${idx + 1}: Header Trang Tin Tức & FAQ`}
+                  subtitle="Tiêu đề, dòng dẫn và mô tả nhịp sống bên suối."
+                  icon={Newspaper}
+                  enabled={isSectionEnabled('news-header')}
+                  onToggle={() => toggleSection('news-header')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < newsOrder.length - 1}
+                  onMoveUp={() => moveSection(newsOrder, setNewsOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(newsOrder, setNewsOrder, idx, 'down')}
                 >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showNewsEvents ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Dòng Eyebrow (VI):' : 'Eyebrow (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? newsEyebrow : newsEyebrowEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setNewsEyebrow(e.target.value) : setNewsEyebrowEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Tiêu Đề Trang (VI):' : 'Title (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? newsTitle : newsTitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setNewsTitle(e.target.value) : setNewsTitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
 
-              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Hiển Thị Khối Câu Hỏi Thường Gặp (FAQ)</span>
-                  <span className="text-[11px] text-slate-500">Accordion FAQ section</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowNewsFaq(!showNewsFaq)}
-                  className={`w-12 h-6 rounded-full transition-colors relative ${
-                    showNewsFaq ? 'bg-emerald-600' : 'bg-slate-300'
-                  }`}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Phụ Đề (VI):' : 'Subtitle (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? newsSubtitle : newsSubtitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setNewsSubtitle(e.target.value) : setNewsSubtitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs italic"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Đoạn Văn Giới Thiệu (VI):' : 'Intro Text (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? newsIntro : newsIntroEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setNewsIntro(e.target.value) : setNewsIntroEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'newsEvents') {
+              return (
+                <SectionCard
+                  key="newsEvents"
+                  sectionId="newsEvents"
+                  title={`Khu Vực ${idx + 1}: Tin Tức & Hoạt Động Bên Suối`}
+                  subtitle="Hiển thị danh sách các bài viết nhịp sống và sự kiện bên dòng suối."
+                  icon={Newspaper}
+                  enabled={isSectionEnabled('news-newsEvents') && showNewsEvents}
+                  onToggle={() => {
+                    toggleSection('news-newsEvents');
+                    setShowNewsEvents(!showNewsEvents);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < newsOrder.length - 1}
+                  onMoveUp={() => moveSection(newsOrder, setNewsOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(newsOrder, setNewsOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['news-newsEvents'] || 'cards-grid'}
+                  layoutOptions={[
+                    { value: 'cards-grid', label: 'Lưới thẻ' },
+                    { value: 'list-horizontal', label: 'Danh sách ngang' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('news-newsEvents', val)}
                 >
-                  <span
-                    className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                      showNewsFaq ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
+                  <p className="text-xs text-slate-600">
+                    Bài viết tin tức và chương trình được quản lý tại tab <strong>Bản Tin & Sự Kiện</strong>.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'faqAccordion') {
+              return (
+                <SectionCard
+                  key="faqAccordion"
+                  sectionId="faqAccordion"
+                  title={`Khu Vực ${idx + 1}: Câu Hỏi Thường Gặp (FAQ Accordion)`}
+                  subtitle="Bộ câu hỏi giải đáp chi tiết về đường đi, giờ mở cửa và thực đơn."
+                  icon={HelpCircle}
+                  enabled={isSectionEnabled('news-faqAccordion') && showNewsFaq}
+                  onToggle={() => {
+                    toggleSection('news-faqAccordion');
+                    setShowNewsFaq(!showNewsFaq);
+                  }}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < newsOrder.length - 1}
+                  onMoveUp={() => moveSection(newsOrder, setNewsOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(newsOrder, setNewsOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Các câu hỏi FAQ được quản lý và biên tập tại mục <strong>Trang Pháp Lý & FAQ</strong>.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            return null;
+          })}
         </div>
       )}
 
@@ -1839,176 +2331,193 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
       ========================================================================= */}
       {currentSubPage === 'page-contact' && (
         <div className="space-y-6">
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-emerald-600" />
-                  <span>Trang Chỉ Đường & Kết Nối Liên Hệ ({activeLangTab.toUpperCase()})</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Địa chỉ chính xác, hướng dẫn xuống dốc Hẻm 437 Hùng Vương, bãi đỗ xe và lưu ý tiệc BBQ suối.
-                </p>
-              </div>
-            </div>
+          <PageVisibilityCard
+            pageTitle="Liên hệ"
+            enabled={showPageContact}
+            onToggle={() => setShowPageContact(!showPageContact)}
+          />
 
-            {activeLangTab === 'vi' ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow:</label>
-                    <input
-                      type="text"
-                      value={contactEyebrow}
-                      onChange={(e) => setContactEyebrow(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
+          {contactOrder.map((sectionId, idx) => {
+            if (sectionId === 'header') {
+              return (
+                <SectionCard
+                  key="header"
+                  sectionId="header"
+                  title={`Khu Vực ${idx + 1}: Header & Hướng Dẫn Di Chuyển Hẻm 437 Hùng Vương`}
+                  subtitle="Tiêu đề, phụ đề và ghi chú bãi đậu xe ô tô / xe máy."
+                  icon={MapPin}
+                  enabled={isSectionEnabled('contact-header')}
+                  onToggle={() => toggleSection('contact-header')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < contactOrder.length - 1}
+                  onMoveUp={() => moveSection(contactOrder, setContactOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(contactOrder, setContactOrder, idx, 'down')}
+                >
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Dòng Eyebrow (VI):' : 'Eyebrow (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? contactEyebrow : contactEyebrowEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setContactEyebrow(e.target.value) : setContactEyebrowEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Tiêu Đề Trang (VI):' : 'Title (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? contactTitle : contactTitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setContactTitle(e.target.value) : setContactTitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Địa Chỉ Quán (VI):' : 'Address Subtitle (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? contactSubtitle : contactSubtitleEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setContactSubtitle(e.target.value) : setContactSubtitleEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs italic"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                          {activeLangTab === 'vi' ? 'Hướng Dẫn Vào Hẻm & Đỗ Xe (VI):' : 'Parking Guidance (EN):'}
+                        </label>
+                        <input
+                          type="text"
+                          value={activeLangTab === 'vi' ? contactDirectionsNote : contactDirectionsNoteEn}
+                          onChange={(e) =>
+                            activeLangTab === 'vi' ? setContactDirectionsNote(e.target.value) : setContactDirectionsNoteEn(e.target.value)
+                          }
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Đoạn Văn Giới Thiệu Đường Đi (VI):' : 'Intro Text (EN):'}
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={activeLangTab === 'vi' ? contactIntro : contactIntroEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setContactIntro(e.target.value) : setContactIntroEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs leading-relaxed"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Tiêu Đề Trang:</label>
-                    <input
-                      type="text"
-                      value={contactTitle}
-                      onChange={(e) => setContactTitle(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'quickInfo') {
+              return (
+                <SectionCard
+                  key="quickInfo"
+                  sectionId="quickInfo"
+                  title={`Khu Vực ${idx + 1}: Thẻ Thông Tin Liên Hệ Nhanh`}
+                  subtitle="Hotline, Giờ mở cửa Thứ 2–5 07:00–18:00 & Thứ 6–CN 07:00–22:00."
+                  icon={MapPin}
+                  enabled={isSectionEnabled('contact-quickInfo')}
+                  onToggle={() => toggleSection('contact-quickInfo')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < contactOrder.length - 1}
+                  onMoveUp={() => moveSection(contactOrder, setContactOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(contactOrder, setContactOrder, idx, 'down')}
+                  layoutVariant={sectionLayouts['contact-quickInfo'] || '3-cols'}
+                  layoutOptions={[
+                    { value: '3-cols', label: '3 cột' },
+                    { value: '2-cols-map', label: '2 cột kèm bản đồ' },
+                  ]}
+                  onChangeLayout={(val) => changeLayoutVariant('contact-quickInfo', val)}
+                >
+                  <p className="text-xs text-slate-600">
+                    Hiển thị các khối thông tin cốt lõi: <strong>Hotline: 038 285 1688 / 077 465 9000</strong>, <strong>Giờ Đón Khách</strong> và <strong>Tọa độ 11.99° N, 107.69° E</strong>.
+                  </p>
+                </SectionCard>
+              );
+            }
+
+            if (sectionId === 'contactForm') {
+              return (
+                <SectionCard
+                  key="contactForm"
+                  sectionId="contactForm"
+                  title={`Khu Vực ${idx + 1}: Form Gửi Lời Nhắn & Đặt Tiệc BBQ`}
+                  subtitle="Form liên hệ trực tiếp gửi về hòm thư Admin và thông báo qua Gmail SMTP."
+                  icon={Sparkles}
+                  enabled={isSectionEnabled('contact-contactForm')}
+                  onToggle={() => toggleSection('contact-contactForm')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < contactOrder.length - 1}
+                  onMoveUp={() => moveSection(contactOrder, setContactOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(contactOrder, setContactOrder, idx, 'down')}
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">
+                        {activeLangTab === 'vi' ? 'Ghi Chú Đặt BBQ & Đoàn Đông (VI):' : 'BBQ Notice (EN):'}
+                      </label>
+                      <input
+                        type="text"
+                        value={activeLangTab === 'vi' ? contactBbqCallout : contactBbqCalloutEn}
+                        onChange={(e) =>
+                          activeLangTab === 'vi' ? setContactBbqCallout(e.target.value) : setContactBbqCalloutEn(e.target.value)
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs"
+                      />
+                    </div>
                   </div>
-                </div>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Địa Chỉ Chi Tiết (Subtitle):</label>
-                  <input
-                    type="text"
-                    value={contactSubtitle}
-                    onChange={(e) => setContactSubtitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+            if (sectionId === 'mapEmbed') {
+              return (
+                <SectionCard
+                  key="mapEmbed"
+                  sectionId="mapEmbed"
+                  title={`Khu Vực ${idx + 1}: Bản Đồ Google Maps Nhúng`}
+                  subtitle="Bản đồ tương tác chỉ đường chính xác tới Hẻm 437 Hùng Vương."
+                  icon={MapPin}
+                  enabled={isSectionEnabled('contact-mapEmbed')}
+                  onToggle={() => toggleSection('contact-mapEmbed')}
+                  canMoveUp={idx > 0}
+                  canMoveDown={idx < contactOrder.length - 1}
+                  onMoveUp={() => moveSection(contactOrder, setContactOrder, idx, 'up')}
+                  onMoveDown={() => moveSection(contactOrder, setContactOrder, idx, 'down')}
+                >
+                  <p className="text-xs text-slate-600">
+                    Bản đồ nhúng Google Maps với tọa độ chính xác 11.98634, 107.69421 cùng nút điều hướng trực tiếp bằng Google Maps app.
+                  </p>
+                </SectionCard>
+              );
+            }
 
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Đoạn Văn Giới Thiệu Con Dốc (Intro):</label>
-                  <textarea
-                    rows={2}
-                    value={contactIntro}
-                    onChange={(e) => setContactIntro(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Lưu Ý Tiệc BBQ Bên Suối & Đặt Chỗ Đoàn:</label>
-                  <textarea
-                    rows={2}
-                    value={contactBbqCallout}
-                    onChange={(e) => setContactBbqCallout(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Hướng Dẫn Chỉ Đường & Bãi Đỗ Xe Ô Tô:</label>
-                  <textarea
-                    rows={2}
-                    value={contactDirectionsNote}
-                    onChange={(e) => setContactDirectionsNote(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Eyebrow (EN):</label>
-                    <input
-                      type="text"
-                      value={contactEyebrowEn}
-                      onChange={(e) => setContactEyebrowEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 font-mono"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Title (EN):</label>
-                    <input
-                      type="text"
-                      value={contactTitleEn}
-                      onChange={(e) => setContactTitleEn(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Full Address (Subtitle EN):</label>
-                  <input
-                    type="text"
-                    value={contactSubtitleEn}
-                    onChange={(e) => setContactSubtitleEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Slope & Stream Location Intro (EN):</label>
-                  <textarea
-                    rows={2}
-                    value={contactIntroEn}
-                    onChange={(e) => setContactIntroEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500 leading-relaxed"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Streamside BBQ & Group Reservation Notice (EN):</label>
-                  <textarea
-                    rows={2}
-                    value={contactBbqCalloutEn}
-                    onChange={(e) => setContactBbqCalloutEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono font-semibold text-slate-700 mb-1">Driving Directions & Parking Guidance (EN):</label>
-                  <textarea
-                    rows={2}
-                    value={contactDirectionsNoteEn}
-                    onChange={(e) => setContactDirectionsNoteEn(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+            return null;
+          })}
         </div>
       )}
-
-      {/* Bottom Floating/Sticky Save Action Bar */}
-      <div className="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs text-slate-500">
-          <Info className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-          <span>Mọi thay đổi trên cả 7 trang sẽ được lưu vào CSDL và đồng bộ ngay lập tức tới khách ghé thăm web.</span>
-        </div>
-
-        <button
-          type="submit"
-          disabled={saving}
-          className={`w-full sm:w-auto px-7 py-2.5 rounded-xl font-medium text-xs flex items-center justify-center gap-2 transition-all shadow-sm ${
-            savedSuccess
-              ? 'bg-emerald-600 text-white'
-              : 'bg-emerald-600 hover:bg-emerald-700 text-white active:scale-95'
-          }`}
-        >
-          {saving ? (
-            <RefreshCw className="w-4 h-4 animate-spin" />
-          ) : savedSuccess ? (
-            <Check className="w-4 h-4" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
-          <span>{saving ? 'Đang lưu CSDL...' : savedSuccess ? 'Đã lưu CSDL thành công!' : 'Lưu Thay Đổi Nội Dung'}</span>
-        </button>
-      </div>
     </form>
   );
 }

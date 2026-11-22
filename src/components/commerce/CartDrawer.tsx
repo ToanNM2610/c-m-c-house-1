@@ -82,7 +82,7 @@ export default function CartDrawer() {
 
                 {/* Free Shipping Progress Bar */}
                 <div className="mt-4 p-3 rounded-2xl bg-forest-50/80 dark:bg-forest-900 border border-forest-200/80 dark:border-forest-750">
-                  <div className="flex items-center justify-between text-xs mb-1.5 font-mono">
+                  <div className="flex items-center justify-between text-xs mb-1.5 font-sans">
                     <span className="flex items-center gap-1.5 text-forest-800 dark:text-forest-200 font-medium">
                       <Truck className="w-3.5 h-3.5 text-accent-botanical" />
                       {isFreeShipEligible
@@ -91,7 +91,7 @@ export default function CartDrawer() {
                             ? `Add ${freeShipRemaining.toLocaleString('vi-VN')}đ for Free Ship`
                             : `Thêm ${freeShipRemaining.toLocaleString('vi-VN')}đ để Freeship`)}
                     </span>
-                    <span className="text-ink-muted font-bold">{freeShipPercent}%</span>
+                    <span className="text-ink-muted font-bold font-mono-num">{freeShipPercent}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-forest-200/60 dark:bg-forest-800 rounded-full overflow-hidden">
                     <div
@@ -214,13 +214,13 @@ export default function CartDrawer() {
               {items.length > 0 && (
                 <div className="p-5 sm:p-6 border-t border-forest-200 dark:border-forest-800 bg-white/90 dark:bg-forest-900/90 backdrop-blur-md space-y-4">
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-mono text-ink-muted">
+                    <div className="flex items-center justify-between text-xs font-sans text-ink-muted">
                       <span>{isEn ? 'Subtotal' : 'Tạm tính'}</span>
-                      <span className="font-bold text-sm text-ink-primary">
+                      <span className="font-bold text-sm text-ink-primary font-mono-num">
                         {subtotal.toLocaleString('vi-VN')}đ
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] font-mono text-ink-muted">
+                    <div className="flex items-center justify-between text-xs font-sans text-ink-muted">
                       <span>{isEn ? 'Shipping Fee' : 'Phí vận chuyển'}</span>
                       <span className="italic">
                         {isFreeShipEligible
@@ -233,7 +233,7 @@ export default function CartDrawer() {
                   <div className="space-y-2">
                     <button
                       onClick={handleCheckout}
-                      className="w-full py-3.5 px-6 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white font-mono text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-accent-botanical/20 transition-all active:scale-[0.99]"
+                      className="w-full py-3.5 px-6 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white font-sans text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-accent-botanical/20 transition-all active:scale-[0.99]"
                     >
                       <span>{isEn ? 'Proceed to Checkout' : 'Tiến Hành Đặt Hàng'}</span>
                       <ArrowRight className="w-4 h-4" />
@@ -243,7 +243,7 @@ export default function CartDrawer() {
                         closeCart();
                         router.push('/thuc-don');
                       }}
-                      className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-mono text-ink-muted hover:text-ink-primary hover:bg-forest-100 dark:hover:bg-forest-800 transition-colors"
+                      className="w-full py-2.5 px-4 rounded-xl text-center text-xs font-sans text-ink-muted hover:text-ink-primary hover:bg-forest-100 dark:hover:bg-forest-800 transition-colors"
                     >
                       {isEn ? 'Continue Shopping' : 'Tiếp tục chọn món khác'}
                     </button>

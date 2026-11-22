@@ -64,15 +64,12 @@ export default function KhachHangPage() {
   });
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
 
-  const publishedStories = (data.stories || []).filter((st) => st.published);
-  const shouldShowHighlights = (s.showHighlightsSection !== false) && publishedStories.length > 0;
-
-  const approvedComments = comments.filter((c) => c.status === 'APPROVED');
+  const approvedComments = comments.filter((cm) => cm.status === 'APPROVED');
   const approvedCount = approvedComments.length;
-  const recommendedCount = approvedComments.filter((c) => (c.rating ?? 5) >= 4).length;
+  const recommendedCount = approvedComments.filter((cm) => (cm.rating ?? 5) >= 4).length;
   const recommendedPercent = approvedCount > 0 ? Math.round((recommendedCount / approvedCount) * 100) : 0;
   const avgRating = approvedCount > 0
-    ? (approvedComments.reduce((acc, c) => acc + (c.rating ?? 5), 0) / approvedCount).toFixed(1)
+    ? (approvedComments.reduce((acc, cm) => acc + (cm.rating ?? 5), 0) / approvedCount).toFixed(1)
     : '5.0';
 
   // Cooldown restoration from localStorage on mount
@@ -110,35 +107,39 @@ export default function KhachHangPage() {
     return () => clearInterval(interval);
   }, [cooldownRemaining]);
 
-  // Fetch approved comments
+  // Load comments
   useEffect(() => {
-    async function loadComments() {
+    let isMounted = true;
+    async function fetchComments() {
       try {
+        setLoadingComments(true);
         const res = await fetch('/api/comments');
         if (res.ok) {
           const json = await res.json();
-          const list = Array.isArray(json) ? json : json.data || [];
-          setComments(list);
+          const list: GuestComment[] = Array.isArray(json) ? json : json.data || [];
+          if (isMounted) setComments(list);
         }
       } catch (err) {
         console.error('Failed to load guest comments:', err);
       } finally {
-        setLoadingComments(false);
+        if (isMounted) setLoadingComments(false);
       }
     }
-    loadComments();
+    fetchComments();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Pre-flight checks
     if (cooldownRemaining > 0) {
       setErrorMessage(
         isEn
           ? `Please wait ${cooldownRemaining}s before submitting again.`
-          : `Đợi ${cooldownRemaining}s để gửi tiếp...`
+          : `Vui lòng đợi ${cooldownRemaining}s để gửi lại.`
       );
       return;
     }
@@ -205,7 +206,7 @@ export default function KhachHangPage() {
           challengeAnswer: challengeState.challengeAnswer,
           websiteUrl: challengeState.websiteUrl,
           companyFax: challengeState.companyFax,
-          honeypot: challengeState.websiteUrl, // legacy compatibility
+          honeypot: challengeState.websiteUrl,
         }),
       });
 
@@ -214,7 +215,6 @@ export default function KhachHangPage() {
         setAuthorName('');
         setContent('');
         setVisitDate('');
-        // Start 60s cooldown
         const cooldownMs = 60 * 1000;
         try {
           localStorage.setItem('cam_cu_cooldown_comment', String(Date.now() + cooldownMs));
@@ -249,345 +249,306 @@ export default function KhachHangPage() {
     }
   };
 
-  return (
-    <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
-      {/* Editorial Header */}
-      <section className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
-        <div className="max-w-3xl space-y-4">
-          <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-            <span className="w-8 h-px bg-accent-botanical" />
-            <span>{reviewsEyebrow}</span>
-          </div>
+  // Universal Section Order & Visibility Resolution
+  const defaultReviewsOrder = ['header', 'reviewsList', 'submissionForm'];
+  const reviewsOrder = (c?.reviewsSectionOrder && Array.isArray(c.reviewsSectionOrder) && c.reviewsSectionOrder.length > 0)
+    ? c.reviewsSectionOrder
+    : defaultReviewsOrder;
 
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-            {reviewsTitle} <br />
-            <span className="italic font-normal text-accent-botanical">
-              {reviewsSubtitle}
-            </span>
-          </h1>
+  const isSectionVisible = (id: string) => {
+    if (c?.sectionVisibility && (c.sectionVisibility['reviews-' + id] === false || c.sectionVisibility['reviews-list'] === false && id === 'reviewsList' || c.sectionVisibility['reviews-form'] === false && id === 'submissionForm')) return false;
+    return true;
+  };
 
-          <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-            {reviewsIntro}
-          </p>
+  /* ========================================================= */
+  /* SECTION RENDERERS                                         */
+  /* ========================================================= */
 
-          {/* Trust Banner Badge: Dynamically calculated from real approved reviews (Hidden if 0 reviews) */}
-          {approvedCount > 0 && (
-            <div className="pt-2 inline-flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle">
-              <div className="flex items-center text-amber-500">
-                {[...Array(Math.min(5, Math.max(1, Math.round(Number(avgRating)))))].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <div className="border-l border-forest-200 dark:border-forest-700 pl-3">
-                <span className="font-serif font-bold text-base text-ink-primary block leading-none">
-                  {recommendedPercent === 100
-                    ? (isEn ? '100% Recommended' : '100% Đề Xuất Tuyệt Đối')
-                    : `${recommendedPercent}% ${isEn ? 'Recommended' : 'Đề Xuất'}`}
-                </span>
-                <span className="text-[11px] font-mono text-ink-muted">
-                  {isEn
-                    ? `Based on ${recommendedCount}/${approvedCount} verified reviews`
-                    : `Dựa trên ${recommendedCount}/${approvedCount} đánh giá thực khách`}
-                </span>
-              </div>
-            </div>
-          )}
+  // 1. Header
+  const renderHeader = () => (
+    <section key="header" className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+      <div className="max-w-3xl space-y-4">
+        <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+          <span className="w-8 h-px bg-accent-botanical" />
+          <span>{reviewsEyebrow}</span>
         </div>
-      </section>
 
-      {/* SECTION 1: CÁC DẤU ẤN NỔI BẬT (HIGHLIGHT STORIES) */}
-      {shouldShowHighlights && (
-        <section className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
-          <div className="space-y-3 mb-12 max-w-2xl">
-            <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-accent-botanical" />
-              <span>{isEn ? 'SANCTUARY MILESTONES' : 'DẤU ẤN HOẠT ĐỘNG NỔI BẬT'}</span>
+        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
+          {reviewsTitle} <br />
+          <span className="italic font-normal text-accent-botanical">
+            {reviewsSubtitle}
+          </span>
+        </h1>
+
+        <p className="text-sm sm:text-base text-ink-muted leading-relaxed font-sans">
+          {reviewsIntro}
+        </p>
+
+        {approvedCount > 0 && (
+          <div className="pt-2 inline-flex items-center gap-3 p-4 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 shadow-subtle">
+            <div className="flex items-center text-amber-500">
+              {[...Array(Math.min(5, Math.max(1, Math.round(Number(avgRating)))))].map((_, i) => (
+                <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+              ))}
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-              {isEn ? 'Moments Along The Natural Stream' : 'Nhịp Sống Tự Nhiên Bên Dòng Suối'}
-            </h2>
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-              {isEn
-                ? 'From weekend acoustic music nights to seasonal Dak Nong avocado harvests.'
-                : 'Từ những đêm nhạc Acoustic mộc mạc cuối tuần đến mùa thu hoạch bơ sáp Đăk Nông trù phú.'}
-            </p>
+            <div className="border-l border-forest-200 dark:border-forest-700 pl-3">
+              <span className="font-serif font-bold text-base text-ink-primary block leading-none">
+                {recommendedPercent === 100
+                  ? (isEn ? '100% Recommended' : '100% Đề Xuất Tuyệt Đối')
+                  : `${recommendedPercent}% ${isEn ? 'Recommended' : 'Đề Xuất'}`}
+              </span>
+              <span className="text-xs font-sans text-ink-muted">
+                {isEn
+                  ? `Based on ${recommendedCount}/${approvedCount} verified reviews`
+                  : `Dựa trên ${recommendedCount}/${approvedCount} đánh giá thực khách`}
+              </span>
+            </div>
           </div>
+        )}
+      </div>
+    </section>
+  );
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {publishedStories.map((story, idx) => {
-              const title = isEn && story.titleEn ? story.titleEn : story.title;
-              const category = isEn && story.categoryEn ? story.categoryEn : story.category;
-              const date = isEn && story.dateEn ? story.dateEn : story.date;
-              const summary = isEn && story.summaryEn ? story.summaryEn : story.summary;
-              const contentText = isEn && story.contentEn ? story.contentEn : story.content;
-              const badge = isEn && story.badgeEn ? story.badgeEn : story.badge;
+  // 2. Reviews List
+  const renderReviewsList = () => (
+    <section key="reviewsList" className="py-16 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+      <div className="space-y-3 mb-12 max-w-2xl">
+        <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+          <Heart className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? 'VERIFIED GUEST REVIEWS' : 'ĐÁNH GIÁ THỰC KHÁCH ĐÃ TRẢI NGHIỆM'}</span>
+        </div>
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+          {isEn ? 'What Guests Say About Us' : 'Thực Khách Nói Gì Về Cẩm Cù House'}
+        </h2>
+        <p className="text-xs sm:text-sm text-ink-muted leading-relaxed font-sans">
+          {isEn
+            ? 'Authentic feedback and recommendations from friends and families who spent tranquil hours beside the stream.'
+            : 'Những lời chia sẻ ấm áp và chân thành từ các bạn trẻ, gia đình và du khách từng dừng chân uống cà phê bên suối.'}
+        </p>
+      </div>
 
-              return (
-                <ScrollLayoutCard3D key={story.id} delay={idx * 0.08} className="h-full">
-                  <InteractiveTiltCard maxTilt={3.0} spotlight={true} className="h-full">
-                    <div className="h-full bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated transition-shadow duration-200 flex flex-col justify-between overflow-hidden">
-                      <div className="p-7 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-botanical bg-forest-100 dark:bg-forest-800 px-3 py-1 rounded-full">
-                            {badge || category}
-                          </span>
-                          <span className="text-xs font-mono text-ink-muted flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5 text-accent-botanical" />
-                            <span>{date}</span>
-                          </span>
-                        </div>
-
-                        <h3 className="font-serif text-2xl font-bold text-ink-primary leading-snug">
-                          {title}
-                        </h3>
-
-                        <p className="font-serif italic text-sm text-accent-earth leading-relaxed">
-                          &ldquo;{summary}&rdquo;
-                        </p>
-
-                        <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-                          {contentText}
-                        </p>
-                      </div>
-
-                      <div className="px-7 py-4 bg-forest-50 dark:bg-forest-950 border-t border-forest-200 dark:border-forest-800 flex items-center justify-between text-xs font-mono text-accent-botanical">
-                        <span>Cẩm Cù House Streamside</span>
-                        <span className="font-bold"># {category}</span>
-                      </div>
-                    </div>
-                  </InteractiveTiltCard>
-                </ScrollLayoutCard3D>
-              );
-            })}
-          </div>
-        </section>
+      {loadingComments ? (
+        <div className="py-12 text-center text-xs font-sans text-ink-muted">
+          {isEn ? 'Loading verified reviews...' : 'Đang tải đánh giá thực khách...'}
+        </div>
+      ) : (
+        <ReviewShowcase3 comments={comments} settings={s} />
       )}
+    </section>
+  );
 
-      {/* SECTION 2: GUEST COMMENTS & REVIEWS GRID */}
-      <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
-        <div className="space-y-3 mb-12 max-w-2xl">
-          <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-            <Heart className="w-4 h-4 text-accent-botanical" />
-            <span>{isEn ? 'VERIFIED GUEST REVIEWS' : 'ĐÁNH GIÁ THỰC KHÁCH ĐÃ TRẢI NGHIỆM'}</span>
+  // 3. Submission Form
+  const renderSubmissionForm = () => (
+    <section key="submissionForm" id="feedback-form" className="py-16 sm:py-24 px-4 sm:px-8 max-w-4xl mx-auto">
+      <div className="p-8 sm:p-12 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-elevated space-y-6">
+        <div className="text-center space-y-2 max-w-md mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-accent-botanical text-xs font-sans font-bold">
+            <MessageSquarePlus className="w-3.5 h-3.5" />
+            <span>{isEn ? 'GUEST FEEDBACK' : 'Ý KIẾN ĐÓNG GÓP'}</span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-            {isEn ? 'What Guests Say About Us' : 'Thực Khách Nói Gì Về Cẩm Cù House'}
-          </h2>
-          <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
+          <h3 className="font-serif text-3xl font-bold text-ink-primary">
+            {reviewsPrompt}
+          </h3>
+          <p className="text-xs sm:text-sm text-ink-muted font-sans">
             {isEn
-              ? 'Authentic feedback and recommendations from friends and families who spent tranquil hours beside the stream.'
-              : 'Những lời chia sẻ ấm áp và chân thành từ các bạn trẻ, gia đình và du khách từng dừng chân uống cà phê bên suối.'}
+              ? 'Your feedback helps Cẩm Cù House preserve our botanical sanctuary and serve you better.'
+              : 'Mỗi lời góp ý là nguồn động viên quý giá để Cẩm Cù House ngày càng hoàn thiện không gian sinh thái.'}
           </p>
         </div>
 
-        {loadingComments ? (
-          <div className="py-12 text-center text-xs font-mono text-ink-muted">
-            {isEn ? 'Loading verified reviews...' : 'Đang tải đánh giá thực khách...'}
+        {submitSuccess ? (
+          <div className="p-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-center space-y-2 animate-fadeIn">
+            <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
+            <h4 className="font-serif font-bold text-lg text-emerald-900 dark:text-emerald-200">
+              {isEn ? 'Thank you for your review!' : 'Cảm ơn bạn đã gửi cảm nhận!'}
+            </h4>
+            <p className="text-xs font-sans text-emerald-700 dark:text-emerald-300">
+              {isEn
+                ? 'Your feedback has been received and will be displayed after editorial review.'
+                : 'Cảm nhận của bạn đã được gửi thành công và sẽ hiển thị trên website sau khi được kiểm duyệt.'}
+            </p>
+            <button
+              onClick={() => setSubmitSuccess(false)}
+              className="mt-3 text-xs font-sans text-accent-botanical underline hover:text-forest-800 font-semibold"
+            >
+              {isEn ? 'Submit another review' : 'Gửi thêm đánh giá khác'}
+            </button>
           </div>
         ) : (
-          <ReviewShowcase3 comments={comments} settings={s} />
-        )}
-      </section>
-
-      {/* SECTION 3: FORM GỬI CẢM NHẬN (REVIEW SUBMISSION FORM) */}
-      <section id="feedback-form" className="py-16 sm:py-24 px-4 sm:px-8 max-w-4xl mx-auto">
-        <div className="p-8 sm:p-12 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-elevated space-y-6">
-          <div className="text-center space-y-2 max-w-md mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-accent-botanical text-xs font-mono font-bold">
-              <MessageSquarePlus className="w-3.5 h-3.5" />
-              <span>{isEn ? 'GUEST FEEDBACK' : 'Ý KIẾN ĐÓNG GÓP'}</span>
-            </div>
-            <h3 className="font-serif text-3xl font-bold text-ink-primary">
-              {reviewsPrompt}
-            </h3>
-            <p className="text-xs sm:text-sm text-ink-muted">
-              {isEn
-                ? 'Your feedback helps Cẩm Cù House preserve our botanical sanctuary and serve you better.'
-                : 'Mỗi lời góp ý là nguồn động viên quý giá để Cẩm Cù House ngày càng hoàn thiện không gian sinh thái.'}
-            </p>
-          </div>
-
-          {submitSuccess ? (
-            <div className="p-6 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-center space-y-2 animate-fadeIn">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
-              <h4 className="font-serif font-bold text-lg text-emerald-900 dark:text-emerald-200">
-                {isEn ? 'Thank you for your review!' : 'Cảm ơn bạn đã gửi cảm nhận!'}
-              </h4>
-              <p className="text-xs font-mono text-emerald-700 dark:text-emerald-300">
-                {isEn
-                  ? 'Your feedback has been received and will be displayed after editorial review.'
-                  : 'Cảm nhận của bạn đã được gửi thành công và sẽ hiển thị trên website sau khi được kiểm duyệt.'}
-              </p>
-              <button
-                onClick={() => setSubmitSuccess(false)}
-                className="mt-3 text-xs font-mono text-accent-botanical underline hover:text-forest-800"
-              >
-                {isEn ? 'Submit another review' : 'Gửi thêm đánh giá khác'}
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {errorMessage && (
-                <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-300 rounded-xl text-xs font-mono flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
-
-              {/* Live Cooldown Banner */}
-              {cooldownRemaining > 0 && (
-                <div className="p-3 bg-amber-50/90 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 rounded-xl text-xs font-mono flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
-                    <span>{isEn ? 'Anti-spam protection active:' : 'Hệ thống bảo vệ đang bật:'}</span>
-                  </span>
-                  <span className="font-bold font-mono px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 border border-amber-300 dark:border-amber-600">
-                    {isEn ? `Wait ${cooldownRemaining}s to submit again...` : `Đợi ${cooldownRemaining}s để gửi tiếp...`}
-                  </span>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-mono text-ink-muted uppercase tracking-wider">
-                      {isEn ? 'Your Full Name *' : 'Họ và tên của bạn *'}
-                    </label>
-                    <span className={`text-[10px] font-mono ${authorName.length > 80 ? 'text-red-500 font-bold' : 'text-ink-muted'}`}>
-                      {authorName.length}/80
-                    </span>
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    maxLength={80}
-                    value={authorName}
-                    onChange={(e) => setAuthorName(e.target.value)}
-                    placeholder={isEn ? 'e.g. John Doe' : 'Ví dụ: Nguyễn Văn An'}
-                    className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono text-ink-muted uppercase tracking-wider mb-1">
-                    {isEn ? 'Visit Date / Timing' : 'Thời gian ghé quán'}
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={60}
-                    value={visitDate}
-                    onChange={(e) => setVisitDate(e.target.value)}
-                    placeholder={isEn ? 'e.g. November 2026' : 'Ví dụ: Chiều Thứ Bảy vừa qua'}
-                    className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
-                  />
-                </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {errorMessage && (
+              <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-300 rounded-xl text-xs font-sans flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{errorMessage}</span>
               </div>
+            )}
 
-              {/* Star rating selector */}
-              <div>
-                <label className="block text-xs font-mono text-ink-muted uppercase tracking-wider mb-1.5">
-                  {isEn ? 'Your Rating (1 to 5 Stars)' : 'Mức độ hài lòng của bạn'}
-                </label>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => setRating(num)}
-                      className={`p-2 rounded-xl border transition-all ${
-                        rating >= num
-                          ? 'bg-amber-50 dark:bg-amber-950/50 border-amber-300 text-amber-500'
-                          : 'bg-forest-50/70 dark:bg-forest-800 border-forest-200 dark:border-forest-700 text-ink-muted'
-                      }`}
-                    >
-                      <Star className={`w-5 h-5 ${rating >= num ? 'fill-amber-400' : ''}`} />
-                    </button>
-                  ))}
-                  <span className="text-xs font-mono text-accent-earth font-bold ml-2">
-                    {rating} / 5 {isEn ? 'Stars' : 'Sao'}
-                  </span>
-                </div>
+            {cooldownRemaining > 0 && (
+              <div className="p-3 bg-amber-50/90 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200 rounded-xl text-xs font-sans flex items-center justify-between">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
+                  <span>{isEn ? 'Anti-spam protection active:' : 'Hệ thống bảo vệ đang bật:'}</span>
+                </span>
+                <span className="font-bold font-sans px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 border border-amber-300 dark:border-amber-600">
+                  {isEn ? `Wait ${cooldownRemaining}s to submit again...` : `Đợi ${cooldownRemaining}s để gửi tiếp...`}
+                </span>
               </div>
+            )}
 
-              {/* Content text area with inline character counter */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-mono text-ink-muted uppercase tracking-wider">
-                    {isEn ? 'Your Detailed Experience *' : 'Cảm nhận chi tiết về không gian & đồ uống *'}
+                  <label className="block text-xs font-sans text-ink-muted uppercase tracking-wider font-semibold">
+                    {isEn ? 'Your Full Name *' : 'Họ và tên của bạn *'}
                   </label>
-                  <span
-                    className={`text-[10px] font-mono ${
-                      content.length > 1200
-                        ? 'text-red-500 font-bold'
-                        : content.length > 0 && content.length < 10
-                        ? 'text-amber-600 dark:text-amber-400 font-semibold'
-                        : 'text-ink-muted'
+                  <span className={`text-[10px] font-sans ${authorName.length > 80 ? 'text-red-500 font-bold' : 'text-ink-muted'}`}>
+                    {authorName.length}/80
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  required
+                  maxLength={80}
+                  value={authorName}
+                  onChange={(e) => setAuthorName(e.target.value)}
+                  placeholder={isEn ? 'e.g. John Doe' : 'Ví dụ: Nguyễn Văn An'}
+                  className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical font-sans"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-sans text-ink-muted uppercase tracking-wider mb-1 font-semibold">
+                  {isEn ? 'Visit Date / Timing' : 'Thời gian ghé quán'}
+                </label>
+                <input
+                  type="text"
+                  maxLength={60}
+                  value={visitDate}
+                  onChange={(e) => setVisitDate(e.target.value)}
+                  placeholder={isEn ? 'e.g. November 2026' : 'Ví dụ: Chiều Thứ Bảy vừa qua'}
+                  className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical font-sans"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-sans text-ink-muted uppercase tracking-wider mb-1.5 font-semibold">
+                {isEn ? 'Your Rating (1 to 5 Stars)' : 'Mức độ hài lòng của bạn'}
+              </label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setRating(num)}
+                    className={`p-2 rounded-xl border transition-all ${
+                      rating >= num
+                        ? 'bg-amber-50 dark:bg-amber-950/50 border-amber-300 text-amber-500'
+                        : 'bg-forest-50/70 dark:bg-forest-800 border-forest-200 dark:border-forest-700 text-ink-muted'
                     }`}
                   >
-                    {content.length}/1200 {content.length > 0 && content.length < 10 && (isEn ? '(Min 10)' : '(Tối thiểu 10)')}
-                  </span>
-                </div>
-                <textarea
-                  rows={4}
-                  required
-                  maxLength={1200}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder={
-                    isEn
-                      ? 'Share your thoughts about the natural stream, salted coffee, atmosphere, or staff...'
-                      : 'Chia sẻ ấn tượng của bạn về con suối, tách cà phê muối, đĩa sinh tố bơ hay thái độ phục vụ...'
-                  }
-                  className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical"
-                />
+                    <Star className={`w-5 h-5 ${rating >= num ? 'fill-amber-400' : ''}`} />
+                  </button>
+                ))}
+                <span className="text-xs font-sans text-accent-earth font-bold ml-2">
+                  {rating} / 5 {isEn ? 'Stars' : 'Sao'}
+                </span>
               </div>
+            </div>
 
-              {/* Human Math Challenge & Honeypot Box */}
-              <div className="pt-1">
-                <HumanChallengeBox
-                  ref={challengeRef}
-                  onChange={setChallengeState}
-                  disabled={submitting || cooldownRemaining > 0}
-                  isEn={isEn}
-                />
-              </div>
-
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="text-xs font-mono text-ink-muted text-left">
-                  {cooldownRemaining > 0 && (
-                    <span className="text-amber-600 dark:text-amber-400 font-medium">
-                      {isEn ? `Wait ${cooldownRemaining}s to submit again...` : `Đợi ${cooldownRemaining}s để gửi tiếp...`}
-                    </span>
-                  )}
-                </div>
-
-                <MagneticButton
-                  type="submit"
-                  disabled={submitting || cooldownRemaining > 0 || !challengeState.isValid}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-botanical hover:bg-forest-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-xs font-mono font-bold transition-all shadow-subtle active:scale-95"
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-sans text-ink-muted uppercase tracking-wider font-semibold">
+                  {isEn ? 'Your Detailed Experience *' : 'Cảm nhận chi tiết về không gian & đồ uống *'}
+                </label>
+                <span
+                  className={`text-[10px] font-sans ${
+                    content.length > 1200
+                      ? 'text-red-500 font-bold'
+                      : content.length > 0 && content.length < 10
+                      ? 'text-amber-600 dark:text-amber-400 font-semibold'
+                      : 'text-ink-muted'
+                  }`}
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>
-                    {submitting
-                      ? isEn
-                        ? 'Submitting...'
-                        : 'Đang gửi...'
-                      : cooldownRemaining > 0
-                      ? isEn
-                        ? `Wait ${cooldownRemaining}s...`
-                        : `Đợi ${cooldownRemaining}s để gửi tiếp...`
-                      : isEn
-                      ? 'Submit Review'
-                      : 'Gửi cảm nhận'}
-                  </span>
-                </MagneticButton>
+                  {content.length}/1200 {content.length > 0 && content.length < 10 && (isEn ? '(Min 10)' : '(Tối thiểu 10)')}
+                </span>
               </div>
-            </form>
-          )}
-        </div>
-      </section>
+              <textarea
+                rows={4}
+                required
+                maxLength={1200}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder={
+                  isEn
+                    ? 'Share your thoughts about the natural stream, salted coffee, atmosphere, or staff...'
+                    : 'Chia sẻ ấn tượng của bạn về con suối, tách cà phê muối, đĩa sinh tố bơ hay thái độ phục vụ...'
+                }
+                className="w-full px-4 py-2.5 bg-forest-50 dark:bg-forest-950 rounded-xl border border-forest-200 dark:border-forest-700 text-xs text-ink-primary focus:outline-none focus:border-accent-botanical font-sans"
+              />
+            </div>
 
-      {/* Footer Section */}
+            <div className="pt-1">
+              <HumanChallengeBox
+                ref={challengeRef}
+                onChange={setChallengeState}
+                disabled={submitting || cooldownRemaining > 0}
+                isEn={isEn}
+              />
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs font-sans text-ink-muted text-left">
+                {cooldownRemaining > 0 && (
+                  <span className="text-amber-600 dark:text-amber-400 font-medium">
+                    {isEn ? `Wait ${cooldownRemaining}s to submit again...` : `Đợi ${cooldownRemaining}s để gửi tiếp...`}
+                  </span>
+                )}
+              </div>
+
+              <MagneticButton
+                type="submit"
+                disabled={submitting || cooldownRemaining > 0 || !challengeState.isValid}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-accent-botanical hover:bg-forest-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-xs font-sans font-bold transition-all shadow-subtle active:scale-95"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>
+                  {submitting
+                    ? isEn
+                      ? 'Submitting...'
+                      : 'Đang gửi...'
+                    : cooldownRemaining > 0
+                    ? isEn
+                      ? `Wait ${cooldownRemaining}s...`
+                      : `Đợi ${cooldownRemaining}s để gửi tiếp...`
+                    : isEn
+                    ? 'Submit Review'
+                    : 'Gửi cảm nhận'}
+                </span>
+              </MagneticButton>
+            </div>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+
+  return (
+    <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
+      {reviewsOrder.map((sectionId) => {
+        if (!isSectionVisible(sectionId)) return null;
+        switch (sectionId) {
+          case 'header':
+            return renderHeader();
+          case 'reviewsList':
+            return renderReviewsList();
+          case 'submissionForm':
+            return renderSubmissionForm();
+          default:
+            return null;
+        }
+      })}
+
       <FooterSection />
     </main>
   );

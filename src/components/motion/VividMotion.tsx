@@ -262,7 +262,7 @@ export function StreamMarquee120({
     'Cà Phê Muối Đăk Nông Đậm Đà',
     'Thảo Mộc Xanh Sạch Tự Nhiên',
     'Đông Gia Nghĩa • Lâm Đồng',
-    'Âm Nhạc Mộc Acoustic Cuối Tuần',
+    'Không Gian Xanh Mát Bên Suối',
   ],
   speed = 32,
   className = '',
@@ -292,7 +292,7 @@ export function StreamMarquee120({
   if (!enableAnimations || motionIntensity === 'OFF') {
     return (
       <div className={`py-3 overflow-hidden border-y border-forest-900/10 dark:border-forest-700/40 ${className}`}>
-        <div className="flex gap-8 whitespace-nowrap justify-center text-xs tracking-widest uppercase opacity-75 font-mono">
+        <div className="flex gap-8 whitespace-nowrap justify-center text-xs tracking-wider uppercase opacity-75 font-sans font-medium">
           {items.map((item, i) => (
             <span key={i} className="flex items-center gap-3">
               <span>{item}</span>
@@ -325,7 +325,7 @@ export function StreamMarquee120({
           duration: effectiveDuration,
           ease: 'linear',
         }}
-        className="flex gap-8 whitespace-nowrap will-change-transform font-mono text-[11px] sm:text-xs uppercase tracking-widest text-ink-secondary"
+        className="flex gap-8 whitespace-nowrap will-change-transform font-sans text-xs sm:text-sm uppercase tracking-wider font-medium text-ink-secondary"
       >
         {repeatedItems.map((item, idx) => (
           <span key={idx} className="flex items-center gap-6 shrink-0">

@@ -170,6 +170,90 @@ export interface SiteContent {
   contactBbqCalloutEn?: string;
   contactDirectionsNote?: string;
   contactDirectionsNoteEn?: string;
+
+  // Page-Level Visibility Toggles (Module 1)
+  showPageAbout?: boolean;
+  showPageSpace?: boolean;
+  showPageMenu?: boolean;
+  showPageReviews?: boolean;
+  showPageNews?: boolean;
+  showPageContact?: boolean;
+
+  showHeroSection?: boolean;
+  showPhilosophySection?: boolean;
+
+  // Universal Section Ordering
+  homeSectionOrder?: string[];
+  aboutSectionOrder?: string[];
+  spaceSectionOrder?: string[];
+  menuSectionOrder?: string[];
+  reviewsSectionOrder?: string[];
+  newsSectionOrder?: string[];
+  contactSectionOrder?: string[];
+
+  // Universal Section Layout Variants & Visibility
+  sectionLayouts?: Record<string, string>;
+  sectionVisibility?: Record<string, boolean>;
+
+  // Additional section content fields
+  heroLayout?: string;
+  heroPrimaryCtaText?: string;
+  heroPrimaryCtaTextEn?: string;
+  heroPrimaryCtaLink?: string;
+  heroSecondaryCtaText?: string;
+  heroSecondaryCtaTextEn?: string;
+  heroSecondaryCtaLink?: string;
+  heroCoverImage?: string;
+  showHeroCoverImage?: boolean;
+  heroCaption?: string;
+  heroCaptionEn?: string;
+  homeCtaBannerTitle?: string;
+  homeCtaBannerTitleEn?: string;
+  homeCtaBannerDesc?: string;
+  homeCtaBannerDescEn?: string;
+  homeCtaBannerBtnText?: string;
+  homeCtaBannerBtnTextEn?: string;
+  homeCtaBannerBtnLink?: string;
+  showHomeCtaBanner?: boolean;
+
+  aboutCommitments?: any[];
+
+  spaceZones?: any[];
+  spaceCtaTitle?: string;
+  spaceCtaTitleEn?: string;
+  spaceCtaDesc?: string;
+  spaceCtaDescEn?: string;
+  spaceCtaBtnText?: string;
+  spaceCtaBtnTextEn?: string;
+  showSpaceCta?: boolean;
+  showSpaceFilterBar?: boolean;
+
+  menuShowPrices?: boolean;
+  menuShowAddToCart?: boolean;
+  menuDietaryNote?: string;
+  menuDietaryNoteEn?: string;
+  menuCurrencyNote?: string;
+  menuCurrencyNoteEn?: string;
+  menuBbqBannerTitle?: string;
+  menuBbqBannerTitleEn?: string;
+  menuBbqBannerDesc?: string;
+  menuBbqBannerDescEn?: string;
+  menuBbqBannerBtnText?: string;
+  menuBbqBannerBtnTextEn?: string;
+  showMenuBbqBanner?: boolean;
+
+  reviewsTrustScore?: string;
+  reviewsTrustScoreEn?: string;
+  reviewsThankYou?: string;
+  reviewsThankYouEn?: string;
+
+  newsContactPrompt?: string;
+  newsContactPromptEn?: string;
+
+  contactQuickInfoLayout?: string;
+  contactMapCaption?: string;
+  contactMapCaptionEn?: string;
+  contactMapEmbedUrl?: string;
 }
 
 export interface SpatialPlate {

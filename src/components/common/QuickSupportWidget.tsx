@@ -69,7 +69,7 @@ export default function QuickSupportWidget() {
                 : 'Kết nối nhanh với quán để được hướng dẫn đặt món, đặt tiệc BBQ bờ suối hoặc chỉ đường.'}
             </p>
 
-            <div className="space-y-2 text-xs font-mono">
+            <div className="space-y-2.5 text-sm font-sans font-medium">
               {/* Hotline */}
               <a
                 href={`tel:${phone}`}

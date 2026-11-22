@@ -8,7 +8,7 @@ import { useApp } from '@/context/AppContext';
 
 export default function FooterSection() {
   const pathname = usePathname();
-  const { data, language } = useApp();
+  const { data, language, content } = useApp();
 
   const [approvedCount, setApprovedCount] = React.useState<number | null>(null);
   const [recommendedCount, setRecommendedCount] = React.useState<number>(0);
@@ -107,8 +107,8 @@ export default function FooterSection() {
             </h3>
             <p className="text-xs text-forest-300 font-sans leading-relaxed">
               {isEn
-                ? 'Receive seasonal coffee harvests, acoustic night invites, and exclusive vouchers.'
-                : 'Nhận thông tin mùa hoa cẩm cù nở, lịch acoustic cuối tuần và ưu đãi món mới bên bờ suối.'}
+                ? 'Receive seasonal coffee harvests, eco-sanctuary updates, and exclusive vouchers.'
+                : 'Nhận thông tin mùa hoa cẩm cù nở, bản tin sinh thái và ưu đãi món mới bên bờ suối.'}
             </p>
           </div>
 
@@ -120,13 +120,13 @@ export default function FooterSection() {
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder={isEn ? 'Enter your email...' : 'Nhập địa chỉ email...'}
-                className="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-forest-400 text-xs font-mono focus:outline-none focus:border-emerald-400"
+                className="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-forest-400 text-sm font-sans focus:outline-none focus:border-emerald-400"
               />
             </div>
             <button
               type="submit"
               disabled={newsletterStatus === 'loading'}
-              className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
+              className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{isEn ? 'Subscribe' : 'Đăng ký'}</span>
@@ -220,51 +220,63 @@ export default function FooterSection() {
 
           {/* 7 Quick Navigation Corporate Pages (2 cols) */}
           <div className="lg:col-span-2 space-y-4">
-            <h4 className="text-xs font-mono uppercase tracking-widest text-emerald-400 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-emerald-400 font-semibold">
               {isEn ? 'CORPORATE PAGES' : 'TRANG DOANH NGHIỆP'}
             </h4>
-            <ul className="space-y-2.5 text-xs font-mono">
+            <ul className="space-y-2.5 text-xs font-sans">
               <li>
                 <Link href={isEn ? '/en' : '/'} className="text-forest-200/80 hover:text-white transition-colors">
                   {isEn ? 'Home' : 'Trang chủ'}
                 </Link>
               </li>
-              <li>
-                <Link href={isEn ? '/en/about' : '/gioi-thieu'} className="text-forest-200/80 hover:text-white transition-colors">
-                  {isEn ? 'About Us' : 'Giới thiệu Cẩm Cù'}
-                </Link>
-              </li>
-              <li>
-                <Link href={isEn ? '/en/space' : '/khong-gian'} className="text-forest-200/80 hover:text-white transition-colors">
-                  {isEn ? 'Sanctuary (30 Plates)' : 'Không gian (30 Plates)'}
-                </Link>
-              </li>
-              <li>
-                <Link href={isEn ? '/en/menu' : '/thuc-don'} className="text-forest-200/80 hover:text-white transition-colors">
-                  {isEn ? 'Menu (~67 Items)' : 'Thực đơn (~67 món)'}
-                </Link>
-              </li>
-              <li>
-                <Link href={isEn ? '/en/reviews' : '/khach-hang'} className="text-forest-200/80 hover:text-white transition-colors">
-                  {isEn ? 'Reviews & Stories' : 'Dấu ấn & Đánh giá'}
-                </Link>
-              </li>
-              <li>
-                <Link href={isEn ? '/en/news' : '/su-kien'} className="text-forest-200/80 hover:text-white transition-colors">
-                  {isEn ? 'News & FAQ' : 'Tin tức & FAQ'}
-                </Link>
-              </li>
-              <li>
-                <Link href={isEn ? '/en/contact' : '/lien-he'} className="text-forest-200/80 hover:text-white transition-colors">
-                  {isEn ? 'Contact & Map' : 'Liên hệ & Chỉ đường'}
-                </Link>
-              </li>
+              {content?.showPageAbout !== false && (
+                <li>
+                  <Link href={isEn ? '/en/about' : '/gioi-thieu'} className="text-forest-200/80 hover:text-white transition-colors">
+                    {isEn ? 'About Us' : 'Giới thiệu Cẩm Cù'}
+                  </Link>
+                </li>
+              )}
+              {content?.showPageSpace !== false && (
+                <li>
+                  <Link href={isEn ? '/en/space' : '/khong-gian'} className="text-forest-200/80 hover:text-white transition-colors">
+                    {isEn ? 'Sanctuary (30 Plates)' : 'Không gian (30 Plates)'}
+                  </Link>
+                </li>
+              )}
+              {content?.showPageMenu !== false && (
+                <li>
+                  <Link href={isEn ? '/en/menu' : '/thuc-don'} className="text-forest-200/80 hover:text-white transition-colors">
+                    {isEn ? 'Menu (~67 Items)' : 'Thực đơn (~67 món)'}
+                  </Link>
+                </li>
+              )}
+              {content?.showPageReviews !== false && (
+                <li>
+                  <Link href={isEn ? '/en/reviews' : '/khach-hang'} className="text-forest-200/80 hover:text-white transition-colors">
+                    {isEn ? 'Reviews & Stories' : 'Dấu ấn & Đánh giá'}
+                  </Link>
+                </li>
+              )}
+              {content?.showPageNews !== false && (
+                <li>
+                  <Link href={isEn ? '/en/news' : '/su-kien'} className="text-forest-200/80 hover:text-white transition-colors">
+                    {isEn ? 'News & FAQ' : 'Tin tức & FAQ'}
+                  </Link>
+                </li>
+              )}
+              {content?.showPageContact !== false && (
+                <li>
+                  <Link href={isEn ? '/en/contact' : '/lien-he'} className="text-forest-200/80 hover:text-white transition-colors">
+                    {isEn ? 'Contact & Map' : 'Liên hệ & Chỉ đường'}
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
           {/* Contact & Hotlines (3 cols) */}
           <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-xs font-mono uppercase tracking-widest text-emerald-400 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-emerald-400 font-semibold">
               {isEn ? 'DIRECT CONTACT' : 'LIÊN HỆ TRỰC TIẾP'}
             </h4>
             <div className="space-y-3 text-xs leading-relaxed">
@@ -334,10 +346,10 @@ export default function FooterSection() {
 
           {/* Operating Hours (3 cols) */}
           <div className="lg:col-span-3 space-y-4">
-            <h4 className="text-xs font-mono uppercase tracking-widest text-emerald-400 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-emerald-400 font-semibold">
               {isEn ? 'OPERATING HOURS (GMT+7)' : 'GIỜ ĐÓN KHÁCH (GMT+7)'}
             </h4>
-            <div className="space-y-2.5 text-xs font-mono">
+            <div className="space-y-2.5 text-xs font-sans">
               <div className="p-2.5 bg-white/5 rounded-xl border border-white/10 space-y-1">
                 <span className="text-forest-300 block">
                   {isEn ? 'Monday – Thursday:' : 'Thứ Hai – Thứ Năm:'}

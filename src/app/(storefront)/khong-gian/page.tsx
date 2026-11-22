@@ -10,10 +10,12 @@ import {
   Compass,
   UtensilsCrossed,
   BookOpen,
+  Phone,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { SpatialPlate } from '@/types';
 import FooterSection from '@/components/home/FooterSection';
+import { MagneticButton } from '@/components/motion/VividMotion';
 
 function PlateCard({
   plate,
@@ -58,7 +60,6 @@ function PlateCard({
       onClick={onOpen}
       className="group relative bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 overflow-hidden shadow-subtle hover:shadow-elevated transition-shadow duration-200 cursor-pointer flex flex-col justify-between h-full"
     >
-      {/* 16:10 Solid Image Container - Direct always-visible rendering with zero clip-path */}
       <div className="relative w-full aspect-[16/10] overflow-hidden bg-forest-100 dark:bg-forest-800 border-b border-forest-200 dark:border-forest-700">
         <img
           src={imgSrc}
@@ -69,35 +70,31 @@ function PlateCard({
           className="w-full h-full object-cover block opacity-100 group-hover:scale-105 transition-transform duration-300 ease-out"
         />
 
-        {/* Figure Tag - Solid Opaque */}
-        <div className="absolute top-3 left-3 bg-white dark:bg-forest-900 px-2.5 py-1 rounded-md text-[11px] font-mono font-bold text-accent-botanical border border-forest-200 dark:border-forest-700 shadow-sm z-10">
+        <div className="absolute top-3 left-3 bg-white dark:bg-forest-900 px-2.5 py-1 rounded-md text-xs font-sans font-bold text-accent-botanical border border-forest-200 dark:border-forest-700 shadow-sm z-10">
           {plate.id}
         </div>
 
-        {/* Expand Icon - Solid Opaque */}
         <div className="absolute top-3 right-3 p-1.5 bg-white dark:bg-forest-900 rounded-full text-ink-muted opacity-0 group-hover:opacity-100 transition-opacity shadow-sm z-10">
           <Maximize2 className="w-4 h-4 text-accent-botanical" />
         </div>
 
-        {/* Location badge - Solid Opaque */}
-        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-1.5 text-[11px] font-mono text-ink-primary bg-white dark:bg-forest-900 py-1.5 px-2.5 rounded-lg border border-forest-200 dark:border-forest-700 shadow-sm z-10">
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-1.5 text-xs font-sans text-ink-primary bg-white dark:bg-forest-900 py-1.5 px-2.5 rounded-lg border border-forest-200 dark:border-forest-700 shadow-sm z-10">
           <MapPin className="w-3.5 h-3.5 text-accent-botanical flex-shrink-0" />
           <span className="truncate">{location}</span>
         </div>
       </div>
 
-      {/* Editorial Card Body - Solid Opaque */}
       <div className="p-5 space-y-2 bg-white dark:bg-forest-900">
-        <div className="text-[10px] font-mono uppercase tracking-wider text-accent-botanical font-semibold">
+        <div className="text-xs font-sans uppercase tracking-wider text-accent-botanical font-semibold">
           {chapter}
         </div>
         <h3 className="font-serif text-base font-bold text-ink-primary line-clamp-1">
           {title}
         </h3>
-        <p className="text-xs text-ink-muted leading-relaxed line-clamp-3">
+        <p className="text-xs text-ink-muted leading-relaxed line-clamp-3 font-sans">
           {description}
         </p>
-        <span className="text-[11px] font-mono text-accent-botanical font-medium block pt-1 group-hover:underline">
+        <span className="text-xs font-sans text-accent-botanical font-medium block pt-1 group-hover:underline">
           {isEn ? 'Enlarge Plate →' : 'Phóng to chi tiết →'}
         </span>
       </div>
@@ -143,9 +140,9 @@ export default function KhongGianPage() {
         },
         {
           id: 4,
-          title: 'Chapter IV: Twilight & Weekend Nights',
+          title: 'Chapter IV: Twilight & Peaceful Evenings',
           range: ch4Range,
-          desc: 'Valley golden sunsets, intimate acoustic live sessions, and lantern reflections',
+          desc: 'Valley golden sunsets, serene streamside gatherings, and lantern reflections',
         },
       ]
     : [
@@ -169,9 +166,9 @@ export default function KhongGianPage() {
         },
         {
           id: 4,
-          title: 'Chương IV: Chiều Buông & Đêm Cuối Tuần',
+          title: 'Chương IV: Chiều Buông & Đêm Bình Yên',
           range: ch4Range,
-          desc: 'Hoàng hôn thung lũng, đêm nhạc acoustic mộc và ánh đèn vàng soi bóng suối',
+          desc: 'Hoàng hôn thung lũng, nhịp suối róc rách thanh bình và ánh đèn vàng ấm áp',
         },
       ];
 
@@ -180,151 +177,303 @@ export default function KhongGianPage() {
     return data.spatialPlates.filter((p) => p.chapter === selectedChapter);
   }, [data.spatialPlates, selectedChapter]);
 
-  return (
-    <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
-      {/* Editorial Magazine Hero - Solid Opaque */}
-      <section className="relative overflow-hidden py-14 sm:py-20 border-b border-forest-200 dark:border-forest-700 bg-paper">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="max-w-3xl space-y-4">
-            <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-              <span className="w-8 h-px bg-accent-botanical" />
-              <span>{spaceEyebrow}</span>
-            </div>
+  const defaultSpaceZones = [
+    {
+      id: 'zone-stream',
+      nameVi: 'Khu Bờ Suối Mát Lạnh',
+      nameEn: 'Streamside Sanctuary',
+      descVi: 'Bàn ghế mộc đặt sát bờ suối róc rách, rợp bóng vòm cây rừng và hoa lan Cẩm Cù.',
+      descEn: 'Rustic tables right by the flowing mountain brook under lush rainforest canopies.',
+      highlightVi: 'Mát rượi quanh năm • View suối tự nhiên',
+      highlightEn: 'Year-round cool breeze • Natural waterfall views',
+      imageUrl: '/uploads/gallery/fig-01.jpg',
+    },
+    {
+      id: 'zone-woodhouse',
+      nameVi: 'Nhà Gỗ Mộc Mạc & Hiên Sưởi',
+      nameEn: 'Rustic Wooden Lodge & Hearth',
+      descVi: 'Không gian ấm cúng với kiến trúc gỗ tái chế, lò sưởi củi và ánh đèn vàng lắng đọng.',
+      descEn: 'Warm timber architecture with wood-fired hearth and cozy golden ambient lighting.',
+      highlightVi: 'Ấm cúng • Thích hợp họp mặt & đọc sách',
+      highlightEn: 'Cozy retreat • Ideal for reading & group chats',
+      imageUrl: '/uploads/gallery/fig-10.jpg',
+    },
+    {
+      id: 'zone-bbq',
+      nameVi: 'Sân Vườn BBQ Bên Bờ Suối',
+      nameEn: 'Streamside BBQ Garden Terrace',
+      descVi: 'Khu tiệc ngoài trời thoáng đãng dành cho các buổi tiệc nướng BBQ cuối tuần.',
+      descEn: 'Open-air outdoor garden designed for relaxing weekend BBQ gatherings.',
+      highlightVi: 'Rộng rãi • Nhận tiệc đặt trước',
+      highlightEn: 'Spacious • Advance reservations available',
+      imageUrl: '/uploads/gallery/fig-24.jpg',
+    },
+    {
+      id: 'zone-tea',
+      nameVi: 'Góc Thưởng Trà Tĩnh Lặng',
+      nameEn: 'Quiet Tea & Mindfulness Corner',
+      descVi: 'Góc nhỏ tĩnh lặng dưới giàn lan Cẩm Cù để nhâm nhi tách trà thảo mộc ấm lành.',
+      descEn: 'Serene nook under wax flower trellises to savor fragrant botanical herbal teas.',
+      highlightVi: 'Yên tĩnh • Hương hoa thoang thoảng',
+      highlightEn: 'Tranquil ambiance • Subtle floral aroma',
+      imageUrl: '/uploads/gallery/fig-15.jpg',
+    },
+  ];
 
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-              {spaceTitle}
-            </h1>
+  const zones = c?.spaceZones || defaultSpaceZones;
 
-            <p className="font-serif text-lg sm:text-xl text-accent-earth italic">
-              {spaceSubtitle}
-            </p>
+  // Universal Section Order & Visibility Resolution
+  const defaultSpaceOrder = ['header', 'zones', 'gallery', 'cta'];
+  const spaceOrder = (c?.spaceSectionOrder && Array.isArray(c.spaceSectionOrder) && c.spaceSectionOrder.length > 0)
+    ? c.spaceSectionOrder
+    : defaultSpaceOrder;
 
-            <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-              {spaceIntro}
-            </p>
+  const isSectionVisible = (id: string) => {
+    if (c?.sectionVisibility && c.sectionVisibility['space-' + id] === false) return false;
+    if (id === 'cta' && c?.showSpaceCta === false) return false;
+    return true;
+  };
 
-            {c?.spaceHeroBanner && (
-              <div className="pt-4">
-                <div className="w-full aspect-[21/9] sm:aspect-[24/9] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100 dark:bg-forest-900">
-                  <img
-                    src={c.spaceHeroBanner}
-                    alt={spaceTitle}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+  /* ========================================================= */
+  /* SECTION RENDERERS                                         */
+  /* ========================================================= */
 
-      {/* Main Spatial Gallery Section */}
-      <section className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto">
-        {/* Chapter Filter Controls */}
-        <div className="space-y-6 mb-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-1">
-              <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{isEn ? 'FILTER BY CHAPTER' : 'PHÂN LOẠI THEO CHƯƠNG'}</span>
-              </div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-ink-primary">
-                {isEn ? 'Curated Visual Journey' : 'Hành Trình Khám Phá Thị Giác'}
-              </h2>
-            </div>
-
-            {/* Solid Chapter Filter Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-white dark:bg-forest-900 p-1.5 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle">
-              <button
-                onClick={() => setSelectedChapter('all')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
-                  selectedChapter === 'all'
-                    ? 'bg-accent-botanical text-white font-semibold'
-                    : 'text-ink-muted hover:text-ink-primary'
-                }`}
-              >
-                {isEn ? `All (${totalCount} Plates)` : `Tất cả (${totalCount} Plates)`}
-              </button>
-              {chapters.map((ch) => {
-                const isChActive = selectedChapter === ch.id;
-                return (
-                  <button
-                    key={ch.id}
-                    onClick={() => setSelectedChapter(ch.id)}
-                    className={`px-3 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
-                      isChActive
-                        ? 'bg-accent-botanical text-white font-semibold'
-                        : 'text-ink-muted hover:text-ink-primary'
-                    }`}
-                  >
-                    {isEn ? `Chapter ${ch.id}` : `Chương ${ch.id}`} ({ch.range})
-                  </button>
-                );
-              })}
-            </div>
+  // 1. Header
+  const renderHeader = () => (
+    <section key="header" className="relative overflow-hidden py-14 sm:py-20 border-b border-forest-200 dark:border-forest-700 bg-paper">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="max-w-3xl space-y-4">
+          <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+            <span className="w-8 h-px bg-accent-botanical" />
+            <span>{spaceEyebrow}</span>
           </div>
 
-          {/* Active Chapter Overview Banner - Solid Opaque */}
-          {selectedChapter !== 'all' && (
-            <div className="p-4 sm:p-5 bg-forest-50 dark:bg-forest-950 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs text-ink-muted flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="space-y-0.5">
-                <span className="font-mono font-bold text-accent-botanical uppercase">
-                  {chapters.find((c) => c.id === selectedChapter)?.title}
-                </span>
-                <p className="font-serif italic text-ink-primary">
-                  {chapters.find((c) => c.id === selectedChapter)?.desc}
-                </p>
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
+            {spaceTitle}
+          </h1>
+
+          <p className="font-serif text-lg sm:text-xl text-accent-earth italic">
+            {spaceSubtitle}
+          </p>
+
+          <p className="text-sm sm:text-base text-ink-muted leading-relaxed font-sans">
+            {spaceIntro}
+          </p>
+
+          {c?.spaceHeroBanner && (
+            <div className="pt-4">
+              <div className="w-full aspect-[21/9] sm:aspect-[24/9] rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-elevated bg-forest-100 dark:bg-forest-900">
+                <img
+                  src={c.spaceHeroBanner}
+                  alt={spaceTitle}
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <span className="font-mono text-ink-muted text-[11px] self-start sm:self-auto bg-white dark:bg-forest-900 px-3 py-1 rounded-lg border border-forest-200 dark:border-forest-700">
-                {chapters.find((c) => c.id === selectedChapter)?.range}
-              </span>
             </div>
           )}
         </div>
+      </div>
+    </section>
+  );
 
-        {/* Clean Responsive Solid Grid - Direct rendering, no scroll velocity hooks or delays */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredPlates.map((plate) => (
-            <PlateCard
-              key={plate.id}
-              plate={plate}
-              onOpen={() => openLightbox(plate)}
-              isEn={isEn}
-            />
-          ))}
+  // 2. Experience Zones
+  const renderZones = () => (
+    <section key="zones" className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50 bg-forest-50/30 dark:bg-forest-950/20">
+      <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+        <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
+          <Sparkles className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? '4 BOTANICAL EXPERIENCE ZONES' : '4 PHÂN KHU TRẢI NGHIỆM ĐẶC TRƯNG'}</span>
+        </div>
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+          {isEn ? 'Discover Your Favorite Corner' : 'Lựa Chọn Góc Quán Yêu Thích Của Bạn'}
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {zones.map((zone: any, idx: number) => {
+          const name = isEn && zone.nameEn ? zone.nameEn : zone.nameVi;
+          const desc = isEn && zone.descEn ? zone.descEn : zone.descVi;
+          const highlight = isEn && zone.highlightEn ? zone.highlightEn : zone.highlightVi;
+
+          return (
+            <div key={zone.id || idx} className="bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 overflow-hidden shadow-subtle flex flex-col justify-between">
+              <div className="relative aspect-[16/10] overflow-hidden bg-forest-100 dark:bg-forest-800">
+                <img
+                  src={zone.imageUrl || `/uploads/gallery/fig-${String(idx * 7 + 1).padStart(2, '0')}.jpg`}
+                  alt={name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-5 space-y-2">
+                <span className="text-[11px] font-sans text-accent-botanical font-semibold block">
+                  {highlight}
+                </span>
+                <h3 className="font-serif text-lg font-bold text-ink-primary">
+                  {name}
+                </h3>
+                <p className="text-xs text-ink-muted leading-relaxed font-sans">
+                  {desc}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+
+  // 3. Main Spatial Gallery
+  const renderGallery = () => (
+    <section key="gallery" className="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+      {/* Chapter Filter Controls */}
+      <div className="space-y-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-1">
+            <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{isEn ? 'FILTER BY CHAPTER' : 'PHÂN LOẠI THEO CHƯƠNG'}</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-ink-primary">
+              {isEn ? 'Curated Visual Journey' : 'Hành Trình Khám Phá Thị Giác'}
+            </h2>
+          </div>
+
+          {/* Chapter Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5 bg-white dark:bg-forest-900 p-1.5 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle">
+            <button
+              onClick={() => setSelectedChapter('all')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-sans font-medium transition-colors ${
+                selectedChapter === 'all'
+                  ? 'bg-accent-botanical text-white font-semibold'
+                  : 'text-ink-muted hover:text-ink-primary'
+              }`}
+            >
+              {isEn ? `All (${totalCount} Plates)` : `Tất cả (${totalCount} Plates)`}
+            </button>
+            {chapters.map((ch) => {
+              const isChActive = selectedChapter === ch.id;
+              return (
+                <button
+                  key={ch.id}
+                  onClick={() => setSelectedChapter(ch.id)}
+                  className={`px-3 py-2 rounded-xl text-xs font-sans font-medium transition-colors ${
+                    isChActive
+                      ? 'bg-accent-botanical text-white font-semibold'
+                      : 'text-ink-muted hover:text-ink-primary'
+                  }`}
+                >
+                  {isEn ? `Chapter ${ch.id}` : `Chương ${ch.id}`} ({ch.range})
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Bottom CTAs - Solid Opaque */}
-        <div className="mt-16 text-center flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/gioi-thieu"
-            prefetch={true}
-            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 dark:hover:bg-forest-800 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
-          >
-            <BookOpen className="w-4 h-4 text-accent-botanical" />
-            <span>{isEn ? 'Read Sanctuary Story & Origins' : 'Tìm hiểu Câu chuyện Cội Nguồn'}</span>
-          </Link>
-          <Link
-            href="/thuc-don"
-            prefetch={true}
-            className="px-6 py-3.5 bg-accent-botanical text-white rounded-xl text-xs font-mono font-bold hover:bg-forest-800 transition-colors shadow-subtle flex items-center gap-2"
-          >
-            <UtensilsCrossed className="w-4 h-4" />
-            <span>{isEn ? 'Explore Botanical Menu (~67 Items)' : 'Khám phá Thực đơn (~67 món)'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="/lien-he"
-            prefetch={true}
-            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 dark:hover:bg-forest-800 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
-          >
-            <Compass className="w-4 h-4 text-accent-botanical" />
-            <span>{isEn ? 'Get Directions on Google Maps' : 'Chỉ đường Google Maps đến quán'}</span>
-          </Link>
-        </div>
-      </section>
+        {/* Active Chapter Overview Banner */}
+        {selectedChapter !== 'all' && (
+          <div className="p-4 sm:p-5 bg-forest-50 dark:bg-forest-950 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs text-ink-muted flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <span className="font-sans font-bold text-accent-botanical uppercase">
+                {chapters.find((c) => c.id === selectedChapter)?.title}
+              </span>
+              <p className="font-serif italic text-ink-primary">
+                {chapters.find((c) => c.id === selectedChapter)?.desc}
+              </p>
+            </div>
+            <span className="font-sans text-ink-muted text-xs self-start sm:self-auto bg-white dark:bg-forest-900 px-3 py-1 rounded-lg border border-forest-200 dark:border-forest-700">
+              {chapters.find((c) => c.id === selectedChapter)?.range}
+            </span>
+          </div>
+        )}
+      </div>
 
-      {/* Footer Section */}
+      {/* Grid of Plates */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        {filteredPlates.map((plate) => (
+          <PlateCard
+            key={plate.id}
+            plate={plate}
+            onOpen={() => openLightbox(plate)}
+            isEn={isEn}
+          />
+        ))}
+      </div>
+
+      {/* Quick Navigation CTAs */}
+      <div className="mt-16 text-center flex flex-wrap items-center justify-center gap-4">
+        <Link
+          href="/gioi-thieu"
+          prefetch={true}
+          className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-sans font-bold hover:bg-forest-50 dark:hover:bg-forest-800 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
+        >
+          <BookOpen className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? 'Read Sanctuary Story & Origins' : 'Tìm hiểu Câu chuyện Cội Nguồn'}</span>
+        </Link>
+        <Link
+          href="/thuc-don"
+          prefetch={true}
+          className="px-6 py-3.5 bg-accent-botanical text-white rounded-xl text-xs font-sans font-bold hover:bg-forest-800 transition-colors shadow-subtle flex items-center gap-2"
+        >
+          <UtensilsCrossed className="w-4 h-4" />
+          <span>{isEn ? 'Explore Botanical Menu (~67 Items)' : 'Khám phá Thực đơn (~67 món)'}</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+        <Link
+          href="/lien-he"
+          prefetch={true}
+          className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-sans font-bold hover:bg-forest-50 dark:hover:bg-forest-800 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
+        >
+          <Compass className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? 'Get Directions on Google Maps' : 'Chỉ đường Google Maps đến quán'}</span>
+        </Link>
+      </div>
+    </section>
+  );
+
+  // 4. Booking Banner CTA
+  const renderCta = () => (
+    <section key="cta" className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-t border-forest-200/60 dark:border-forest-700/50">
+      <div className="p-8 sm:p-12 rounded-3xl bg-forest-900 text-white shadow-elevated flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="space-y-3 max-w-2xl">
+          <span className="text-xs font-sans uppercase tracking-widest text-emerald-300 font-semibold inline-block">
+            {isEn ? 'GROUP & BBQ RESERVATION' : 'ĐẶT CHỖ NHÓM & TIỆC BBQ'}
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white">
+            {isEn ? (c?.spaceCtaTitleEn || 'Planning a Group Visit or Streamside Photoshoot?') : (c?.spaceCtaTitle || 'Bạn Muốn Đặt Chỗ Nhóm Hoặc Chụp Ảnh Bên Suối?')}
+          </h2>
+          <p className="text-sm text-forest-200/90 leading-relaxed font-sans">
+            {isEn ? (c?.spaceCtaDescEn || 'Our natural open sanctuary is ready to welcome you. Contact our hotline for the best preparation.') : (c?.spaceCtaDesc || 'Không gian mở tự nhiên sẵn sàng chào đón bạn. Hãy liên hệ Hotline để quán chuẩn bị chu đáo nhất.')}
+          </p>
+        </div>
+
+        <a href="tel:0382851688" className="shrink-0">
+          <MagneticButton className="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-sm font-sans font-bold shadow-float flex items-center gap-2.5">
+            <Phone className="w-4 h-4" />
+            <span>{isEn ? (c?.spaceCtaBtnTextEn || 'Call Hotline 038 285 1688') : (c?.spaceCtaBtnText || 'Liên Hệ Hotline 038 285 1688')}</span>
+          </MagneticButton>
+        </a>
+      </div>
+    </section>
+  );
+
+  return (
+    <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
+      {spaceOrder.map((sectionId) => {
+        if (!isSectionVisible(sectionId)) return null;
+        switch (sectionId) {
+          case 'header':
+            return renderHeader();
+          case 'zones':
+            return renderZones();
+          case 'gallery':
+            return renderGallery();
+          case 'cta':
+            return renderCta();
+          default:
+            return null;
+        }
+      })}
+
       <FooterSection />
     </main>
   );

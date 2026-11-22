@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   Droplet,
   Sprout,
   Heart,
   MapPin,
-  Maximize2,
   BookOpen,
   Sparkles,
   Users,
@@ -15,24 +14,19 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
+  Clock,
+  Award,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
-import { SpatialPlate } from '@/types';
 import FooterSection from '@/components/home/FooterSection';
-import { SPRING_PILL_TRANSITION, EDITORIAL_EASE, EditorialDivider } from '@/components/motion/EditorialMotion';
-import {
-  ScrollLayoutCard3D,
-  ScrollParallaxFrame,
-  EditorialDivider120,
-} from '@/components/motion/ScrollMotion120';
+import { SPRING_PILL_TRANSITION } from '@/components/motion/EditorialMotion';
+import { ScrollLayoutCard3D } from '@/components/motion/ScrollMotion120';
 
 export default function GioiThieuPage() {
   const { data, content, language } = useApp();
   const c = content || data.content;
   const isEn = language === 'en';
-
-  const [activeTab, setActiveTab] = useState<'all' | 'story' | 'team'>('all');
 
   const brandStoryTitle = isEn && c?.brandStoryTitleEn ? c.brandStoryTitleEn : (c?.brandStoryTitle || 'Nơi Dòng Suối Ôm Lấy Khu Vườn Cẩm Cù');
   const brandStorySubtitle = isEn && c?.brandStorySubtitleEn ? c.brandStorySubtitleEn : (c?.brandStorySubtitle || 'Câu Chuyện Về Đất Đỏ Bazan, Con Suối Nhỏ & Giọt Cà Phê Mộc');
@@ -44,304 +38,367 @@ export default function GioiThieuPage() {
 
   const teamMembers = data.teamMembers || [];
   const showTeam = c?.showTeamMembers !== false && teamMembers.length > 0;
-  const showMilestones = c?.showStoryMilestones !== false;
+  const milestones = (data.stories || []).filter((s) => s.published);
+
+  const commitments = c?.aboutCommitments || [
+    {
+      titleVi: 'Bảo Tồn Dòng Suối Tự Nhiên',
+      titleEn: 'Preserving Natural Forest Streams',
+      descVi: 'Không can thiệp bê tông hóa dòng chảy, giữ trọn ghềnh đá và hệ sinh thái suối rừng.',
+      descEn: 'Zero concrete alteration to waterbeds, preserving volcanic rocks and aquatic habitats.',
+    },
+    {
+      titleVi: '100% Cà Phê Mộc Bazan',
+      titleEn: '100% Pure Wood-Roasted Coffee',
+      descVi: 'Chỉ sử dụng hạt cà phê Robusta chín mọng rang củi mộc, không tẩm ướp phụ gia.',
+      descEn: 'Only sun-ripened Robusta beans traditionally roasted with forest wood, zero artificial flavors.',
+    },
+    {
+      titleVi: 'Nông Sản Xanh Địa Phương',
+      titleEn: 'Fresh Highland Farm Produce',
+      descVi: 'Ưu tiên kết nối nông hộ Đắk Nông với nguồn thảo mộc, bơ sáp và trái cây tươi mỗi ngày.',
+      descEn: 'Direct partnerships with local farmers for fresh botanical herbs and seasonal highland fruits.',
+    },
+  ];
+
+  // Universal Section Order & Visibility Resolution
+  const defaultAboutOrder = ['banner', 'brandStory', 'commitments', 'milestones', 'team'];
+  const aboutOrder = (c?.aboutSectionOrder && Array.isArray(c.aboutSectionOrder) && c.aboutSectionOrder.length > 0)
+    ? c.aboutSectionOrder
+    : defaultAboutOrder;
+
+  const isSectionVisible = (id: string) => {
+    if (c?.sectionVisibility && c.sectionVisibility['about-' + id] === false) return false;
+    if (id === 'team' && !showTeam) return false;
+    if (id === 'milestones' && c?.showStoryMilestones === false) return false;
+    return true;
+  };
+
+  /* ========================================================= */
+  /* SECTION RENDERERS                                         */
+  /* ========================================================= */
+
+  // 1. Banner Header
+  const renderBanner = () => (
+    <section key="banner" className="relative overflow-hidden py-14 sm:py-20 border-b border-forest-200/60 dark:border-forest-700/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="max-w-3xl space-y-4">
+          <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+            <span className="w-8 h-px bg-accent-botanical" />
+            <span>{isEn ? 'THE SANCTUARY CHRONICLES • ABOUT US' : 'HÀNH TRÌNH KHỞI SINH • GIỚI THIỆU QUÁN'}</span>
+          </div>
+
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
+            {brandStoryTitle}
+          </h1>
+
+          <p className="font-serif text-lg sm:text-xl text-accent-earth italic">
+            &ldquo;{brandStorySubtitle}&rdquo;
+          </p>
+
+          <p className="text-sm sm:text-base text-ink-muted leading-relaxed font-sans">
+            {isEn
+              ? 'Nestled down Alley 437 Hung Vuong in Dong Gia Nghia, Lam Dong, Cẩm Cù House is an ecological haven preserving natural stream waterfalls, native volcanic basalt coffee, and porcelain wax flowers.'
+              : 'Ẩn mình dưới con dốc rợp bóng cây tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng, Cẩm Cù House là chốn dừng chân bình yên gìn giữ trọn vẹn vẻ đẹp hoang sơ của con suối rừng, giọt cà phê rang củi mộc bazan và những giàn hoa lan Cẩm Cù thanh khiết.'}
+          </p>
+
+          <div className="pt-2 flex flex-wrap items-center gap-3">
+            <Link
+              href="/khong-gian"
+              className="px-6 py-3 bg-accent-botanical text-white rounded-xl text-xs font-sans font-semibold hover:bg-forest-800 transition-all shadow-subtle flex items-center gap-2"
+            >
+              <span>{isEn ? 'Explore Spatial Gallery (30 Plates)' : 'Xem bộ sưu tập 30 góc không gian'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <Link
+              href="/thuc-don"
+              className="px-6 py-3 bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary rounded-xl text-xs font-sans font-semibold hover:bg-forest-50 transition-all shadow-subtle"
+            >
+              <span>{isEn ? 'View Menu (~67 Items)' : 'Thực đơn 67 món'}</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // 2. Brand Story & Pillars
+  const renderBrandStory = () => (
+    <section key="brandStory" className="py-16 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="lg:col-span-5 space-y-6">
+          <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-accent-botanical" />
+            <span>{isEn ? 'SANCTUARY ORIGINS' : 'KHỞI NGUỒN KHÔNG GIAN'}</span>
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary leading-tight">
+            {isEn ? 'A Green Valley In The Heart Of Gia Nghia' : 'Một Thung Lũng Xanh Giữa Lòng Phố Núi'}
+          </h2>
+          <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-line font-sans">
+            {brandStoryContent}
+          </p>
+          <div className="p-5 bg-forest-100 dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs font-sans text-ink-muted leading-relaxed">
+            <span className="font-bold text-ink-primary block mb-1">
+              {isEn ? 'Cẩm Cù Philosophy:' : 'Triết lý Cẩm Cù:'}
+            </span>
+            {brandStoryPhilosophy}
+          </div>
+        </div>
+
+        {/* Three Botanical Pillars */}
+        <div className="lg:col-span-7 space-y-6">
+          {c?.brandStoryImageUrl && (
+            <div className="h-64 sm:h-72 w-full rounded-2xl overflow-hidden shadow-subtle border border-forest-200 dark:border-forest-700">
+              <img
+                src={c.brandStoryImageUrl}
+                alt={brandStoryTitle}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {/* Pillar 1 */}
+            <ScrollLayoutCard3D delay={0.05} className="h-full">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
+                <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center">
+                  <Droplet className="w-5 h-5" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-ink-primary">
+                  {isEn ? 'Natural Mountain Stream' : 'Con Suối Tự Nhiên'}
+                </h3>
+                <p className="text-xs text-ink-muted leading-relaxed font-sans">
+                  {isEn
+                    ? 'Pure transparent freshwater cascading over basalt river boulders, delivering year-round coolness 3–4°C lower than city streets.'
+                    : 'Mặt nước trong vắt len qua những ghềnh đá cuội tự nhiên, mang lại luồng gió mát lành quanh năm, nhiệt độ luôn thấp hơn phố xá 3–4°C.'}
+                </p>
+              </div>
+            </ScrollLayoutCard3D>
+
+            {/* Pillar 2 */}
+            <ScrollLayoutCard3D delay={0.1} className="h-full">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-accent-earth flex items-center justify-center">
+                  <Sprout className="w-5 h-5" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-ink-primary">
+                  {isEn ? 'Dak Nong Basalt Coffee' : 'Cà Phê Bazan Đăk Nông'}
+                </h3>
+                <p className="text-xs text-ink-muted leading-relaxed font-sans">
+                  {isEn
+                    ? 'Native Robusta beans nourished by mineral-rich volcanic red soil, traditionally wood-roasted to preserve intense botanical depth.'
+                    : 'Hạt Robusta bản địa sinh trưởng trên đất đỏ núi lửa bazan giàu khoáng chất, được rang củi mộc theo bí quyết truyền thống đậm đà và sâu lắng.'}
+                </p>
+              </div>
+            </ScrollLayoutCard3D>
+
+            {/* Pillar 3 */}
+            <ScrollLayoutCard3D delay={0.15} className="h-full">
+              <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
+                <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center">
+                  <Heart className="w-5 h-5" />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-ink-primary">
+                  {isEn ? 'Pure Botanical Tonics' : 'Thảo Mộc Xanh Sạch'}
+                </h3>
+                <p className="text-xs text-ink-muted leading-relaxed font-sans">
+                  {isEn
+                    ? 'Home garden remedies of male papaya blossoms with forest honey, fresh highland ginger, and cold-pressed kale to detoxify and revive.'
+                    : 'Những bài thuốc dân gian từ hoa đu đủ đực chưng mật ong rừng, gừng tươi, cải Kale hữu cơ thanh lọc cơ thể và nuôi dưỡng sức khỏe an lành.'}
+                </p>
+              </div>
+            </ScrollLayoutCard3D>
+          </div>
+
+          {/* Ecological Vision Box */}
+          <div className="p-6 rounded-2xl bg-gradient-to-r from-forest-50 to-forest-100/60 dark:from-forest-950/60 dark:to-forest-900/40 border border-forest-200 dark:border-forest-700/60 space-y-2">
+            <span className="font-sans text-xs uppercase tracking-wider text-accent-botanical font-bold flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4" />
+              <span>{visionTitle}</span>
+            </span>
+            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed font-sans">
+              {visionDesc}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // 3. Commitments
+  const renderCommitments = () => (
+    <section key="commitments" className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50 bg-forest-50/30 dark:bg-forest-950/20">
+      <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+        <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? 'OUR CORE COMMITMENTS' : '3 CAM KẾT VỮNG BỀN'}</span>
+        </div>
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+          {isEn ? 'Pristine Nature, Genuine Quality' : 'Gìn Giữ Tự Nhiên & Chất Lượng Thật'}
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {commitments.map((com, idx) => (
+          <div key={idx} className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center font-serif font-bold text-lg">
+              0{idx + 1}
+            </div>
+            <h3 className="font-serif text-lg font-bold text-ink-primary">
+              {isEn && com.titleEn ? com.titleEn : com.titleVi}
+            </h3>
+            <p className="text-xs text-ink-muted leading-relaxed font-sans">
+              {isEn && com.descEn ? com.descEn : com.descVi}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+
+  // 4. Milestones
+  const renderMilestones = () => (
+    <section key="milestones" className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+      <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
+        <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center justify-center gap-2">
+          <Award className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? 'DEVELOPMENT JOURNEY' : 'CỘT MỐC PHÁT TRIỂN'}</span>
+        </div>
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+          {isEn ? 'Milestones Along The Stream' : 'Hành Trình Gieo Mầm Bên Suối'}
+        </h2>
+      </div>
+
+      <div className="space-y-6 max-w-3xl mx-auto">
+        {(milestones.length > 0 ? milestones : [
+          { year: '2023', titleVi: 'Khởi sinh ý tưởng bờ suối', titleEn: 'Streamside Vision Born', descVi: 'Chọn con dốc Hẻm 437 Hùng Vương làm điểm tựa sinh thái gìn giữ suối nguồn và giàn hoa cẩm cù.', descEn: 'Chose Alley 437 Hung Vuong as an ecological sanctuary preserving natural streams and wax flowers.' },
+          { year: '2024', titleVi: 'Hoàn thiện 4 phân khu sinh thái', titleEn: 'Completed 4 Eco Zones', descVi: 'Xây dựng 18 bàn view suối tự nhiên, nhà gỗ mộc mạc và giàn lan Cẩm Cù che mát.', descEn: 'Built 18 stream-view tables, rustic timber lodge, and shaded wax flower trellises.' },
+          { year: '2025', titleVi: 'Phục vụ thực đơn 67 món thảo mộc & cà phê mộc', titleEn: 'Expanded 67-item Botanical Menu', descVi: 'Được cộng đồng và du khách tin yêu, trở thành điểm đến bình yên đặc trưng tại TP. Gia Nghĩa.', descEn: 'Welcomed locals and travelers alike as a peaceful signature retreat in Gia Nghia.' },
+        ]).map((ms: any, idx: number) => (
+          <div key={idx} className="flex gap-4 p-5 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle items-start">
+            <span className="px-3 py-1 bg-accent-botanical text-white rounded-lg text-xs font-sans font-bold shrink-0">
+              {ms.year}
+            </span>
+            <div className="space-y-1">
+              <h3 className="font-serif text-base font-bold text-ink-primary">
+                {isEn && ms.titleEn ? ms.titleEn : ms.titleVi}
+              </h3>
+              <p className="text-xs text-ink-muted leading-relaxed font-sans">
+                {isEn && ms.descEn ? ms.descEn : ms.descVi}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+
+  // 5. Team Members
+  const renderTeam = () => (
+    <section key="team" className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
+      <div className="space-y-3 mb-12 max-w-2xl">
+        <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
+          <Users className="w-4 h-4 text-accent-botanical" />
+          <span>{isEn ? 'PEOPLE BEHIND THE SANCTUARY' : 'CON NGƯỜI CẨM CÙ HOUSE'}</span>
+        </div>
+        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
+          {isEn ? 'Our Dedicated Team' : 'Đội Ngũ Tâm Huyết Bên Suối'}
+        </h2>
+        <p className="text-xs sm:text-sm text-ink-muted leading-relaxed font-sans">
+          {isEn
+            ? 'Those who nurture the porcelain wax vines every morning, hand-roast each coffee batch, and bring heartfelt hospitality to your table.'
+            : 'Những con người ngày ngày chăm chút từng nhành hoa cẩm cù, tự tay rang củi từng mẻ hạt bazan và gửi gắm sự ân cần vào từng tách đồ uống.'}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {teamMembers.map((member, idx) => {
+          const name = isEn && member.nameEn ? member.nameEn : member.name;
+          const role = isEn && member.roleEn ? member.roleEn : member.role;
+          const bio = isEn && member.bioEn ? member.bioEn : member.bio;
+
+          return (
+            <ScrollLayoutCard3D key={member.id} delay={idx * 0.08} className="h-full">
+              <div className="h-full p-6 sm:p-7 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated transition-shadow duration-200 flex flex-col justify-between space-y-4">
+                <div className="space-y-4">
+                  {/* Avatar */}
+                  <div className="w-20 h-20 rounded-2xl bg-forest-100 dark:bg-forest-800 border border-forest-200 dark:border-forest-700 overflow-hidden flex items-center justify-center">
+                    {member.avatarUrl ? (
+                      <img src={member.avatarUrl} alt={name} className="w-full h-full object-cover" />
+                    ) : (
+                      <Users className="w-8 h-8 text-accent-botanical" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-xl font-bold text-ink-primary">{name}</h3>
+                    <p className="text-xs font-sans text-accent-botanical font-semibold mt-0.5">{role}</p>
+                  </div>
+                  <p className="text-xs text-ink-muted leading-relaxed font-sans">{bio}</p>
+                </div>
+
+                <div className="pt-3 border-t border-forest-100 dark:border-forest-800 flex items-center gap-1.5 text-xs font-sans text-forest-400">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-accent-botanical" />
+                  <span>{isEn ? 'Sanctuary Artisan' : 'Nghệ nhân Cẩm Cù'}</span>
+                </div>
+              </div>
+            </ScrollLayoutCard3D>
+          );
+        })}
+      </div>
+    </section>
+  );
 
   return (
     <main className="min-h-screen pt-[72px] bg-paper text-ink-primary">
-      {/* Editorial Magazine Hero */}
-      <section className="relative overflow-hidden py-14 sm:py-20 border-b border-forest-200/60 dark:border-forest-700/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8">
-          <div className="max-w-3xl space-y-4">
-            <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-              <span className="w-8 h-px bg-accent-botanical" />
-              <span>{isEn ? 'THE SANCTUARY CHRONICLES • ABOUT US' : 'HÀNH TRÌNH KHỞI SINH • GIỚI THIỆU QUÁN'}</span>
-            </div>
+      {aboutOrder.map((sectionId) => {
+        if (!isSectionVisible(sectionId)) return null;
+        switch (sectionId) {
+          case 'banner':
+            return renderBanner();
+          case 'brandStory':
+            return renderBrandStory();
+          case 'commitments':
+            return renderCommitments();
+          case 'milestones':
+            return renderMilestones();
+          case 'team':
+            return renderTeam();
+          default:
+            return null;
+        }
+      })}
 
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-ink-primary leading-tight">
-              {brandStoryTitle}
-            </h1>
-
-            <p className="font-serif text-lg sm:text-xl text-accent-earth italic">
-              &ldquo;{brandStorySubtitle}&rdquo;
-            </p>
-
-            <p className="text-sm sm:text-base text-ink-muted leading-relaxed">
-              {isEn
-                ? 'Nestled down Alley 437 Hung Vuong in Dong Gia Nghia, Lam Dong, Cẩm Cù House is an ecological haven preserving natural stream waterfalls, native volcanic basalt coffee, and porcelain wax flowers.'
-                : 'Ẩn mình dưới con dốc rợp bóng cây tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng, Cẩm Cù House là chốn dừng chân bình yên gìn giữ trọn vẹn vẻ đẹp hoang sơ của con suối rừng, giọt cà phê rang củi mộc bazan và những giàn hoa lan Cẩm Cù thanh khiết.'}
-            </p>
-
-            {/* Navigation Filter Tabs with Gliding Pill */}
-            <div className="pt-4 flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
-                  activeTab === 'all'
-                    ? 'text-white font-semibold'
-                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
-                }`}
-              >
-                {activeTab === 'all' && (
-                  <motion.span
-                    layoutId="gioithieu-tab-pill"
-                    className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
-                    transition={SPRING_PILL_TRANSITION}
-                  />
-                )}
-                <span>{isEn ? 'Complete Overview' : 'Toàn bộ tổng quan'}</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('story')}
-                className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
-                  activeTab === 'story'
-                    ? 'text-white font-semibold'
-                    : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
-                }`}
-              >
-                {activeTab === 'story' && (
-                  <motion.span
-                    layoutId="gioithieu-tab-pill"
-                    className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
-                    transition={SPRING_PILL_TRANSITION}
-                  />
-                )}
-                <span>{isEn ? 'Origin Story' : 'Câu chuyện khởi sinh'}</span>
-              </button>
-
-              {showTeam && (
-                <button
-                  onClick={() => setActiveTab('team')}
-                  className={`relative px-4 py-2 rounded-xl text-xs font-mono font-medium transition-colors ${
-                    activeTab === 'team'
-                      ? 'text-white font-semibold'
-                      : 'bg-white dark:bg-forest-900 text-ink-muted hover:text-ink-primary border border-forest-200 dark:border-forest-700'
-                  }`}
-                >
-                  {activeTab === 'team' && (
-                    <motion.span
-                      layoutId="gioithieu-tab-pill"
-                      className="absolute inset-0 rounded-xl bg-accent-botanical shadow-sm -z-10"
-                      transition={SPRING_PILL_TRANSITION}
-                    />
-                  )}
-                  <span>{isEn ? 'Core Team' : 'Đội ngũ tâm huyết'}</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 1: CÂU CHUYỆN KHỞI SINH & TRIẾT LÝ */}
-      {(activeTab === 'all' || activeTab === 'story') && (
-        <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-            <div className="lg:col-span-5 space-y-6">
-              <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-accent-botanical" />
-                <span>{isEn ? 'SANCTUARY ORIGINS' : 'KHỞI NGUỒN KHÔNG GIAN'}</span>
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary leading-tight">
-                {isEn ? 'A Green Valley In The Heart Of Gia Nghia' : 'Một Thung Lũng Xanh Giữa Lòng Phố Núi'}
-              </h2>
-              <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-line">
-                {brandStoryContent}
-              </p>
-              <div className="p-5 bg-forest-100 dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 text-xs font-mono text-ink-muted leading-relaxed">
-                <span className="font-bold text-ink-primary block mb-1">
-                  {isEn ? 'Cẩm Cù Philosophy:' : 'Triết lý Cẩm Cù:'}
-                </span>
-                {brandStoryPhilosophy}
-              </div>
-            </div>
-
-            {/* Three Botanical Pillars */}
-            <div className="lg:col-span-7 space-y-6">
-              {c?.brandStoryImageUrl && (
-                <div className="h-64 sm:h-72 w-full rounded-2xl overflow-hidden shadow-subtle border border-forest-200 dark:border-forest-700">
-                  <img
-                    src={c.brandStoryImageUrl}
-                    alt={brandStoryTitle}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {/* Pillar 1 */}
-                <ScrollLayoutCard3D delay={0.05} className="h-full">
-                  <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
-                    <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center">
-                      <Droplet className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-serif text-xl font-bold text-ink-primary">
-                      {isEn ? 'Natural Mountain Stream' : 'Con Suối Tự Nhiên'}
-                    </h3>
-                    <p className="text-xs text-ink-muted leading-relaxed">
-                      {isEn
-                        ? 'Pure transparent freshwater cascading over basalt river boulders, delivering year-round coolness 3–4°C lower than city streets.'
-                        : 'Mặt nước trong vắt len qua những ghềnh đá cuội tự nhiên, mang lại luồng gió mát lành quanh năm, nhiệt độ luôn thấp hơn phố xá 3–4°C.'}
-                    </p>
-                  </div>
-                </ScrollLayoutCard3D>
-
-                {/* Pillar 2 */}
-                <ScrollLayoutCard3D delay={0.1} className="h-full">
-                  <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
-                    <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-accent-earth flex items-center justify-center">
-                      <Sprout className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-serif text-xl font-bold text-ink-primary">
-                      {isEn ? 'Dak Nong Basalt Coffee' : 'Cà Phê Bazan Đăk Nông'}
-                    </h3>
-                    <p className="text-xs text-ink-muted leading-relaxed">
-                      {isEn
-                        ? 'Native Robusta beans nourished by mineral-rich volcanic red soil, traditionally wood-roasted to preserve intense botanical depth.'
-                        : 'Hạt Robusta bản địa sinh trưởng trên đất đỏ núi lửa bazan giàu khoáng chất, được rang củi mộc theo bí quyết truyền thống đậm đà và sâu lắng.'}
-                    </p>
-                  </div>
-                </ScrollLayoutCard3D>
-
-                {/* Pillar 3 */}
-                <ScrollLayoutCard3D delay={0.15} className="h-full">
-                  <div className="p-6 bg-white dark:bg-forest-900 rounded-2xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:border-accent-botanical/60 transition-all space-y-3 h-full">
-                    <div className="w-10 h-10 rounded-xl bg-forest-100 dark:bg-forest-800 text-accent-botanical flex items-center justify-center">
-                      <Heart className="w-5 h-5" />
-                    </div>
-                    <h3 className="font-serif text-xl font-bold text-ink-primary">
-                      {isEn ? 'Pure Botanical Tonics' : 'Thảo Mộc Xanh Sạch'}
-                    </h3>
-                    <p className="text-xs text-ink-muted leading-relaxed">
-                      {isEn
-                        ? 'Home garden remedies of male papaya blossoms with forest honey, fresh highland ginger, and cold-pressed kale to detoxify and revive.'
-                        : 'Những bài thuốc dân gian từ hoa đu đủ đực chưng mật ong rừng, gừng tươi, cải Kale hữu cơ thanh lọc cơ thể và nuôi dưỡng sức khỏe an lành.'}
-                    </p>
-                  </div>
-                </ScrollLayoutCard3D>
-              </div>
-
-              {/* Ecological Vision Box */}
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-forest-50 to-forest-100/60 dark:from-forest-950/60 dark:to-forest-900/40 border border-forest-200 dark:border-forest-700/60 space-y-2">
-                <span className="font-mono text-xs uppercase tracking-wider text-accent-botanical font-bold flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>{visionTitle}</span>
-                </span>
-                <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-                  {visionDesc}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* SECTION 2: ĐỘI NGŨ TÂM HUYẾT (TEAM MEMBERS) */}
-      {showTeam && (activeTab === 'all' || activeTab === 'team') && (
-        <section className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-b border-forest-200/60 dark:border-forest-700/50">
-          <div className="space-y-3 mb-12 max-w-2xl">
-            <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-semibold flex items-center gap-2">
-              <Users className="w-4 h-4 text-accent-botanical" />
-              <span>{isEn ? 'PEOPLE BEHIND THE SANCTUARY' : 'CON NGƯỜI CẨM CÙ HOUSE'}</span>
-            </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
-              {isEn ? 'Our Dedicated Team' : 'Đội Ngũ Tâm Huyết Bên Suối'}
-            </h2>
-            <p className="text-xs sm:text-sm text-ink-muted leading-relaxed">
-              {isEn
-                ? 'Those who nurture the porcelain wax vines every morning, hand-roast each coffee batch, and bring heartfelt hospitality to your table.'
-                : 'Những con người ngày ngày chăm chút từng nhành hoa cẩm cù, tự tay rang củi từng mẻ hạt bazan và gửi gắm sự ân cần vào từng tách đồ uống.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {teamMembers.map((member, idx) => {
-              const name = isEn && member.nameEn ? member.nameEn : member.name;
-              const role = isEn && member.roleEn ? member.roleEn : member.role;
-              const bio = isEn && member.bioEn ? member.bioEn : member.bio;
-
-              return (
-                <ScrollLayoutCard3D key={member.id} delay={idx * 0.08} className="h-full">
-                  <div className="h-full p-6 sm:p-7 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-subtle hover:shadow-elevated transition-shadow duration-200 flex flex-col justify-between space-y-4">
-                    <div className="space-y-4">
-                      {/* Avatar */}
-                      <div className="w-20 h-20 rounded-2xl bg-forest-100 dark:bg-forest-800 border border-forest-200 dark:border-forest-700 overflow-hidden flex items-center justify-center">
-                        {member.avatarUrl ? (
-                          <img src={member.avatarUrl} alt={name} className="w-full h-full object-cover" />
-                        ) : (
-                          <Users className="w-8 h-8 text-accent-botanical" />
-                        )}
-                      </div>
-                      <div>
-                        <h3 className="font-serif text-xl font-bold text-ink-primary">{name}</h3>
-                        <p className="text-xs font-mono text-accent-botanical font-semibold mt-0.5">{role}</p>
-                      </div>
-                      <p className="text-xs text-ink-muted leading-relaxed">{bio}</p>
-                    </div>
-
-                    <div className="pt-3 border-t border-forest-100 dark:border-forest-800 flex items-center gap-1.5 text-[11px] font-mono text-forest-400">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-accent-botanical" />
-                      <span>{isEn ? 'Sanctuary Artisan' : 'Nghệ nhân Cẩm Cù'}</span>
-                    </div>
-                  </div>
-                </ScrollLayoutCard3D>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* SECTION 3: LIÊN KẾT ĐẾN BỘ SƯU TẬP 30 BẢN KHẮC KHÔNG GIAN BÊN SUỐI */}
-      <section className="py-16 sm:py-24 px-4 sm:px-8 max-w-7xl mx-auto border-t border-forest-200/60 dark:border-forest-700/50">
+      {/* Persistent Spatial Gallery Link Box */}
+      <section className="py-16 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto border-t border-forest-200/60 dark:border-forest-700/50">
         <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-forest-50 via-white to-forest-100/60 dark:from-forest-950/80 dark:via-forest-900/60 dark:to-forest-950/90 border border-forest-200/90 dark:border-forest-700/70 shadow-elevated flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="space-y-3 max-w-2xl text-left">
-            <div className="text-xs font-mono uppercase tracking-widest text-accent-botanical font-bold flex items-center gap-2">
+            <div className="text-xs font-sans uppercase tracking-widest text-accent-botanical font-bold flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-accent-botanical" />
               <span>{isEn ? 'DEDICATED SPATIAL GALLERY' : 'BỘ SƯU TẬP KHÔNG GIAN RIÊNG BIỆT'}</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-ink-primary">
               {isEn ? 'Explore All Streamside Spatial Plates' : 'Khám Phá Toàn Bộ Góc Ảnh Không Gian Bên Bờ Suối'}
             </h2>
-            <p className="text-sm text-ink-muted leading-relaxed">
+            <p className="text-sm text-ink-muted leading-relaxed font-sans">
               {isEn
-                ? 'From shaded garden pathways and waterside tables to male papaya blossom teapots and acoustic starlight evenings. Organized across 4 curated chapters with high-resolution lightbox.'
-                : 'Từ lối vào rợp bóng hoa cẩm cù, bàn ngắm suối sát mép nước, ấm trà hoa đu đủ đực đến hoàng hôn buông và đêm nhạc acoustic bên bờ suối. Toàn bộ các bản khắc thị giác đã được tổng hợp tại trang Không gian riêng.'}
+                ? 'From shaded garden pathways and waterside tables to male papaya blossom teapots and serene starlight evenings. Organized across 4 curated chapters with high-resolution lightbox.'
+                : 'Từ lối vào rợp bóng hoa cẩm cù, bàn ngắm suối sát mép nước, ấm trà hoa đu đủ đực đến hoàng hôn buông và không gian bình yên bên bờ suối. Toàn bộ các bản khắc thị giác đã được tổng hợp tại trang Không gian riêng.'}
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
             <Link
               href="/khong-gian"
-              className="px-8 py-4 bg-accent-botanical text-white rounded-2xl text-sm font-mono font-bold hover:bg-forest-800 transition-all shadow-float flex items-center gap-2.5 group"
+              className="px-8 py-4 bg-accent-botanical text-white rounded-2xl text-sm font-sans font-bold hover:bg-forest-800 transition-all shadow-float flex items-center gap-2.5 group"
             >
               <span>{isEn ? 'View Spatial Plates →' : 'Khám phá bộ ảnh không gian bên suối →'}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
-
-        {/* Bottom Navigation CTAs */}
-        <div className="mt-14 text-center flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/thuc-don"
-            className="px-6 py-3.5 bg-accent-botanical text-white rounded-xl text-xs font-mono font-bold hover:bg-forest-800 transition-colors shadow-subtle flex items-center gap-2"
-          >
-            <span>{isEn ? 'Explore Botanical Menu (~67 Items)' : 'Khám phá Thực đơn (~67 món)'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="/lien-he"
-            className="px-6 py-3.5 bg-white dark:bg-forest-900 text-ink-primary rounded-xl text-xs font-mono font-bold hover:bg-forest-50 border border-forest-200 dark:border-forest-700 transition-colors shadow-subtle flex items-center gap-2"
-          >
-            <Compass className="w-4 h-4 text-accent-botanical" />
-            <span>{isEn ? 'Get Directions on Google Maps' : 'Chỉ đường Google Maps đến quán'}</span>
-          </Link>
-        </div>
       </section>
 
-      {/* Footer Section */}
       <FooterSection />
     </main>
   );
 }
-

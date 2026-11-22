@@ -14,7 +14,7 @@ import GlobalSearchModal from '@/components/common/GlobalSearchModal';
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { language, setLanguage, theme, toggleTheme } = useApp();
+  const { language, setLanguage, theme, toggleTheme, content } = useApp();
   const { customer, openAuthModal } = useCustomerAuth();
   const { openCart, totalCount, subtotal } = useCart();
   const [scrolled, setScrolled] = useState(false);
@@ -96,26 +96,37 @@ export default function Navbar() {
     }
   };
 
-  const navLinks =
+  const rawNavLinks =
     language === 'en'
       ? [
           { label: 'Home', href: '/en' },
-          { label: 'About Us', href: '/en/about' },
-          { label: 'Sanctuary', href: '/en/space' },
-          { label: 'Menu', href: '/en/menu' },
-          { label: 'Reviews', href: '/en/reviews' },
-          { label: 'News & FAQ', href: '/en/news' },
-          { label: 'Contact', href: '/en/contact' },
+          { label: 'About Us', href: '/en/about', pageKey: 'about' },
+          { label: 'Sanctuary', href: '/en/space', pageKey: 'space' },
+          { label: 'Menu', href: '/en/menu', pageKey: 'menu' },
+          { label: 'Reviews', href: '/en/reviews', pageKey: 'reviews' },
+          { label: 'News & FAQ', href: '/en/news', pageKey: 'news' },
+          { label: 'Contact', href: '/en/contact', pageKey: 'contact' },
         ]
       : [
           { label: 'Trang chủ', href: '/' },
-          { label: 'Giới thiệu', href: '/gioi-thieu' },
-          { label: 'Không gian', href: '/khong-gian' },
-          { label: 'Thực đơn', href: '/thuc-don' },
-          { label: 'Khách hàng', href: '/khach-hang' },
-          { label: 'Tin tức & FAQ', href: '/su-kien' },
-          { label: 'Liên hệ', href: '/lien-he' },
+          { label: 'Giới thiệu', href: '/gioi-thieu', pageKey: 'about' },
+          { label: 'Không gian', href: '/khong-gian', pageKey: 'space' },
+          { label: 'Thực đơn', href: '/thuc-don', pageKey: 'menu' },
+          { label: 'Khách hàng', href: '/khach-hang', pageKey: 'reviews' },
+          { label: 'Tin tức & FAQ', href: '/su-kien', pageKey: 'news' },
+          { label: 'Liên hệ', href: '/lien-he', pageKey: 'contact' },
         ];
+
+  const navLinks = rawNavLinks.filter((link) => {
+    if (!link.pageKey) return true;
+    if (link.pageKey === 'about' && content?.showPageAbout === false) return false;
+    if (link.pageKey === 'space' && content?.showPageSpace === false) return false;
+    if (link.pageKey === 'menu' && content?.showPageMenu === false) return false;
+    if (link.pageKey === 'reviews' && content?.showPageReviews === false) return false;
+    if (link.pageKey === 'news' && content?.showPageNews === false) return false;
+    if (link.pageKey === 'contact' && content?.showPageContact === false) return false;
+    return true;
+  });
 
   const isActiveLink = (href: string) => {
     if (href === '/' || href === '/en') {
@@ -165,7 +176,7 @@ export default function Navbar() {
           </Link>
 
           {/* Zone 2: Navigation Links (Center, hidden xl:flex, whitespace-nowrap) */}
-          <nav className="hidden xl:flex items-center gap-3.5 xl:gap-4 2xl:gap-5 text-[12px] xl:text-[13px] font-mono uppercase tracking-wider shrink-0 whitespace-nowrap">
+          <nav className="hidden xl:flex items-center gap-3.5 xl:gap-4 2xl:gap-5 text-xs xl:text-sm font-sans font-medium tracking-wide shrink-0 whitespace-nowrap">
             {navLinks.map((link) => {
               const active = isActiveLink(link.href);
               return (
@@ -197,7 +208,7 @@ export default function Navbar() {
             {/* Compact Global Search Button (Hidden on tiny mobile, visible sm+) */}
             <button
               onClick={() => setSearchOpen(true)}
-              className="hidden sm:flex h-9 px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs font-mono items-center gap-1.5 shrink-0 whitespace-nowrap"
+              className="hidden sm:flex h-9 px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs font-sans items-center gap-1.5 shrink-0 whitespace-nowrap"
               title="Tìm kiếm (Ctrl + K)"
               aria-label="Search"
             >
@@ -206,7 +217,7 @@ export default function Navbar() {
             </button>
 
             {/* Bilingual Switcher Pill (VI / EN) (Hidden on tiny mobile, visible sm+) */}
-            <div className="relative hidden sm:flex h-9 items-center rounded-full bg-forest-100 dark:bg-forest-900 p-0.5 border border-forest-200 dark:border-forest-700 text-[11px] font-mono shadow-xs shrink-0 whitespace-nowrap">
+            <div className="relative hidden sm:flex h-9 items-center rounded-full bg-forest-100 dark:bg-forest-900 p-0.5 border border-forest-200 dark:border-forest-700 text-xs font-sans shadow-xs shrink-0 whitespace-nowrap">
               <button
                 onClick={() => switchLanguage('vi')}
                 className={`relative z-10 px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
@@ -271,7 +282,7 @@ export default function Navbar() {
             {/* Compact Direct Hotline Button (Visible md+) */}
             <a
               href="tel:0382851688"
-              className="hidden md:flex h-9 w-9 2xl:w-auto 2xl:px-3 items-center justify-center gap-1.5 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-accent-botanical hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors shrink-0 whitespace-nowrap text-xs font-mono font-medium shadow-xs"
+              className="hidden md:flex h-9 w-9 2xl:w-auto 2xl:px-3 items-center justify-center gap-1.5 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-accent-botanical hover:bg-forest-200 dark:hover:bg-forest-800 transition-colors shrink-0 whitespace-nowrap text-xs font-sans font-semibold shadow-xs"
               title="Hotline: 0382 851 688"
               aria-label="Hotline: 0382 851 688"
             >
@@ -288,12 +299,12 @@ export default function Navbar() {
                   openAuthModal('login');
                 }
               }}
-              className="h-9 px-2.5 sm:px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs font-mono flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              className="h-9 px-2.5 sm:px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs sm:text-sm font-sans flex items-center gap-1.5 shrink-0 whitespace-nowrap"
               title={customer ? (language === 'en' ? 'Account' : 'Tài khoản') : (language === 'en' ? 'Sign In' : 'Đăng nhập')}
               aria-label="Tài khoản"
             >
               <User className="w-3.5 h-3.5 text-accent-botanical shrink-0" />
-              <span className="hidden md:inline text-[11px] font-medium max-w-[85px] truncate">
+              <span className="hidden md:inline text-xs sm:text-sm font-medium max-w-[85px] truncate">
                 {customer ? customer.fullName.split(' ').slice(-1)[0] : (language === 'en' ? 'Account' : 'Tài khoản')}
               </span>
             </button>
@@ -301,16 +312,16 @@ export default function Navbar() {
             {/* Cart Button with Live Badge */}
             <button
               onClick={openCart}
-              className="relative h-9 px-3 rounded-full bg-accent-botanical text-white hover:bg-forest-800 transition-all shadow-sm text-xs font-mono font-medium flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+              className="relative h-9 px-3 rounded-full bg-accent-botanical text-white hover:bg-forest-800 transition-all shadow-sm text-xs sm:text-sm font-sans font-medium flex items-center gap-1.5 shrink-0 whitespace-nowrap"
               title={language === 'en' ? 'Shopping Cart' : 'Giỏ hàng'}
               aria-label="Giỏ hàng"
             >
               <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden sm:inline text-[11px] font-bold">
-                {language === 'en' ? 'Cart' : 'Giỏ'}
+              <span className="hidden sm:inline text-xs sm:text-sm font-semibold">
+                {language === 'en' ? 'Cart' : 'Giỏ hàng'}
               </span>
               {totalCount > 0 && (
-                <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-amber-400 text-forest-950 rounded-full font-mono shadow-xs">
+                <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[11px] font-bold bg-amber-400 text-forest-950 rounded-full font-sans shadow-xs">
                   {totalCount}
                 </span>
               )}

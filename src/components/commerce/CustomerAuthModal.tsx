@@ -85,13 +85,13 @@ export default function CustomerAuthModal() {
                 setErrorMessage('');
                 openAuthModal('login');
               }}
-              className={`flex-1 py-2.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 rounded-xl font-sans text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 authModalMode === 'login'
                   ? 'bg-white dark:bg-forest-800 text-accent-botanical shadow-sm'
                   : 'text-ink-muted hover:text-ink-primary'
               }`}
             >
-              <LogIn className="w-3.5 h-3.5" />
+              <LogIn className="w-4 h-4" />
               <span>{isEn ? 'Sign In' : 'Đăng Nhập'}</span>
             </button>
             <button
@@ -100,13 +100,13 @@ export default function CustomerAuthModal() {
                 setErrorMessage('');
                 openAuthModal('register');
               }}
-              className={`flex-1 py-2.5 rounded-xl font-mono text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 rounded-xl font-sans text-sm font-semibold transition-all flex items-center justify-center gap-1.5 ${
                 authModalMode === 'register'
                   ? 'bg-white dark:bg-forest-800 text-accent-botanical shadow-sm'
                   : 'text-ink-muted hover:text-ink-primary'
               }`}
             >
-              <UserPlus className="w-3.5 h-3.5" />
+              <UserPlus className="w-4 h-4" />
               <span>{isEn ? 'Register' : 'Đăng Ký'}</span>
             </button>
           </div>
@@ -114,7 +114,7 @@ export default function CustomerAuthModal() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4">
             {errorMessage && (
-              <div className="p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-mono text-red-600 dark:text-red-400">
+              <div className="p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs font-sans text-red-600 dark:text-red-400">
                 {errorMessage}
               </div>
             )}
@@ -122,7 +122,7 @@ export default function CustomerAuthModal() {
             {authModalMode === 'register' && (
               <>
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-mono font-medium text-ink-muted">
+                  <label className="block text-xs font-sans font-medium text-ink-muted">
                     {isEn ? 'Full Name' : 'Họ và tên'} *
                   </label>
                   <div className="relative">
@@ -133,13 +133,13 @@ export default function CustomerAuthModal() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder={isEn ? 'Nguyen Van A' : 'Nguyễn Văn A'}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-xs font-mono text-ink-primary focus:outline-none focus:border-accent-botanical"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-sm font-sans text-ink-primary focus:outline-none focus:border-accent-botanical"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-mono font-medium text-ink-muted">
+                  <label className="block text-xs font-sans font-medium text-ink-muted">
                     {isEn ? 'Phone Number' : 'Số điện thoại'} (tùy chọn)
                   </label>
                   <div className="relative">
@@ -149,7 +149,7 @@ export default function CustomerAuthModal() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="038 285 1688"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-xs font-mono text-ink-primary focus:outline-none focus:border-accent-botanical"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-sm font-sans text-ink-primary focus:outline-none focus:border-accent-botanical"
                     />
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export default function CustomerAuthModal() {
             )}
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-mono font-medium text-ink-muted">
+              <label className="block text-xs font-sans font-medium text-ink-muted">
                 Email *
               </label>
               <div className="relative">
@@ -168,13 +168,13 @@ export default function CustomerAuthModal() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="khachquy@camcuhouse.online"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-xs font-mono text-ink-primary focus:outline-none focus:border-accent-botanical"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-sm font-sans text-ink-primary focus:outline-none focus:border-accent-botanical"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-mono font-medium text-ink-muted">
+              <label className="block text-xs font-sans font-medium text-ink-muted">
                 {isEn ? 'Password' : 'Mật khẩu'} *
               </label>
               <div className="relative">
@@ -185,7 +185,7 @@ export default function CustomerAuthModal() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-xs font-mono text-ink-primary focus:outline-none focus:border-accent-botanical"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-sm font-sans text-ink-primary focus:outline-none focus:border-accent-botanical"
                 />
                 <button
                   type="button"
@@ -200,7 +200,7 @@ export default function CustomerAuthModal() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-4 py-3 px-5 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white font-mono text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-accent-botanical/20 transition-all active:scale-[0.99] disabled:opacity-60"
+              className="w-full mt-4 py-3 px-5 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white font-sans text-sm font-bold flex items-center justify-center gap-2 shadow-md shadow-accent-botanical/20 transition-all active:scale-[0.99] disabled:opacity-60"
             >
               {loading ? (
                 <>

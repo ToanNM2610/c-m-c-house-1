@@ -334,7 +334,7 @@ export default function ItemCustomizationModal() {
                     : 'Ví dụ: ít đá riêng, ít ngọt, không lấy hành lá...'
                 }
                 rows={2}
-                className="w-full p-3 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-xs font-mono text-ink-primary focus:outline-none focus:border-accent-botanical resize-none placeholder:text-ink-muted/60"
+                className="w-full p-3 rounded-2xl bg-white dark:bg-forest-900 border border-forest-200 dark:border-forest-800 text-sm font-sans text-ink-primary focus:outline-none focus:border-accent-botanical resize-none placeholder:text-ink-muted/60"
               />
             </div>
           </div>
@@ -351,7 +351,7 @@ export default function ItemCustomizationModal() {
               >
                 <Minus className="w-4 h-4" />
               </button>
-              <span className="px-3.5 font-mono text-sm font-bold text-ink-primary min-w-[2rem] text-center">
+              <span className="px-3.5 font-mono-num text-sm font-bold text-ink-primary min-w-[2rem] text-center">
                 {quantity}
               </span>
               <button
@@ -368,13 +368,13 @@ export default function ItemCustomizationModal() {
             <button
               type="button"
               onClick={handleAddToCart}
-              className="flex-1 py-3.5 px-5 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white font-mono text-sm font-bold flex items-center justify-between shadow-lg shadow-accent-botanical/25 transition-all active:scale-[0.99]"
+              className="flex-1 py-3.5 px-5 rounded-2xl bg-accent-botanical hover:bg-forest-800 text-white font-sans text-sm font-bold flex items-center justify-between shadow-lg shadow-accent-botanical/25 transition-all active:scale-[0.99]"
             >
               <span className="flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4" />
                 <span>{isEn ? 'Add to Cart' : 'Thêm Vào Giỏ'}</span>
               </span>
-              <span>{lineTotal.toLocaleString('vi-VN')}đ</span>
+              <span className="font-mono-num">{lineTotal.toLocaleString('vi-VN')}đ</span>
             </button>
           </div>
         </motion.div>

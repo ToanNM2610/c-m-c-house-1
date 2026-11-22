@@ -78,15 +78,15 @@ export default function QuickChatWidget() {
                 : 'Nhắn tin trực tiếp cùng quán hoặc gọi hotline để được chỉ đường và đặt mang về.'}
             </p>
 
-            <div className="space-y-2 text-xs font-mono">
+            <div className="space-y-2.5 text-sm font-sans font-medium">
               {/* Zalo */}
               <a
                 href={zalo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900 font-semibold"
               >
-                <span className="font-bold">Zalo Chat ({phone})</span>
+                <span>Zalo Chat ({phone})</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
@@ -95,9 +95,9 @@ export default function QuickChatWidget() {
                 href={messenger}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900 font-semibold"
               >
-                <span className="font-bold">Messenger (Facebook)</span>
+                <span>Messenger (Facebook)</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
@@ -107,9 +107,9 @@ export default function QuickChatWidget() {
                   href={s.whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors border border-emerald-200 dark:border-emerald-900"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors border border-emerald-200 dark:border-emerald-900 font-semibold"
                 >
-                  <span className="font-bold">WhatsApp (+84 382 851 688)</span>
+                  <span>WhatsApp (+84 382 851 688)</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               )}
@@ -117,13 +117,13 @@ export default function QuickChatWidget() {
               {/* Direct Hotline */}
               <a
                 href={`tel:${phone.startsWith('0') ? '+84' + phone.slice(1) : phone}`}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700 font-bold"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700 font-semibold"
               >
                 <span className="flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5" />
                   <span>{isEn ? '+84 382 851 688' : '0382 851 688'}</span>
                 </span>
-                <span className="text-[10px] uppercase font-semibold">
+                <span className="text-xs uppercase font-semibold">
                   {isEn ? 'Call Now' : 'Gọi ngay'}
                 </span>
               </a>

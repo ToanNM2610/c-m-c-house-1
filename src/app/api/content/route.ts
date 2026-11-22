@@ -155,6 +155,87 @@ export async function PATCH(req: NextRequest) {
     if (body.contactDirectionsNote !== undefined) dataToUpdate.contactDirectionsNote = body.contactDirectionsNote;
     if (body.contactDirectionsNoteEn !== undefined) dataToUpdate.contactDirectionsNoteEn = body.contactDirectionsNoteEn;
 
+    // Page-Level Visibility Toggles (Module 1)
+    if (typeof body.showPageAbout === 'boolean') dataToUpdate.showPageAbout = body.showPageAbout;
+    if (typeof body.showPageSpace === 'boolean') dataToUpdate.showPageSpace = body.showPageSpace;
+    if (typeof body.showPageMenu === 'boolean') dataToUpdate.showPageMenu = body.showPageMenu;
+    if (typeof body.showPageReviews === 'boolean') dataToUpdate.showPageReviews = body.showPageReviews;
+    if (typeof body.showPageNews === 'boolean') dataToUpdate.showPageNews = body.showPageNews;
+    if (typeof body.showPageContact === 'boolean') dataToUpdate.showPageContact = body.showPageContact;
+
+    // Universal Section Ordering
+    if (body.homeSectionOrder !== undefined) dataToUpdate.homeSectionOrder = body.homeSectionOrder;
+    if (body.aboutSectionOrder !== undefined) dataToUpdate.aboutSectionOrder = body.aboutSectionOrder;
+    if (body.spaceSectionOrder !== undefined) dataToUpdate.spaceSectionOrder = body.spaceSectionOrder;
+    if (body.menuSectionOrder !== undefined) dataToUpdate.menuSectionOrder = body.menuSectionOrder;
+    if (body.reviewsSectionOrder !== undefined) dataToUpdate.reviewsSectionOrder = body.reviewsSectionOrder;
+    if (body.newsSectionOrder !== undefined) dataToUpdate.newsSectionOrder = body.newsSectionOrder;
+    if (body.contactSectionOrder !== undefined) dataToUpdate.contactSectionOrder = body.contactSectionOrder;
+
+    // Universal Section Layout Variants & Visibility
+    if (body.sectionLayouts !== undefined) dataToUpdate.sectionLayouts = body.sectionLayouts;
+    if (body.sectionVisibility !== undefined) dataToUpdate.sectionVisibility = body.sectionVisibility;
+
+    // Additional section content fields
+    if (body.heroLayout !== undefined) dataToUpdate.heroLayout = body.heroLayout;
+    if (body.heroPrimaryCtaText !== undefined) dataToUpdate.heroPrimaryCtaText = body.heroPrimaryCtaText;
+    if (body.heroPrimaryCtaTextEn !== undefined) dataToUpdate.heroPrimaryCtaTextEn = body.heroPrimaryCtaTextEn;
+    if (body.heroPrimaryCtaLink !== undefined) dataToUpdate.heroPrimaryCtaLink = body.heroPrimaryCtaLink;
+    if (body.heroSecondaryCtaText !== undefined) dataToUpdate.heroSecondaryCtaText = body.heroSecondaryCtaText;
+    if (body.heroSecondaryCtaTextEn !== undefined) dataToUpdate.heroSecondaryCtaTextEn = body.heroSecondaryCtaTextEn;
+    if (body.heroSecondaryCtaLink !== undefined) dataToUpdate.heroSecondaryCtaLink = body.heroSecondaryCtaLink;
+    if (body.heroCoverImage !== undefined) dataToUpdate.heroCoverImage = body.heroCoverImage;
+    if (typeof body.showHeroCoverImage === 'boolean') dataToUpdate.showHeroCoverImage = body.showHeroCoverImage;
+    if (body.heroCaption !== undefined) dataToUpdate.heroCaption = body.heroCaption;
+    if (body.heroCaptionEn !== undefined) dataToUpdate.heroCaptionEn = body.heroCaptionEn;
+    if (body.homeCtaBannerTitle !== undefined) dataToUpdate.homeCtaBannerTitle = body.homeCtaBannerTitle;
+    if (body.homeCtaBannerTitleEn !== undefined) dataToUpdate.homeCtaBannerTitleEn = body.homeCtaBannerTitleEn;
+    if (body.homeCtaBannerDesc !== undefined) dataToUpdate.homeCtaBannerDesc = body.homeCtaBannerDesc;
+    if (body.homeCtaBannerDescEn !== undefined) dataToUpdate.homeCtaBannerDescEn = body.homeCtaBannerDescEn;
+    if (body.homeCtaBannerBtnText !== undefined) dataToUpdate.homeCtaBannerBtnText = body.homeCtaBannerBtnText;
+    if (body.homeCtaBannerBtnTextEn !== undefined) dataToUpdate.homeCtaBannerBtnTextEn = body.homeCtaBannerBtnTextEn;
+    if (body.homeCtaBannerBtnLink !== undefined) dataToUpdate.homeCtaBannerBtnLink = body.homeCtaBannerBtnLink;
+    if (typeof body.showHomeCtaBanner === 'boolean') dataToUpdate.showHomeCtaBanner = body.showHomeCtaBanner;
+
+    if (body.aboutCommitments !== undefined) dataToUpdate.aboutCommitments = body.aboutCommitments;
+
+    if (body.spaceZones !== undefined) dataToUpdate.spaceZones = body.spaceZones;
+    if (body.spaceCtaTitle !== undefined) dataToUpdate.spaceCtaTitle = body.spaceCtaTitle;
+    if (body.spaceCtaTitleEn !== undefined) dataToUpdate.spaceCtaTitleEn = body.spaceCtaTitleEn;
+    if (body.spaceCtaDesc !== undefined) dataToUpdate.spaceCtaDesc = body.spaceCtaDesc;
+    if (body.spaceCtaDescEn !== undefined) dataToUpdate.spaceCtaDescEn = body.spaceCtaDescEn;
+    if (body.spaceCtaBtnText !== undefined) dataToUpdate.spaceCtaBtnText = body.spaceCtaBtnText;
+    if (body.spaceCtaBtnTextEn !== undefined) dataToUpdate.spaceCtaBtnTextEn = body.spaceCtaBtnTextEn;
+    if (typeof body.showSpaceCta === 'boolean') dataToUpdate.showSpaceCta = body.showSpaceCta;
+    if (typeof body.showSpaceFilterBar === 'boolean') dataToUpdate.showSpaceFilterBar = body.showSpaceFilterBar;
+
+    if (typeof body.menuShowPrices === 'boolean') dataToUpdate.menuShowPrices = body.menuShowPrices;
+    if (typeof body.menuShowAddToCart === 'boolean') dataToUpdate.menuShowAddToCart = body.menuShowAddToCart;
+    if (body.menuDietaryNote !== undefined) dataToUpdate.menuDietaryNote = body.menuDietaryNote;
+    if (body.menuDietaryNoteEn !== undefined) dataToUpdate.menuDietaryNoteEn = body.menuDietaryNoteEn;
+    if (body.menuCurrencyNote !== undefined) dataToUpdate.menuCurrencyNote = body.menuCurrencyNote;
+    if (body.menuCurrencyNoteEn !== undefined) dataToUpdate.menuCurrencyNoteEn = body.menuCurrencyNoteEn;
+    if (body.menuBbqBannerTitle !== undefined) dataToUpdate.menuBbqBannerTitle = body.menuBbqBannerTitle;
+    if (body.menuBbqBannerTitleEn !== undefined) dataToUpdate.menuBbqBannerTitleEn = body.menuBbqBannerTitleEn;
+    if (body.menuBbqBannerDesc !== undefined) dataToUpdate.menuBbqBannerDesc = body.menuBbqBannerDesc;
+    if (body.menuBbqBannerDescEn !== undefined) dataToUpdate.menuBbqBannerDescEn = body.menuBbqBannerDescEn;
+    if (body.menuBbqBannerBtnText !== undefined) dataToUpdate.menuBbqBannerBtnText = body.menuBbqBannerBtnText;
+    if (body.menuBbqBannerBtnTextEn !== undefined) dataToUpdate.menuBbqBannerBtnTextEn = body.menuBbqBannerBtnTextEn;
+    if (typeof body.showMenuBbqBanner === 'boolean') dataToUpdate.showMenuBbqBanner = body.showMenuBbqBanner;
+
+    if (body.reviewsTrustScore !== undefined) dataToUpdate.reviewsTrustScore = body.reviewsTrustScore;
+    if (body.reviewsTrustScoreEn !== undefined) dataToUpdate.reviewsTrustScoreEn = body.reviewsTrustScoreEn;
+    if (body.reviewsThankYou !== undefined) dataToUpdate.reviewsThankYou = body.reviewsThankYou;
+    if (body.reviewsThankYouEn !== undefined) dataToUpdate.reviewsThankYouEn = body.reviewsThankYouEn;
+
+    if (body.newsContactPrompt !== undefined) dataToUpdate.newsContactPrompt = body.newsContactPrompt;
+    if (body.newsContactPromptEn !== undefined) dataToUpdate.newsContactPromptEn = body.newsContactPromptEn;
+
+    if (body.contactQuickInfoLayout !== undefined) dataToUpdate.contactQuickInfoLayout = body.contactQuickInfoLayout;
+    if (body.contactMapCaption !== undefined) dataToUpdate.contactMapCaption = body.contactMapCaption;
+    if (body.contactMapCaptionEn !== undefined) dataToUpdate.contactMapCaptionEn = body.contactMapCaptionEn;
+    if (body.contactMapEmbedUrl !== undefined) dataToUpdate.contactMapEmbedUrl = body.contactMapEmbedUrl;
+
     const updated = await prisma.siteContent.upsert({
       where: { id: 'default' },
       update: dataToUpdate,

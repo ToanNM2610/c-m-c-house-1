@@ -121,7 +121,7 @@ export default function EditorialHero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 font-mono text-[13px] uppercase tracking-widest text-[#E86C3A] font-bold"
+              className="inline-flex items-center gap-2 font-sans text-xs sm:text-sm uppercase tracking-wider text-[#E86C3A] font-bold"
             >
               <Compass className="w-4 h-4 text-[#E86C3A]" />
               <span>

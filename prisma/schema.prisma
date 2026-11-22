@@ -191,6 +191,98 @@ model SiteContent {
   contactDirectionsNote   String   @default("Từ đường Hùng Vương rẽ vào Hẻm 437, đi thẳng 50m xuống dốc có biển chỉ dẫn gỗ Cẩm Cù House. Có bãi đỗ xe ô tô và xe máy rộng rãi.")
   contactDirectionsNoteEn String   @default("From Hung Vuong street turn into Alley 437, drive 50m down the shaded slope following wooden signs. Spacious parking available for cars and motorcycles.")
 
+  // ==========================================
+  // PAGE-LEVEL VISIBILITY & UNIVERSAL SECTION CONTROLS (7 PAGES)
+  // ==========================================
+  showPageAbout           Boolean  @default(true)
+  showPageSpace           Boolean  @default(true)
+  showPageMenu            Boolean  @default(true)
+  showPageReviews         Boolean  @default(true)
+  showPageNews            Boolean  @default(true)
+  showPageContact         Boolean  @default(true)
+
+  // Universal Section Ordering (JSON array of section IDs e.g. ["hero", "philosophy", ...])
+  homeSectionOrder        Json?
+  aboutSectionOrder       Json?
+  spaceSectionOrder       Json?
+  menuSectionOrder        Json?
+  reviewsSectionOrder     Json?
+  newsSectionOrder        Json?
+  contactSectionOrder     Json?
+
+  // Universal Section Layout Variants (JSON map of sectionId -> layout variant)
+  sectionLayouts          Json?
+
+  // Universal Section Visibility Toggles (JSON map of sectionId -> boolean)
+  sectionVisibility       Json?
+
+  // Additional section content fields
+  // Page 1 Home
+  heroLayout              String   @default("image-right") // "image-right" | "image-left" | "full-bg"
+  heroPrimaryCtaText      String   @default("Xem Thực Đơn Thảo Mộc")
+  heroPrimaryCtaTextEn    String   @default("View Botanical Menu")
+  heroPrimaryCtaLink      String   @default("/thuc-don")
+  heroSecondaryCtaText    String   @default("Chỉ Đường & Giờ Mở Cửa")
+  heroSecondaryCtaTextEn  String   @default("Directions & Hours")
+  heroSecondaryCtaLink    String   @default("/lien-he")
+  heroCoverImage          String?  @default("/uploads/gallery/fig-01.jpg")
+  showHeroCoverImage      Boolean  @default(true)
+  heroCaption             String   @default("Một góc suối sớm mai tại Cẩm Cù House")
+  heroCaptionEn           String   @default("Early morning by the stream at Cẩm Cù House")
+  homeCtaBannerTitle      String   @default("Ghé Thăm Cẩm Cù House Cuối Tuần Này")
+  homeCtaBannerTitleEn    String   @default("Visit Cẩm Cù House This Weekend")
+  homeCtaBannerDesc       String   @default("Thưởng thức cà phê mộc bazan, lắng nghe tiếng suối reo và tận hưởng không khí trong lành nguyên bản.")
+  homeCtaBannerDescEn     String   @default("Savor wood-roasted basalt coffee, listen to bubbling streams, and immerse in pristine cool nature.")
+  homeCtaBannerBtnText    String   @default("Xem Chỉ Đường (Google Maps)")
+  homeCtaBannerBtnTextEn  String   @default("Get Directions (Google Maps)")
+  homeCtaBannerBtnLink    String   @default("https://maps.app.goo.gl/9ZpZJ3E8zL4P3K7h9")
+  showHomeCtaBanner       Boolean  @default(true)
+
+  // Page 2 About
+  aboutCommitments        Json?    // Array of { titleVi, titleEn, descVi, descEn, iconName }
+
+  // Page 3 Space
+  spaceZones              Json?    // Array of { id, nameVi, nameEn, descVi, descEn, highlightVi, highlightEn, imageUrl }
+  spaceCtaTitle           String   @default("Bạn Muốn Đặt Chỗ Nhóm Hoặc Chụp Ảnh Bên Suối?")
+  spaceCtaTitleEn         String   @default("Planning a Group Visit or Streamside Photoshoot?")
+  spaceCtaDesc            String   @default("Không gian mở tự nhiên sẵn sàng chào đón bạn. Hãy liên hệ Hotline để quán chuẩn bị chu đáo nhất.")
+  spaceCtaDescEn          String   @default("Our natural open sanctuary is ready to welcome you. Contact our hotline for the best preparation.")
+  spaceCtaBtnText         String   @default("Liên Hệ Hotline 038 285 1688")
+  spaceCtaBtnTextEn       String   @default("Call Hotline 038 285 1688")
+  showSpaceCta            Boolean  @default(true)
+  showSpaceFilterBar      Boolean  @default(true)
+
+  // Page 4 Menu
+  menuShowPrices          Boolean  @default(true)
+  menuShowAddToCart       Boolean  @default(true)
+  menuDietaryNote         String   @default("100% Cà phê rang mộc tự nhiên • Nông sản địa phương Gia Nghĩa • Thảo mộc hái tươi mỗi sáng")
+  menuDietaryNoteEn       String   @default("100% Natural wood-roasted coffee • Local Gia Nghia botanicals • Fresh herbs picked daily")
+  menuCurrencyNote        String   @default("Đơn vị tính: VNĐ (Đã bao gồm VAT). Hỗ trợ thanh toán tiền mặt & chuyển khoản VietQR.")
+  menuCurrencyNoteEn      String   @default("Prices in VND (VAT included). Cash & VietQR dynamic transfers accepted.")
+  menuBbqBannerTitle      String   @default("Thưởng Thức Tiệc BBQ & Cà Phê Suối")
+  menuBbqBannerTitleEn    String   @default("Enjoy Streamside BBQ & Coffee")
+  menuBbqBannerDesc       String   @default("Đặt trước set tiệc BBQ bờ suối hoặc món mang về qua hotline trước 1 ngày.")
+  menuBbqBannerDescEn     String   @default("Pre-order your streamside BBQ set or takeaway items 1 day in advance.")
+  menuBbqBannerBtnText    String   @default("Đặt BBQ Qua Hotline")
+  menuBbqBannerBtnTextEn  String   @default("Reserve BBQ via Hotline")
+  showMenuBbqBanner       Boolean  @default(true)
+
+  // Page 5 Reviews
+  reviewsTrustScore       String   @default("100% Đề xuất từ 8/8 lượt đánh giá thực tế")
+  reviewsTrustScoreEn     String   @default("100% Recommended based on genuine guest reviews")
+  reviewsThankYou         String   @default("Cảm ơn bạn đã gửi cảm nhận! Lời đóng góp của bạn giúp Cẩm Cù House ngày một hoàn thiện hơn.")
+  reviewsThankYouEn       String   @default("Thank you for your review! Your feedback helps Cẩm Cù House improve every day.")
+
+  // Page 6 News & FAQ
+  newsContactPrompt       String   @default("Chưa tìm thấy câu trả lời? Hãy liên hệ với chúng tôi qua hotline hoặc Zalo.")
+  newsContactPromptEn     String   @default("Haven't found your answer? Reach out to us via hotline or Zalo.")
+
+  // Page 7 Contact
+  contactQuickInfoLayout  String   @default("cols-3") // "cols-3" | "cols-2-map"
+  contactMapCaption       String   @default("Vị trí Cẩm Cù House trên bản đồ vệ tinh — Hẻm 437 Hùng Vương, Đông Gia Nghĩa")
+  contactMapCaptionEn     String   @default("Cẩm Cù House satellite location — Alley 437 Hung Vuong, Dong Gia Nghia")
+  contactMapEmbedUrl      String?  @default("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.316875888277!2d107.69!3d11.99!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTHCsDU5JzI0LjAiTiAxMDfCsDQxJzI0LjAiRQ!5e0!3m2!1svi!2svn!4v1700000000000!5m2!1svi!2svn")
+
   updatedAt               DateTime @updatedAt
 }
 

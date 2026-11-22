@@ -176,6 +176,87 @@ export async function GET() {
           contactBbqCalloutEn: siteContent.contactBbqCalloutEn,
           contactDirectionsNote: siteContent.contactDirectionsNote,
           contactDirectionsNoteEn: siteContent.contactDirectionsNoteEn,
+
+          // Page-Level Visibility Toggles (Module 1)
+          showPageAbout: siteContent.showPageAbout ?? true,
+          showPageSpace: siteContent.showPageSpace ?? true,
+          showPageMenu: siteContent.showPageMenu ?? true,
+          showPageReviews: siteContent.showPageReviews ?? true,
+          showPageNews: siteContent.showPageNews ?? true,
+          showPageContact: siteContent.showPageContact ?? true,
+
+          // Universal Section Ordering
+          homeSectionOrder: (siteContent.homeSectionOrder as string[]) || initialSiteContent.homeSectionOrder,
+          aboutSectionOrder: (siteContent.aboutSectionOrder as string[]) || initialSiteContent.aboutSectionOrder,
+          spaceSectionOrder: (siteContent.spaceSectionOrder as string[]) || initialSiteContent.spaceSectionOrder,
+          menuSectionOrder: (siteContent.menuSectionOrder as string[]) || initialSiteContent.menuSectionOrder,
+          reviewsSectionOrder: (siteContent.reviewsSectionOrder as string[]) || initialSiteContent.reviewsSectionOrder,
+          newsSectionOrder: (siteContent.newsSectionOrder as string[]) || initialSiteContent.newsSectionOrder,
+          contactSectionOrder: (siteContent.contactSectionOrder as string[]) || initialSiteContent.contactSectionOrder,
+
+          // Universal Section Layout Variants & Visibility
+          sectionLayouts: (siteContent.sectionLayouts as Record<string, string>) || initialSiteContent.sectionLayouts,
+          sectionVisibility: (siteContent.sectionVisibility as Record<string, boolean>) || initialSiteContent.sectionVisibility,
+
+          // Additional section content fields
+          heroLayout: siteContent.heroLayout || initialSiteContent.heroLayout,
+          heroPrimaryCtaText: siteContent.heroPrimaryCtaText || initialSiteContent.heroPrimaryCtaText,
+          heroPrimaryCtaTextEn: siteContent.heroPrimaryCtaTextEn || initialSiteContent.heroPrimaryCtaTextEn,
+          heroPrimaryCtaLink: siteContent.heroPrimaryCtaLink || initialSiteContent.heroPrimaryCtaLink,
+          heroSecondaryCtaText: siteContent.heroSecondaryCtaText || initialSiteContent.heroSecondaryCtaText,
+          heroSecondaryCtaTextEn: siteContent.heroSecondaryCtaTextEn || initialSiteContent.heroSecondaryCtaTextEn,
+          heroSecondaryCtaLink: siteContent.heroSecondaryCtaLink || initialSiteContent.heroSecondaryCtaLink,
+          heroCoverImage: siteContent.heroCoverImage || initialSiteContent.heroCoverImage,
+          showHeroCoverImage: siteContent.showHeroCoverImage ?? true,
+          heroCaption: siteContent.heroCaption || initialSiteContent.heroCaption,
+          heroCaptionEn: siteContent.heroCaptionEn || initialSiteContent.heroCaptionEn,
+          homeCtaBannerTitle: siteContent.homeCtaBannerTitle || initialSiteContent.homeCtaBannerTitle,
+          homeCtaBannerTitleEn: siteContent.homeCtaBannerTitleEn || initialSiteContent.homeCtaBannerTitleEn,
+          homeCtaBannerDesc: siteContent.homeCtaBannerDesc || initialSiteContent.homeCtaBannerDesc,
+          homeCtaBannerDescEn: siteContent.homeCtaBannerDescEn || initialSiteContent.homeCtaBannerDescEn,
+          homeCtaBannerBtnText: siteContent.homeCtaBannerBtnText || initialSiteContent.homeCtaBannerBtnText,
+          homeCtaBannerBtnTextEn: siteContent.homeCtaBannerBtnTextEn || initialSiteContent.homeCtaBannerBtnTextEn,
+          homeCtaBannerBtnLink: siteContent.homeCtaBannerBtnLink || initialSiteContent.homeCtaBannerBtnLink,
+          showHomeCtaBanner: siteContent.showHomeCtaBanner ?? true,
+
+          aboutCommitments: (siteContent.aboutCommitments as any[]) || initialSiteContent.aboutCommitments,
+
+          spaceZones: (siteContent.spaceZones as any[]) || initialSiteContent.spaceZones,
+          spaceCtaTitle: siteContent.spaceCtaTitle || initialSiteContent.spaceCtaTitle,
+          spaceCtaTitleEn: siteContent.spaceCtaTitleEn || initialSiteContent.spaceCtaTitleEn,
+          spaceCtaDesc: siteContent.spaceCtaDesc || initialSiteContent.spaceCtaDesc,
+          spaceCtaDescEn: siteContent.spaceCtaDescEn || initialSiteContent.spaceCtaDescEn,
+          spaceCtaBtnText: siteContent.spaceCtaBtnText || initialSiteContent.spaceCtaBtnText,
+          spaceCtaBtnTextEn: siteContent.spaceCtaBtnTextEn || initialSiteContent.spaceCtaBtnTextEn,
+          showSpaceCta: siteContent.showSpaceCta ?? true,
+          showSpaceFilterBar: siteContent.showSpaceFilterBar ?? true,
+
+          menuShowPrices: siteContent.menuShowPrices ?? true,
+          menuShowAddToCart: siteContent.menuShowAddToCart ?? true,
+          menuDietaryNote: siteContent.menuDietaryNote || initialSiteContent.menuDietaryNote,
+          menuDietaryNoteEn: siteContent.menuDietaryNoteEn || initialSiteContent.menuDietaryNoteEn,
+          menuCurrencyNote: siteContent.menuCurrencyNote || initialSiteContent.menuCurrencyNote,
+          menuCurrencyNoteEn: siteContent.menuCurrencyNoteEn || initialSiteContent.menuCurrencyNoteEn,
+          menuBbqBannerTitle: siteContent.menuBbqBannerTitle || initialSiteContent.menuBbqBannerTitle,
+          menuBbqBannerTitleEn: siteContent.menuBbqBannerTitleEn || initialSiteContent.menuBbqBannerTitleEn,
+          menuBbqBannerDesc: siteContent.menuBbqBannerDesc || initialSiteContent.menuBbqBannerDesc,
+          menuBbqBannerDescEn: siteContent.menuBbqBannerDescEn || initialSiteContent.menuBbqBannerDescEn,
+          menuBbqBannerBtnText: siteContent.menuBbqBannerBtnText || initialSiteContent.menuBbqBannerBtnText,
+          menuBbqBannerBtnTextEn: siteContent.menuBbqBannerBtnTextEn || initialSiteContent.menuBbqBannerBtnTextEn,
+          showMenuBbqBanner: siteContent.showMenuBbqBanner ?? true,
+
+          reviewsTrustScore: siteContent.reviewsTrustScore || initialSiteContent.reviewsTrustScore,
+          reviewsTrustScoreEn: siteContent.reviewsTrustScoreEn || initialSiteContent.reviewsTrustScoreEn,
+          reviewsThankYou: siteContent.reviewsThankYou || initialSiteContent.reviewsThankYou,
+          reviewsThankYouEn: siteContent.reviewsThankYouEn || initialSiteContent.reviewsThankYouEn,
+
+          newsContactPrompt: siteContent.newsContactPrompt || initialSiteContent.newsContactPrompt,
+          newsContactPromptEn: siteContent.newsContactPromptEn || initialSiteContent.newsContactPromptEn,
+
+          contactQuickInfoLayout: siteContent.contactQuickInfoLayout || initialSiteContent.contactQuickInfoLayout,
+          contactMapCaption: siteContent.contactMapCaption || initialSiteContent.contactMapCaption,
+          contactMapCaptionEn: siteContent.contactMapCaptionEn || initialSiteContent.contactMapCaptionEn,
+          contactMapEmbedUrl: siteContent.contactMapEmbedUrl || initialSiteContent.contactMapEmbedUrl,
         }
       : initialSiteContent;
 
