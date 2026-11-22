@@ -28,22 +28,24 @@ export default function QuickSupportWidget() {
       window.location.host.startsWith('admin.') ||
       window.location.pathname.startsWith('/admin'));
 
-  const phone = s.quickChatPhone || '0382851688';
-  const zalo = s.zaloUrl || `https://zalo.me/${phone}`;
-  const messenger = s.messengerUrl || 'https://m.me/camcuhousedaknong';
-  const whatsapp = s.whatsappUrl || `https://wa.me/84382851688`;
+  const hotlineNum = s.hotlineNumber || s.quickChatPhone || '0382851688';
+  const zaloUrl = s.zaloUrl || (hotlineNum ? `https://zalo.me/${hotlineNum}` : '');
+  const messengerUrl = s.messengerUrl || 'https://m.me/camcuhousedaknong';
+  const whatsappUrl = s.whatsappUrl || 'https://wa.me/84382851688';
 
-  const cs = data.commerceSettings;
-  const isWidgetEnabled = (cs?.enableQuickSupportWidget !== false) && (s.enableQuickChat !== false);
+  const isWidgetEnabled =
+    (s.enableSupportWidget !== false) &&
+    (s.enableQuickChat !== false) &&
+    ((data as any).commerceSettings?.enableQuickSupportWidget !== false);
 
   if (pathname?.startsWith('/admin') || isClientAdmin || !isWidgetEnabled) {
     return null;
   }
 
-  const showHotline = cs?.enableSupportHotline !== false && Boolean(phone);
-  const showZalo = cs?.enableSupportZalo !== false && Boolean(zalo);
-  const showMessenger = cs?.enableSupportMessenger !== false && Boolean(messenger);
-  const showWhatsApp = cs?.enableSupportWhatsApp !== false && Boolean(whatsapp);
+  const showHotline = (s.enableHotline !== false) && ((data as any).commerceSettings?.enableSupportHotline !== false) && Boolean(hotlineNum);
+  const showZalo = (s.enableZalo !== false) && ((data as any).commerceSettings?.enableSupportZalo !== false) && Boolean(zaloUrl);
+  const showMessenger = (s.enableMessenger !== false) && ((data as any).commerceSettings?.enableSupportMessenger !== false) && Boolean(messengerUrl);
+  const showWhatsApp = (s.enableWhatsApp !== false) && ((data as any).commerceSettings?.enableSupportWhatsApp !== false) && Boolean(whatsappUrl);
 
   if (!showHotline && !showZalo && !showMessenger && !showWhatsApp) {
     return null;
@@ -85,12 +87,12 @@ export default function QuickSupportWidget() {
               {/* Hotline */}
               {showHotline && (
                 <a
-                  href={`tel:${phone}`}
+                  href={`tel:${hotlineNum}`}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical dark:text-emerald-300 hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700"
                 >
                   <span className="font-bold flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5" />
-                    <span>Hotline ({phone})</span>
+                    <span>Hotline ({hotlineNum})</span>
                   </span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -99,14 +101,14 @@ export default function QuickSupportWidget() {
               {/* Zalo */}
               {showZalo && (
                 <a
-                  href={zalo}
+                  href={zaloUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900"
                 >
                   <span className="font-bold flex items-center gap-2">
                     <MessageCircle className="w-3.5 h-3.5" />
-                    <span>Zalo Chat ({phone})</span>
+                    <span>Zalo Chat ({hotlineNum})</span>
                   </span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -115,7 +117,7 @@ export default function QuickSupportWidget() {
               {/* Messenger */}
               {showMessenger && (
                 <a
-                  href={messenger}
+                  href={messengerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900"
@@ -131,7 +133,7 @@ export default function QuickSupportWidget() {
               {/* WhatsApp */}
               {showWhatsApp && (
                 <a
-                  href={whatsapp}
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors border border-emerald-200 dark:border-emerald-900"

@@ -18,7 +18,6 @@ function MenuItemCard({
   isEn: boolean;
   usdRate?: number;
   showPrices?: boolean;
-  showAddToCart?: boolean;
 }) {
   const isAvailable = item.inStock !== false && (item as any).isAvailable !== false;
   const name = isEn && item.nameEn ? item.nameEn : (item.vietnameseTitle || (item as any).nameVi || item.name);
@@ -119,8 +118,6 @@ export default function MenuSection() {
   const menuNotice = isEn && c?.menuNoticeEn ? c.menuNoticeEn : (c?.menuNotice || (isEn ? 'Call our baristas directly 15–20 minutes in advance so we can prepare your fresh drinks and hot food with supreme care.' : 'Quý khách có thể gọi điện thoại trực tiếp trước 15–20 phút để quán chuẩn bị chu đáo thức uống và đồ ăn mang về luôn tươi mới.'));
 
   const showPrices = c?.menuShowPrices !== false;
-  const commerceEnabled = data.commerceSettings?.commerceEnabled !== false;
-  const showAddToCart = commerceEnabled && (c?.menuShowAddToCart !== false);
   const dietaryNote = isEn && c?.menuDietaryNoteEn ? c?.menuDietaryNoteEn : (c?.menuDietaryNote || '100% Cà phê rang mộc tự nhiên • Nông sản địa phương Gia Nghĩa • Thảo mộc hái tươi mỗi sáng');
   const currencyNote = isEn && c?.menuCurrencyNoteEn ? c?.menuCurrencyNoteEn : (c?.menuCurrencyNote || 'Đơn vị tính: VNĐ (Đã bao gồm VAT). Hỗ trợ thanh toán tiền mặt & chuyển khoản VietQR.');
 
@@ -312,7 +309,6 @@ export default function MenuSection() {
                 isEn={isEn}
                 usdRate={data.settings.usdExchangeRate}
                 showPrices={showPrices}
-                showAddToCart={showAddToCart}
               />
             </motion.div>
           ))}
