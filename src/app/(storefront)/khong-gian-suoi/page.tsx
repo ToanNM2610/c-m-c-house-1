@@ -253,11 +253,11 @@ export default function StreamSanctuaryPage() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/chi-duong-lien-he"
+                href="/lien-he"
                 className="btn-cta-secondary px-8 py-4 rounded-full font-semibold text-[15px] inline-flex items-center gap-2"
               >
                 <Navigation className="w-4 h-4" />
-                <span>{isVi ? "Chỉ Đường & Đặt Bàn [05]" : "Directions & Contact [05]"}</span>
+                <span>{isVi ? "Chỉ Đường & Liên Hệ [05]" : "Directions & Contact [05]"}</span>
               </Link>
             </div>
           </div>

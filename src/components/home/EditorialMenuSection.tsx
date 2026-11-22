@@ -223,45 +223,6 @@ export default function EditorialMenuSection({
         </nav>
       </div>
 
-      {/* 3. Pre-order Selection Floating Indicator */}
-      {localSelectedItems.length > 0 && (
-        <div className="mb-8 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--accent-botanical)]/40 flex flex-wrap items-center justify-between gap-4 shadow-sm animate-fadeIn">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[var(--accent-botanical)] text-white flex items-center justify-center font-mono font-bold text-xs">
-              {localSelectedItems.length}
-            </div>
-            <div className="flex flex-col">
-              <span className="font-mono text-xs font-bold text-[var(--text-primary)]">
-                {isVi ? "MÓN ĐÃ CHỌN ĐẶT TRƯỚC / MANG VỀ" : "PRE-SELECTED TAKEAWAY ITEMS"}
-              </span>
-              <span className="text-[13px] text-[var(--text-secondary)]">
-                {localSelectedItems.join(", ")}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setLocalSelectedItems([]);
-                onSelectPreOrderItems?.([]);
-              }}
-              className="px-3 py-1.5 text-xs font-mono text-[var(--text-secondary)] hover:text-red-600 transition-colors"
-            >
-              {isVi ? "Xóa chọn" : "Clear"}
-            </button>
-            <a
-              href="#reservation-section"
-              className="btn-cta-primary px-4 py-1.5 text-xs rounded-full inline-flex items-center gap-1.5"
-            >
-              <ClipboardList className="w-3.5 h-3.5" />
-              <span>{isVi ? "Gửi vào phiếu đặt bàn" : "Attach to Reservation"}</span>
-            </a>
-          </div>
-        </div>
-      )}
-
       {/* 4. Menu Chapters (2 columns on Desktop 1440px / 1 column on Mobile 390px) */}
       <div className="editorial-chapters-wrapper flex flex-col gap-12">
         {filteredCategories.length > 0 ? (
@@ -341,21 +302,6 @@ export default function EditorialMenuSection({
                             </span>
                           ))}
                         </div>
-
-                        {/* Quick pre-order selection checkbox */}
-                        <button
-                          type="button"
-                          onClick={() => handleToggleItem(item.code, item.name)}
-                          className={`text-xs font-mono px-2 py-0.5 rounded border inline-flex items-center gap-1 transition-colors ${
-                            isChecked
-                              ? "bg-[var(--accent-botanical)] text-white border-[var(--accent-botanical)] font-bold"
-                              : "text-[var(--text-secondary)] border-[var(--border-subtle)] hover:border-[var(--text-primary)] hover:text-[var(--text-primary)]"
-                          }`}
-                          aria-label={`Chọn món ${item.name} đặt trước`}
-                        >
-                          <Check className={`w-3 h-3 ${isChecked ? "opacity-100" : "opacity-0"}`} />
-                          <span>{isChecked ? (isVi ? "Đã chọn" : "Selected") : (isVi ? "+ Đặt trước" : "+ Pre-order")}</span>
-                        </button>
                       </div>
                     </li>
                   );

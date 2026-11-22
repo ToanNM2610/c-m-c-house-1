@@ -505,7 +505,6 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
   const [menuNotice, setMenuNotice] = useState(c?.menuNotice || 'Phục vụ tại bàn sát suối • Không sử dụng phẩm màu hay hương liệu nhân tạo • Thảo mộc tươi hái mỗi sáng');
   const [menuNoticeEn, setMenuNoticeEn] = useState(c?.menuNoticeEn || 'Served right beside the stream • Zero artificial flavors or coloring • Fresh herbs harvested every morning');
   const [menuShowPrices, setMenuShowPrices] = useState<boolean>(c?.menuShowPrices ?? true);
-  const [menuShowAddToCart, setMenuShowAddToCart] = useState<boolean>(c?.menuShowAddToCart ?? true);
 
   // ---------------- Page 5: Khach hang (/khach-hang) ----------------
   const [reviewsEyebrow, setReviewsEyebrow] = useState(c?.reviewsEyebrow || 'CẢM NHẬN & ĐÁNH GIÁ THỰC TẾ');
@@ -702,7 +701,6 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
           menuNotice,
           menuNoticeEn,
           menuShowPrices,
-          menuShowAddToCart,
 
           // Page 5
           reviewsEyebrow,
@@ -1907,7 +1905,7 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
                   key="filterAndSearch"
                   sectionId="filterAndSearch"
                   title={`Khu Vực ${idx + 1}: Thanh Lọc Danh Mục & Tùy Chọn Hiển Thị`}
-                  subtitle="Tùy biến hiển thị giá tiền, nút Thêm vào giỏ và bố cục tab thực đơn."
+                  subtitle="Tùy biến hiển thị giá tiền và bố cục tab thực đơn."
                   icon={Layers}
                   enabled={isSectionEnabled('menu-filterAndSearch')}
                   onToggle={() => toggleSection('menu-filterAndSearch')}
@@ -1938,26 +1936,6 @@ export default function AdminCMSHome({ activeSubPage }: AdminCMSHomeProps) {
                         <span
                           className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
                             menuShowPrices ? 'translate-x-6' : 'translate-x-1'
-                          }`}
-                        />
-                      </button>
-                    </div>
-
-                    <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                      <div>
-                        <span className="text-xs font-bold text-slate-800 block">Nút &quot;Thêm vào giỏ&quot;</span>
-                        <span className="text-[11px] text-slate-500">Add to Cart Button</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setMenuShowAddToCart(!menuShowAddToCart)}
-                        className={`w-12 h-6 rounded-full transition-colors relative ${
-                          menuShowAddToCart ? 'bg-emerald-600' : 'bg-slate-300'
-                        }`}
-                      >
-                        <span
-                          className={`block w-5 h-5 rounded-full bg-white shadow-md transform transition-transform ${
-                            menuShowAddToCart ? 'translate-x-6' : 'translate-x-1'
                           }`}
                         />
                       </button>

@@ -85,11 +85,11 @@ export default function EditorialHero() {
     },
     {
       num: "[05]",
-      route: "/chi-duong-lien-he",
+      route: "/lien-he",
       titleVi: "CHỈ ĐƯỜNG & LIÊN HỆ",
       titleEn: "DIRECTIONS & CONTACT",
-      subVi: "Bản đồ Hẻm 437 Hùng Vương, form đặt bàn & gọi hotline kép",
-      subEn: "Interactive map, pre-order reservation assistant & dual hotlines",
+      subVi: "Bản đồ Hẻm 437 Hùng Vương, chỉ đường & gọi hotline kép",
+      subEn: "Interactive map, directions & dual hotlines",
       icon: <MapPin className="w-5 h-5 text-emerald-400" />,
       bg: "bg-[#131916]",
     },
@@ -179,11 +179,11 @@ export default function EditorialHero() {
               </Link>
 
               <Link
-                href="/chi-duong-lien-he"
+                href="/lien-he"
                 className="btn-cta-secondary px-6 py-3.5 text-[15px] rounded-full inline-flex items-center gap-2 font-semibold"
               >
                 <Navigation className="w-4 h-4" />
-                <span>{isVi ? "Chỉ Đường & Đặt Bàn" : "Directions & Reserve"}</span>
+                <span>{isVi ? "Chỉ Đường & Liên Hệ" : "Directions & Contact"}</span>
               </Link>
 
               <a

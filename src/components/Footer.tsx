@@ -117,7 +117,7 @@ export default function Footer() {
               <Link href="/thuc-don" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
                 → [04] {isEn ? "Menu" : "Thực Đơn"}
               </Link>
-              <Link href="/chi-duong-lien-he" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
+              <Link href="/lien-he" className="nav-footer-link text-[var(--ink-on-dark,#F2EDE4)] hover:text-[#E86C3A] hover:translate-x-1 transition-all w-fit">
                 → [05] {isEn ? "Directions & Contact" : "Chỉ Đường & Liên Hệ"}
               </Link>
             </nav>

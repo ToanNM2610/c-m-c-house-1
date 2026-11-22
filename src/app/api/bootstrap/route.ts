@@ -234,7 +234,6 @@ export async function GET() {
           showSpaceFilterBar: siteContent.showSpaceFilterBar ?? true,
 
           menuShowPrices: siteContent.menuShowPrices ?? true,
-          menuShowAddToCart: siteContent.menuShowAddToCart ?? true,
           menuDietaryNote: siteContent.menuDietaryNote || initialSiteContent.menuDietaryNote,
           menuDietaryNoteEn: siteContent.menuDietaryNoteEn || initialSiteContent.menuDietaryNoteEn,
           menuCurrencyNote: siteContent.menuCurrencyNote || initialSiteContent.menuCurrencyNote,
@@ -436,7 +435,6 @@ export async function GET() {
         metaDescription: p.metaDescription,
         published: p.published,
       })),
-      commerceSettings: null,
       lastUpdated: new Date().toISOString(),
     };
 

@@ -436,10 +436,10 @@ export default function KhongGianPage() {
       <div className="p-8 sm:p-12 rounded-3xl bg-forest-900 text-white shadow-elevated flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="space-y-3 max-w-2xl">
           <span className="text-xs font-sans uppercase tracking-widest text-emerald-300 font-semibold inline-block">
-            {isEn ? 'GROUP & BBQ RESERVATION' : 'ĐẶT CHỖ NHÓM & TIỆC BBQ'}
+            {isEn ? 'GROUP VISITS & SANCTUARY INQUIRY' : 'LIÊN HỆ ĐOÀN ĐÔNG & GHÉ THĂM'}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white">
-            {isEn ? (c?.spaceCtaTitleEn || 'Planning a Group Visit or Streamside Photoshoot?') : (c?.spaceCtaTitle || 'Bạn Muốn Đặt Chỗ Nhóm Hoặc Chụp Ảnh Bên Suối?')}
+            {isEn ? (c?.spaceCtaTitleEn || 'Planning a Group Visit or Streamside Photoshoot?') : (c?.spaceCtaTitle || 'Bạn Muốn Ghé Thăm Theo Đoàn Hoặc Chụp Ảnh Bên Suối?')}
           </h2>
           <p className="text-sm text-forest-200/90 leading-relaxed font-sans">
             {isEn ? (c?.spaceCtaDescEn || 'Our natural open sanctuary is ready to welcome you. Contact our hotline for the best preparation.') : (c?.spaceCtaDesc || 'Không gian mở tự nhiên sẵn sàng chào đón bạn. Hãy liên hệ Hotline để quán chuẩn bị chu đáo nhất.')}

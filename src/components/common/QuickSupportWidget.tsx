@@ -28,26 +28,23 @@ export default function QuickSupportWidget() {
       window.location.host.startsWith('admin.') ||
       window.location.pathname.startsWith('/admin'));
 
-  const hotlineNum = s.hotlineNumber || s.quickChatPhone || '0382851688';
-  const zaloUrl = s.zaloUrl || (hotlineNum ? `https://zalo.me/${hotlineNum}` : '');
-  const messengerUrl = s.messengerUrl || 'https://m.me/camcuhousedaknong';
-  const whatsappUrl = s.whatsappUrl || 'https://wa.me/84382851688';
+  const hotline1 = s.hotlineNumber || s.quickChatPhone || '0382851688';
+  const hotline2 = '0774659000';
+  const zaloUrl = s.zaloUrl || (hotline1 ? `https://zalo.me/${hotline1}` : 'https://zalo.me/0382851688');
+  const mapsUrl = s.links?.googleMaps || 'https://maps.app.goo.gl/G6aP51qJ6aDabp676';
 
   const isWidgetEnabled =
     (s.enableSupportWidget !== false) &&
-    (s.enableQuickChat !== false) &&
-    ((data as any).commerceSettings?.enableQuickSupportWidget !== false);
+    (s.enableQuickChat !== false);
 
   if (pathname?.startsWith('/admin') || isClientAdmin || !isWidgetEnabled) {
     return null;
   }
 
-  const showHotline = (s.enableHotline !== false) && ((data as any).commerceSettings?.enableSupportHotline !== false) && Boolean(hotlineNum);
-  const showZalo = (s.enableZalo !== false) && ((data as any).commerceSettings?.enableSupportZalo !== false) && Boolean(zaloUrl);
-  const showMessenger = (s.enableMessenger !== false) && ((data as any).commerceSettings?.enableSupportMessenger !== false) && Boolean(messengerUrl);
-  const showWhatsApp = (s.enableWhatsApp !== false) && ((data as any).commerceSettings?.enableSupportWhatsApp !== false) && Boolean(whatsappUrl);
+  const showHotline = (s.enableHotline !== false) && Boolean(hotline1);
+  const showZalo = (s.enableZalo !== false) && Boolean(zaloUrl);
 
-  if (!showHotline && !showZalo && !showMessenger && !showWhatsApp) {
+  if (!showHotline && !showZalo) {
     return null;
   }
 
@@ -61,7 +58,7 @@ export default function QuickSupportWidget() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, y: 16 }}
             transition={{ duration: 0.2 }}
-            className="mb-3 w-64 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-2xl p-4 space-y-3"
+            className="mb-3 w-72 bg-white dark:bg-forest-900 rounded-3xl border border-forest-200 dark:border-forest-700 shadow-2xl p-4 space-y-3"
           >
             <div className="flex items-center justify-between pb-2 border-b border-forest-100 dark:border-forest-800">
               <span className="font-serif font-bold text-sm text-ink-primary flex items-center gap-1.5">
@@ -79,24 +76,36 @@ export default function QuickSupportWidget() {
 
             <p className="text-[11px] text-ink-muted leading-relaxed font-sans">
               {isEn
-                ? 'Directly reach our sanctuary baristas for order assistance, BBQ booking, or directions.'
-                : 'Kết nối nhanh với quán để được hướng dẫn đặt món, đặt tiệc BBQ bờ suối hoặc chỉ đường.'}
+                ? 'Connect directly with our sanctuary baristas for directions, drink inquiries, or visit assistance.'
+                : 'Kết nối nhanh với quán để được hỗ trợ thông tin, hướng dẫn đường đi hoặc liên hệ trực tiếp.'}
             </p>
 
-            <div className="space-y-2.5 text-sm font-sans font-medium">
-              {/* Hotline */}
+            <div className="space-y-2 text-xs font-sans font-medium">
+              {/* Hotline 1 */}
               {showHotline && (
                 <a
-                  href={`tel:${hotlineNum}`}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical dark:text-emerald-300 hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700"
+                  href={`tel:${hotline1}`}
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical dark:text-emerald-300 hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700 font-semibold"
                 >
-                  <span className="font-bold flex items-center gap-2">
+                  <span className="flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5" />
-                    <span>Hotline ({hotlineNum})</span>
+                    <span>Hotline ({hotline1 === '0382851688' ? '038 285 1688' : hotline1})</span>
                   </span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               )}
+
+              {/* Hotline 2 */}
+              <a
+                href={`tel:${hotline2}`}
+                className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50/80 dark:bg-forest-800/80 text-accent-botanical dark:text-emerald-300 hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700 font-semibold"
+              >
+                <span className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Hotline (077 465 9000)</span>
+                </span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
 
               {/* Zalo */}
               {showZalo && (
@@ -104,47 +113,29 @@ export default function QuickSupportWidget() {
                   href={zaloUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900 font-semibold"
                 >
-                  <span className="font-bold flex items-center gap-2">
+                  <span className="flex items-center gap-2">
                     <MessageCircle className="w-3.5 h-3.5" />
-                    <span>Zalo Chat ({hotlineNum})</span>
+                    <span>Zalo Chat (038 285 1688)</span>
                   </span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               )}
 
-              {/* Messenger */}
-              {showMessenger && (
-                <a
-                  href={messengerUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900"
-                >
-                  <span className="font-bold flex items-center gap-2">
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>Facebook Messenger</span>
-                  </span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
-
-              {/* WhatsApp */}
-              {showWhatsApp && (
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors border border-emerald-200 dark:border-emerald-900"
-                >
-                  <span className="font-bold flex items-center gap-2">
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>WhatsApp</span>
-                  </span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              )}
+              {/* Google Maps Chỉ Đường */}
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-200 hover:bg-amber-100 transition-colors border border-amber-200 dark:border-amber-900 font-semibold"
+              >
+                <span className="flex items-center gap-2">
+                  <ExternalLink className="w-3.5 h-3.5 text-accent-botanical" />
+                  <span>{isEn ? 'Google Maps Directions' : 'Chỉ Đường Google Maps'}</span>
+                </span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </motion.div>
         )}

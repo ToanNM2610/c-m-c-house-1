@@ -8,24 +8,6 @@ export interface MenuItemVariant {
   price: number;
 }
 
-export interface ProductOption {
-  labelVi: string;
-  labelEn?: string;
-  priceDelta: number; // +price in VND
-}
-
-export interface ProductOptionGroup {
-  id: string;
-  nameVi: string;
-  nameEn?: string;
-  type: 'SINGLE' | 'MULTIPLE';
-  required: boolean;
-  options: ProductOption[];
-  isActive: boolean;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
-}
-
 export interface MenuItem {
   id: string;
   categoryId: CategoryId;
@@ -56,8 +38,6 @@ export interface MenuItem {
   productType?: ProductType;
   trackInventory?: boolean;
   stockQuantity?: number;
-  allowOrdering?: boolean;
-  optionGroups?: ProductOptionGroup[] | any;
 }
 
 export interface PhilosophyCard {
@@ -232,7 +212,6 @@ export interface SiteContent {
   showSpaceFilterBar?: boolean;
 
   menuShowPrices?: boolean;
-  menuShowAddToCart?: boolean;
   menuDietaryNote?: string;
   menuDietaryNoteEn?: string;
   menuCurrencyNote?: string;
@@ -531,7 +510,6 @@ export interface DatabaseSchema {
   stories?: HighlightStory[];
   faqs?: FaqItem[];
   staticPages?: StaticPage[];
-  commerceSettings?: any | null;
   lastUpdated: string;
 }
 

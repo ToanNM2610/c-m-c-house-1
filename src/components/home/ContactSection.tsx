@@ -13,12 +13,9 @@ import {
   CalendarDays,
   ExternalLink,
 } from "lucide-react";
-import ReservationModal from "./ReservationModal";
-
 export default function ContactSection() {
   const { locale } = useLanguage();
   const isVi = locale !== "en";
-  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <section
@@ -140,12 +137,12 @@ export default function ContactSection() {
                 <CalendarDays className="w-5 h-5" />
               </div>
               <h3 className="font-display font-bold text-[20px] text-[var(--text-primary)]">
-                {isVi ? "Đặt Chỗ & Mạng Xã Hội" : "Reservation & Socials"}
+                {isVi ? "Kênh Kết Nối & Mạng Xã Hội" : "Community & Socials"}
               </h3>
               <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed">
                 {isVi
-                  ? "Đặt bàn bờ suối cho nhóm gia đình, du khách hoặc ghi chú món mang về nhanh chóng."
-                  : "Reserve streamside seating for families or travelers, or prepare your takeaway notes."}
+                  ? "Theo dõi fanpage, kênh video và kết nối nhanh với quán qua các nền tảng mạng xã hội."
+                  : "Follow our social channels and video feeds for stories from our streamside sanctuary."}
               </p>
 
               {/* Social Channels Links */}
@@ -177,23 +174,16 @@ export default function ContactSection() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setModalOpen(true)}
+            <a
+              href="tel:0382851688"
               className="btn-cta-primary w-full py-3 text-xs justify-center inline-flex items-center gap-2 rounded-xl"
             >
-              <CalendarDays className="w-4 h-4" />
-              <span>{isVi ? "Mở Trợ Lý Đặt Bàn" : "Open Reservation"}</span>
-            </button>
+              <PhoneCall className="w-4 h-4" />
+              <span>{isVi ? "Gọi Hotline 038 285 1688" : "Call Hotline +84 382 851 688"}</span>
+            </a>
           </div>
         </div>
       </div>
-
-      {/* Reservation Modal */}
-      <ReservationModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-      />
     </section>
   );
 }

@@ -237,12 +237,12 @@ export default function StoryPage() {
             </Link>
 
             <Link
-              href="/chi-duong-lien-he"
+              href="/lien-he"
               className="group p-6 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] hover:border-[#E86C3A] transition-all flex flex-col justify-between gap-4"
             >
               <span className="font-mono text-xs text-[#E86C3A] font-bold">[05] CHỈ ĐƯỜNG & LIÊN HỆ</span>
               <p className="font-display font-extrabold text-[18px] text-[var(--text-primary)] group-hover:text-[#E86C3A] transition-colors">
-                Bản đồ đường đi Hẻm 437 Hùng Vương & Form đặt trước →
+                Bản đồ đường đi Hẻm 437 Hùng Vương & Thông tin liên hệ →
               </p>
             </Link>
           </div>

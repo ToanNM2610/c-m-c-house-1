@@ -210,7 +210,6 @@ export async function PATCH(req: NextRequest) {
     if (typeof body.showSpaceFilterBar === 'boolean') dataToUpdate.showSpaceFilterBar = body.showSpaceFilterBar;
 
     if (typeof body.menuShowPrices === 'boolean') dataToUpdate.menuShowPrices = body.menuShowPrices;
-    if (typeof body.menuShowAddToCart === 'boolean') dataToUpdate.menuShowAddToCart = body.menuShowAddToCart;
     if (body.menuDietaryNote !== undefined) dataToUpdate.menuDietaryNote = body.menuDietaryNote;
     if (body.menuDietaryNoteEn !== undefined) dataToUpdate.menuDietaryNoteEn = body.menuDietaryNoteEn;
     if (body.menuCurrencyNote !== undefined) dataToUpdate.menuCurrencyNote = body.menuCurrencyNote;

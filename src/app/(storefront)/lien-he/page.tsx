@@ -382,8 +382,8 @@ export default function LienHePage() {
           </h3>
           <p className="text-xs text-ink-muted font-sans">
             {isEn
-              ? 'Have questions about directions, takeaway coffee, or BBQ reservation? Drop us a note.'
-              : 'Bạn cần hỗ trợ chỉ đường, đặt mang về trước hoặc đặt tiệc BBQ? Hãy để lại thông tin bên dưới.'}
+              ? 'Have questions about directions, our sanctuary space, or botanical drinks? Drop us a note.'
+              : 'Bạn cần hỗ trợ chỉ đường, tìm hiểu không gian suối hoặc thông tin đồ uống? Hãy để lại lời nhắn bên dưới.'}
           </p>
         </div>
 
