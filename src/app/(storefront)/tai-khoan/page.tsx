@@ -160,6 +160,41 @@ export default function CustomerPortalPage() {
 
   // Wishlist menu items from global menu data
   const wishlistedItems = (data?.menu || []).filter((item) => wishlistIds.includes(item.id));
+  const enableCustomerPortal = data.commerceSettings?.enableCustomerPortal !== false;
+
+  useEffect(() => {
+    if (data.commerceSettings && data.commerceSettings.enableCustomerPortal === false) {
+      router.replace(isEn ? '/en' : '/');
+    }
+  }, [data.commerceSettings, router, isEn]);
+
+  if (!enableCustomerPortal) {
+    return (
+      <main className="min-h-screen pt-28 pb-16 bg-paper text-ink-primary">
+        <div className="max-w-2xl mx-auto px-4 text-center py-16 space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-forest-100 dark:bg-forest-800 flex items-center justify-center text-forest-400">
+            <User className="w-8 h-8" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-ink-primary">
+            {isEn ? 'Customer Portal Paused' : 'Cổng Tài Khoản Tạm Đóng'}
+          </h1>
+          <p className="text-xs text-ink-muted max-w-sm mx-auto">
+            {isEn
+              ? 'Customer account features are currently disabled.'
+              : 'Tính năng tài khoản khách hàng đang tạm thời đóng theo cài đặt của quán.'}
+          </p>
+          <div className="pt-2">
+            <Link
+              href={isEn ? '/en' : '/'}
+              className="px-6 py-2.5 rounded-full bg-accent-botanical text-white text-xs font-semibold hover:bg-forest-800 transition-all shadow-sm"
+            >
+              {isEn ? 'Return Home' : 'Về Trang Chủ'}
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   if (isAuthLoading) {
     return (

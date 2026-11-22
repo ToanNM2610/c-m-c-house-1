@@ -55,9 +55,10 @@ export default function GlobalSearchModal({
   onClose: () => void;
 }) {
   const router = useRouter();
-  const { language } = useApp();
+  const { language, data } = useApp();
   const { openCustomization } = useCart();
   const isEn = language === 'en';
+  const commerceEnabled = data.commerceSettings?.commerceEnabled !== false;
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResultPayload | null>(null);
@@ -253,28 +254,30 @@ export default function GlobalSearchModal({
                               <span className="font-mono text-xs font-bold text-accent-botanical whitespace-nowrap">
                                 {m.priceDisplay}
                               </span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onClose();
-                                  openCustomization({
-                                    id: m.id,
-                                    name: m.name,
-                                    nameEn: m.nameEn,
-                                    vietnameseTitle: m.vietnameseTitle,
-                                    description: m.description,
-                                    price: parseInt((m.priceDisplay || '35000').replace(/\D/g, ''), 10) || 35000,
-                                    categoryId: 'coffee',
-                                    inStock: true,
-                                  } as any);
-                                }}
-                                className="p-1.5 rounded-lg bg-accent-botanical/10 hover:bg-accent-botanical text-accent-botanical hover:text-white transition-colors"
-                                title={isEn ? 'Add to cart' : 'Thêm vào giỏ'}
-                                aria-label="Thêm vào giỏ"
-                              >
-                                <Plus className="w-3.5 h-3.5" />
-                              </button>
+                              {commerceEnabled && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClose();
+                                    openCustomization({
+                                      id: m.id,
+                                      name: m.name,
+                                      nameEn: m.nameEn,
+                                      vietnameseTitle: m.vietnameseTitle,
+                                      description: m.description,
+                                      price: parseInt((m.priceDisplay || '35000').replace(/\D/g, ''), 10) || 35000,
+                                      categoryId: 'coffee',
+                                      inStock: true,
+                                    } as any);
+                                  }}
+                                  className="p-1.5 rounded-lg bg-accent-botanical/10 hover:bg-accent-botanical text-accent-botanical hover:text-white transition-colors"
+                                  title={isEn ? 'Add to cart' : 'Thêm vào giỏ'}
+                                  aria-label="Thêm vào giỏ"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                </button>
+                              )}
                             </div>
                           </div>
                         ))}

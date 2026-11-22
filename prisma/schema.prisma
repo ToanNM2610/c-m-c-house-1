@@ -732,6 +732,13 @@ model CommerceSettings {
   webhookSecret            String?
   defaultFreeShipThreshold Int      @default(300000)
   orderNotificationEmail   String?
+  enableCustomerPortal     Boolean  @default(true)
+  enableNewsletter         Boolean  @default(true)
+  enableQuickSupportWidget Boolean  @default(true)
+  enableSupportHotline     Boolean  @default(true)
+  enableSupportZalo        Boolean  @default(true)
+  enableSupportMessenger   Boolean  @default(true)
+  enableSupportWhatsApp    Boolean  @default(true)
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
 }

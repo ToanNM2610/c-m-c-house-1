@@ -28,14 +28,26 @@ export default function QuickSupportWidget() {
       window.location.host.startsWith('admin.') ||
       window.location.pathname.startsWith('/admin'));
 
-  if (pathname?.startsWith('/admin') || isClientAdmin || s.enableQuickChat === false) {
-    return null;
-  }
-
   const phone = s.quickChatPhone || '0382851688';
   const zalo = s.zaloUrl || `https://zalo.me/${phone}`;
   const messenger = s.messengerUrl || 'https://m.me/camcuhousedaknong';
   const whatsapp = s.whatsappUrl || `https://wa.me/84382851688`;
+
+  const cs = data.commerceSettings;
+  const isWidgetEnabled = (cs?.enableQuickSupportWidget !== false) && (s.enableQuickChat !== false);
+
+  if (pathname?.startsWith('/admin') || isClientAdmin || !isWidgetEnabled) {
+    return null;
+  }
+
+  const showHotline = cs?.enableSupportHotline !== false && Boolean(phone);
+  const showZalo = cs?.enableSupportZalo !== false && Boolean(zalo);
+  const showMessenger = cs?.enableSupportMessenger !== false && Boolean(messenger);
+  const showWhatsApp = cs?.enableSupportWhatsApp !== false && Boolean(whatsapp);
+
+  if (!showHotline && !showZalo && !showMessenger && !showWhatsApp) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
@@ -71,47 +83,53 @@ export default function QuickSupportWidget() {
 
             <div className="space-y-2.5 text-sm font-sans font-medium">
               {/* Hotline */}
-              <a
-                href={`tel:${phone}`}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical dark:text-emerald-300 hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700"
-              >
-                <span className="font-bold flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>Hotline ({phone})</span>
-                </span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+              {showHotline && (
+                <a
+                  href={`tel:${phone}`}
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-forest-50 dark:bg-forest-800 text-accent-botanical dark:text-emerald-300 hover:bg-forest-100 transition-colors border border-forest-200 dark:border-forest-700"
+                >
+                  <span className="font-bold flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Hotline ({phone})</span>
+                  </span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
 
               {/* Zalo */}
-              <a
-                href={zalo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900"
-              >
-                <span className="font-bold flex items-center gap-2">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>Zalo Chat ({phone})</span>
-                </span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+              {showZalo && (
+                <a
+                  href={zalo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors border border-blue-200 dark:border-blue-900"
+                >
+                  <span className="font-bold flex items-center gap-2">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Zalo Chat ({phone})</span>
+                  </span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
 
               {/* Messenger */}
-              <a
-                href={messenger}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900"
-              >
-                <span className="font-bold flex items-center gap-2">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>Facebook Messenger</span>
-                </span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+              {showMessenger && (
+                <a
+                  href={messenger}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900"
+                >
+                  <span className="font-bold flex items-center gap-2">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Facebook Messenger</span>
+                  </span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
 
               {/* WhatsApp */}
-              {whatsapp && (
+              {showWhatsApp && (
                 <a
                   href={whatsapp}
                   target="_blank"

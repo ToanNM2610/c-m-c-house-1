@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { apiSuccess, apiError } from '@/lib/api-response';
 import { requireAuth } from '@/lib/auth';
@@ -58,6 +59,13 @@ export async function PATCH(req: NextRequest) {
       'webhookSecret',
       'defaultFreeShipThreshold',
       'orderNotificationEmail',
+      'enableCustomerPortal',
+      'enableNewsletter',
+      'enableQuickSupportWidget',
+      'enableSupportHotline',
+      'enableSupportZalo',
+      'enableSupportMessenger',
+      'enableSupportWhatsApp',
     ];
 
     const updateData: any = {};
@@ -79,6 +87,8 @@ export async function PATCH(req: NextRequest) {
       where: { id: settings.id },
       data: updateData,
     });
+
+    revalidatePath('/', 'layout');
 
     await logAction({
       level: 'INFO',

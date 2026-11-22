@@ -26,7 +26,9 @@ function MenuItemCard({
   const { openCustomization } = useCart();
   const { isWishlisted, toggleWishlist } = useCustomerAuth();
 
-  const isSoldOut = !item.inStock || (item.stockQuantity !== undefined && item.stockQuantity !== null && item.stockQuantity <= 0) || item.allowOrdering === false;
+  const isOutOfStock = !item.inStock || (item.stockQuantity !== undefined && item.stockQuantity !== null && item.stockQuantity <= 0);
+  const isOrderingPaused = item.allowOrdering === false;
+  const isSoldOut = isOutOfStock || isOrderingPaused;
   const isOrderable = !isSoldOut;
   const wishlisted = isWishlisted(item.id);
   const name = isEn && item.nameEn ? item.nameEn : item.vietnameseTitle;
@@ -59,9 +61,14 @@ function MenuItemCard({
                     {highlight}
                   </span>
                 )}
-                {isSoldOut && (
+                {isOutOfStock && (
                   <span className="text-[10px] font-sans text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 px-2 py-0.5 rounded-full font-bold">
                     {isEn ? 'Sold Out' : 'Tạm hết món'}
+                  </span>
+                )}
+                {!isOutOfStock && isOrderingPaused && (
+                  <span className="text-[10px] font-sans text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 rounded-full font-bold">
+                    {isEn ? 'Paused' : 'Tạm ngưng nhận đơn'}
                   </span>
                 )}
               </div>
@@ -142,7 +149,9 @@ function MenuItemCard({
               </button>
             ) : (
               <div className="w-full py-2.5 px-3 rounded-xl bg-forest-100/60 dark:bg-forest-800/40 text-ink-muted font-sans text-sm text-center font-medium">
-                {isEn ? 'Temporarily Sold Out' : 'Tạm hết món'}
+                {isOutOfStock
+                  ? (isEn ? 'Temporarily Sold Out' : 'Tạm hết món')
+                  : (isEn ? 'Ordering Paused' : 'Tạm ngưng nhận đơn')}
               </div>
             )}
           </div>
@@ -164,7 +173,8 @@ export default function MenuSection() {
   const menuNotice = isEn && c?.menuNoticeEn ? c.menuNoticeEn : (c?.menuNotice || (isEn ? 'Call our baristas directly 15–20 minutes in advance so we can prepare your fresh drinks and hot food with supreme care.' : 'Quý khách có thể gọi điện thoại trực tiếp trước 15–20 phút để quán chuẩn bị chu đáo thức uống và đồ ăn mang về luôn tươi mới.'));
 
   const showPrices = c?.menuShowPrices !== false;
-  const showAddToCart = c?.menuShowAddToCart !== false;
+  const commerceEnabled = data.commerceSettings?.commerceEnabled !== false;
+  const showAddToCart = commerceEnabled && (c?.menuShowAddToCart !== false);
   const dietaryNote = isEn && c?.menuDietaryNoteEn ? c?.menuDietaryNoteEn : (c?.menuDietaryNote || '100% Cà phê rang mộc tự nhiên • Nông sản địa phương Gia Nghĩa • Thảo mộc hái tươi mỗi sáng');
   const currencyNote = isEn && c?.menuCurrencyNoteEn ? c?.menuCurrencyNoteEn : (c?.menuCurrencyNote || 'Đơn vị tính: VNĐ (Đã bao gồm VAT). Hỗ trợ thanh toán tiền mặt & chuyển khoản VietQR.');
 

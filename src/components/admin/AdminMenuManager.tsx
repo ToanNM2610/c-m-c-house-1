@@ -69,6 +69,33 @@ export default function AdminMenuManager() {
     }
   };
 
+  // Toggle Allow Online Ordering
+  const handleToggleAllowOrdering = async (item: MenuItem) => {
+    setLoadingItemId(item.id);
+    const nextVal = item.allowOrdering === false ? true : false;
+    try {
+      const res = await fetch('/api/menu', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ id: item.id, allowOrdering: nextVal }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && (json.success || !json.error)) {
+        showToast('success', `Đã ${nextVal ? 'mở nhận đơn' : 'tắt nhận đơn'} cho món "${item.vietnameseTitle}"`);
+        await refreshData();
+        broadcastCmsSync('menu');
+      } else {
+        showToast('error', json.error || 'Lỗi cập nhật nhận đơn');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Lỗi kết nối khi cập nhật nhận đơn');
+    } finally {
+      setLoadingItemId(null);
+    }
+  };
+
   const startEditItem = (item: MenuItem) => {
     setEditingItem(item);
     setEditPrice(item.price);
@@ -577,6 +604,7 @@ export default function AdminMenuManager() {
                 <th className="p-4">Nhóm</th>
                 <th className="p-4">Giá Niêm Yết (VND)</th>
                 <th className="p-4 text-center">Trạng Thái Kho</th>
+                <th className="p-4 text-center">Nhận Đơn Online</th>
                 <th className="p-4 text-right">Thao Tác</th>
               </tr>
             </thead>
@@ -640,6 +668,34 @@ export default function AdminMenuManager() {
                           <>
                             <span className="w-2 h-2 rounded-full bg-red-600" />
                             <span>Tạm hết</span>
+                          </>
+                        )}
+                      </button>
+                    </td>
+
+                    {/* Online Ordering Switch */}
+                    <td className="p-4 text-center">
+                      <button
+                        onClick={() => handleToggleAllowOrdering(item)}
+                        disabled={isLoading}
+                        title={item.allowOrdering !== false ? 'Đang mở nhận đơn đặt (Bấm để tạm ngưng)' : 'Đang tắt nhận đơn đặt (Bấm để mở lại)'}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-[11px] font-bold border transition-all ${
+                          item.allowOrdering !== false
+                            ? 'bg-sky-50 text-sky-800 border-sky-300 hover:bg-sky-100'
+                            : 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200'
+                        }`}
+                      >
+                        {isLoading ? (
+                          <RefreshCw className="w-3 h-3 animate-spin" />
+                        ) : item.allowOrdering !== false ? (
+                          <>
+                            <span className="w-2 h-2 rounded-full bg-sky-600" />
+                            <span>Mở đặt</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="w-2 h-2 rounded-full bg-amber-600" />
+                            <span>Tắt đặt</span>
                           </>
                         )}
                       </button>

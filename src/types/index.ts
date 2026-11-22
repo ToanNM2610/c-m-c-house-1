@@ -522,6 +522,7 @@ export interface DatabaseSchema {
   stories?: HighlightStory[];
   faqs?: FaqItem[];
   staticPages?: StaticPage[];
+  commerceSettings?: CommerceSettingsRecord | null;
   lastUpdated: string;
 }
 
@@ -721,6 +722,13 @@ export interface CommerceSettingsRecord {
   webhookSecret?: string | null;
   defaultFreeShipThreshold: number;
   orderNotificationEmail?: string | null;
+  enableCustomerPortal?: boolean;
+  enableNewsletter?: boolean;
+  enableQuickSupportWidget?: boolean;
+  enableSupportHotline?: boolean;
+  enableSupportZalo?: boolean;
+  enableSupportMessenger?: boolean;
+  enableSupportWhatsApp?: boolean;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }

@@ -14,12 +14,15 @@ import GlobalSearchModal from '@/components/common/GlobalSearchModal';
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { language, setLanguage, theme, toggleTheme, content } = useApp();
+  const { language, setLanguage, theme, toggleTheme, content, data } = useApp();
   const { customer, openAuthModal } = useCustomerAuth();
   const { openCart, totalCount, subtotal } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const commerceEnabled = data.commerceSettings?.commerceEnabled !== false;
+  const enableCustomerPortal = data.commerceSettings?.enableCustomerPortal !== false;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -291,41 +294,45 @@ export default function Navbar() {
             </a>
 
             {/* Customer Account Button */}
-            <button
-              onClick={() => {
-                if (customer) {
-                  router.push('/tai-khoan');
-                } else {
-                  openAuthModal('login');
-                }
-              }}
-              className="h-9 px-2.5 sm:px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs sm:text-sm font-sans flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-              title={customer ? (language === 'en' ? 'Account' : 'Tài khoản') : (language === 'en' ? 'Sign In' : 'Đăng nhập')}
-              aria-label="Tài khoản"
-            >
-              <User className="w-3.5 h-3.5 text-accent-botanical shrink-0" />
-              <span className="hidden md:inline text-xs sm:text-sm font-medium max-w-[85px] truncate">
-                {customer ? customer.fullName.split(' ').slice(-1)[0] : (language === 'en' ? 'Account' : 'Tài khoản')}
-              </span>
-            </button>
+            {enableCustomerPortal && (
+              <button
+                onClick={() => {
+                  if (customer) {
+                    router.push('/tai-khoan');
+                  } else {
+                    openAuthModal('login');
+                  }
+                }}
+                className="h-9 px-2.5 sm:px-3 rounded-full bg-forest-100 dark:bg-forest-900 border border-forest-200 dark:border-forest-700 text-ink-primary hover:text-accent-botanical transition-all shadow-xs text-xs sm:text-sm font-sans flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+                title={customer ? (language === 'en' ? 'Account' : 'Tài khoản') : (language === 'en' ? 'Sign In' : 'Đăng nhập')}
+                aria-label="Tài khoản"
+              >
+                <User className="w-3.5 h-3.5 text-accent-botanical shrink-0" />
+                <span className="hidden md:inline text-xs sm:text-sm font-medium max-w-[85px] truncate">
+                  {customer ? customer.fullName.split(' ').slice(-1)[0] : (language === 'en' ? 'Account' : 'Tài khoản')}
+                </span>
+              </button>
+            )}
 
             {/* Cart Button with Live Badge */}
-            <button
-              onClick={openCart}
-              className="relative h-9 px-3 rounded-full bg-accent-botanical text-white hover:bg-forest-800 transition-all shadow-sm text-xs sm:text-sm font-sans font-medium flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-              title={language === 'en' ? 'Shopping Cart' : 'Giỏ hàng'}
-              aria-label="Giỏ hàng"
-            >
-              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden sm:inline text-xs sm:text-sm font-semibold">
-                {language === 'en' ? 'Cart' : 'Giỏ hàng'}
-              </span>
-              {totalCount > 0 && (
-                <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[11px] font-bold bg-amber-400 text-forest-950 rounded-full font-sans shadow-xs">
-                  {totalCount}
+            {commerceEnabled && (
+              <button
+                onClick={openCart}
+                className="relative h-9 px-3 rounded-full bg-accent-botanical text-white hover:bg-forest-800 transition-all shadow-sm text-xs sm:text-sm font-sans font-medium flex items-center gap-1.5 shrink-0 whitespace-nowrap"
+                title={language === 'en' ? 'Shopping Cart' : 'Giỏ hàng'}
+                aria-label="Giỏ hàng"
+              >
+                <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline text-xs sm:text-sm font-semibold">
+                  {language === 'en' ? 'Cart' : 'Giỏ hàng'}
                 </span>
-              )}
-            </button>
+                {totalCount > 0 && (
+                  <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[11px] font-bold bg-amber-400 text-forest-950 rounded-full font-sans shadow-xs">
+                    {totalCount}
+                  </span>
+                )}
+              </button>
+            )}
 
             {/* Mobile Hamburger Drawer Button */}
             <button
@@ -421,7 +428,7 @@ export default function Navbar() {
       </header>
 
       {/* Floating Mobile Cart Bar when cart count > 0 */}
-      {totalCount > 0 && (
+      {commerceEnabled && totalCount > 0 && (
         <div className="fixed bottom-20 left-4 right-4 z-40 sm:hidden">
           <motion.div
             initial={{ opacity: 0, y: 16 }}

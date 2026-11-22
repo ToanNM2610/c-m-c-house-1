@@ -21,7 +21,13 @@ import {
   DollarSign,
   Calendar,
   Percent,
+  User,
+  Mail,
+  Headphones,
+  MessageCircle,
+  Phone,
 } from 'lucide-react';
+import { broadcastCmsSync } from '@/lib/cms-sync';
 import {
   VoucherRecord,
   ShippingZoneRecord,
@@ -71,6 +77,13 @@ export default function AdminVouchersShippingManager() {
     webhookSecret: 'camcu_sec_' + Math.random().toString(36).substring(2, 10),
     defaultFreeShipThreshold: 150000,
     orderNotificationEmail: 'camcuhouse@gmail.com',
+    enableCustomerPortal: true,
+    enableNewsletter: true,
+    enableQuickSupportWidget: true,
+    enableSupportHotline: true,
+    enableSupportZalo: true,
+    enableSupportMessenger: true,
+    enableSupportWhatsApp: true,
   });
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -341,6 +354,7 @@ export default function AdminVouchersShippingManager() {
       const json = await res.json().catch(() => ({}));
       if (res.ok && (json.success || !json.error)) {
         showToast('success', 'Đã lưu cấu hình bán hàng & cổng thanh toán');
+        broadcastCmsSync('commerce_settings');
       } else {
         showToast('error', json.error || 'Lỗi lưu cấu hình');
       }
@@ -658,20 +672,38 @@ export default function AdminVouchersShippingManager() {
                 </p>
               </div>
 
-              {/* Master toggle */}
-              <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-                <input
-                  type="checkbox"
-                  checked={settings.commerceEnabled}
-                  onChange={(e) =>
-                    setSettings({ ...settings, commerceEnabled: e.target.checked })
-                  }
-                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
-                />
-                <span className="text-xs font-bold text-white">
-                  {settings.commerceEnabled ? 'Hệ thống Bán hàng: BẬT' : 'Hệ thống Bán hàng: TẮT'}
-                </span>
-              </label>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Customer Portal Toggle */}
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={settings.enableCustomerPortal !== false}
+                    onChange={(e) =>
+                      setSettings({ ...settings, enableCustomerPortal: e.target.checked })
+                    }
+                    className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                  />
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-sky-400" />
+                    <span>{settings.enableCustomerPortal !== false ? 'Tài khoản khách: BẬT' : 'Tài khoản khách: TẮT'}</span>
+                  </span>
+                </label>
+
+                {/* Master toggle */}
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={settings.commerceEnabled}
+                    onChange={(e) =>
+                      setSettings({ ...settings, commerceEnabled: e.target.checked })
+                    }
+                    className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                  />
+                  <span className="text-xs font-bold text-white">
+                    {settings.commerceEnabled ? 'Hệ thống Bán hàng: BẬT' : 'Hệ thống Bán hàng: TẮT'}
+                  </span>
+                </label>
+              </div>
             </div>
 
             {/* Service types */}
@@ -989,6 +1021,144 @@ export default function AdminVouchersShippingManager() {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Support Channels & Floating Widget */}
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Headphones className="w-5 h-5 text-emerald-400" />
+                  <span>Nút Nổi Hỗ Trợ Nhanh Bên Suối & Kênh Liên Hệ</span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Bật/tắt nút nổi góc màn hình và từng kênh liên hệ (Hotline, Zalo, Messenger, WhatsApp) trên storefront
+                </p>
+              </div>
+
+              {/* Master Widget Toggle */}
+              <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={settings.enableQuickSupportWidget !== false}
+                  onChange={(e) =>
+                    setSettings({ ...settings, enableQuickSupportWidget: e.target.checked })
+                  }
+                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                />
+                <span className="text-xs font-bold text-white">
+                  {settings.enableQuickSupportWidget !== false ? 'Nút Nổi Hỗ Trợ: BẬT' : 'Nút Nổi Hỗ Trợ: TẮT'}
+                </span>
+              </label>
+            </div>
+
+            {/* Individual Channel Toggles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Hotline */}
+              <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-800/40 cursor-pointer hover:bg-slate-800/60 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={settings.enableSupportHotline !== false}
+                  onChange={(e) =>
+                    setSettings({ ...settings, enableSupportHotline: e.target.checked })
+                  }
+                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                />
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-accent-botanical" />
+                    <span>Hotline (0382851688)</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400">Gọi điện thoại trực tiếp</div>
+                </div>
+              </label>
+
+              {/* Zalo */}
+              <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-800/40 cursor-pointer hover:bg-slate-800/60 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={settings.enableSupportZalo !== false}
+                  onChange={(e) =>
+                    setSettings({ ...settings, enableSupportZalo: e.target.checked })
+                  }
+                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                />
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Zalo Chat</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400">Chat qua Zalo Official/Cá nhân</div>
+                </div>
+              </label>
+
+              {/* Messenger */}
+              <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-800/40 cursor-pointer hover:bg-slate-800/60 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={settings.enableSupportMessenger !== false}
+                  onChange={(e) =>
+                    setSettings({ ...settings, enableSupportMessenger: e.target.checked })
+                  }
+                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                />
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Facebook Messenger</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400">Chat qua Facebook Fanpage</div>
+                </div>
+              </label>
+
+              {/* WhatsApp */}
+              <label className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-800 bg-slate-800/40 cursor-pointer hover:bg-slate-800/60 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={settings.enableSupportWhatsApp !== false}
+                  onChange={(e) =>
+                    setSettings({ ...settings, enableSupportWhatsApp: e.target.checked })
+                  }
+                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                />
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>WhatsApp</span>
+                  </div>
+                  <div className="text-[11px] text-slate-400">Nhắn tin khách quốc tế</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Newsletter Subscription Toggle */}
+          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Mail className="w-5 h-5 text-amber-400" />
+                  <span>Bản Tin Chân Trang (Newsletter)</span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Hiển thị khung &quot;Đăng ký nhận bản tin Cẩm Cù House&quot; ở khu vực Footer trên toàn bộ trang web
+                </p>
+              </div>
+
+              <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={settings.enableNewsletter !== false}
+                  onChange={(e) =>
+                    setSettings({ ...settings, enableNewsletter: e.target.checked })
+                  }
+                  className="rounded border-slate-600 text-emerald-600 focus:ring-0"
+                />
+                <span className="text-xs font-bold text-white">
+                  {settings.enableNewsletter !== false ? 'Bản Tin Footer: BẬT' : 'Bản Tin Footer: TẮT'}
+                </span>
+              </label>
             </div>
           </div>
 

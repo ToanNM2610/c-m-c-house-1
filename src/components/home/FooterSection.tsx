@@ -95,46 +95,49 @@ export default function FooterSection() {
 
   const tagline = isEn && s.taglineEn ? s.taglineEn : s.tagline;
   const address = isEn && s.addressEn ? s.addressEn : s.address;
+  const showNewsletter = data.commerceSettings?.enableNewsletter !== false;
 
   return (
     <footer id="contact-section" className="bg-[#1A241E] text-[#EBF0EC] pt-16 sm:pt-20 pb-12 relative z-10 border-t border-forest-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Newsletter Subscription Bar */}
-        <div className="mb-14 p-6 sm:p-8 rounded-3xl bg-forest-900/80 border border-forest-750/70 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-1 text-center md:text-left max-w-md">
-            <h3 className="font-serif text-lg sm:text-xl font-bold text-white tracking-tight">
-              {isEn ? 'Join Our Ecological Sanctuary Journal' : 'Đăng Ký Nhận Bản Tin Cẩm Cù House'}
-            </h3>
-            <p className="text-xs text-forest-300 font-sans leading-relaxed">
-              {isEn
-                ? 'Receive seasonal coffee harvests, eco-sanctuary updates, and exclusive vouchers.'
-                : 'Nhận thông tin mùa hoa cẩm cù nở, bản tin sinh thái và ưu đãi món mới bên bờ suối.'}
-            </p>
-          </div>
-
-          <form onSubmit={handleSubscribeNewsletter} className="w-full md:w-auto flex flex-col sm:flex-row gap-2.5">
-            <div className="relative flex-1 sm:w-72">
-              <input
-                type="email"
-                required
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder={isEn ? 'Enter your email...' : 'Nhập địa chỉ email...'}
-                className="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-forest-400 text-sm font-sans focus:outline-none focus:border-emerald-400"
-              />
+        {showNewsletter && (
+          <div className="mb-14 p-6 sm:p-8 rounded-3xl bg-forest-900/80 border border-forest-750/70 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-1 text-center md:text-left max-w-md">
+              <h3 className="font-serif text-lg sm:text-xl font-bold text-white tracking-tight">
+                {isEn ? 'Join Our Ecological Sanctuary Journal' : 'Đăng Ký Nhận Bản Tin Cẩm Cù House'}
+              </h3>
+              <p className="text-xs text-forest-300 font-sans leading-relaxed">
+                {isEn
+                  ? 'Receive seasonal coffee harvests, eco-sanctuary updates, and exclusive vouchers.'
+                  : 'Nhận thông tin mùa hoa cẩm cù nở, bản tin sinh thái và ưu đãi món mới bên bờ suối.'}
+              </p>
             </div>
-            <button
-              type="submit"
-              disabled={newsletterStatus === 'loading'}
-              className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{isEn ? 'Subscribe' : 'Đăng ký'}</span>
-            </button>
-          </form>
-        </div>
 
-        {newsletterMessage && (
+            <form onSubmit={handleSubscribeNewsletter} className="w-full md:w-auto flex flex-col sm:flex-row gap-2.5">
+              <div className="relative flex-1 sm:w-72">
+                <input
+                  type="email"
+                  required
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder={isEn ? 'Enter your email...' : 'Nhập địa chỉ email...'}
+                  className="w-full px-4 py-3 rounded-2xl bg-white/10 border border-white/20 text-white placeholder:text-forest-400 text-sm font-sans focus:outline-none focus:border-emerald-400"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={newsletterStatus === 'loading'}
+                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 shrink-0"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>{isEn ? 'Subscribe' : 'Đăng ký'}</span>
+              </button>
+            </form>
+          </div>
+        )}
+
+        {showNewsletter && newsletterMessage && (
           <div className={`-mt-8 mb-10 p-3.5 rounded-2xl border text-xs font-mono flex items-center gap-2 ${
             newsletterStatus === 'success'
               ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300'

@@ -31,10 +31,11 @@ import { FulfillmentType, PaymentMethod, ShippingZoneRecord } from '@/types';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { language } = useApp();
+  const { language, data } = useApp();
   const isEn = language === 'en';
   const { items, subtotal, clearCart, freeShipThreshold } = useCart();
   const { customer, addresses } = useCustomerAuth();
+  const commerceEnabled = data.commerceSettings?.commerceEnabled !== false;
 
   // Step 1: Fulfillment & Customer Info
   const [fulfillmentType, setFulfillmentType] = useState<FulfillmentType>('DELIVERY');
@@ -173,7 +174,12 @@ export default function CheckoutPage() {
     e.preventDefault();
     setErrorMessage('');
 
-    if (items.length === 0) {
+    if (!commerceEnabled) {
+      setErrorMessage(isEn ? 'Online ordering is currently paused' : 'Hệ thống đặt món trực tuyến đang tạm ngưng');
+      return;
+    }
+
+  if (items.length === 0) {
       setErrorMessage(isEn ? 'Your cart is empty' : 'Giỏ hàng đang trống');
       return;
     }
@@ -239,6 +245,40 @@ export default function CheckoutPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (!commerceEnabled) {
+    return (
+      <main className="min-h-screen pt-28 pb-16 bg-paper text-ink-primary">
+        <div className="max-w-2xl mx-auto px-4 text-center py-16 space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-ink-primary">
+            {isEn ? 'Online Ordering is Currently Paused' : 'Đặt Món Trực Tuyến Tạm Ngưng'}
+          </h1>
+          <p className="text-xs text-ink-muted max-w-md mx-auto leading-relaxed">
+            {isEn
+              ? 'Our online ordering system is temporarily unavailable. Please contact our sanctuary directly via Hotline 038 285 1688 for assistance.'
+              : 'Hệ thống đặt món trực tuyến đang tạm thời ngưng nhận đơn mới. Quý khách vui lòng liên hệ trực tiếp Hotline 038 285 1688 để được hỗ trợ chu đáo nhất.'}
+          </p>
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href={isEn ? '/en/menu' : '/thuc-don'}
+              className="px-6 py-2.5 rounded-full bg-accent-botanical text-white text-xs font-semibold hover:bg-forest-800 transition-all shadow-sm"
+            >
+              {isEn ? 'View Menu' : 'Xem Thực Đơn'}
+            </Link>
+            <a
+              href="tel:0382851688"
+              className="px-6 py-2.5 rounded-full bg-forest-100 dark:bg-forest-800 text-ink-primary text-xs font-semibold hover:bg-forest-200 transition-all border border-forest-200 dark:border-forest-700"
+            >
+              Hotline: 038 285 1688
+            </a>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   if (items.length === 0) {
     return (

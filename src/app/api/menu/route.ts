@@ -49,6 +49,7 @@ export async function PATCH(req: NextRequest) {
     const {
       id,
       inStock,
+      allowOrdering,
       price,
       priceDisplay,
       customGlbUrl,
@@ -77,6 +78,7 @@ export async function PATCH(req: NextRequest) {
 
     const dataToUpdate: Record<string, unknown> = {};
     if (typeof inStock === 'boolean') dataToUpdate.inStock = inStock;
+    if (typeof allowOrdering === 'boolean') dataToUpdate.allowOrdering = allowOrdering;
     if (customGlbUrl !== undefined) dataToUpdate.customGlbUrl = customGlbUrl;
     if (photoUrl !== undefined) dataToUpdate.photoUrl = photoUrl;
     if (name !== undefined) dataToUpdate.name = name;

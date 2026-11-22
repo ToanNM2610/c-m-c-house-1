@@ -29,6 +29,7 @@ export async function GET() {
       stories,
       faqs,
       staticPages,
+      commerceSettings,
     ] = await Promise.all([
       prisma.storeSettings.findUnique({ where: { id: 'default' } }),
       prisma.siteContent.findUnique({ where: { id: 'default' } }),
@@ -51,6 +52,7 @@ export async function GET() {
         orderBy: { orderIndex: 'asc' },
       }),
       prisma.staticPage.findMany({ where: { published: true } }),
+      prisma.commerceSettings.findFirst().catch(() => null),
     ]);
 
     // Idempotent background cleanup of any legacy Acoustic FAQ item
@@ -428,6 +430,32 @@ export async function GET() {
         metaDescription: p.metaDescription,
         published: p.published,
       })),
+      commerceSettings: commerceSettings
+        ? {
+            id: commerceSettings.id,
+            commerceEnabled: commerceSettings.commerceEnabled,
+            enableDelivery: commerceSettings.enableDelivery,
+            enablePickup: commerceSettings.enablePickup,
+            enableDineInBbq: commerceSettings.enableDineInBbq,
+            enableCod: commerceSettings.enableCod,
+            enableVietQr: commerceSettings.enableVietQr,
+            enableEwallet: commerceSettings.enableEwallet,
+            enableCard: commerceSettings.enableCard,
+            bankId: commerceSettings.bankId,
+            bankAccountNo: commerceSettings.bankAccountNo,
+            bankAccountName: commerceSettings.bankAccountName,
+            vietQrTemplate: commerceSettings.vietQrTemplate,
+            defaultFreeShipThreshold: commerceSettings.defaultFreeShipThreshold,
+            orderNotificationEmail: commerceSettings.orderNotificationEmail,
+            enableCustomerPortal: commerceSettings.enableCustomerPortal,
+            enableNewsletter: commerceSettings.enableNewsletter,
+            enableQuickSupportWidget: commerceSettings.enableQuickSupportWidget,
+            enableSupportHotline: commerceSettings.enableSupportHotline,
+            enableSupportZalo: commerceSettings.enableSupportZalo,
+            enableSupportMessenger: commerceSettings.enableSupportMessenger,
+            enableSupportWhatsApp: commerceSettings.enableSupportWhatsApp,
+          }
+        : null,
       lastUpdated: new Date().toISOString(),
     };
 

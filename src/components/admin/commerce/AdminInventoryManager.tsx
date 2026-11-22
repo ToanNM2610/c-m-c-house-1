@@ -450,11 +450,11 @@ export default function AdminInventoryManager() {
                             }
                             className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all ${
                               item.allowOrdering !== false
-                                ? 'bg-sky-500/20 text-sky-300 border-sky-500/30'
-                                : 'bg-slate-800 text-slate-500 border-slate-700'
+                                ? 'bg-sky-500/20 text-sky-300 border-sky-500/30 hover:bg-sky-500/30'
+                                : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30'
                             }`}
                           >
-                            {item.allowOrdering !== false ? 'Mở đặt' : 'Ngưng đặt'}
+                            {item.allowOrdering !== false ? 'Mở đặt' : 'Tắt đặt'}
                           </button>
                         </td>
 
