@@ -522,7 +522,7 @@ export interface DatabaseSchema {
   stories?: HighlightStory[];
   faqs?: FaqItem[];
   staticPages?: StaticPage[];
-  commerceSettings?: CommerceSettingsRecord | null;
+  commerceSettings?: any | null;
   lastUpdated: string;
 }
 
@@ -573,171 +573,242 @@ export interface BlockedIpItem {
 }
 
 // ==========================================
-// E-COMMERCE SUITE & CUSTOMER TYPES
+// STANDARD EDITORIAL CMS CORE TYPES
 // ==========================================
 
-export type FulfillmentType = 'DELIVERY' | 'PICKUP' | 'DINE_IN_BBQ';
-export type PaymentMethod = 'VIETQR' | 'COD' | 'VNPAY' | 'MOMO' | 'CARD';
-export type PaymentStatus = 'UNPAID' | 'PENDING_VERIFY' | 'PAID' | 'REFUNDED' | 'FAILED';
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PREPARING' | 'SHIPPING' | 'COMPLETED' | 'CANCELLED';
-export type DiscountType = 'PERCENT' | 'FIXED' | 'FREE_SHIP';
-
-export interface CustomerSafe {
+export interface PageSection<TDataVi = any, TDataEn = any> {
   id: string;
-  email: string;
-  phone?: string | null;
-  fullName: string;
-  avatarUrl?: string | null;
-  isActive: boolean;
-  totalSpent: number;
-  orderCount: number;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
+  key: string;
+  enabled: boolean;
+  order: number;
+  layoutVariant: string;
+  dataVi: TDataVi;
+  dataEn: TDataEn;
+  imageUrl?: string;
+  showImage?: boolean;
 }
 
-export interface CustomerAddressItem {
+export interface PageConfigData {
   id: string;
-  customerId: string;
-  label: string;
-  recipientName: string;
-  phone: string;
-  addressLine: string;
-  wardDistrict: string;
-  provinceCity: string;
-  note?: string | null;
-  isDefault: boolean;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
-}
-
-export interface SelectedOptionSnapshot {
-  groupNameVi: string;
-  groupNameEn?: string;
-  labelVi: string;
-  labelEn?: string;
-  priceDelta: number;
-}
-
-export interface CartItem {
-  id: string; // unique cart entry key
-  menuItemId: string;
-  nameVi: string;
-  nameEn?: string;
-  unitPrice: number; // base price + options priceDelta
-  basePrice: number;
-  quantity: number;
-  selectedOptions?: SelectedOptionSnapshot[];
-  itemNote?: string;
-  productType?: ProductType;
-}
-
-export interface OrderItemRecord {
-  id: string;
-  orderId: string;
-  menuItemId?: string | null;
-  itemNameVi: string;
-  itemNameEn?: string | null;
-  unitPrice: number;
-  quantity: number;
-  selectedOptions?: SelectedOptionSnapshot[] | any;
-  itemNote?: string | null;
-  lineTotal: number;
-}
-
-export interface OrderRecord {
-  id: string;
-  orderCode: string;
-  customerId?: string | null;
-  customer?: CustomerSafe | null;
-  fulfillmentType: FulfillmentType;
-  scheduledTime?: string | null;
-  customerName: string;
-  customerPhone: string;
-  customerEmail?: string | null;
-  shippingAddress?: string | null;
-  customerNote?: string | null;
-  subtotal: number;
-  shippingFee: number;
-  discountAmount: number;
-  totalAmount: number;
-  voucherCode?: string | null;
-  paymentMethod: PaymentMethod;
-  paymentStatus: PaymentStatus;
-  paymentRef?: string | null;
-  paidAt?: string | Date | null;
-  orderStatus: OrderStatus;
-  adminNote?: string | null;
-  cancelReason?: string | null;
-  createdAt: string | Date;
+  pageKey: 'home' | 'about' | 'space' | 'menu' | 'reviews' | 'news' | 'contact';
+  enabled: boolean;
+  seoTitleVi: string;
+  seoTitleEn: string;
+  seoDescVi: string;
+  seoDescEn: string;
+  sections: PageSection[];
   updatedAt: string | Date;
-  items: OrderItemRecord[];
 }
 
-export interface VoucherRecord {
+export interface SiteSettingsRecord {
+  id: string;
+  brandNameVi: string;
+  brandNameEn: string;
+  taglineVi: string;
+  taglineEn: string;
+  addressVi: string;
+  addressEn: string;
+  hotline1: string;
+  hotline2: string;
+  email: string;
+  operatingHoursVi: string;
+  operatingHoursEn: string;
+  googleMapsUrl: string;
+  facebookUrl: string;
+  tiktokUrl: string;
+  youtubeUrl: string;
+  coordinates: string;
+  enableSupportWidget: boolean;
+  enableHotline: boolean;
+  hotlineNumber: string;
+  enableZalo: boolean;
+  zaloUrl: string;
+  enableMessenger: boolean;
+  messengerUrl: string;
+  enableWhatsApp: boolean;
+  whatsappUrl: string;
+  metaTitleVi: string;
+  metaTitleEn: string;
+  metaDescVi: string;
+  metaDescEn: string;
+  ogImageUrl: string;
+  ga4MeasurementId?: string | null;
+  gscVerificationCode?: string | null;
+  metaPixelId?: string | null;
+  tiktokPixelId?: string | null;
+  gmailSmtpUser?: string | null;
+  gmailSmtpPass?: string | null;
+  notificationRecipient: string;
+  rateLimitPerHour: number;
+  emergencyLockdown: boolean;
+  updatedAt: string | Date;
+}
+
+export interface GalleryPlateRecord {
   id: string;
   code: string;
-  nameVi: string;
-  nameEn?: string | null;
-  discountType: DiscountType;
-  discountValue: number;
-  maxDiscount?: number | null;
-  minOrderAmount: number;
-  usageLimit?: number | null;
-  usedCount: number;
-  startsAt?: string | Date | null;
-  expiresAt?: string | Date | null;
-  isActive: boolean;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
-}
-
-export interface ShippingZoneRecord {
-  id: string;
-  nameVi: string;
-  nameEn?: string | null;
-  fee: number;
-  freeShipThreshold?: number | null;
-  estimatedTimeVi?: string | null;
-  estimatedTimeEn?: string | null;
+  titleVi: string;
+  titleEn: string;
+  captionVi: string;
+  captionEn: string;
+  zoneTag: string;
+  imageUrl: string;
   sortOrder: number;
-  isActive: boolean;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
+  isVisible: boolean;
+  chapter: number;
+  chapterTitleVi: string;
+  chapterTitleEn: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
 
-export interface CommerceSettingsRecord {
+export type ReservationInquiryType = 'TABLE' | 'BBQ' | 'CONTACT';
+export type ReservationInquiryStatus = 'NEW' | 'CONTACTED' | 'CONFIRMED' | 'CANCELLED';
+
+export interface ReservationInquiryRecord {
   id: string;
-  commerceEnabled: boolean;
-  enableDelivery: boolean;
-  enablePickup: boolean;
-  enableDineInBbq: boolean;
-  enableCod: boolean;
-  enableVietQr: boolean;
-  enableEwallet: boolean;
-  enableCard: boolean;
-  bankId: string;
-  bankAccountNo: string;
-  bankAccountName: string;
-  vietQrTemplate: string;
-  webhookSecret?: string | null;
-  defaultFreeShipThreshold: number;
-  orderNotificationEmail?: string | null;
-  enableCustomerPortal?: boolean;
-  enableNewsletter?: boolean;
-  enableQuickSupportWidget?: boolean;
-  enableSupportHotline?: boolean;
-  enableSupportZalo?: boolean;
-  enableSupportMessenger?: boolean;
-  enableSupportWhatsApp?: boolean;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
+  type: ReservationInquiryType;
+  fullName: string;
+  phone: string;
+  email?: string | null;
+  date?: string | null;
+  time?: string | null;
+  guestCount?: number | null;
+  message: string;
+  status: ReservationInquiryStatus;
+  adminNote?: string | null;
+  ipAddress?: string | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
 
-export interface NewsletterSubscriberRecord {
+export type CustomerReviewStatus = 'PENDING' | 'APPROVED' | 'HIDDEN';
+
+export interface CustomerReviewRecord {
   id: string;
-  email: string;
-  locale: string;
+  authorName: string;
+  rating: number;
+  contentVi: string;
+  contentEn?: string | null;
+  replyVi?: string | null;
+  replyEn?: string | null;
+  status: CustomerReviewStatus;
+  isFeatured: boolean;
+  visitDate?: string | null;
+  ipAddress?: string | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface PostRecord {
+  id: string;
+  slug: string;
+  titleVi: string;
+  titleEn: string;
+  subtitleVi?: string | null;
+  subtitleEn?: string | null;
+  dateLabelVi?: string | null;
+  dateLabelEn?: string | null;
+  contentVi: string;
+  contentEn: string;
+  seoTitleVi?: string | null;
+  seoTitleEn?: string | null;
+  seoDescVi?: string | null;
+  seoDescEn?: string | null;
+  imageUrl?: string | null;
+  badgeVi?: string | null;
+  badgeEn?: string | null;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface FaqItemRecord {
+  id: string;
+  questionVi: string;
+  questionEn: string;
+  answerVi: string;
+  answerEn: string;
+  categoryVi: string;
+  categoryEn: string;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface LegalPageRecord {
+  id: string;
+  slug: string;
+  titleVi: string;
+  titleEn: string;
+  contentVi: string;
+  contentEn: string;
+  seoTitleVi?: string | null;
+  seoTitleEn?: string | null;
+  seoDescVi?: string | null;
+  seoDescEn?: string | null;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface MilestoneRecord {
+  id: string;
+  titleVi: string;
+  titleEn: string;
+  dateLabelVi: string;
+  dateLabelEn: string;
+  summaryVi: string;
+  summaryEn: string;
+  contentVi?: string | null;
+  contentEn?: string | null;
+  badgeVi?: string | null;
+  badgeEn?: string | null;
+  imageUrl?: string | null;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface TeamMemberRecord {
+  id: string;
+  nameVi: string;
+  nameEn: string;
+  roleVi: string;
+  roleEn: string;
+  bioVi: string;
+  bioEn: string;
+  avatarUrl?: string | null;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface RedirectRuleRecord {
+  id: string;
+  fromPath: string;
+  toPath: string;
+  statusCode: number;
   isActive: boolean;
+  hitCount: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface AuditLogRecord {
+  id: string;
+  action: string;
+  module: string;
+  recordId?: string | null;
+  details?: string | null;
+  userId?: string | null;
+  username?: string | null;
+  ipAddress?: string | null;
   createdAt: string | Date;
 }
 

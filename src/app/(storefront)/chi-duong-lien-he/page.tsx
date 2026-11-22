@@ -5,7 +5,6 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import { CAM_CU_HOUSE_INFO } from "@/data/camCuHouseData";
 import { useLanguage } from "@/context/LanguageContext";
-import { usePreOrder } from "@/context/PreOrderContext";
 import { trackCustomerAction, saveReservation } from "@/lib/cmsStore";
 import {
   MapPin,
@@ -33,7 +32,12 @@ import {
 export default function ContactDirectionsPage() {
   const { locale } = useLanguage();
   const isVi = locale !== "en";
-  const { items: preOrderItems, updateQuantity, removeItem, clearTray, totalItems, totalEstimatedAmount } = usePreOrder();
+  const preOrderItems: any[] = [];
+  const totalItems = 0;
+  const totalEstimatedAmount = 0;
+  const updateQuantity = (_id: string, _q: number, _variant?: string) => {};
+  const removeItem = (_id: string, _variant?: string) => {};
+  const clearTray = () => {};
 
   // Form states
   const [serviceType, setServiceType] = useState<"outdoor" | "takeaway">("outdoor");

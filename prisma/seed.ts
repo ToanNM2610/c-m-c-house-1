@@ -1,6 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { initialDbData } from '../src/lib/seedData';
-import { hashPassword } from '../src/lib/auth';
+import { PrismaClient, InquiryType, InquiryStatus, ReviewStatus } from '@prisma/client';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+
+type AdminRole = 'SUPER_ADMIN' | 'EDITOR' | 'STAFF';
 import {
   menuItemTranslations,
   spatialPlateTranslations,
@@ -11,760 +14,1267 @@ import {
 
 const prisma = new PrismaClient();
 
-const categories = [
-  { id: 'coffee', nameVi: 'Cà phê', nameEn: 'Coffee', slug: 'ca-phe', orderIndex: 1 },
-  { id: 'tea', nameVi: 'Trà & Thảo mộc', nameEn: 'Herbal Tea', slug: 'tra-thao-moc', orderIndex: 2 },
-  { id: 'smoothie', nameVi: 'Sinh tố', nameEn: 'Smoothie', slug: 'sinh-to', orderIndex: 3 },
-  { id: 'juice', nameVi: 'Nước ép', nameEn: 'Fresh Juice', slug: 'nuoc-ep', orderIndex: 4 },
-  { id: 'soda-yogurt', nameVi: 'Soda / Sữa chua', nameEn: 'Soda & Yogurt', slug: 'soda-sua-chua', orderIndex: 5 },
-  { id: 'other', nameVi: 'Thức uống khác', nameEn: 'Other Drinks', slug: 'thuc-uong-khac', orderIndex: 6 },
-  { id: 'food', nameVi: 'Đồ ăn no & Ăn vặt', nameEn: 'Food & Snacks', slug: 'do-an-vat', orderIndex: 7 },
+function hashPassword(password: string): string {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derivedKey = crypto.scryptSync(password, salt, 64);
+  return `${salt}:${derivedKey.toString('hex')}`;
+}
+
+const CATEGORIES = [
+  { id: 'coffee', nameVi: 'Cà phê', nameEn: 'Coffee', slug: 'ca-phe', sortOrder: 1 },
+  { id: 'tea', nameVi: 'Trà & Thảo mộc', nameEn: 'Herbal Tea', slug: 'tra-thao-moc', sortOrder: 2 },
+  { id: 'smoothie', nameVi: 'Sinh tố', nameEn: 'Smoothie', slug: 'sinh-to', sortOrder: 3 },
+  { id: 'juice', nameVi: 'Nước ép', nameEn: 'Fresh Juice', slug: 'nuoc-ep', sortOrder: 4 },
+  { id: 'soda-yogurt', nameVi: 'Soda / Sữa chua', nameEn: 'Soda & Yogurt', slug: 'soda-sua-chua', sortOrder: 5 },
+  { id: 'other', nameVi: 'Thức uống khác', nameEn: 'Other Drinks', slug: 'thuc-uong-khac', sortOrder: 6 },
+  { id: 'food', nameVi: 'Đồ ăn no & Ăn vặt', nameEn: 'Food & Snacks', slug: 'do-an-vat', sortOrder: 7 },
 ];
 
-const defaultPhilosophyCards = [
-  {
-    title: 'Dòng Suối Tự Nhiên Mát Lành',
-    desc: 'Bờ suối uốn lượn róc rách suốt 4 mùa mang đến hơi sương tinh khôi, xua tan cái oi bức và mệt mỏi.',
-    iconName: 'Droplets',
-  },
-  {
-    title: 'Hương Vị Bazan Đăk Nông',
-    desc: 'Hạt cà phê Robusta tuyển chọn chín mọng trên vùng đất đỏ núi lửa, rang mộc giữ trọn hương nồng đậm đà.',
-    iconName: 'Coffee',
-  },
-  {
-    title: 'Vòm Lá & Hoa Lan Cẩm Cù',
-    desc: 'Không gian ngập tràn sắc xanh sinh thái, nơi những chùm hoa Cẩm Cù bung nở dịu dàng trong nắng sớm.',
-    iconName: 'Sprout',
-  },
-];
+export async function seedDatabase() {
+  console.log('🌱 Starting clean, idempotent seed for Cẩm Cù House Editorial CMS...');
 
-async function main() {
-  console.log('Seeding Cẩm Cù House Enterprise Corporate Website & 5-Module Headless CMS...');
+  // Read raw backup json
+  const backupPath = path.resolve(process.cwd(), 'camcu_raw_backup.json');
+  let backupData: any = {};
+  if (fs.existsSync(backupPath)) {
+    backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+  }
 
-  // 1. Store Settings
-  const s = initialDbData.settings;
-  const settingsData = {
-    name: s.name,
-    tagline: s.tagline,
-    taglineEn: defaultSettingsEn.taglineEn,
-    address: s.address,
-    addressEn: defaultSettingsEn.addressEn,
-    hotlines: JSON.stringify(s.hotlines),
-    email: s.email,
-    monThuHours: s.hours.monThu,
-    monThuHoursEn: defaultSettingsEn.hoursWeekdayEn,
-    friSunHours: s.hours.friSun,
-    friSunHoursEn: defaultSettingsEn.hoursWeekendEn,
-    timezone: s.hours.timezone || 'Asia/Ho_Chi_Minh',
-    socialProof: s.socialProof,
-    socialProofEn: defaultSettingsEn.socialProofEn,
-    googleMapsUrl: s.links.googleMaps,
-    facebookUrl: s.links.facebook,
-    tiktokUrl: s.links.tiktok,
-    youtubeUrl: s.links.youtube,
-    announcement: s.announcement,
-    announcementEn: defaultSettingsEn.announcementEn,
-    footerDesc: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng. Thức uống thảo mộc và cà phê rang mộc.',
-    footerDescEn: defaultSettingsEn.footerDescEn,
-    defaultLanguage: defaultSettingsEn.defaultLanguage,
-    defaultTheme: defaultSettingsEn.defaultTheme,
-    fontPreset: 'sans-be-vietnam',
-    lightBgHex: defaultSettingsEn.lightBgHex,
-    lightAccentHex: defaultSettingsEn.lightAccentHex,
-    darkBgHex: defaultSettingsEn.darkBgHex,
-    darkAccentHex: defaultSettingsEn.darkAccentHex,
-    enableAnimations: true,
-    motionIntensity: 'VIVID',
-
-    // Module 4 Fields
-    gaMeasurementId: '',
-    gtmContainerId: 'GTM-M78P32L4',
-    gscVerification: '',
-    facebookPixelId: '',
-    tiktokPixelId: '',
-    enableQuickChat: true,
-    zaloUrl: 'https://zalo.me/0382851688',
-    messengerUrl: 'https://m.me/camcuhousedaknong',
-    quickChatPhone: '0382851688',
-    enableSocialShare: true,
-
-    // Cinematic Intro Overlay Configuration (120fps)
-    enableIntro: true,
-    introFrequency: 'SESSION',
-    introEyebrowVi: 'ĐÔNG GIA NGHĨA • LÂM ĐỒNG • HẺM 437 HÙNG VƯƠNG',
-    introEyebrowEn: 'DONG GIA NGHIA • LAM DONG • ALLEY 437 HUNG VUONG',
-    introSubtitleVi: 'Cà phê sinh thái bên bờ suối — Xanh sạch & Trong lành',
-    introSubtitleEn: 'Streamside Ecological Café — Clean & Lush Sanctuary',
-
-    // Review Showcase Configuration (Module 4)
-    reviewDisplayMode: 'AUTO_RANDOM',
-    reviewAutoIntervalSec: 6,
-  };
-
-  await prisma.storeSettings.upsert({
+  // 1. SiteSettings (Single-row global config)
+  console.log('1. Seeding SiteSettings...');
+  await prisma.siteSettings.upsert({
     where: { id: 'default' },
-    update: settingsData,
-    create: { id: 'default', ...settingsData },
+    update: {
+      brandNameVi: 'Cẩm Cù House',
+      brandNameEn: 'Cẩm Cù House',
+      taglineVi: 'Chốn dừng chân mộc mạc bên bờ suối đá',
+      taglineEn: 'A rustic eco-sanctuary along rocky streams',
+      addressVi: 'Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng (P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông cũ)',
+      addressEn: 'Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong (Former Nghia Trung Ward, Gia Nghia City, Dak Nong)',
+      hotline1: '0382 851 688',
+      hotline2: '0774 659 000',
+      email: 'thuynhu8788@gmail.com',
+      operatingHoursVi: 'T2–T5: 07:00 – 18:00 | T6–CN: 07:00 – 22:00',
+      operatingHoursEn: 'Mon–Thu: 07:00 – 18:00 | Fri–Sun: 07:00 – 22:00',
+      googleMapsUrl: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
+      facebookUrl: 'https://facebook.com/camcuhouse',
+      tiktokUrl: 'https://tiktok.com/@camcuhouse',
+      youtubeUrl: '',
+      coordinates: '11.99° N, 107.69° E',
+      enableSupportWidget: true,
+      enableHotline: true,
+      hotlineNumber: '0382851688',
+      enableZalo: true,
+      zaloUrl: 'https://zalo.me/0382851688',
+      enableMessenger: true,
+      messengerUrl: 'https://m.me/camcuhousedaknong',
+      enableWhatsApp: true,
+      whatsappUrl: 'https://wa.me/84382851688',
+      metaTitleVi: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Gia Nghĩa, Đắk Nông',
+      metaTitleEn: 'Cẩm Cù House — Streamside Eco-Sanctuary Café Dong Gia Nghia, Lam Dong',
+      metaDescVi: 'Không gian cà phê sinh thái trong lành nép bên dòng suối mát tự nhiên tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng. Cà phê rang mộc và thảo mộc xanh sạch.',
+      metaDescEn: 'Eco-coffee sanctuary beside a natural mountain stream in Dong Gia Nghia, Lam Dong. Authentic wood-roasted basalt coffee and fresh botanical teas.',
+      ogImageUrl: '/uploads/gallery/fig-01.jpg',
+      notificationRecipient: 'thuynhu8788@gmail.com',
+      rateLimitPerHour: 15,
+      emergencyLockdown: false,
+    },
+    create: {
+      id: 'default',
+      brandNameVi: 'Cẩm Cù House',
+      brandNameEn: 'Cẩm Cù House',
+      taglineVi: 'Chốn dừng chân mộc mạc bên bờ suối đá',
+      taglineEn: 'A rustic eco-sanctuary along rocky streams',
+      addressVi: 'Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng (P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông cũ)',
+      addressEn: 'Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong (Former Nghia Trung Ward, Gia Nghia City, Dak Nong)',
+      hotline1: '0382 851 688',
+      hotline2: '0774 659 000',
+      email: 'thuynhu8788@gmail.com',
+      operatingHoursVi: 'T2–T5: 07:00 – 18:00 | T6–CN: 07:00 – 22:00',
+      operatingHoursEn: 'Mon–Thu: 07:00 – 18:00 | Fri–Sun: 07:00 – 22:00',
+      googleMapsUrl: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
+      facebookUrl: 'https://facebook.com/camcuhouse',
+      tiktokUrl: 'https://tiktok.com/@camcuhouse',
+      youtubeUrl: '',
+      coordinates: '11.99° N, 107.69° E',
+      enableSupportWidget: true,
+      enableHotline: true,
+      hotlineNumber: '0382851688',
+      enableZalo: true,
+      zaloUrl: 'https://zalo.me/0382851688',
+      enableMessenger: true,
+      messengerUrl: 'https://m.me/camcuhousedaknong',
+      enableWhatsApp: true,
+      whatsappUrl: 'https://wa.me/84382851688',
+      metaTitleVi: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Gia Nghĩa, Đắk Nông',
+      metaTitleEn: 'Cẩm Cù House — Streamside Eco-Sanctuary Café Dong Gia Nghia, Lam Dong',
+      metaDescVi: 'Không gian cà phê sinh thái trong lành nép bên dòng suối mát tự nhiên tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng. Cà phê rang mộc và thảo mộc xanh sạch.',
+      metaDescEn: 'Eco-coffee sanctuary beside a natural mountain stream in Dong Gia Nghia, Lam Dong. Authentic wood-roasted basalt coffee and fresh botanical teas.',
+      ogImageUrl: '/uploads/gallery/fig-01.jpg',
+      notificationRecipient: 'thuynhu8788@gmail.com',
+      rateLimitPerHour: 15,
+      emergencyLockdown: false,
+    },
   });
-  console.log('✓ Store settings upserted');
 
-  // 2. Site Content
-  const contentData = {
-    heroEyebrow: 'BOTANICAL ECO-COFFEE & STREAMSIDE SANCTUARY',
-    heroEyebrowEn: defaultContentEn.heroEyebrowEn,
-    heroTitle: 'CẨM CÙ HOUSE',
-    heroTitleEn: defaultContentEn.heroTitleEn,
-    heroSubtitle: 'Bên Dòng Suối Mát • Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng',
-    heroSubtitleEn: defaultContentEn.heroSubtitleEn,
-    heroTagline: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng.',
-    heroTaglineEn: defaultContentEn.heroTaglineEn,
-    heroDescription: 'Tận hưởng không gian suối mát rượi quanh năm, view suối tự nhiên, hương vị cà phê muối đậm đà rang mộc bazan Đăk Nông cùng các thức uống thảo mộc lành sạch cho tâm hồn.',
-    heroDescriptionEn: defaultContentEn.heroDescriptionEn,
-    showHero3DBean: true,
-    philosophyEyebrow: 'VỀ KHÔNG GIAN BÊN SUỐI',
-    philosophyEyebrowEn: defaultContentEn.philosophyEyebrowEn,
-    philosophyTitle: 'Nơi Nhịp Thở Chậm Lại Bên Dòng Suối Tự Nhiên',
-    philosophyTitleEn: defaultContentEn.philosophyTitleEn,
-    philosophyLead: 'Giữa lòng Đông Gia Nghĩa, Lâm Đồng, Cẩm Cù House ẩn mình dưới con dốc rợp bóng cây tại Hẻm 437 Hùng Vương, nép mình bên dòng suối nhỏ chảy róc rách bốn mùa.',
-    philosophyLeadEn: defaultContentEn.philosophyLeadEn,
-    philosophyStory: 'Chúng tôi giữ lại nguyên vẹn nét hoang sơ của ghềnh đá, tán cây rừng và làn hơi nước mát lạnh để tạo nên một chốn dừng chân thanh sạch, bình yên đúng nghĩa cho bạn và người thương.',
-    philosophyStoryEn: defaultContentEn.philosophyStoryEn,
-    philosophyCards: JSON.stringify(defaultPhilosophyCards),
-    philosophyCardsEn: JSON.stringify(defaultContentEn.philosophyCardsEn),
-    brandStoryTitle: 'Hành Trình Khởi Sinh Dưới Vòm Hoa Cẩm Cù',
-    brandStoryTitleEn: defaultContentEn.brandStoryTitleEn,
-    brandStorySubtitle: 'Câu Chuyện Về Đất Đỏ Bazan, Con Suối Nhỏ & Giọt Cà Phê Mộc',
-    brandStorySubtitleEn: defaultContentEn.brandStorySubtitleEn,
-    brandStoryContent: 'Đông Gia Nghĩa, Lâm Đồng không chỉ có thiên nhiên xanh mát mà còn có những thung lũng xanh tĩnh lặng ẩn mình. Cẩm Cù House được sinh ra từ chính niềm say mê thiên nhiên và khát khao gìn giữ một khoảng trời xanh trong lành giữa lòng Đông Gia Nghĩa. Từng giàn lan Cẩm Cù bung nở những chùm hoa hình ngôi sao sáp dịu dàng soi bóng xuống dòng nước suối trong veo.',
-    brandStoryContentEn: defaultContentEn.brandStoryContentEn,
-    brandStoryPhilosophy: 'Triết lý của chúng tôi rất giản dị: "Xanh - Lành - Thuần Khiết". Mỗi ly cà phê mộc là hương vị của đất bazan núi lửa, mỗi ấm trà thảo mộc là sự chắt chiu từ hoa lá vườn nhà. Không gian ở đây không có máy lạnh ngột ngạt hay tiếng còi xe, chỉ có gió ngàn, tiếng suối reo và tiếng cười của những buổi chuyện trò ấm cúng.',
-    brandStoryPhilosophyEn: defaultContentEn.brandStoryPhilosophyEn,
-    brandStoryImageUrl: '/uploads/gallery/fig-01.jpg',
-    visionTitle: 'Tầm Nhìn & Sứ Mệnh Sinh Thái',
-    visionTitleEn: 'Ecological Vision & Mission',
-    visionDesc: 'Trở thành điểm hẹn sinh thái biểu trưng của Đông Gia Nghĩa, Lâm Đồng — nơi gìn giữ vẻ đẹp nguyên bản của dòng suối rừng và tôn vinh nông sản thảo mộc tự nhiên.',
-    visionDescEn: 'To be the premier ecological destination of Dong Gia Nghia, Lam Dong — preserving the pristine beauty of natural forest streams and celebrating wholesome organic botanicals.',
-  };
+  // 2. PageConfig (7 rows)
+  console.log('2. Seeding PageConfig (7 pages)...');
+  const pageConfigs = [
+    {
+      pageKey: 'home',
+      enabled: true,
+      seoTitleVi: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Gia Nghĩa, Đắk Nông',
+      seoTitleEn: 'Cẩm Cù House — Streamside Eco-Sanctuary Café Dong Gia Nghia, Lam Dong',
+      seoDescVi: 'Tận hưởng không gian suối mát tự nhiên bốn mùa, cà phê rang mộc bazan và thức uống thảo mộc lành sạch tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa.',
+      seoDescEn: 'Immerse in pure streamside mountain breeze, authentic wood-roasted basalt coffee, and wild botanical herbal teas.',
+      sections: [
+        {
+          id: 'hero',
+          key: 'hero',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'image-right',
+          dataVi: {
+            eyebrow: 'BOTANICAL ECO-COFFEE & STREAMSIDE SANCTUARY',
+            title: 'CẨM CÙ HOUSE',
+            subtitle: 'Bên Dòng Suối Mát • Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng',
+            tagline: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, hòa mình với thiên nhiên giữa lòng Đông Gia Nghĩa, Lâm Đồng.',
+            description: 'Tận hưởng không gian suối mát rượi quanh năm, view suối tự nhiên, hương vị cà phê muối đậm đà rang mộc bazan Đăk Nông cùng các thức uống thảo mộc lành sạch cho tâm hồn.',
+            primaryCtaText: 'Xem Thực Đơn Thảo Mộc',
+            primaryCtaLink: '/thuc-don',
+            secondaryCtaText: 'Chỉ Đường & Giờ Mở Cửa',
+            secondaryCtaLink: '/lien-he',
+          },
+          dataEn: {
+            eyebrow: 'BOTANICAL ECO-COFFEE & STREAMSIDE SANCTUARY',
+            title: 'CẨM CÙ HOUSE',
+            subtitle: 'Beside Fresh Mountain Stream • Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong',
+            tagline: 'Eco-coffee sanctuary beside a natural stream — Fresh, serene, and harmonized with rainforest nature in the heart of Dong Gia Nghia, Lam Dong.',
+            description: 'Experience year-round cool streamside breezes, natural waterfall views, authentic wood-roasted Dak Nong basalt coffee, and wholesome botanical herbal drinks.',
+            primaryCtaText: 'View Botanical Menu',
+            primaryCtaLink: '/en/menu',
+            secondaryCtaText: 'Directions & Hours',
+            secondaryCtaLink: '/en/contact',
+          },
+          imageUrl: '/uploads/gallery/fig-01.jpg',
+          showImage: true,
+        },
+        {
+          id: 'philosophy',
+          key: 'philosophy',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'cards-3',
+          dataVi: {
+            eyebrow: 'VỀ KHÔNG GIAN BÊN SUỐI',
+            title: 'Nơi Nhịp Thở Chậm Lại Bên Dòng Suối Tự Nhiên',
+            lead: 'Giữa lòng Đông Gia Nghĩa, Lâm Đồng, Cẩm Cù House ẩn mình dưới con dốc rợp bóng cây tại Hẻm 437 Hùng Vương, nép mình bên dòng suối nhỏ chảy róc rách bốn mùa.',
+            story: 'Chúng tôi giữ lại nguyên vẹn nét hoang sơ của ghềnh đá, tán cây rừng và làn hơi nước mát lạnh để tạo nên một chốn dừng chân thanh sạch, bình yên đúng nghĩa cho bạn và người thương.',
+          },
+          dataEn: {
+            eyebrow: 'ABOUT OUR STREAMSIDE SANCTUARY',
+            title: 'Where Your Breath Slows Down by the Gentle Stream',
+            lead: 'In the heart of Dong Gia Nghia, Lam Dong, Cẩm Cù House is nestled down a tree-shaded slope at Alley 437 Hung Vuong, sitting peacefully along a gentle natural stream flowing year-round.',
+            story: 'We preserve the pristine basalt rocks, rainforest canopy, and cool water mists to create a truly pure, serene haven for you and your loved ones.',
+          },
+        },
+        {
+          id: 'featuredMenu',
+          key: 'featuredMenu',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'grid-4',
+          dataVi: {
+            eyebrow: 'THỰC ĐƠN ĐẶC SẮC',
+            title: 'Thức Uống Chọn Lọc Từ Đất Núi Lửa & Vườn Thảo Mộc',
+            ctaText: 'Xem Toàn Bộ 67 Món Thực Đơn',
+            ctaLink: '/thuc-don',
+          },
+          dataEn: {
+            eyebrow: 'FEATURED TASTES',
+            title: 'Curated Drinks from Basalt Soil & Garden Botanicals',
+            ctaText: 'Explore All 67 Menu Items',
+            ctaLink: '/en/menu',
+          },
+        },
+        {
+          id: 'featuredSpace',
+          key: 'featuredSpace',
+          enabled: true,
+          order: 4,
+          layoutVariant: 'curated-slider',
+          dataVi: {
+            eyebrow: 'KHÔNG GIAN SUỐI MÁT',
+            title: 'Bản Khắc Thị Giác Bên Dòng Nước',
+            ctaText: 'Khám Phá 30 Bản Khắc Không Gian',
+            ctaLink: '/khong-gian',
+          },
+          dataEn: {
+            eyebrow: 'COOL STREAM SANCTUARY',
+            title: 'Visual Plates Along the Water',
+            ctaText: 'Explore All 30 Spatial Plates',
+            ctaLink: '/en/space',
+          },
+        },
+        {
+          id: 'reviews',
+          key: 'reviews',
+          enabled: true,
+          order: 5,
+          layoutVariant: 'review-cards',
+          dataVi: {
+            eyebrow: 'CẢM NHẬN KHÁCH QUÝ',
+            title: 'Những Lời Gửi Gắm Từ Những Chuyến Ghé Thăm',
+            subtitle: '100% Khách hàng đề xuất trải nghiệm bên suối',
+          },
+          dataEn: {
+            eyebrow: 'GENUINE GUEST REVIEWS',
+            title: 'Heartfelt Words from Streamside Visits',
+            subtitle: '100% Recommended by genuine guests',
+          },
+        },
+        {
+          id: 'events',
+          key: 'events',
+          enabled: true,
+          order: 6,
+          layoutVariant: 'list-3',
+          dataVi: {
+            eyebrow: 'NHỊP SỐNG BÊN SUỐI',
+            title: 'Hoạt Động & Mùa Vụ Hoa Nở',
+            ctaText: 'Xem Tất Cả Tin Tức & FAQ',
+            ctaLink: '/tin-tuc',
+          },
+          dataEn: {
+            eyebrow: 'STREAMSIDE HAPPENINGS',
+            title: 'Activities & Blossom Seasons',
+            ctaText: 'View All News & FAQ',
+            ctaLink: '/en/news',
+          },
+        },
+        {
+          id: 'ctaBanner',
+          key: 'ctaBanner',
+          enabled: true,
+          order: 7,
+          layoutVariant: 'banner-callout',
+          dataVi: {
+            title: 'Ghé Thăm Cẩm Cù House Cuối Tuần Này',
+            desc: 'Thưởng thức cà phê mộc bazan, lắng nghe tiếng suối reo và tận hưởng không khí trong lành nguyên bản.',
+            btnText: 'Xem Chỉ Đường (Google Maps)',
+            btnLink: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
+          },
+          dataEn: {
+            title: 'Visit Cẩm Cù House This Weekend',
+            desc: 'Savor wood-roasted basalt coffee, listen to bubbling streams, and immerse in pristine cool nature.',
+            btnText: 'Get Directions (Google Maps)',
+            btnLink: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
+          },
+        },
+      ],
+    },
+    {
+      pageKey: 'about',
+      enabled: true,
+      seoTitleVi: 'Giới Thiệu & Triết Lý Sinh Thái — Cẩm Cù House',
+      seoTitleEn: 'About Us & Ecological Vision — Cẩm Cù House',
+      seoDescVi: 'Hành trình khởi sinh dưới vòm hoa Cẩm Cù, triết lý Xanh - Lành - Thuần Khiết bên dòng suối mát Gia Nghĩa, Lâm Đồng.',
+      seoDescEn: 'The awakening journey beneath wax plant vines, and our philosophy of Green, Wholesome, Pure by the stream.',
+      sections: [
+        {
+          id: 'story',
+          key: 'story',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'editorial-split',
+          dataVi: {
+            eyebrow: 'CÂU CHUYỆN KHỞI SINH',
+            title: 'Hành Trình Khởi Sinh Dưới Vòm Hoa Cẩm Cù',
+            subtitle: 'Câu Chuyện Về Đất Đỏ Bazan, Con Suối Nhỏ & Giọt Cà Phê Mộc',
+            content: 'Đông Gia Nghĩa, Lâm Đồng không chỉ có thiên nhiên xanh mát mà còn có những thung lũng xanh tĩnh lặng ẩn mình. Cẩm Cù House được sinh ra từ chính niềm say mê thiên nhiên và khát khao gìn giữ một khoảng trời xanh trong lành giữa lòng Đông Gia Nghĩa. Từng giàn lan Cẩm Cù bung nở những chùm hoa hình ngôi sao sáp dịu dàng soi bóng xuống dòng nước suối trong veo.',
+            philosophy: 'Triết lý của chúng tôi rất giản dị: "Xanh - Lành - Thuần Khiết". Mỗi ly cà phê mộc là hương vị của đất bazan núi lửa, mỗi ấm trà thảo mộc là sự chắt chiu từ hoa lá vườn nhà. Không gian ở đây không có máy lạnh ngột ngạt hay tiếng còi xe, chỉ có gió ngàn, tiếng suối reo và tiếng cười của những buổi chuyện trò ấm cúng.',
+          },
+          dataEn: {
+            eyebrow: 'ORIGIN STORY',
+            title: 'The Awakening Journey Beneath the Wax Plant Vines',
+            subtitle: 'A Story of Basalt Soil, Gentle Streams & Pure Wood-Roasted Coffee',
+            content: 'Dong Gia Nghia, Lam Dong is blessed with pristine waterfalls and serene green valleys. Cẩm Cù House was born from our profound love for nature and a dream to preserve an untamed green haven in Dong Gia Nghia.',
+            philosophy: 'Our philosophy is simple: "Green - Wholesome - Pure". Every cup of wood-roasted coffee carries the volcanic richness of basalt soil; every herbal teapot is carefully harvested from home garden botanicals.',
+          },
+          imageUrl: '/uploads/gallery/fig-01.jpg',
+          showImage: true,
+        },
+        {
+          id: 'vision',
+          key: 'vision',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'cards-2',
+          dataVi: {
+            eyebrow: 'SỨ MỆNH & TẦM NHÌN',
+            title: 'Tầm Nhìn & Sứ Mệnh Sinh Thái',
+            desc: 'Trở thành điểm hẹn sinh thái biểu trưng của Đông Gia Nghĩa, Lâm Đồng — nơi gìn giữ vẻ đẹp nguyên bản của dòng suối rừng và tôn vinh nông sản thảo mộc tự nhiên.',
+          },
+          dataEn: {
+            eyebrow: 'VISION & MISSION',
+            title: 'Ecological Vision & Mission',
+            desc: 'To be the premier ecological destination of Dong Gia Nghia, Lam Dong — preserving the pristine beauty of natural forest streams and celebrating wholesome organic botanicals.',
+          },
+        },
+        {
+          id: 'milestones',
+          key: 'milestones',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'timeline-vertical',
+          dataVi: {
+            eyebrow: 'DẤU ẤN PHÁT TRIỂN',
+            title: 'Những Cột Mốc Đáng Nhớ',
+          },
+          dataEn: {
+            eyebrow: 'JOURNEY MILESTONES',
+            title: 'Memorable Milestones',
+          },
+        },
+        {
+          id: 'team',
+          key: 'team',
+          enabled: true,
+          order: 4,
+          layoutVariant: 'team-grid',
+          dataVi: {
+            eyebrow: 'NHỮNG NGƯỜI BẠN ĐỒNG HÀNH',
+            title: 'Đội Ngũ Phục Vụ Tận Tâm',
+          },
+          dataEn: {
+            eyebrow: 'PEOPLE BEHIND CẨM CÙ',
+            title: 'Dedicated Warm Team',
+          },
+        },
+      ],
+    },
+    {
+      pageKey: 'space',
+      enabled: true,
+      seoTitleVi: '30 Bản Khắc Không Gian Suối — Cẩm Cù House',
+      seoTitleEn: '30 Streamside Spatial Plates — Cẩm Cù House',
+      seoDescVi: 'Khám phá 30 bản khắc không gian sinh thái bên bờ suối đá: Chòi gỗ mộc, ban công suối, góc thổ cẩm và sân vườn BBQ.',
+      seoDescEn: 'Explore 30 spatial plates along our rocky stream: rustic wooden huts, stream balconies, and leafy open sanctuary.',
+      sections: [
+        {
+          id: 'intro',
+          key: 'intro',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'heading-center',
+          dataVi: {
+            eyebrow: 'BỘ SƯU TẬP KHÔNG GIAN • BẢN KHẮC THỊ GIÁC',
+            title: '30 Bản Khắc Không Gian Bên Bờ Suối Mát',
+            subtitle: 'Nơi mỗi góc quán mộc mạc ghi lại vẻ đẹp tĩnh lặng của làn nước suối và vòm lá Cẩm Cù',
+            intro: 'Khám phá trọn vẹn các bản khắc thị giác của Cẩm Cù House qua 4 phân khu: Bờ suối, Nhà gỗ, Sân vườn BBQ, và Góc trà tĩnh lặng.',
+          },
+          dataEn: {
+            eyebrow: 'SPATIAL GALLERY • CURATED VISUAL PLATES',
+            title: '30 Streamside Spatial Plates',
+            subtitle: 'Where each rustic frame captures the quiet poetry of flowing water and wax plant canopies',
+            intro: 'Explore all curated visual plates of Cẩm Cù House organized across 4 zones: Streamside, Wooden Cabins, BBQ Garden, and Tea Nook.',
+          },
+        },
+        {
+          id: 'zoneFilter',
+          key: 'zoneFilter',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'zone-tabs',
+          dataVi: {
+            allLabel: 'Tất cả 30 bản khắc',
+            zones: ['Bờ suối', 'Nhà gỗ', 'Sân vườn BBQ', 'Góc trà'],
+          },
+          dataEn: {
+            allLabel: 'All 30 visual plates',
+            zones: ['Streamside', 'Wooden Cabins', 'BBQ Garden', 'Tea Nook'],
+          },
+        },
+        {
+          id: 'galleryGrid',
+          key: 'galleryGrid',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'grid-3-col',
+          dataVi: {},
+          dataEn: {},
+        },
+        {
+          id: 'spaceCta',
+          key: 'spaceCta',
+          enabled: true,
+          order: 4,
+          layoutVariant: 'banner-callout',
+          dataVi: {
+            title: 'Bạn Muốn Đặt Chỗ Nhóm Hoặc Chụp Ảnh Bên Suối?',
+            desc: 'Không gian mở tự nhiên sẵn sàng chào đón bạn. Hãy liên hệ Hotline để quán chuẩn bị chu đáo nhất.',
+            btnText: 'Liên Hệ Hotline 038 285 1688',
+            btnLink: 'tel:0382851688',
+          },
+          dataEn: {
+            title: 'Planning a Group Visit or Streamside Photoshoot?',
+            desc: 'Our natural open sanctuary is ready to welcome you. Contact our hotline for the best preparation.',
+            btnText: 'Call Hotline 038 285 1688',
+            btnLink: 'tel:0382851688',
+          },
+        },
+      ],
+    },
+    {
+      pageKey: 'menu',
+      enabled: true,
+      seoTitleVi: 'Thực Đơn 67 Món Thảo Mộc & Cà Phê Mộc — Cẩm Cù House',
+      seoTitleEn: 'Botanical Menu 67 Items — Cẩm Cù House',
+      seoDescVi: 'Thực đơn thanh sạch 67 món: Cà phê rang củi Đắk Nông, trà thảo mộc tươi hái mỗi sáng, sinh tố trái cây và điểm tâm ấm bụng.',
+      seoDescEn: '67 pure botanical items: wood-roasted coffee, fresh herbal teas, smoothies, and wholesome morning breakfasts.',
+      sections: [
+        {
+          id: 'intro',
+          key: 'intro',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'heading-center',
+          dataVi: {
+            eyebrow: 'THỰC ĐƠN THẢO MỘC & CÀ PHÊ RANG MỘC',
+            title: 'Thực Đơn Cẩm Cù House',
+            subtitle: 'Hương Vị Bazan Đăk Nông & Thảo Mộc Thanh Mát',
+            intro: '67 món thức uống và điểm tâm được chế biến từ nông sản tự nhiên, cà phê rang củi mộc và thảo mộc tươi mát.',
+            notice: 'Phục vụ tại bàn sát suối • Không sử dụng phẩm màu hay hương liệu nhân tạo • Thảo mộc tươi hái mỗi sáng',
+          },
+          dataEn: {
+            eyebrow: 'BOTANICAL HERBAL MENU & WOOD-ROASTED COFFEE',
+            title: 'Cẩm Cù House Botanical Menu',
+            subtitle: 'Flavors of Basalt Soil & Wholesome Fresh Herbs',
+            intro: '67 drinks and artisanal breakfast dishes crafted from organic botanicals, wood-roasted coffee, and garden herbs.',
+            notice: 'Served right beside the stream • Zero artificial flavors or coloring • Fresh herbs harvested every morning',
+          },
+        },
+        {
+          id: 'categoryFilter',
+          key: 'categoryFilter',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'category-pills',
+          dataVi: {
+            allLabel: 'Tất cả 67 món',
+          },
+          dataEn: {
+            allLabel: 'All 67 items',
+          },
+        },
+        {
+          id: 'menuShowcase',
+          key: 'menuShowcase',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'editorial-list',
+          dataVi: {},
+          dataEn: {},
+        },
+        {
+          id: 'bbqBanner',
+          key: 'bbqBanner',
+          enabled: true,
+          order: 4,
+          layoutVariant: 'banner-callout',
+          dataVi: {
+            title: 'Thưởng Thức Tiệc BBQ & Cà Phê Suối',
+            desc: 'Đặt trước set tiệc BBQ bờ suối hoặc món mang về qua hotline trước 1 ngày để quán chuẩn bị tươi ngon nhất.',
+            btnText: 'Đặt BBQ Qua Hotline 038 285 1688',
+            btnLink: 'tel:0382851688',
+          },
+          dataEn: {
+            title: 'Enjoy Streamside BBQ & Coffee',
+            desc: 'Pre-order your streamside BBQ set or group orders 1 day in advance via hotline.',
+            btnText: 'Reserve BBQ via Hotline',
+            btnLink: 'tel:0382851688',
+          },
+        },
+      ],
+    },
+    {
+      pageKey: 'reviews',
+      enabled: true,
+      seoTitleVi: 'Cảm Nhận & Đánh Giá Khách Quý — Cẩm Cù House',
+      seoTitleEn: 'Genuine Guest Reviews — Cẩm Cù House',
+      seoDescVi: '100% Đề xuất từ khách ghé thăm Cẩm Cù House. Đọc cảm nhận chân thực về không gian suối và hương vị cà phê muối.',
+      seoDescEn: '100% Recommended by genuine guests visiting Cẩm Cù House beside the stream.',
+      sections: [
+        {
+          id: 'intro',
+          key: 'intro',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'heading-center',
+          dataVi: {
+            eyebrow: 'CẢM NHẬN & ĐÁNH GIÁ THỰC TẾ',
+            title: 'Những Lời Gửi Gắm Bên Dòng Suối',
+            subtitle: '100% Đề xuất từ những vị khách quý ghé thăm Cẩm Cù House',
+            intro: 'Mỗi tách cà phê, mỗi buổi chiều ngồi nghe tiếng suối là một kỷ niệm đẹp. Chúng tôi trân trọng từng chia sẻ và góp ý chân tình của bạn.',
+          },
+          dataEn: {
+            eyebrow: 'GENUINE GUEST REVIEWS & STORIES',
+            title: 'Heartfelt Words Beside the Stream',
+            subtitle: '100% Recommended by genuine guests visiting Cẩm Cù House',
+            intro: 'Every cup of coffee, every peaceful afternoon listening to the gentle brook is a cherished memory.',
+          },
+        },
+        {
+          id: 'trustMetrics',
+          key: 'trustMetrics',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'trust-banner',
+          dataVi: {
+            score: '5.0 / 5.0',
+            source: 'Đánh giá thực tế từ Google Maps Local Guides',
+          },
+          dataEn: {
+            score: '5.0 / 5.0',
+            source: 'Verified reviews from Google Maps Local Guides',
+          },
+        },
+        {
+          id: 'reviewList',
+          key: 'reviewList',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'cards-masonry',
+          dataVi: {},
+          dataEn: {},
+        },
+        {
+          id: 'submitForm',
+          key: 'submitForm',
+          enabled: true,
+          order: 4,
+          layoutVariant: 'form-box',
+          dataVi: {
+            title: 'Chia Sẻ Cảm Nhận Của Bạn',
+            desc: 'Bạn đã ghé thăm Cẩm Cù House? Hãy để lại cảm nhận của bạn để chúng tôi phục vụ ngày một chu đáo hơn!',
+          },
+          dataEn: {
+            title: 'Share Your Experience',
+            desc: 'Have you visited Cẩm Cù House? Please leave your review so we can welcome you even better!',
+          },
+        },
+      ],
+    },
+    {
+      pageKey: 'news',
+      enabled: true,
+      seoTitleVi: 'Bản Tin Sinh Thái & Giải Đáp FAQ — Cẩm Cù House',
+      seoTitleEn: 'Ecological Dispatch & FAQ — Cẩm Cù House',
+      seoDescVi: 'Cập nhật lịch trình hoa nở, hoạt động kết nối và giải đáp thắc mắc về đường đi, bãi đỗ xe tại Cẩm Cù House.',
+      seoDescEn: 'Updates on seasonal blooms, streamside activities, and answers regarding parking, directions, and hours.',
+      sections: [
+        {
+          id: 'intro',
+          key: 'intro',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'heading-center',
+          dataVi: {
+            eyebrow: 'BẢN TIN SINH THÁI & GIẢI ĐÁP',
+            title: 'Tin Tức Hoạt Động & Câu Hỏi Thường Gặp',
+            subtitle: 'Cập nhật nhịp sống bên suối và thông tin hướng dẫn chi tiết dành cho bạn',
+            intro: 'Xem lịch trình các mùa vụ hoa nở và câu trả lời cho các thắc mắc về đường đi, thực đơn, bãi đỗ xe.',
+          },
+          dataEn: {
+            eyebrow: 'ECOLOGICAL DISPATCH & FAQ',
+            title: 'Events, News & Frequently Asked Questions',
+            subtitle: 'Updates on streamside happenings and helpful guide notes for your visit',
+            intro: 'Check schedules for seasonal blooms and clear answers regarding parking, menu, and directions.',
+          },
+        },
+        {
+          id: 'postsList',
+          key: 'postsList',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'blog-cards',
+          dataVi: {
+            title: 'Tin Tức & Hoạt Động',
+          },
+          dataEn: {
+            title: 'News & Activities',
+          },
+        },
+        {
+          id: 'faqAccordion',
+          key: 'faqAccordion',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'accordion-clean',
+          dataVi: {
+            title: 'Câu Hỏi Thường Gặp',
+          },
+          dataEn: {
+            title: 'Frequently Asked Questions',
+          },
+        },
+      ],
+    },
+    {
+      pageKey: 'contact',
+      enabled: true,
+      seoTitleVi: 'Chỉ Đường, Giờ Mở Cửa & Đặt Chỗ — Cẩm Cù House',
+      seoTitleEn: 'Directions, Hours & Booking — Cẩm Cù House',
+      seoDescVi: 'Chỉ đường chi tiết tới Hẻm 437 Hùng Vương, Đông Gia Nghĩa. Đặt bàn cà phê ngắm suối hoặc đặt tiệc BBQ bên bờ suối.',
+      seoDescEn: 'Step-by-step directions to Alley 437 Hung Vuong, Dong Gia Nghia. Streamside table reservations and BBQ inquiries.',
+      sections: [
+        {
+          id: 'intro',
+          key: 'intro',
+          enabled: true,
+          order: 1,
+          layoutVariant: 'heading-center',
+          dataVi: {
+            eyebrow: 'CHỈ ĐƯỜNG & KẾT NỐI',
+            title: 'Ghé Thăm Cẩm Cù House',
+            subtitle: 'Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng (P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông cũ)',
+            intro: 'Quán nằm dưới con dốc rợp bóng cây xanh mát, chỉ cách trục đường Hùng Vương vài bước chân. Dòng suối tự nhiên uốn lượn ngay sau quán.',
+          },
+          dataEn: {
+            eyebrow: 'DIRECTIONS & GET IN TOUCH',
+            title: 'Visit Cẩm Cù House',
+            subtitle: 'Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong (Former Nghia Trung Ward, Gia Nghia City, Dak Nong)',
+            intro: 'Nestled down a tree-shaded slope just steps away from Hung Vuong street. The gentle natural stream flows right behind the café.',
+          },
+        },
+        {
+          id: 'quickInfo',
+          key: 'quickInfo',
+          enabled: true,
+          order: 2,
+          layoutVariant: 'cards-3',
+          dataVi: {},
+          dataEn: {},
+        },
+        {
+          id: 'bookingForm',
+          key: 'bookingForm',
+          enabled: true,
+          order: 3,
+          layoutVariant: 'inquiry-form',
+          dataVi: {
+            title: 'Đặt Bàn, Tiệc BBQ Hoặc Gửi Tin Nhắn',
+            desc: 'Quán phản hồi nhanh chóng qua Zalo hoặc điện thoại xác nhận trong 15 phút.',
+          },
+          dataEn: {
+            title: 'Table Booking, BBQ Reservation & Inquiries',
+            desc: 'We will confirm promptly via phone or Zalo within 15 minutes.',
+          },
+        },
+        {
+          id: 'mapSection',
+          key: 'mapSection',
+          enabled: true,
+          order: 4,
+          layoutVariant: 'full-map',
+          dataVi: {
+            title: 'Bản Đồ Chỉ Đường Trực Tiếp',
+            note: 'Từ đường Hùng Vương rẽ vào Hẻm 437, đi thẳng 50m xuống dốc có biển chỉ dẫn gỗ Cẩm Cù House. Có bãi đỗ xe ô tô và xe máy rộng rãi.',
+          },
+          dataEn: {
+            title: 'Interactive Google Map',
+            note: 'From Hung Vuong street turn into Alley 437, drive 50m down the shaded slope following wooden signs. Spacious parking available for cars and motorcycles.',
+          },
+        },
+      ],
+    },
+  ];
 
-  await prisma.siteContent.upsert({
-    where: { id: 'default' },
-    update: contentData,
-    create: { id: 'default', ...contentData },
-  });
-  console.log('✓ Site content Headless CMS upserted');
+  for (const pc of pageConfigs) {
+    await prisma.pageConfig.upsert({
+      where: { pageKey: pc.pageKey },
+      update: {
+        enabled: pc.enabled,
+        seoTitleVi: pc.seoTitleVi,
+        seoTitleEn: pc.seoTitleEn,
+        seoDescVi: pc.seoDescVi,
+        seoDescEn: pc.seoDescEn,
+        sections: pc.sections,
+      },
+      create: {
+        pageKey: pc.pageKey,
+        enabled: pc.enabled,
+        seoTitleVi: pc.seoTitleVi,
+        seoTitleEn: pc.seoTitleEn,
+        seoDescVi: pc.seoDescVi,
+        seoDescEn: pc.seoDescEn,
+        sections: pc.sections,
+      },
+    });
+  }
 
   // 3. Menu Categories
-  for (const cat of categories) {
+  console.log('3. Seeding MenuCategory (7 categories)...');
+  for (const cat of CATEGORIES) {
     await prisma.menuCategory.upsert({
       where: { id: cat.id },
       update: {
         nameVi: cat.nameVi,
         nameEn: cat.nameEn,
         slug: cat.slug,
-        orderIndex: cat.orderIndex,
+        sortOrder: cat.sortOrder,
       },
       create: {
         id: cat.id,
         nameVi: cat.nameVi,
         nameEn: cat.nameEn,
         slug: cat.slug,
-        orderIndex: cat.orderIndex,
+        sortOrder: cat.sortOrder,
       },
     });
   }
-  console.log(`✓ ${categories.length} menu categories upserted`);
 
-  // 4. Menu Items (~67 items)
-  for (const item of initialDbData.menu) {
-    const trans = menuItemTranslations[item.id];
-    const itemData = {
-      categoryId: item.categoryId,
-      name: item.name,
-      nameEn: trans?.nameEn || item.name,
-      vietnameseTitle: item.vietnameseTitle,
-      description: item.description,
-      descriptionEn: trans?.descriptionEn || item.description,
-      price: item.price,
-      priceDisplay: item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`,
-      variants: item.variants ? JSON.stringify(item.variants) : null,
-      variantsEn: trans?.variantsEn ? JSON.stringify(trans.variantsEn) : null,
-      highlight: item.highlight || null,
-      highlightEn: trans?.highlightEn || null,
-      editorialNote: item.editorialNote || null,
-      editorialNoteEn: trans?.editorialNoteEn || null,
-      moodTags: item.moodTags ? JSON.stringify(item.moodTags) : null,
-      modelType: item.modelType || 'coffee-cup',
-      customGlbUrl: item.customGlbUrl || null,
-      photoUrl: item.photoUrl || null,
-      ingredients: item.ingredients ? JSON.stringify(item.ingredients) : null,
-      inStock: item.inStock ?? true,
-      orderCount: item.orderCount || 0,
-    };
+  // 4. MenuItem (67 items)
+  console.log('4. Seeding MenuItem (67 items from raw backup)...');
+  const backupMenuItems = backupData.menu_items || [];
+  let itemIndex = 0;
+  for (const item of backupMenuItems) {
+    itemIndex++;
+    let catId = item.category === 'others' ? 'other' : item.category;
+    if (!CATEGORIES.some((c) => c.id === catId)) {
+      catId = 'other';
+    }
+
+    // Lookup translation
+    // Mapping keys: c1 -> cf-01, t1 -> tra-01, etc.
+    let translationKey = item.id;
+    if (item.id.startsWith('c')) {
+      const num = parseInt(item.id.replace('c', ''), 10);
+      translationKey = `cf-0${num}`;
+    } else if (item.id.startsWith('t')) {
+      const num = parseInt(item.id.replace('t', ''), 10);
+      translationKey = `tra-${num < 10 ? '0' : ''}${num}`;
+    } else if (item.id.startsWith('s')) {
+      const num = parseInt(item.id.replace('s', ''), 10);
+      translationKey = `st-0${num}`;
+    } else if (item.id.startsWith('j')) {
+      const num = parseInt(item.id.replace('j', ''), 10);
+      translationKey = `ne-0${num}`;
+    } else if (item.id.startsWith('sy')) {
+      const num = parseInt(item.id.replace('sy', ''), 10);
+      translationKey = `sd-0${num}`;
+    } else if (item.id.startsWith('o')) {
+      const num = parseInt(item.id.replace('o', ''), 10);
+      translationKey = `ot-0${num}`;
+    } else if (item.id.startsWith('f')) {
+      const num = parseInt(item.id.replace('f', ''), 10);
+      translationKey = `fd-${num < 10 ? '0' : ''}${num}`;
+    }
+
+    const tr = menuItemTranslations[translationKey] || {};
 
     await prisma.menuItem.upsert({
       where: { id: item.id },
-      update: itemData,
+      update: {
+        categoryId: catId,
+        sortOrder: itemIndex,
+        nameVi: item.name,
+        nameEn: tr.nameEn || item.name,
+        descVi: item.description || '',
+        descEn: tr.descriptionEn || item.description || '',
+        priceVnd: item.price || 25000,
+        priceDisplay: `${(item.price || 25000).toLocaleString('vi-VN')}đ`,
+        imageUrl: item.image || undefined,
+        isFeatured: itemIndex <= 8,
+        isAvailable: true,
+        isVisible: true,
+        badgeVi: tr.highlightEn ? 'Signature' : undefined,
+        badgeEn: tr.highlightEn || undefined,
+        editorialNoteVi: tr.editorialNoteEn ? 'Rang mộc thủ công' : undefined,
+        editorialNoteEn: tr.editorialNoteEn || undefined,
+      },
       create: {
         id: item.id,
-        ...itemData,
+        categoryId: catId,
+        sortOrder: itemIndex,
+        nameVi: item.name,
+        nameEn: tr.nameEn || item.name,
+        descVi: item.description || '',
+        descEn: tr.descriptionEn || item.description || '',
+        priceVnd: item.price || 25000,
+        priceDisplay: `${(item.price || 25000).toLocaleString('vi-VN')}đ`,
+        imageUrl: item.image || undefined,
+        isFeatured: itemIndex <= 8,
+        isAvailable: true,
+        isVisible: true,
+        badgeVi: tr.highlightEn ? 'Signature' : undefined,
+        badgeEn: tr.highlightEn || undefined,
+        editorialNoteVi: tr.editorialNoteEn ? 'Rang mộc thủ công' : undefined,
+        editorialNoteEn: tr.editorialNoteEn || undefined,
       },
     });
   }
-  console.log(`✓ ${initialDbData.menu.length} menu items upserted`);
 
-  // 5. Spatial Figures (30 figures)
-  for (const plate of initialDbData.spatialPlates) {
-    const trans = spatialPlateTranslations[plate.id];
-    const plateData = {
-      chapter: plate.chapter,
-      chapterTitleVi: plate.chapterTitleVi,
-      chapterTitleEn: trans?.chapterTitleEn || '',
-      titleVi: plate.titleVi,
-      titleEn: trans?.titleEn || '',
-      locationVi: plate.locationVi,
-      locationEn: trans?.locationEn || '',
-      descriptionVi: plate.descriptionVi,
-      descriptionEn: trans?.descriptionEn || '',
-      imageUrl: plate.imageUrl,
-      customGlbUrl: plate.customGlbUrl || null,
-      aspectRatio: plate.aspectRatio || '4/3',
-    };
+  // 5. GalleryPlate (30 spatial photos)
+  console.log('5. Seeding GalleryPlate (30 spatial photos)...');
+  const backupSpaceItems = backupData.space_items || [];
+  for (let i = 1; i <= 30; i++) {
+    const code = `FIG. ${i < 10 ? '0' : ''}${i}`;
+    const id = code;
+    const backupItem = backupSpaceItems[i - 1] || {};
+    const tr = spatialPlateTranslations[code] || {};
 
-    await prisma.spatialFigure.upsert({
-      where: { id: plate.id },
-      update: plateData,
+    let chapter = 1;
+    let chapterTitleVi = 'Chương I — Lối Nhỏ Vào Vườn';
+    let chapterTitleEn = 'Chapter I — The Wax Flower Path';
+    let zoneTag = 'Bờ suối';
+
+    if (i >= 1 && i <= 8) {
+      chapter = 1;
+      chapterTitleVi = 'Chương I — Lối Nhỏ Vào Vườn';
+      chapterTitleEn = 'Chapter I — The Wax Flower Path';
+      zoneTag = 'Góc trà';
+    } else if (i >= 9 && i <= 16) {
+      chapter = 2;
+      chapterTitleVi = 'Chương II — Bên Bờ Suối Mát';
+      chapterTitleEn = 'Chapter II — Beside the Cool Stream';
+      zoneTag = 'Bờ suối';
+    } else if (i >= 17 && i <= 24) {
+      chapter = 3;
+      chapterTitleVi = 'Chương III — Nhà Gỗ & Lửa Trại';
+      chapterTitleEn = 'Chapter III — Wooden Cabins & Campfire';
+      zoneTag = 'Nhà gỗ';
+    } else {
+      chapter = 4;
+      chapterTitleVi = 'Chương IV — Sân Vườn BBQ & Hoàng Hôn';
+      chapterTitleEn = 'Chapter IV — BBQ Garden & Twilight';
+      zoneTag = 'Sân vườn BBQ';
+    }
+
+    const titleVi = backupItem.title || tr.titleEn || `Bản khắc không gian ${code}`;
+    const titleEn = tr.titleEn || titleVi;
+    const captionVi = backupItem.description || tr.descriptionEn || `Không gian sinh thái mộc mạc tại Cẩm Cù House.`;
+    const captionEn = tr.descriptionEn || captionVi;
+    const imageUrl = `/uploads/gallery/fig-${i < 10 ? '0' : ''}${i}.jpg`;
+
+    await prisma.galleryPlate.upsert({
+      where: { code },
+      update: {
+        titleVi,
+        titleEn,
+        captionVi,
+        captionEn,
+        zoneTag,
+        imageUrl,
+        sortOrder: i,
+        isVisible: true,
+        chapter,
+        chapterTitleVi,
+        chapterTitleEn,
+      },
       create: {
-        id: plate.id,
-        ...plateData,
+        id,
+        code,
+        titleVi,
+        titleEn,
+        captionVi,
+        captionEn,
+        zoneTag,
+        imageUrl,
+        sortOrder: i,
+        isVisible: true,
+        chapter,
+        chapterTitleVi,
+        chapterTitleEn,
       },
     });
   }
-  console.log(`✓ ${initialDbData.spatialPlates.length} spatial figures upserted`);
 
-  // 6. Events
-  for (const ev of initialDbData.events) {
-    const trans = eventTranslations[ev.id];
-    const evData = {
-      title: ev.title,
-      titleEn: trans?.titleEn || '',
-      subtitle: ev.subtitle,
-      subtitleEn: trans?.subtitleEn || '',
-      dateOrSchedule: ev.dateOrSchedule,
-      dateOrScheduleEn: trans?.dateOrScheduleEn || '',
-      description: ev.description,
-      descriptionEn: trans?.descriptionEn || '',
-      badge: ev.badge,
-      badgeEn: trans?.badgeEn || '',
-      imageUrl: ev.imageUrl || null,
-      active: false, // Default sample events marked inactive
-    };
-
-    await prisma.eventPost.upsert({
-      where: { id: ev.id },
-      update: evData,
-      create: {
-        id: ev.id,
-        ...evData,
-      },
-    });
-  }
-  console.log(`✓ ${initialDbData.events.length} event posts upserted`);
-
-  // 7. Team Members (3 members)
-  const team = [
+  // 6. Post (Events & News)
+  console.log('6. Seeding Post (Events & News)...');
+  const posts = [
     {
-      id: 'team-1',
-      name: 'Ms. Thùy Như',
-      nameEn: 'Ms. Thuy Nhu',
-      role: 'Sáng Lập & Chủ Quán',
-      roleEn: 'Founder & Sanctuary Hostess',
-      bio: 'Người con của phố núi Gia Nghĩa, luôn trân quý từng dòng suối, vòm lá và khát khao tạo dựng một chốn bình yên thanh sạch cho mọi thực khách.',
-      bioEn: 'A native daughter of Gia Nghia mountain town with a deep passion for natural preservation and warm botanical hospitality.',
-      avatarUrl: '/images/team-nhu.jpg',
-      orderIndex: 1,
-      active: true,
+      slug: 'mua-hoa-cam-cu-no-ro',
+      titleVi: 'Mùa Hoa Cẩm Cù Nở Rộ Bên Dòng Suối Mát',
+      titleEn: 'Wax Flowers in Full Bloom Beside the Stream',
+      subtitleVi: 'Khám phá sắc hoa ngôi sao sáp tuyệt đẹp bung nở trong nắng sớm',
+      subtitleEn: 'Admire the porcelain star blossoms glistening in early sunlight',
+      dateLabelVi: 'Tháng 4 – Tháng 8 hàng năm',
+      dateLabelEn: 'April – August yearly',
+      contentVi: 'Mỗi năm khi tiết trời sang hạ, những giàn lan Cẩm Cù tại quán lại đồng loạt kết nụ và bung nở những chùm hoa hình ngôi sao sáp tinh xảo. Hương thơm thoang thoảng dịu nhẹ hòa quyện cùng làn hơi nước mát lạnh từ bờ suối tạo nên bầu không khí thư thái vô ngần.',
+      contentEn: 'Every summer, the wax flower canopies burst into clusters of porcelain star blooms. The delicate fragrance blends with cool stream mists to produce an unforgettably tranquil ambiance.',
+      badgeVi: 'Mùa vụ',
+      badgeEn: 'Seasonal',
+      imageUrl: '/uploads/gallery/fig-03.jpg',
+      sortOrder: 1,
     },
     {
-      id: 'team-2',
-      name: 'Nguyễn Tuấn Anh',
-      nameEn: 'Tuan Anh Nguyen',
-      role: 'Trưởng Pha Chế & Kỹ Thuật Rang',
-      roleEn: 'Head Barista & Wood-Roast Artisan',
-      bio: 'Hơn 8 năm tâm huyết cùng hạt Robusta bản địa Đăk Nông, nắm giữ bí quyết rang củi mộc đậm đà chuẩn vị bazan.',
-      bioEn: 'Over 8 years mastering indigenous Dak Nong Robusta and traditional wood-roasting secrets.',
-      avatarUrl: '/images/team-anh.jpg',
-      orderIndex: 2,
-      active: true,
+      slug: 'ca-phe-rang-moc-cui-truyen-thong',
+      titleVi: 'Hương Vị Cà Phê Mộc Rang Củi Bazan Đắk Nông',
+      titleEn: 'Wood-Roasted Basalt Coffee Heritage',
+      subtitleVi: 'Giữ trọn hương vị nguyên bản của hạt cà phê Robusta chín mọng',
+      subtitleEn: 'Preserving the raw integrity of ripe highland Robusta beans',
+      dateLabelVi: 'Phục vụ hàng ngày',
+      dateLabelEn: 'Served Daily',
+      contentVi: 'Tại Cẩm Cù House, từng mẻ cà phê được tuyển chọn từ những cây cà phê Robusta lâu năm trên vùng đất đỏ núi lửa Gia Nghĩa. Hạt được rang bằng củi cà phê khô theo phương pháp thủ công, không tẩm ướp bơ hay hương liệu nhân tạo, đem lại vị đắng thanh thoát và hậu ngọt dài lâu.',
+      contentEn: 'Each coffee batch is handpicked from mature highland trees in volcanic soil. Wood roasting without additives preserves an intense earthy sweetness.',
+      badgeVi: 'Đặc sản',
+      badgeEn: 'Specialty',
+      imageUrl: '/uploads/gallery/fig-05.jpg',
+      sortOrder: 2,
     },
     {
-      id: 'team-3',
-      name: 'Lê Thị Mai',
-      nameEn: 'Mai Le',
-      role: 'Chuyên Viên Thảo Mộc & Ẩm Thực',
-      roleEn: 'Botanical Herbalist & Nutritionist',
-      bio: 'Chăm chút tỉ mỉ từng mẻ hoa đu đủ đực chưng mật ong, trà thảo mộc tươi mát và công thức nước ép thanh lọc cơ thể.',
-      bioEn: 'Specializes in home-garden herbal infusions, forest honey steamed papaya blossoms, and green cleanse juices.',
-      avatarUrl: '/images/team-mai.jpg',
-      orderIndex: 3,
-      active: true,
+      slug: 'tiec-bbq-lua-trai-ben-suoi',
+      titleVi: 'Tiệc BBQ & Lửa Trại Gia Đình Bên Bờ Suối',
+      titleEn: 'Streamside BBQ & Campfire Gatherings',
+      subtitleVi: 'Không gian ấm cúng cho các buổi sum họp cuối tuần',
+      subtitleEn: 'Cozy weekend gatherings around glowing campfires',
+      dateLabelVi: 'Thứ 6 – Chủ Nhật',
+      dateLabelEn: 'Fri – Sun Evenings',
+      contentVi: 'Khi hoàng hôn buông xuống thung lũng, ánh lửa bập bùng cùng hương thơm của các món nướng mộc mạc bên bờ suối mang đến cảm giác ấm áp và gắn kết. Vui lòng liên hệ trước ít nhất 1 ngày để quán chuẩn bị chu đáo nhất.',
+      contentEn: 'As twilight settles over the valley, golden campfires and streamside BBQ aromas offer the perfect setting for family reunions.',
+      badgeVi: 'Trải nghiệm',
+      badgeEn: 'Experience',
+      imageUrl: '/uploads/gallery/fig-12.jpg',
+      sortOrder: 3,
     },
   ];
 
-  for (const m of team) {
-    await prisma.teamMember.upsert({
-      where: { id: m.id },
-      update: m,
-      create: m,
+  for (const p of posts) {
+    await prisma.post.upsert({
+      where: { slug: p.slug },
+      update: {
+        titleVi: p.titleVi,
+        titleEn: p.titleEn,
+        subtitleVi: p.subtitleVi,
+        subtitleEn: p.subtitleEn,
+        dateLabelVi: p.dateLabelVi,
+        dateLabelEn: p.dateLabelEn,
+        contentVi: p.contentVi,
+        contentEn: p.contentEn,
+        badgeVi: p.badgeVi,
+        badgeEn: p.badgeEn,
+        imageUrl: p.imageUrl,
+        sortOrder: p.sortOrder,
+        published: true,
+      },
+      create: {
+        slug: p.slug,
+        titleVi: p.titleVi,
+        titleEn: p.titleEn,
+        subtitleVi: p.subtitleVi,
+        subtitleEn: p.subtitleEn,
+        dateLabelVi: p.dateLabelVi,
+        dateLabelEn: p.dateLabelEn,
+        contentVi: p.contentVi,
+        contentEn: p.contentEn,
+        badgeVi: p.badgeVi,
+        badgeEn: p.badgeEn,
+        imageUrl: p.imageUrl,
+        sortOrder: p.sortOrder,
+        published: true,
+      },
     });
   }
-  console.log(`✓ ${team.length} team members upserted`);
 
-  // 8. Highlight Stories (4 stories)
-  const stories = [
-    {
-      id: 'story-1',
-      title: 'Đêm Nhạc Acoustic Mộc Bên Bờ Suối Tự Nhiên',
-      titleEn: 'Streamside Acoustic Live Music Nights',
-      category: 'Sự kiện',
-      categoryEn: 'Events',
-      date: 'Thứ Bảy hàng tuần',
-      dateEn: 'Every Saturday evening',
-      summary: 'Không gian ấm cúng dưới ánh đèn vàng, tiếng suối reo hòa cùng tiếng đàn guitar mộc mạc mang đến những phút giây lắng đọng.',
-      summaryEn: 'Gentle golden lanterns, babbling water, and soothing acoustic guitar melodies creating unforgettable weekend memories.',
-      content: 'Chương trình diễn ra từ 19:30 đến 21:30 tối Thứ Bảy hàng tuần. Quán không phụ thu bất kỳ chi phí vé nào, nhằm tạo nên không gian giao lưu âm nhạc mộc mạc cho cộng đồng yêu thích vẻ đẹp tự nhiên.',
-      contentEn: 'Every Saturday 19:30 - 21:30. Free admission and no surcharge, creating an intimate musical sanctuary by the stream.',
-      imageUrl: '/images/acoustic-night.jpg',
-      badge: 'Cuối tuần',
-      badgeEn: 'Weekend Live',
-      orderIndex: 1,
-      published: false,
-    },
-    {
-      id: 'story-2',
-      title: 'Mùa Bơ Sáp Đăk Nông & Nông Sản Bản Địa',
-      titleEn: 'Dak Nong Wax Avocado Harvest Season',
-      category: 'Mùa vụ',
-      categoryEn: 'Harvest',
-      date: 'Tháng 05 – Tháng 09',
-      dateEn: 'May – September',
-      summary: 'Từng quả bơ sáp chín cây từ các nhà vườn Gia Nghĩa được tuyển chọn tươi mới mỗi sáng sớm, mang đến vị béo ngậy tự nhiên.',
-      summaryEn: 'Tree-ripened creamy wax avocados selected fresh daily from local Gia Nghia organic orchards.',
-      content: 'Đăk Nông vốn nổi danh là thủ phủ bơ sáp với chất lượng dẻo béo khó nơi nào sánh kịp. Cẩm Cù House tự hào kết hợp bơ sáp cùng sữa chua nhà làm và sầu riêng nguyên chất tạo nên những ly sinh tố đậm đà khó quên.',
-      contentEn: 'Dak Nong is celebrated for creamy avocados. Combined with house yogurt and fresh durian for unmatched taste.',
-      imageUrl: '/images/avocado-story.jpg',
-      badge: 'Mùa vụ',
-      badgeEn: 'Harvest',
-      orderIndex: 2,
-      published: false,
-    },
-    {
-      id: 'story-3',
-      title: 'Góc Suối Đá Cuội Tự Nhiên & 18 Bàn View Nước',
-      titleEn: 'Natural River Stone Stream & 18 Waterfront Tables',
-      category: 'Không gian',
-      categoryEn: 'Sanctuary',
-      date: 'Quanh năm',
-      dateEn: 'Year-round',
-      summary: 'Những tảng đá cuội bazan được hình thành qua hàng nghìn năm, tạo nên ghềnh suối mát rượi 3–4°C thấp hơn phố xá.',
-      summaryEn: 'Ancient basalt boulders creating pristine natural cascades 3–4°C cooler than city streets.',
-      content: 'Hệ sinh thái tự nhiên quanh suối được giữ gìn nguyên vẹn với 18 bàn gỗ mộc kê sát mép nước. Khách có thể chạm tay vào làn nước trong vắt và tận hưởng làn gió mát lành tự nhiên bốn mùa.',
-      contentEn: 'Pristine riparian ecosystem preserved with 18 wooden tables right on the stream edge.',
-      imageUrl: '/images/stream-story.jpg',
-      badge: 'Sinh thái',
-      badgeEn: 'Eco-Living',
-      orderIndex: 3,
-      published: false,
-    },
-    {
-      id: 'story-4',
-      title: 'Vòm Hoa Cẩm Cù Nở Rộ Bên Thác Nước Nhỏ',
-      titleEn: 'Porcelain Wax Flowers Blooming Over Streamside',
-      category: 'Thiên nhiên',
-      categoryEn: 'Botanical',
-      date: 'Mùa xuân & Hè',
-      dateEn: 'Spring & Summer',
-      summary: 'Biểu tượng của tình yêu bền bỉ và sức sống mãnh liệt, hoa Cẩm Cù bung nở những chùm sao sáp thơm dịu dàng.',
-      summaryEn: 'Symbol of resilient love and vitality, star-shaped wax flowers bloom gracefully over water.',
-      content: 'Những giàn hoa Cẩm Cù được bàn tay gia đình chăm sóc tỉ mỉ từng ngày, leo phủ trên những khung gỗ mộc và soi bóng xuống dòng suối mát lành.',
-      contentEn: 'Carefully nurtured wax flowers climbing over rustic wooden trellises reflected in crystal stream water.',
-      imageUrl: '/images/camcu-bloom.jpg',
-      badge: 'Đặc trưng',
-      badgeEn: 'Signature',
-      orderIndex: 4,
-      published: false,
-    },
-  ];
-
-  for (const st of stories) {
-    await prisma.highlightStory.upsert({
-      where: { id: st.id },
-      update: st,
-      create: st,
-    });
-  }
-  console.log(`✓ ${stories.length} highlight stories upserted (marked unpublished by default)`);
-
-  // 9. Customer Reviews: ZERO fake/sample reviews seeded. All reviews must be real organic submissions.
-  // Clean up any historical fake seeded reviews (rev-1 to rev-8)
-  await prisma.guestComment.deleteMany({
-    where: {
-      OR: [
-        { id: { startsWith: 'rev-' } },
-        { authorName: { in: ['Nguyễn Hoài An', 'Trần Quốc Bảo', 'Lê Thị Kim Ngân', 'Đặng Minh Trí', 'Vũ Phương Linh', 'Huỳnh Văn Đông', 'Bùi Thanh Hương', 'Hoàng Đức Nam'] } },
-      ],
-    },
-  });
-  console.log('✓ Cleaned up fake/sample guest reviews from database');
-
-  // 10. FAQs across 4 categories (7 items)
-  // Clean up any legacy Acoustic Night FAQ permanently
-  await prisma.faqItem.deleteMany({
-    where: {
-      OR: [
-        { id: 'faq-5' },
-        { question: { contains: 'Đêm nhạc Acoustic' } },
-        { questionEn: { contains: 'Acoustic Live sessions' } },
-      ],
-    },
-  });
-
+  // 7. FaqItem (4 items)
+  console.log('7. Seeding FaqItem...');
   const faqs = [
     {
       id: 'faq-1',
-      question: 'Quán có chỗ đậu xe ô tô và xe máy không?',
-      questionEn: 'Is parking available for cars and motorbikes?',
-      answer: 'Có. Quán có bãi đậu xe máy và bãi đậu ô tô rộng rãi, an ninh ngay trước cổng quán. Bạn chỉ cần men theo Hẻm 437 Hùng Vương xuống con dốc rợp bóng cây là vào tận nơi.',
-      answerEn: 'Yes, spacious and free parking for both cars and motorbikes is available right at the sanctuary gate.',
-      category: 'Đường đi & Đỗ xe',
+      questionVi: 'Đường vào Cẩm Cù House như thế nào? Xe ô tô có vào được không?',
+      questionEn: 'How are the directions to Cẩm Cù House? Can cars enter?',
+      answerVi: 'Quán nằm tại Hẻm 437 Hùng Vương, P. Nghĩa Trung, TP. Gia Nghĩa. Đường hẻm bê tông rộng rãi, xe ô tô 4-16 chỗ vào thẳng tận sân quán và có bãi đỗ xe quay đầu thoải mái.',
+      answerEn: 'The café is at Alley 437 Hung Vuong. Wide concrete road allows 4-16 seater cars to drive directly into our spacious parking courtyard.',
+      categoryVi: 'Đường đi & Đỗ xe',
       categoryEn: 'Directions & Parking',
-      orderIndex: 1,
-      published: true,
+      sortOrder: 1,
     },
     {
       id: 'faq-2',
-      question: 'Đường vào quán có dốc khó đi không?',
-      questionEn: 'Is the road leading down to the stream steep or difficult?',
-      answer: 'Hẻm 437 Hùng Vương là con dốc thoai thoải rợp bóng mát, đã được trải bê tông kiên cố và bằng phẳng. Xe tay ga và ô tô 4–7 chỗ đều di chuyển an toàn, êm ái.',
-      answerEn: 'Alley 437 Hung Vuong is a gentle, fully paved road with lush shade. Both scooters and cars navigate comfortably.',
-      category: 'Đường đi & Đỗ xe',
-      categoryEn: 'Directions & Parking',
-      orderIndex: 2,
-      published: true,
+      questionVi: 'Cẩm Cù House có phục vụ đồ ăn sáng và ăn trưa không?',
+      questionEn: 'Does Cẩm Cù House serve breakfast and lunch?',
+      answerVi: 'Có. Quán phục vụ điểm tâm sáng như Bò kho bánh mì, Bánh mì ốp la xúc xích, Mì Ý bò bằm và nhiều món ăn vặt phong phú suốt ngày.',
+      answerEn: 'Yes. We serve breakfast and light lunch including Beef Stew Bread, sunny-side eggs with sausage, pasta, and wholesome snacks.',
+      categoryVi: 'Thực đơn xanh sạch',
+      categoryEn: 'Wholesome Menu',
+      sortOrder: 2,
     },
     {
       id: 'faq-3',
-      question: 'Quán phục vụ những loại đồ uống nào đặc sắc nhất?',
-      questionEn: 'What are the top signature drinks at Cẩm Cù House?',
-      answer: 'Những món được yêu thích nhất gồm: Cà phê muối Đăk Nông, Cà phê dừa xay, Trà hoa đu đủ đực mật ong rừng, Sinh tố bơ sáp Đăk Nông và Nước ép cải Kale xanh sạch.',
-      answerEn: 'Favorites include Salted Cream Coffee, Coconut Coffee, Male Papaya Blossom Forest Honey Tea, and Dak Nong Avocado Smoothie.',
-      category: 'Thực đơn xanh sạch',
-      categoryEn: 'Botanical Menu',
-      orderIndex: 3,
-      published: true,
+      questionVi: 'Giờ mở cửa của quán như thế nào?',
+      questionEn: 'What are the operating hours of the café?',
+      answerVi: 'Quán mở cửa từ Thứ 2 đến Thứ 5: 07:00 – 18:00; Thứ 6 đến Chủ Nhật: 07:00 – 22:00.',
+      answerEn: 'Monday to Thursday: 07:00 – 18:00; Friday to Sunday: 07:00 – 22:00.',
+      categoryVi: 'Giờ mở cửa',
+      categoryEn: 'Operating Hours',
+      sortOrder: 3,
     },
     {
       id: 'faq-4',
-      question: 'Cà phê của quán là loại cà phê gì?',
-      questionEn: 'What kind of coffee beans are used?',
-      answer: '100% hạt Robusta bản địa Đăk Nông sinh trưởng trên đất đỏ núi lửa bazan giàu khoáng chất, được rang củi mộc theo bí quyết truyền thống, không tẩm ướp hương liệu.',
-      answerEn: '100% indigenous Dak Nong Robusta beans grown on volcanic basalt soil, traditionally wood-roasted without artificial flavorings.',
-      category: 'Thực đơn xanh sạch',
-      categoryEn: 'Botanical Menu',
-      orderIndex: 4,
-      published: true,
-    },
-    {
-      id: 'faq-6',
-      question: 'Giờ mở cửa đón khách của quán như thế nào?',
-      questionEn: 'What are the sanctuary operating hours?',
-      answer: 'Thứ Hai đến Thứ Năm quán mở từ 07:00 đến 18:00. Thứ Sáu, Thứ Bảy và Chủ Nhật quán mở muộn ngắm suối đêm đến 22:00.',
-      answerEn: 'Monday to Thursday: 07:00 - 18:00. Friday to Sunday: 07:00 - 22:00 for evening night stream views.',
-      category: 'Giờ mở cửa',
-      categoryEn: 'Operating Hours',
-      orderIndex: 5,
-      published: true,
-    },
-    {
-      id: 'faq-7',
-      question: 'Quán có nhận đặt đồ uống mang về (takeaway) không?',
-      questionEn: 'Can I order drinks ahead for takeaway?',
-      answer: 'Có. Bạn có thể gọi trực tiếp qua 2 hotline: 0382 851 688 hoặc 0774 659 000 để quán chuẩn bị sẵn đồ uống khi bạn ghé lấy.',
-      answerEn: 'Yes! Call hotlines 0382 851 688 or 0774 659 000 in advance for prompt takeaway preparation.',
-      category: 'Họp nhóm & Mang về',
-      categoryEn: 'Gatherings & Takeaway',
-      orderIndex: 6,
-      published: true,
-    },
-    {
-      id: 'faq-8',
-      question: 'Quán có không gian dành cho gia đình và nhóm đông người không?',
-      questionEn: 'Is there suitable seating for large groups or families?',
-      answer: 'Quán có 18 bàn view suối và các khu bàn dài rợp bóng cây dưới tán rừng, rất phù hợp cho họp mặt gia đình, bạn bè hoặc nhóm từ 10 đến 25 người.',
-      answerEn: 'Yes, with 18 streamside tables and long wooden banquet setups, we comfortably accommodate groups of 10 to 25 guests.',
-      category: 'Họp nhóm & Mang về',
-      categoryEn: 'Gatherings & Takeaway',
-      orderIndex: 7,
-      published: true,
+      questionVi: 'Tôi muốn tổ chức tiệc BBQ hoặc họp nhóm thì cần liên hệ thế nào?',
+      questionEn: 'How can I book streamside BBQ or private group gatherings?',
+      answerVi: 'Vui lòng liên hệ Hotline 038 285 1688 hoặc nhắn Zalo trước ít nhất 1 ngày để quán chuẩn bị không gian và nguyên liệu tươi ngon nhất.',
+      answerEn: 'Please contact our Hotline 038 285 1688 or Zalo at least 1 day in advance for optimal preparation.',
+      categoryVi: 'Họp nhóm & Đặt tiệc',
+      categoryEn: 'Groups & BBQ',
+      sortOrder: 4,
     },
   ];
 
-  for (const f of faqs) {
+  for (const faq of faqs) {
     await prisma.faqItem.upsert({
-      where: { id: f.id },
-      update: f,
-      create: f,
+      where: { id: faq.id },
+      update: {
+        questionVi: faq.questionVi,
+        questionEn: faq.questionEn,
+        answerVi: faq.answerVi,
+        answerEn: faq.answerEn,
+        categoryVi: faq.categoryVi,
+        categoryEn: faq.categoryEn,
+        sortOrder: faq.sortOrder,
+        published: true,
+      },
+      create: {
+        id: faq.id,
+        questionVi: faq.questionVi,
+        questionEn: faq.questionEn,
+        answerVi: faq.answerVi,
+        answerEn: faq.answerEn,
+        categoryVi: faq.categoryVi,
+        categoryEn: faq.categoryEn,
+        sortOrder: faq.sortOrder,
+        published: true,
+      },
     });
   }
-  console.log(`✓ ${faqs.length} FAQs upserted`);
 
-  // 11. Static Legal Pages (3 pages)
-  const staticPages = [
+  // 8. LegalPage
+  console.log('8. Seeding LegalPage...');
+  const legalPages = [
     {
-      id: 'page-1',
       slug: 'chinh-sach-bao-mat',
-      title: 'Chính Sách Bảo Mật Thông Tin Khách Hàng',
-      titleEn: 'Privacy & Customer Data Protection Policy',
-      content: `### 1. Thu thập thông tin\nCẩm Cù House cam kết bảo mật tuyệt đối các thông tin cá nhân của quý khách (bao gồm tên, số điện thoại, email) khi quý khách liên hệ, gửi đánh giá hoặc tư vấn dịch vụ.\n\n### 2. Mục đích sử dụng\nThông tin chỉ được sử dụng cho mục đích: giải đáp thắc mắc, phản hồi tư vấn, và nâng cao chất lượng trải nghiệm tại quán. Chúng tôi cam đoan không bán, chia sẻ hoặc cung cấp thông tin cho bất kỳ bên thứ ba nào vì mục đích thương mại.\n\n### 3. Quyền của khách hàng\nQuý khách có quyền yêu cầu cập nhật, chỉnh sửa hoặc xóa vĩnh viễn thông tin liên hệ của mình bất kỳ lúc nào qua email thuynhu8788@gmail.com hoặc hotline 0382 851 688.`,
-      contentEn: `### 1. Data Collection\nCam Cu House strictly protects personal data (name, phone, email) submitted through contact forms or feedback.\n\n### 2. Purpose of Use\nData is exclusively used for guest support, feedback resolution, and sanctuary experience enhancement. Never sold or shared with third parties.\n\n### 3. Your Rights\nYou may request update or deletion of your contact information at any time via thuynhu8788@gmail.com or 0382 851 688.`,
-      metaTitle: 'Chính Sách Bảo Mật — Cẩm Cù House',
-      metaDescription: 'Cam kết bảo mật thông tin khách hàng tuyệt đối tại Cẩm Cù House Đông Gia Nghĩa, Lâm Đồng.',
-      published: true,
+      titleVi: 'Chính Sách Bảo Mật Thông Tin',
+      titleEn: 'Privacy Policy',
+      contentVi: 'Cẩm Cù House cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng khi gửi yêu cầu liên hệ hoặc đặt bàn tại website camcuhouse.online. Chúng tôi chỉ sử dụng thông tin để xác nhận lịch hẹn và nâng cao chất lượng dịch vụ, không chia sẻ cho bất kỳ bên thứ ba nào.',
+      contentEn: 'Cẩm Cù House is committed to safeguarding personal information submitted via camcuhouse.online. We use your details solely for confirmation and customer care.',
+      sortOrder: 1,
     },
     {
-      id: 'page-2',
       slug: 'dieu-khoan-su-dung',
-      title: 'Điều Khoản Dịch Vụ & Sử Dụng Website',
-      titleEn: 'Terms of Service & Website Usage',
-      content: `### 1. Giới thiệu chung\nWebsite camcuhouse.vn là trang thông tin chính thức của Cẩm Cù House — Cà phê sinh thái bên bờ suối Đông Gia Nghĩa, Lâm Đồng. Mọi nội dung, hình ảnh thực đơn và bài viết đều thuộc quyền sở hữu của Cẩm Cù House.\n\n### 2. Quyền sở hữu trí tuệ\nMọi hình ảnh 30 góc không gian (FIG. 01 – FIG. 30), hình ảnh hoa Cẩm Cù và tư liệu sự kiện không được sao chép cho mục đích thương mại khi chưa có sự đồng ý bằng văn bản của chúng tôi.\n\n### 3. Giá cả & Thực đơn\nBảng giá và danh mục thực đơn được cập nhật trực tiếp theo thời gian thực từ hệ thống quản lý quán. Giá hiển thị bằng Việt Nam Đồng (VND) đã bao gồm thuế và không có bất kỳ phí ẩn nào.`,
-      contentEn: `### 1. General Terms\nOfficial website of Cam Cu House ecological cafe in Dong Gia Nghia, Lam Dong. All media and text are protected.\n\n### 2. Intellectual Property\n30 Spatial plates (FIG. 01 - 30) and branding media cannot be duplicated for commercial intent without prior consent.\n\n### 3. Pricing Transparency\nTransparent VND prices directly synchronized from our live headless CMS without hidden surcharges.`,
-      metaTitle: 'Điều Khoản Sử Dụng — Cẩm Cù House',
-      metaDescription: 'Điều khoản sử dụng dịch vụ và thông tin minh bạch tại Cẩm Cù House.',
-      published: true,
-    },
-    {
-      id: 'page-3',
-      slug: 'noi-quy-khong-gian',
-      title: 'Nội Quy Không Gian Sinh Thái Bên Bờ Suối',
-      titleEn: 'Sanctuary Environmental Guidelines',
-      content: `### 1. Giữ gìn vệ sinh dòng suối và cây xanh\nVì một môi trường xanh sạch và trong lành, quý khách vui lòng không vứt rác, tàn thuốc xuống dòng suối hay bồn cây hoa Cẩm Cù. Thùng rác được bố trí đầy đủ tại các phân khu.\n\n### 2. An toàn bên bờ suối\nDòng suối tự nhiên có ghềnh đá trơn trượt mùa mưa. Quý khách vui lòng lưu ý khi di chuyển sát mép nước và trông chừng các em nhỏ.\n\n### 3. Trật tự và không gian thư giãn\nCẩm Cù House là chốn dừng chân bình yên để lắng nghe tiếng suối và hòa mình vào thiên nhiên. Xin quý khách giữ âm lượng vừa phải, không sử dụng loa kéo cá nhân.`,
-      contentEn: `### 1. Stream & Botanical Preservation\nPlease do not discard trash or cigarette butts into the natural stream or wax flower planters. Dedicated bins are placed throughout.\n\n### 2. Streamside Safety\nNatural river stones can be slippery. Please take care when walking near the water edge and supervise small children.\n\n### 3. Peaceful Atmosphere\nA sanctuary to enjoy tranquil water and forest whispers. Please keep conversational volume moderate and refrain from personal portable loudspeakers.`,
-      metaTitle: 'Nội Quy Không Gian — Cẩm Cù House',
-      metaDescription: 'Nội quy giữ gìn vệ sinh sinh thái và an toàn bên bờ suối tại Cẩm Cù House Đông Gia Nghĩa, Lâm Đồng.',
-      published: true,
+      titleVi: 'Điều Khoản & Quy Định Không Gian',
+      titleEn: 'Terms & Space Guidelines',
+      contentVi: 'Để bảo tồn nguyên vẹn hệ sinh thái tự nhiên và dòng suối trong lành, quý khách vui lòng giữ gìn vệ sinh chung, không xả rác xuống suối, và lưu ý an toàn cho các bạn nhỏ khi dạo chơi ven bờ suối.',
+      contentEn: 'To protect our pristine streamside ecosystem, guests are kindly requested to preserve cleanliness, avoid littering, and supervise children near the stream.',
+      sortOrder: 2,
     },
   ];
 
-  for (const p of staticPages) {
-    await prisma.staticPage.upsert({
-      where: { slug: p.slug },
-      update: p,
-      create: p,
+  for (const lp of legalPages) {
+    await prisma.legalPage.upsert({
+      where: { slug: lp.slug },
+      update: {
+        titleVi: lp.titleVi,
+        titleEn: lp.titleEn,
+        contentVi: lp.contentVi,
+        contentEn: lp.contentEn,
+        sortOrder: lp.sortOrder,
+        published: true,
+      },
+      create: {
+        slug: lp.slug,
+        titleVi: lp.titleVi,
+        titleEn: lp.titleEn,
+        contentVi: lp.contentVi,
+        contentEn: lp.contentEn,
+        sortOrder: lp.sortOrder,
+        published: true,
+      },
     });
   }
-  console.log(`✓ ${staticPages.length} static legal pages upserted`);
 
-  // 12. Page SEO Records (6 core routes)
-  const seoRecords = [
+  // 9. Milestone
+  console.log('9. Seeding Milestone...');
+  const milestones = [
     {
-      id: 'seo-home',
-      route: '/',
-      metaTitleVi: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
-      metaTitleEn: 'Cẩm Cù House — Streamside Ecological Cafe in Dong Gia Nghia, Lam Dong',
-      metaDescVi: 'Cà phê sinh thái bên bờ suối — Xanh sạch, trong lành, 18 bàn view suối mát rượi tại Đông Gia Nghĩa, Lâm Đồng. Cà phê muối rang mộc bazan và thức uống thảo mộc.',
-      metaDescEn: 'Streamside ecological cafe in Dong Gia Nghia, Lam Dong. 18 natural stream tables, wood-roasted basalt coffee, and fresh organic herbal tonics.',
-      h1Vi: 'CẨM CÙ HOUSE — Cà Phê Sinh Thái Bên Bờ Suối Đông Gia Nghĩa, Lâm Đồng',
-      h1En: 'CẨM CÙ HOUSE — Streamside Eco-Coffee Sanctuary',
-      ogImage: '/images/og-cover.jpg',
-      canonicalUrl: 'https://camcuhouse.vn',
-      noIndex: false,
+      id: 'mile-1',
+      titleVi: 'Khởi Sinh Ý Tưởng Dưới Vòm Suối Rừng',
+      titleEn: 'Awakening Beside the Mountain Stream',
+      dateLabelVi: 'Mùa xuân 2022',
+      dateLabelEn: 'Spring 2022',
+      summaryVi: 'Tìm thấy khu đất nguyên sơ bên dòng suối nhỏ tại Hẻm 437 Hùng Vương và ấp ủ giấc mơ sinh thái.',
+      summaryEn: 'Discovering the pristine streamside land at Alley 437 Hung Vuong and dreaming of an ecological sanctuary.',
+      sortOrder: 1,
     },
     {
-      id: 'seo-about',
-      route: '/gioi-thieu',
-      metaTitleVi: 'Giới Thiệu Cẩm Cù House — Câu Chuyện Cội Nguồn & Đội Ngũ Sáng Lập',
-      metaTitleEn: 'About Cẩm Cù House — Origin Story & Founding Team',
-      metaDescVi: 'Hành trình khởi sinh dưới vòm hoa Cẩm Cù, đội ngũ tâm huyết và triết lý Xanh - Lành - Thuần khiết của Cẩm Cù House tại Đông Gia Nghĩa, Lâm Đồng.',
-      metaDescEn: 'The awakening journey under porcelain wax flowers, our passionate team, and pure ecological philosophy.',
-      h1Vi: 'Hành Trình Khởi Sinh Dưới Vòm Hoa Cẩm Cù',
-      h1En: 'The Awakening Journey Beneath the Wax Plant Vines',
-      ogImage: '/images/og-about.jpg',
-      canonicalUrl: 'https://camcuhouse.vn/gioi-thieu',
-      noIndex: false,
+      id: 'mile-2',
+      titleVi: 'Gầy Dựng Giàn Lan Cẩm Cù Đầu Tiên',
+      titleEn: 'Cultivating the First Wax Plant Canopy',
+      dateLabelVi: 'Mùa thu 2023',
+      dateLabelEn: 'Autumn 2023',
+      summaryVi: 'Trồng những nhành hoa Cẩm Cù đầu tiên leo quanh cột gỗ và bắc cầu gỗ mộc qua bờ suối đá.',
+      summaryEn: 'Planting initial wax plant vines over wooden beams and erecting natural timber footbridges.',
+      sortOrder: 2,
     },
     {
-      id: 'seo-space',
-      route: '/khong-gian',
-      metaTitleVi: 'Không Gian Quán Bên Bờ Suối — 30 Bản Khắc Thị Giác Cẩm Cù House',
-      metaTitleEn: 'Streamside Sanctuary Gallery — 30 Spatial Plates | Cẩm Cù House',
-      metaDescVi: 'Khám phá 30 góc ảnh không gian sinh thái bên suối mát tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng. Bàn ngắm suối tự nhiên, vòm hoa cẩm cù và acoustic cuối tuần.',
-      metaDescEn: 'Explore 30 visual frames of Cẩm Cù House eco-coffee sanctuary in Dong Gia Nghia, Lam Dong. Streamside seats, natural boulders, and wax flower gardens.',
-      h1Vi: '30 Bản Khắc Không Gian Bên Suối Cẩm Cù House',
-      h1En: '30 Streamside Spatial Plates & Sanctuary Gallery',
-      ogImage: '/images/og-gallery.jpg',
-      canonicalUrl: 'https://camcuhouse.vn/khong-gian',
-      noIndex: false,
-    },
-    {
-      id: 'seo-menu',
-      route: '/thuc-don',
-      metaTitleVi: 'Thực Đơn Cẩm Cù House — 7 Nhóm Thức Uống Rang Mộc & Thảo Mộc Bản Địa',
-      metaTitleEn: 'Menu at Cẩm Cù House — 7 Categories of Wood-Roasted & Herbal Drinks',
-      metaDescVi: 'Khám phá thực đơn 67 món: cà phê muối rang mộc, trà thảo mộc tươi, sinh tố bơ sáp Đăk Nông, nước ép thanh lọc và đồ ăn no đậm đà.',
-      metaDescEn: 'Explore 67 artisan drinks: salted cream coffee, fresh botanical teas, avocado smoothies, cleanse juices, and hearty local snacks.',
-      h1Vi: 'Thực Đơn Sinh Thái Cẩm Cù House (~67 Món)',
-      h1En: 'Botanical Eco-Menu (~67 Items)',
-      ogImage: '/images/og-menu.jpg',
-      canonicalUrl: 'https://camcuhouse.vn/thuc-don',
-      noIndex: false,
-    },
-    {
-      id: 'seo-reviews',
-      route: '/khach-hang',
-      metaTitleVi: 'Dấu Ấn & Đánh Giá Khách Hàng — 100% Đề Xuất Cẩm Cù House',
-      metaTitleEn: 'Milestones & Guest Reviews — 100% Recommended Cẩm Cù House',
-      metaDescVi: 'Dấu ấn nhịp sống bên suối, những cột mốc đáng nhớ và cảm nhận chân thực từ thực khách ghé thăm Cẩm Cù House Đông Gia Nghĩa, Lâm Đồng.',
-      metaDescEn: 'Streamside milestones and authentic guest testimonials with 100% recommendation for Cẩm Cù House.',
-      h1Vi: 'Dấu Ấn Nhịp Sống & Cảm Nhận Thực Khách',
-      h1En: 'Sanctuary Milestones & Guest Testimonials',
-      ogImage: '/images/og-reviews.jpg',
-      canonicalUrl: 'https://camcuhouse.vn/khach-hang',
-      noIndex: false,
-    },
-    {
-      id: 'seo-news',
-      route: '/su-kien',
-      metaTitleVi: 'Tin Tức, Sự Kiện & FAQ — Đêm Nhạc Acoustic Cẩm Cù House',
-      metaTitleEn: 'News, Events & FAQ — Acoustic Live Nights at Cẩm Cù House',
-      metaDescVi: 'Lịch đêm nhạc Acoustic mộc tối Thứ Bảy bên bờ suối, các chương trình mùa vụ nông sản và giải đáp thắc mắc thường gặp.',
-      metaDescEn: 'Saturday evening acoustic music schedules, seasonal agricultural updates, and comprehensive guest FAQs.',
-      h1Vi: 'Nhịp Sống, Sự Kiện & Giải Đáp Thắc Mắc',
-      h1En: 'Sanctuary Life, Events & Guest FAQs',
-      ogImage: '/images/og-events.jpg',
-      canonicalUrl: 'https://camcuhouse.vn/su-kien',
-      noIndex: false,
-    },
-    {
-      id: 'seo-contact',
-      route: '/lien-he',
-      metaTitleVi: 'Liên Hệ & Chỉ Đường — Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng',
-      metaTitleEn: 'Contact & Directions — Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong',
-      metaDescVi: 'Địa chỉ Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng; hotline 0382 851 688, giờ mở cửa GMT+7 và bản đồ Google Maps chỉ đường đến tận cổng Cẩm Cù House.',
-      metaDescEn: 'Address at Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong; hotlines, GMT+7 hours, and Google Maps directions straight to Cẩm Cù House gate.',
-      h1Vi: 'Liên Hệ & Chỉ Đường Đến Bờ Suối Cẩm Cù House',
-      h1En: 'Contact & Directions to Cẩm Cù House Streamside',
-      ogImage: '/images/og-contact.jpg',
-      canonicalUrl: 'https://camcuhouse.vn/lien-he',
-      noIndex: false,
+      id: 'mile-3',
+      titleVi: 'Chính Thức Đón Những Vị Khách Quý',
+      titleEn: 'Welcoming Our First Cherished Guests',
+      dateLabelVi: 'Năm 2024',
+      dateLabelEn: 'Year 2024',
+      summaryVi: 'Mở cửa đón tiếp khách du lịch và người dân địa phương ghé thưởng thức cà phê rang củi và trà thảo mộc.',
+      summaryEn: 'Opening our doors to welcome visitors seeking authentic wood-roasted coffee and serene stream waters.',
+      sortOrder: 3,
     },
   ];
 
-  for (const s of seoRecords) {
-    await prisma.pageSeo.upsert({
-      where: { route: s.route },
-      update: s,
-      create: s,
+  for (const m of milestones) {
+    await prisma.milestone.upsert({
+      where: { id: m.id },
+      update: {
+        titleVi: m.titleVi,
+        titleEn: m.titleEn,
+        dateLabelVi: m.dateLabelVi,
+        dateLabelEn: m.dateLabelEn,
+        summaryVi: m.summaryVi,
+        summaryEn: m.summaryEn,
+        sortOrder: m.sortOrder,
+        published: true,
+      },
+      create: {
+        id: m.id,
+        titleVi: m.titleVi,
+        titleEn: m.titleEn,
+        dateLabelVi: m.dateLabelVi,
+        dateLabelEn: m.dateLabelEn,
+        summaryVi: m.summaryVi,
+        summaryEn: m.summaryEn,
+        sortOrder: m.sortOrder,
+        published: true,
+      },
     });
   }
-  console.log(`✓ ${seoRecords.length} PageSeo records upserted`);
 
-  // 13. Ensure /khong-gian is a standalone page (Clean up any legacy redirect)
-  await prisma.redirectRule.deleteMany({
-    where: { sourcePath: '/khong-gian' },
-  });
-  console.log('✓ Cleaned up legacy /khong-gian redirect rule (Standalone page active)');
+  // 10. TeamMember
+  console.log('10. Seeding TeamMember...');
+  const team = [
+    {
+      id: 'team-1',
+      nameVi: 'Thủy Như',
+      nameEn: 'Thuy Nhu',
+      roleVi: 'Chủ Sáng Lập & Chăm Sóc Vườn Cẩm Cù',
+      roleEn: 'Founder & Botanical Curator',
+      bioVi: 'Yêu thiên nhiên, đất bazan và từng nhành hoa dại bên suối.',
+      bioEn: 'Devoted to preserving untamed highland greenery and indigenous flora.',
+      avatarUrl: '/uploads/gallery/fig-06.jpg',
+      sortOrder: 1,
+    },
+    {
+      id: 'team-2',
+      nameVi: 'Bác Ba',
+      nameEn: 'Uncle Ba',
+      roleVi: 'Nghệ Nhân Rang Cà Phê Củi Mộc',
+      roleEn: 'Artisanal Wood-Roaster',
+      bioVi: 'Hơn 25 năm kinh nghiệm rang cà phê củi mộc truyền thống Tây Nguyên.',
+      bioEn: 'Over 25 years perfecting wood-roasted highland Robusta.',
+      avatarUrl: '/uploads/gallery/fig-05.jpg',
+      sortOrder: 2,
+    },
+  ];
 
-  // 14. Default Super Admin User
+  for (const member of team) {
+    await prisma.teamMember.upsert({
+      where: { id: member.id },
+      update: {
+        nameVi: member.nameVi,
+        nameEn: member.nameEn,
+        roleVi: member.roleVi,
+        roleEn: member.roleEn,
+        bioVi: member.bioVi,
+        bioEn: member.bioEn,
+        avatarUrl: member.avatarUrl,
+        sortOrder: member.sortOrder,
+        published: true,
+      },
+      create: {
+        id: member.id,
+        nameVi: member.nameVi,
+        nameEn: member.nameEn,
+        roleVi: member.roleVi,
+        roleEn: member.roleEn,
+        bioVi: member.bioVi,
+        bioEn: member.bioEn,
+        avatarUrl: member.avatarUrl,
+        sortOrder: member.sortOrder,
+        published: true,
+      },
+    });
+  }
+
+  // 11. CustomerReview (6 genuine reviews)
+  console.log('11. Seeding CustomerReview (6 real Google Maps reviews)...');
+  const backupReviews = backupData.reviews || [];
+  for (const r of backupReviews) {
+    await prisma.customerReview.upsert({
+      where: { id: r.id },
+      update: {
+        authorName: r.author,
+        rating: r.rating || 5,
+        contentVi: r.textVi || '',
+        contentEn: r.textEn || undefined,
+        status: ReviewStatus.APPROVED,
+        isFeatured: true,
+        visitDate: r.publishedTimeVi || undefined,
+      },
+      create: {
+        id: r.id,
+        authorName: r.author,
+        rating: r.rating || 5,
+        contentVi: r.textVi || '',
+        contentEn: r.textEn || undefined,
+        status: ReviewStatus.APPROVED,
+        isFeatured: true,
+        visitDate: r.publishedTimeVi || undefined,
+      },
+    });
+  }
+
+  // 12. AdminUser (SUPER_ADMIN)
+  console.log('12. Seeding AdminUser...');
   const existingAdmin = await prisma.adminUser.findUnique({
     where: { username: 'admin' },
   });
 
   if (!existingAdmin) {
-    const passwordHash = hashPassword('admin123');
+    // Generate secure initial password hash
+    const initialPass = process.env.ADMIN_INITIAL_PASSWORD || 'CamCu@House2026';
     await prisma.adminUser.create({
       data: {
         username: 'admin',
-        passwordHash,
-        fullName: 'Quản trị viên Cẩm Cù House',
+        passwordHash: hashPassword(initialPass),
+        fullName: 'Quản Trị Viên Cẩm Cù',
         role: 'SUPER_ADMIN',
         isActive: true,
       },
     });
-    console.log('✓ Default Super Admin account created (username: admin / pass: admin123)');
-  } else {
-    console.log('✓ Default Super Admin account already exists');
+    console.log('✓ Created initial super-admin account "admin"');
   }
 
-  // 15. Gmail SMTP Singleton Configuration & Pre-seeded Recipient
-  await prisma.gmailConfig.upsert({
-    where: { id: 'default' },
-    update: {
-      senderName: 'Cẩm Cù House — Thông Báo Website',
-    },
-    create: {
-      id: 'default',
-      isEnabled: true,
-      senderName: 'Cẩm Cù House — Thông Báo Website',
-      senderEmail: '',
-      appPassword: '',
-      autoReplyEnabled: false,
-      autoReplySubject: 'Cẩm Cù House đã nhận được lời nhắn của bạn',
-      autoReplyBody: 'Cảm ơn bạn đã liên hệ Cẩm Cù House. Chúng tôi đã ghi nhận lời nhắn và sẽ phản hồi sớm nhất.',
-    },
-  });
-  console.log('✓ Default GmailConfig upserted');
-
-  await prisma.gmailRecipient.upsert({
-    where: { email: 'thuynhu8788@gmail.com' },
-    update: {
-      label: 'Email chính Cẩm Cù House',
-      receiveSubjects: 'ALL',
-      isActive: true,
-    },
-    create: {
-      email: 'thuynhu8788@gmail.com',
-      label: 'Email chính Cẩm Cù House',
-      receiveSubjects: 'ALL',
-      isActive: true,
-    },
-  });
-  console.log('✓ Pre-seeded GmailRecipient (thuynhu8788@gmail.com) upserted');
-
-  // 16. Default AntiSpamConfig Singleton
-  await prisma.antiSpamConfig.upsert({
-    where: { id: 'default' },
-    update: {},
-    create: {
-      id: 'default',
-      emergencyLockdown: false,
-      maxRequestSizeKb: 8,
-      cooldownSeconds: 60,
-      maxPerTenMinutes: 3,
-      maxPerDay: 8,
-      globalMaxPerFiveMinutes: 25,
-      escalatingBanEnabled: true,
-      mathChallengeRequired: true,
-      mathChallengeTtlMinutes: 15,
-      mathChallengeMinFillSeconds: 3,
-      nameMinLength: 2,
-      nameMaxLength: 80,
-      contentMinLength: 10,
-      contentMaxLength: 1200,
-      maxLinksAllowed: 1,
-      blockedKeywords: 'casino,bet88,kubet,viagra,sex,porn,vay tien,danh bac,lo de,keo nha cai,telegram,crypto,forex',
-      maxGmailPerHour: 15,
-    },
-  });
-  console.log('✓ Default AntiSpamConfig upserted');
-
-  console.log('Master Enterprise Seed completed successfully!');
+  console.log('✅ Clean, idempotent seed completed successfully with ZERO data loss!');
 }
 
-main()
-  .catch((e) => {
-    console.error('Seeding error:', e);
+async function main() {
+  try {
+    await seedDatabase();
+  } catch (err) {
+    console.error('❌ Error during database seed:', err);
     process.exit(1);
-  })
-  .finally(async () => {
+  } finally {
     await prisma.$disconnect();
-  });
+  }
+}
+
+// Only execute directly when run as CLI script
+if (require.main === module || process.argv[1]?.includes('seed.ts')) {
+  main();
+}

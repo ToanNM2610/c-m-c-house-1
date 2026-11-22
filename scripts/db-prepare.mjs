@@ -27,30 +27,7 @@ async function main() {
 
   const prisma = new PrismaClient();
   try {
-    // Permanently remove Acoustic Night FAQ item from PostgreSQL database
-    try {
-      const deletedFaqs = await prisma.faqItem.deleteMany({
-        where: {
-          OR: [
-            { id: 'faq-5' },
-            { question: { contains: 'Đêm nhạc Acoustic' } },
-            { questionEn: { contains: 'Acoustic Live sessions' } },
-          ],
-        },
-      });
-      if (deletedFaqs.count > 0) {
-        console.log(`🧹 [db-prepare] Removed ${deletedFaqs.count} Acoustic Night FAQ record(s) from PostgreSQL.`);
-      }
-
-      await prisma.faqItem.updateMany({
-        where: { category: 'Giờ mở cửa & Acoustic' },
-        data: { category: 'Giờ mở cửa', categoryEn: 'Operating Hours' },
-      });
-    } catch (cleanErr) {
-      console.warn('⚠️ [db-prepare] Note during Acoustic FAQ cleanup:', cleanErr.message);
-    }
-
-    const adminCount = await prisma.adminUser.count();
+    const adminCount = await prisma.adminUser.count().catch(() => 0);
     console.log(`📊 [db-prepare] Current AdminUser count: ${adminCount}`);
 
     if (adminCount === 0) {
@@ -58,7 +35,7 @@ async function main() {
       execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' });
       console.log('✓ [db-prepare] Database idempotent seed completed successfully.');
     } else {
-      console.log('✅ [db-prepare] Database already initialized with AdminUser. Skipping initial seed.');
+      console.log('✅ [db-prepare] Database already initialized with AdminUser.');
     }
   } catch (seedErr) {
     console.error('❌ [db-prepare] Error checking/seeding database:', seedErr);

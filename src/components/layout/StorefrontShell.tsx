@@ -7,9 +7,6 @@ import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
 import GalleryLightboxModal from '@/components/modals/GalleryLightboxModal';
 import QuickChatWidget from '@/components/common/QuickChatWidget';
 import QuickSupportWidget from '@/components/common/QuickSupportWidget';
-import CartDrawer from '@/components/commerce/CartDrawer';
-import ItemCustomizationModal from '@/components/commerce/ItemCustomizationModal';
-import CustomerAuthModal from '@/components/commerce/CustomerAuthModal';
 import MobileBottomBar from '@/components/MobileBottomBar';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 import { useApp } from '@/context/AppContext';
@@ -56,9 +53,6 @@ export default function StorefrontShell({ children }: { children: React.ReactNod
       {/* Global Interactive Modals & Quick Chat */}
       <GalleryLightboxModal />
       <QuickSupportWidget />
-      <CartDrawer />
-      <ItemCustomizationModal />
-      <CustomerAuthModal />
       <MobileBottomBar />
     </>
   );

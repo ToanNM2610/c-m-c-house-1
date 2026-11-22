@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X, Coffee, Calendar, HelpCircle, FileText, Camera, ArrowRight, Loader2, Plus, ShoppingBag } from 'lucide-react';
+import { Search, X, Coffee, Calendar, HelpCircle, FileText, Camera, ArrowRight, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
-import { useCart } from '@/context/CartContext';
 
 interface SearchResultPayload {
   menu: Array<{
@@ -56,9 +55,7 @@ export default function GlobalSearchModal({
 }) {
   const router = useRouter();
   const { language, data } = useApp();
-  const { openCustomization } = useCart();
   const isEn = language === 'en';
-  const commerceEnabled = data.commerceSettings?.commerceEnabled !== false;
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResultPayload | null>(null);
@@ -254,30 +251,6 @@ export default function GlobalSearchModal({
                               <span className="font-mono text-xs font-bold text-accent-botanical whitespace-nowrap">
                                 {m.priceDisplay}
                               </span>
-                              {commerceEnabled && (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onClose();
-                                    openCustomization({
-                                      id: m.id,
-                                      name: m.name,
-                                      nameEn: m.nameEn,
-                                      vietnameseTitle: m.vietnameseTitle,
-                                      description: m.description,
-                                      price: parseInt((m.priceDisplay || '35000').replace(/\D/g, ''), 10) || 35000,
-                                      categoryId: 'coffee',
-                                      inStock: true,
-                                    } as any);
-                                  }}
-                                  className="p-1.5 rounded-lg bg-accent-botanical/10 hover:bg-accent-botanical text-accent-botanical hover:text-white transition-colors"
-                                  title={isEn ? 'Add to cart' : 'Thêm vào giỏ'}
-                                  aria-label="Thêm vào giỏ"
-                                >
-                                  <Plus className="w-3.5 h-3.5" />
-                                </button>
-                              )}
                             </div>
                           </div>
                         ))}

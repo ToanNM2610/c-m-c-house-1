@@ -3,9 +3,6 @@ import { headers } from 'next/headers';
 import './globals.css';
 import { AppProvider } from '@/context/AppContext';
 import { LanguageProvider } from '@/context/LanguageContext';
-import { PreOrderProvider } from '@/context/PreOrderContext';
-import { CustomerAuthProvider } from '@/context/CustomerAuthContext';
-import { CartProvider } from '@/context/CartContext';
 import { NavigationDirectionProvider } from '@/context/NavigationDirectionContext';
 import { getPublicIntegrations } from '@/lib/integrations';
 import { getPageSeoMetadata } from '@/lib/seo';
@@ -212,15 +209,9 @@ gtag('js', new Date());`,
       <body className="min-h-screen bg-paper text-ink-primary selection:bg-accent-botanical selection:text-white">
         <AppProvider initialLanguage={locale}>
           <LanguageProvider initialLocale={locale}>
-            <CustomerAuthProvider>
-              <CartProvider>
-                <PreOrderProvider>
-                  <NavigationDirectionProvider>
-                    {children}
-                  </NavigationDirectionProvider>
-                </PreOrderProvider>
-              </CartProvider>
-            </CustomerAuthProvider>
+            <NavigationDirectionProvider>
+              {children}
+            </NavigationDirectionProvider>
           </LanguageProvider>
         </AppProvider>
       </body>

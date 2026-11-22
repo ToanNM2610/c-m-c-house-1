@@ -29,7 +29,6 @@ export async function GET() {
       stories,
       faqs,
       staticPages,
-      commerceSettings,
     ] = await Promise.all([
       prisma.storeSettings.findUnique({ where: { id: 'default' } }),
       prisma.siteContent.findUnique({ where: { id: 'default' } }),
@@ -52,7 +51,6 @@ export async function GET() {
         orderBy: { orderIndex: 'asc' },
       }),
       prisma.staticPage.findMany({ where: { published: true } }),
-      prisma.commerceSettings.findFirst().catch(() => null),
     ]);
 
     // Idempotent background cleanup of any legacy Acoustic FAQ item
@@ -324,16 +322,16 @@ export async function GET() {
         usdExchangeRate: settings.usdExchangeRate ?? 25000,
       },
       content: resolvedContent,
-      menu: menuItems.map((m: PrismaMenuItem) => ({
+      menu: menuItems.map((m: any) => ({
         id: m.id,
-        categoryId: m.categoryId as MenuItem['categoryId'],
-        name: m.name,
-        nameEn: m.nameEn || undefined,
-        vietnameseTitle: m.vietnameseTitle,
-        description: m.description,
-        descriptionEn: m.descriptionEn || undefined,
-        price: m.price,
-        priceDisplay: m.priceDisplay || `${m.price.toLocaleString('vi-VN')}đ`,
+        categoryId: (m.categoryId || "ca-phe") as MenuItem['categoryId'],
+        name: m.name || m.nameVi || '',
+        nameEn: m.nameEn || m.nameEn || undefined,
+        vietnameseTitle: m.vietnameseTitle || m.nameVi || '',
+        description: m.description || m.descVi || '',
+        descriptionEn: m.descriptionEn || m.descEn || undefined,
+        price: m.price || m.priceVnd || 0,
+        priceDisplay: m.priceDisplay || `${(m.price || m.priceVnd || 0).toLocaleString('vi-VN')}đ`,
         variants: m.variants ? JSON.parse(m.variants) : undefined,
         variantsEn: m.variantsEn ? JSON.parse(m.variantsEn) : undefined,
         highlight: m.highlight || undefined,
@@ -430,32 +428,7 @@ export async function GET() {
         metaDescription: p.metaDescription,
         published: p.published,
       })),
-      commerceSettings: commerceSettings
-        ? {
-            id: commerceSettings.id,
-            commerceEnabled: commerceSettings.commerceEnabled,
-            enableDelivery: commerceSettings.enableDelivery,
-            enablePickup: commerceSettings.enablePickup,
-            enableDineInBbq: commerceSettings.enableDineInBbq,
-            enableCod: commerceSettings.enableCod,
-            enableVietQr: commerceSettings.enableVietQr,
-            enableEwallet: commerceSettings.enableEwallet,
-            enableCard: commerceSettings.enableCard,
-            bankId: commerceSettings.bankId,
-            bankAccountNo: commerceSettings.bankAccountNo,
-            bankAccountName: commerceSettings.bankAccountName,
-            vietQrTemplate: commerceSettings.vietQrTemplate,
-            defaultFreeShipThreshold: commerceSettings.defaultFreeShipThreshold,
-            orderNotificationEmail: commerceSettings.orderNotificationEmail,
-            enableCustomerPortal: commerceSettings.enableCustomerPortal,
-            enableNewsletter: commerceSettings.enableNewsletter,
-            enableQuickSupportWidget: commerceSettings.enableQuickSupportWidget,
-            enableSupportHotline: commerceSettings.enableSupportHotline,
-            enableSupportZalo: commerceSettings.enableSupportZalo,
-            enableSupportMessenger: commerceSettings.enableSupportMessenger,
-            enableSupportWhatsApp: commerceSettings.enableSupportWhatsApp,
-          }
-        : null,
+      commerceSettings: null,
       lastUpdated: new Date().toISOString(),
     };
 

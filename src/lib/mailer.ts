@@ -772,11 +772,11 @@ export async function sendOrderEmail(
     // 3. Send to Admin / Staff Notification
     if (options?.toAdmin !== false) {
       try {
-        // Retrieve recipient from CommerceSettings or StoreSettings
-        const commerceSettings = await prisma.commerceSettings.findFirst();
+        // Retrieve recipient from SiteSettings or StoreSettings
+        const siteSettings = await prisma.siteSettings.findFirst();
         const storeSettings = await prisma.storeSettings.findFirst();
 
-        const adminTarget = commerceSettings?.orderNotificationEmail || storeSettings?.email || senderEmail;
+        const adminTarget = siteSettings?.email || storeSettings?.email || senderEmail;
         if (adminTarget) {
           await transporter.sendMail({
             from: `"${senderName}" <${senderEmail}>`,

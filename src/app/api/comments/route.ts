@@ -67,6 +67,21 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Also mirror to standard CustomerReview table
+    try {
+      await prisma.customerReview.create({
+        data: {
+          authorName: authorName.trim(),
+          rating: Math.min(5, Math.max(1, Number(rating) || 5)),
+          contentVi: content.trim(),
+          status: 'PENDING',
+          isFeatured: false,
+        },
+      });
+    } catch (revErr) {
+      console.warn('Mirror to customerReview warning:', revErr);
+    }
+
     // Record submission for rate limiting
     commitSubmission(clientIp);
 

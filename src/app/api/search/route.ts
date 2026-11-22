@@ -27,9 +27,11 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           name: true,
+          nameVi: true,
           nameEn: true,
           vietnameseTitle: true,
           description: true,
+          descVi: true,
           price: true,
           priceDisplay: true,
           categoryId: true,
@@ -81,10 +83,10 @@ export async function GET(request: NextRequest) {
     // Memory filter with Vietnamese case-insensitive matching
     const matchedMenu = menuItems.filter(
       (m) =>
-        m.name.toLowerCase().includes(lower) ||
-        m.vietnameseTitle.toLowerCase().includes(lower) ||
+        (m.name || m.nameVi || '').toLowerCase().includes(lower) ||
+        (m.vietnameseTitle || m.nameVi || '').toLowerCase().includes(lower) ||
         (m.nameEn && m.nameEn.toLowerCase().includes(lower)) ||
-        m.description.toLowerCase().includes(lower)
+        (m.description || m.descVi || '').toLowerCase().includes(lower)
     ).slice(0, 6);
 
     const matchedEvents = events.filter(

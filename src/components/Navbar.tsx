@@ -17,7 +17,6 @@ import ThemeToggle from "@/components/ThemeToggle";
 import StarHoya from "@/components/ui/StarHoya";
 import AtmosphereBar from "@/components/AtmosphereBar";
 import { useLanguage } from "@/context/LanguageContext";
-import { usePreOrder } from "@/context/PreOrderContext";
 import { trackCustomerAction } from "@/lib/cmsStore";
 
 export const NAV_ITEMS = [
@@ -33,7 +32,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { locale, setLocale } = useLanguage();
   const isEn = locale === "en";
-  const { totalItems } = usePreOrder();
+  const totalItems = 0;
 
   // Close mobile drawer upon route change
   useEffect(() => {

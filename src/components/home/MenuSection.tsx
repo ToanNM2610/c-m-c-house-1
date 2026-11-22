@@ -1,21 +1,18 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Sparkles, Coffee, Leaf, Citrus, Sun, Flame, Utensils, Phone, Clock, Heart, Plus, ShoppingBag, Info } from 'lucide-react';
+import { Search, Sparkles, Coffee, Leaf, Citrus, Sun, Flame, Utensils, Phone, Clock, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
-import { useCart } from '@/context/CartContext';
-import { useCustomerAuth } from '@/context/CustomerAuthContext';
 import { CategoryId, MenuItem } from '@/types';
 import { SPRING_PILL_TRANSITION, EDITORIAL_EASE } from '@/components/motion/EditorialMotion';
-import { InteractiveTiltCard, MagneticButton } from '@/components/motion/VividMotion';
+import { InteractiveTiltCard } from '@/components/motion/VividMotion';
 
 function MenuItemCard({
   item,
   isEn,
   usdRate = 25000,
   showPrices = true,
-  showAddToCart = true,
 }: {
   item: MenuItem;
   isEn: boolean;
@@ -23,18 +20,11 @@ function MenuItemCard({
   showPrices?: boolean;
   showAddToCart?: boolean;
 }) {
-  const { openCustomization } = useCart();
-  const { isWishlisted, toggleWishlist } = useCustomerAuth();
-
-  const isOutOfStock = !item.inStock || (item.stockQuantity !== undefined && item.stockQuantity !== null && item.stockQuantity <= 0);
-  const isOrderingPaused = item.allowOrdering === false;
-  const isSoldOut = isOutOfStock || isOrderingPaused;
-  const isOrderable = !isSoldOut;
-  const wishlisted = isWishlisted(item.id);
-  const name = isEn && item.nameEn ? item.nameEn : item.vietnameseTitle;
+  const isAvailable = item.inStock !== false && (item as any).isAvailable !== false;
+  const name = isEn && item.nameEn ? item.nameEn : (item.vietnameseTitle || (item as any).nameVi || item.name);
   const highlight = isEn && item.highlightEn ? item.highlightEn : item.highlight;
   const note = isEn && item.editorialNoteEn ? item.editorialNoteEn : item.editorialNote;
-  const desc = isEn && item.descriptionEn ? item.descriptionEn : item.description;
+  const desc = isEn && item.descriptionEn ? item.descriptionEn : (item.description || (item as any).descVi);
   const variants = isEn && item.variantsEn && item.variantsEn.length > 0 ? item.variantsEn : item.variants;
   const usdPrice = (item.price / (usdRate || 25000)).toFixed(2);
 
@@ -42,7 +32,7 @@ function MenuItemCard({
     <InteractiveTiltCard maxTilt={2.8} spotlight={true} className="h-full">
       <div
         className={`p-5 sm:p-6 rounded-2xl bg-white dark:bg-forest-900 border transition-all duration-200 flex flex-col justify-between h-full ${
-          isOrderable
+          isAvailable
             ? 'border-forest-100 dark:border-forest-700/60 hover:border-accent-botanical/50 shadow-subtle'
             : 'border-red-100 dark:border-red-900/40 bg-red-50/20 dark:bg-red-950/20 opacity-75'
         }`}
@@ -61,14 +51,9 @@ function MenuItemCard({
                     {highlight}
                   </span>
                 )}
-                {isOutOfStock && (
+                {!isAvailable && (
                   <span className="text-[10px] font-sans text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 px-2 py-0.5 rounded-full font-bold">
                     {isEn ? 'Sold Out' : 'Tạm hết món'}
-                  </span>
-                )}
-                {!isOutOfStock && isOrderingPaused && (
-                  <span className="text-[10px] font-sans text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 rounded-full font-bold">
-                    {isEn ? 'Paused' : 'Tạm ngưng nhận đơn'}
                   </span>
                 )}
               </div>
@@ -79,30 +64,13 @@ function MenuItemCard({
               )}
             </div>
 
-            {/* Price & Wishlist */}
+            {/* Price */}
             <div className="flex flex-col items-end shrink-0 whitespace-nowrap">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleWishlist(item.id);
-                  }}
-                  className={`p-1.5 rounded-full border transition-colors ${
-                    wishlisted
-                      ? 'border-red-200 bg-red-50 text-red-500 dark:bg-red-950/40 dark:border-red-900'
-                      : 'border-forest-200 dark:border-forest-700 text-ink-muted hover:text-red-500 hover:border-red-200'
-                  }`}
-                  aria-label={wishlisted ? 'Bỏ yêu thích' : 'Yêu thích'}
-                >
-                  <Heart className={`w-3.5 h-3.5 ${wishlisted ? 'fill-red-500 text-red-500' : ''}`} />
-                </button>
-                {showPrices && (
-                  <span className="font-sans text-base font-bold text-accent-botanical">
-                    {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
-                  </span>
-                )}
-              </div>
+              {showPrices && (
+                <span className="font-sans text-base font-bold text-accent-botanical">
+                  {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
+                </span>
+              )}
               {showPrices && isEn && (
                 <span className="block text-[11px] font-normal text-ink-muted font-sans">
                   ~ ${usdPrice} USD
@@ -134,28 +102,6 @@ function MenuItemCard({
             </div>
           )}
         </div>
-
-        {/* Action Button */}
-        {showAddToCart && (
-          <div className="mt-4 pt-3 border-t border-forest-100 dark:border-forest-800">
-            {isOrderable ? (
-              <button
-                type="button"
-                onClick={() => openCustomization(item)}
-                className="w-full py-2.5 px-3 rounded-xl bg-accent-botanical/10 dark:bg-accent-botanical/20 hover:bg-accent-botanical hover:text-white text-accent-botanical font-sans text-sm font-semibold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
-              >
-                <Plus className="w-4 h-4" />
-                <span>{isEn ? 'Add to Cart / Customize' : 'Thêm vào giỏ / Tùy chọn'}</span>
-              </button>
-            ) : (
-              <div className="w-full py-2.5 px-3 rounded-xl bg-forest-100/60 dark:bg-forest-800/40 text-ink-muted font-sans text-sm text-center font-medium">
-                {isOutOfStock
-                  ? (isEn ? 'Temporarily Sold Out' : 'Tạm hết món')
-                  : (isEn ? 'Ordering Paused' : 'Tạm ngưng nhận đơn')}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </InteractiveTiltCard>
   );

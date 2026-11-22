@@ -81,6 +81,31 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Also mirror to standard ReservationInquiry table
+    try {
+      const inquiryType = lowerSub.includes('bbq')
+        ? 'BBQ'
+        : (lowerSub.includes('bàn') || lowerSub.includes('table') || body.guestCount)
+        ? 'TABLE'
+        : 'CONTACT';
+      await prisma.reservationInquiry.create({
+        data: {
+          type: inquiryType,
+          fullName: fullName.trim(),
+          phone: phone.trim(),
+          email: email ? email.trim() : null,
+          date: body.date || body.visitDate || null,
+          time: body.time || body.visitTime || null,
+          guestCount: body.guestCount ? Number(body.guestCount) : null,
+          message: message.trim(),
+          status: 'NEW',
+          ipAddress: clientIp,
+        },
+      });
+    } catch (inqErr) {
+      console.warn('Mirror to reservationInquiry warning:', inqErr);
+    }
+
     // Record submission for rate limiting
     commitSubmission(clientIp);
 
