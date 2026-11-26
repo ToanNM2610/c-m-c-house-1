@@ -112,7 +112,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 
     if (role !== undefined && currentUser.role === 'SUPER_ADMIN') {
-      dataToUpdate.role = ['SUPER_ADMIN', 'EDITOR', 'SEO_MANAGER'].includes(role) ? role : 'EDITOR';
+      const allowed = [
+        'SUPER_ADMIN',
+        'MARKETING_CONTENT',
+        'SALES_CSKH',
+        'WAREHOUSE_OPS',
+        'ACCOUNTANT',
+        'EDITOR',
+        'SEO_MANAGER',
+        'STAFF',
+      ];
+      dataToUpdate.role = allowed.includes(role) ? role : 'MARKETING_CONTENT';
     }
 
     if (isActive !== undefined && currentUser.role === 'SUPER_ADMIN') {

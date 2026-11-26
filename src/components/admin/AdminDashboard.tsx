@@ -29,8 +29,18 @@ interface DashboardMetrics {
   totalPhotos: number;
   publishedPosts: number;
   activePages: number;
+  commerceEnabled?: boolean;
+  enableCustomerPortal?: boolean;
+  pendingOrdersCount?: number;
+  lowStockCount?: number;
+  grossRevenue?: number | null;
+  netRevenue?: number | null;
+  completedOrdersCount?: number;
+  conversionRate?: number;
   recentInquiries: any[];
   recentReviews: any[];
+  recentPendingOrders?: any[];
+  lowStockItems?: any[];
 }
 
 export default function AdminDashboard({
@@ -314,6 +324,80 @@ export default function AdminDashboard({
         </div>
       </div>
 
+      {/* Action Center & Real-time Business KPIs (PostgreSQL) */}
+      <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-slate-200 space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm font-mono">
+            <TrendingUp className="w-5 h-5" />
+            <span>TRUNG TÂM CẢNH BÁO (ACTION CENTER) & CHỈ SỐ KINH DOANH THẬT</span>
+          </div>
+          <button
+            onClick={() => onNavigateTab('dual-mode-settings')}
+            className={`px-3 py-1 rounded-full text-xs font-mono font-bold border ${
+              metrics?.commerceEnabled
+                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+            }`}
+          >
+            {metrics?.commerceEnabled
+              ? 'Chế độ Bán hàng Online: ĐANG BẬT'
+              : 'Chế độ Giới thiệu (Giai đoạn 1): ĐANG BẬT'}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          {metrics?.netRevenue !== null && metrics?.netRevenue !== undefined && (
+            <div
+              onClick={() => onNavigateTab('commerce-analytics')}
+              className="p-4 rounded-2xl bg-slate-800/70 border border-slate-700/70 cursor-pointer hover:border-emerald-500/50"
+            >
+              <div className="font-mono text-slate-400">DOANH THU THUẦN</div>
+              <div className="text-xl font-mono font-bold text-emerald-400 mt-1">
+                {Number(metrics?.netRevenue || 0).toLocaleString('vi-VN')}đ
+              </div>
+              <div className="text-[11px] text-slate-400 mt-0.5">
+                Gộp: {Number(metrics?.grossRevenue || 0).toLocaleString('vi-VN')}đ
+              </div>
+            </div>
+          )}
+
+          <div
+            onClick={() => onNavigateTab('orders-cms')}
+            className="p-4 rounded-2xl bg-slate-800/70 border border-slate-700/70 cursor-pointer hover:border-amber-500/50"
+          >
+            <div className="font-mono text-slate-400">ĐƠN CHỜ DUYỆT</div>
+            <div className="text-xl font-mono font-bold text-amber-300 mt-1">
+              {metrics?.pendingOrdersCount ?? 0}
+            </div>
+            <div className="text-[11px] text-slate-400 mt-0.5">
+              Hoàn tất: {metrics?.conversionRate ?? 0}%
+            </div>
+          </div>
+
+          <div
+            onClick={() => onNavigateTab('inventory-cms')}
+            className="p-4 rounded-2xl bg-slate-800/70 border border-slate-700/70 cursor-pointer hover:border-rose-500/50"
+          >
+            <div className="font-mono text-slate-400">CẢNH BÁO TỒN KHO</div>
+            <div className="text-xl font-mono font-bold text-rose-400 mt-1">
+              {metrics?.lowStockCount ?? 0}
+            </div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Sản phẩm sắp hết</div>
+          </div>
+
+          <div
+            onClick={() => onNavigateTab('interactions-inbox')}
+            className="p-4 rounded-2xl bg-slate-800/70 border border-slate-700/70 cursor-pointer hover:border-sky-500/50"
+          >
+            <div className="font-mono text-slate-400">LỊCH ĐẶT BBQ / LIÊN HỆ</div>
+            <div className="text-xl font-mono font-bold text-sky-400 mt-1">
+              {metrics?.unreadInquiries ?? 0}
+            </div>
+            <div className="text-[11px] text-slate-400 mt-0.5">Chưa xử lý</div>
+          </div>
+        </div>
+      </div>
+
       {/* Quick Launchpad & Integrity Guarantee */}
       <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 text-slate-300 space-y-4">
         <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm font-mono">
@@ -321,8 +405,7 @@ export default function AdminDashboard({
           <span>CAM KẾT TOÀN VẸN HỆ THỐNG (ENTERPRISE STANDARD)</span>
         </div>
         <p className="text-sm text-slate-400 leading-relaxed">
-          Hệ thống được thiết kế hoàn toàn không chứa mã nguồn thương mại điện tử (giỏ hàng, thanh toán, kho hàng). 
-          Mọi dữ liệu menu 67 món, 30 bản khắc không gian, thiết lập hỗ trợ nổi và cấu hình 7 trang web đọc/ghi trực tiếp vào Neon PostgreSQL, 
+          Mọi dữ liệu menu 67 món, 30 bản khắc không gian, tồn kho, đơn hàng, CRM khách hàng và cấu hình 7 trang web đọc/ghi trực tiếp vào Neon PostgreSQL,
           tự động đồng bộ sang giao diện khách hàng qua <code>revalidatePath(&quot;/&quot;, &quot;layout&quot;)</code>.
         </p>
 

@@ -81,12 +81,11 @@ export function LanguageProvider({
       } else if (savedBlocks && (savedBlocks.vi || savedBlocks.en)) {
         setContentOverrides(savedBlocks);
       } else {
-        fetch("/api/admin/content")
-          .then((r) => r.json())
+        fetch("/api/content")
+          .then((r) => (r.ok ? r.json() : null))
           .then((d) => {
-            if (d && d.content) {
-              setContentOverrides(d.content);
-              setSharedData(KEYS.CONTENT_BLOCKS, d.content);
+            if (d && d.data && typeof d.data === "object") {
+              setContentOverrides(d.data);
             }
           })
           .catch(() => {});

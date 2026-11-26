@@ -190,18 +190,26 @@ export default function SuKienPage() {
                   </div>
 
                   <div className="p-6 sm:p-7 pt-0">
-                    <div className="pt-5 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between gap-3">
+                    <div className="pt-5 border-t border-forest-100 dark:border-forest-800 flex items-center justify-between gap-2.5">
+                      <Link
+                        href={isEn ? `/en/news/${event.id}` : `/tin-tuc/${event.id}`}
+                        className="px-3.5 py-2.5 rounded-xl bg-accent-botanical text-white text-xs font-semibold hover:opacity-95 transition-opacity inline-flex items-center gap-1.5 whitespace-nowrap font-sans"
+                      >
+                        <span>{isEn ? 'Read Article' : 'Xem bài viết'}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                       <a
                         href="tel:0382851688"
-                        className="flex-1 py-2.5 bg-forest-50 dark:bg-forest-800/80 hover:bg-accent-botanical hover:text-white text-accent-botanical rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-xs font-sans"
+                        className="flex-1 py-2.5 px-3 bg-forest-50 dark:bg-forest-800/80 hover:bg-accent-botanical hover:text-white text-accent-botanical rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-xs font-sans whitespace-nowrap"
                       >
                         <Phone className="w-3.5 h-3.5" />
-                        <span>{isEn ? 'Inquire: 0382 851 688' : 'Hotline: 0382 851 688'}</span>
+                        <span>{isEn ? '0382 851 688' : '0382 851 688'}</span>
                       </a>
 
                       <button
                         onClick={() => handleShare(event.id, title)}
                         title="Copy link to event"
+                        aria-label="Copy link"
                         className="p-2.5 rounded-xl border border-forest-200 dark:border-forest-700 hover:bg-forest-100 dark:hover:bg-forest-800 text-ink-muted transition-colors flex items-center gap-1"
                       >
                         {copiedId === event.id ? (

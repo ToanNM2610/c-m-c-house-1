@@ -326,8 +326,8 @@ function CinematicIntro8KContent() {
           <>
             {/* Top curtain sweeping upward */}
             <motion.div
-              initial={{ transform: 'translate3d(0, 0%, 0)' }}
-              animate={{ transform: 'translate3d(0, -100%, 0)' }}
+              initial={{ y: '0%' }}
+              animate={{ y: '-100%' }}
               transition={{ duration: 0.72, ease: [0.76, 0, 0.24, 1] }}
               style={{
                 backgroundColor: bgColor,
@@ -339,8 +339,8 @@ function CinematicIntro8KContent() {
             />
             {/* Bottom curtain sweeping downward */}
             <motion.div
-              initial={{ transform: 'translate3d(0, 0%, 0)' }}
-              animate={{ transform: 'translate3d(0, 100%, 0)' }}
+              initial={{ y: '0%' }}
+              animate={{ y: '100%' }}
               transition={{ duration: 0.72, ease: [0.76, 0, 0.24, 1] }}
               style={{
                 backgroundColor: bgColor,
@@ -359,11 +359,13 @@ function CinematicIntro8KContent() {
         animate={
           isExiting
             ? {
-                transform: 'translate3d(0, -22px, 0) scale3d(0.975, 0.975, 1)',
+                y: -22,
+                scale: 0.975,
                 opacity: 0,
               }
             : {
-                transform: 'translate3d(0, 0px, 0) scale3d(1, 1, 1)',
+                y: 0,
+                scale: 1,
                 opacity: 1,
               }
         }
@@ -515,8 +517,8 @@ function CinematicIntro8KContent() {
           {/* Eyebrow Reveal */}
           <div className="overflow-hidden py-0.5">
             <motion.div
-              initial={{ transform: 'translate3d(0, 100%, 0)' }}
-              animate={{ transform: 'translate3d(0, 0%, 0)' }}
+              initial={{ y: '100%' }}
+              animate={{ y: '0%' }}
               transition={{ duration: 0.65, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
               style={{ willChange: 'transform', color: accentBotanical }}
               className="font-mono text-[10px] sm:text-[11px] tracking-[0.25em] uppercase font-bold"
@@ -528,8 +530,8 @@ function CinematicIntro8KContent() {
           {/* Main Headline Masked Kinetic Reveal */}
           <div className="overflow-hidden py-1">
             <motion.h1
-              initial={{ transform: 'translate3d(0, 110%, 0)' }}
-              animate={{ transform: 'translate3d(0, 0%, 0)' }}
+              initial={{ y: '110%' }}
+              animate={{ y: '0%' }}
               transition={{ duration: 0.75, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 color: textPrimary,
@@ -544,8 +546,8 @@ function CinematicIntro8KContent() {
           {/* Subtitle Reveal */}
           <div className="overflow-hidden py-0.5 max-w-lg mx-auto">
             <motion.p
-              initial={{ transform: 'translate3d(0, 100%, 0)', opacity: 0 }}
-              animate={{ transform: 'translate3d(0, 0%, 0)', opacity: 1 }}
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: '0%', opacity: 1 }}
               transition={{ duration: 0.65, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
               style={{ willChange: 'transform, opacity' }}
               className="text-xs sm:text-sm font-serif italic text-ink-muted leading-relaxed"

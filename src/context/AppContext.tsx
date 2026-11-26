@@ -87,12 +87,12 @@ export function AppProvider({
 
       if (theme === 'light') {
         const bg = data.settings.lightBgHex || '#F6F3EC';
-        const accent = data.settings.lightAccentHex || '#2E5A3C';
+        const accent = data.settings.lightAccentHex || '#233B2D';
         root.style.setProperty('--bg-paper', bg);
         root.style.setProperty('--accent-botanical', accent);
       } else {
-        const bg = data.settings.darkBgHex || '#111915';
-        const accent = data.settings.darkAccentHex || '#4C9A67';
+        const bg = data.settings.darkBgHex || '#131613';
+        const accent = data.settings.darkAccentHex || '#3A5E49';
         root.style.setProperty('--bg-paper', bg);
         root.style.setProperty('--accent-botanical', accent);
       }

@@ -63,7 +63,17 @@ export async function POST(req: NextRequest) {
       return apiError('Mật khẩu phải có độ dài tối thiểu 6 ký tự', 400);
     }
 
-    const validRole = ['SUPER_ADMIN', 'EDITOR', 'SEO_MANAGER'].includes(role) ? role : 'EDITOR';
+    const allowedRoles = [
+      'SUPER_ADMIN',
+      'MARKETING_CONTENT',
+      'SALES_CSKH',
+      'WAREHOUSE_OPS',
+      'ACCOUNTANT',
+      'EDITOR',
+      'SEO_MANAGER',
+      'STAFF',
+    ];
+    const validRole = allowedRoles.includes(role) ? role : 'MARKETING_CONTENT';
 
     const existing = await prisma.adminUser.findUnique({
       where: { username: cleanUsername },

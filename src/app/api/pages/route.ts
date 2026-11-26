@@ -54,6 +54,29 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    await prisma.legalPage.upsert({
+      where: { slug: cleanSlug },
+      update: {
+        titleVi: title,
+        titleEn: titleEn || title,
+        contentVi: content,
+        contentEn: contentEn || content,
+        seoTitleVi: metaTitle || null,
+        seoDescVi: metaDescription || null,
+        published: Boolean(published),
+      },
+      create: {
+        slug: cleanSlug,
+        titleVi: title,
+        titleEn: titleEn || title,
+        contentVi: content,
+        contentEn: contentEn || content,
+        seoTitleVi: metaTitle || null,
+        seoDescVi: metaDescription || null,
+        published: Boolean(published),
+      },
+    }).catch(() => {});
+
     await logAction({
       level: 'INFO',
       action: 'PAGE_CREATE',
@@ -92,6 +115,29 @@ export async function PUT(req: NextRequest) {
         published: typeof published === 'boolean' ? published : undefined,
       },
     });
+
+    await prisma.legalPage.upsert({
+      where: { slug: updated.slug },
+      update: {
+        titleVi: updated.title,
+        titleEn: updated.titleEn || updated.title,
+        contentVi: updated.content,
+        contentEn: updated.contentEn || updated.content,
+        seoTitleVi: updated.metaTitle,
+        seoDescVi: updated.metaDescription,
+        published: updated.published,
+      },
+      create: {
+        slug: updated.slug,
+        titleVi: updated.title,
+        titleEn: updated.titleEn || updated.title,
+        contentVi: updated.content,
+        contentEn: updated.contentEn || updated.content,
+        seoTitleVi: updated.metaTitle,
+        seoDescVi: updated.metaDescription,
+        published: updated.published,
+      },
+    }).catch(() => {});
 
     await logAction({
       level: 'INFO',

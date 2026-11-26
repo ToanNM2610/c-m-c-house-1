@@ -98,7 +98,12 @@ export function middleware(request: NextRequest) {
           "/contact": "/lien-he",
         };
 
-        const targetPath = enToViTargetMap[subpath] || subpath;
+        let targetPath = enToViTargetMap[subpath] || subpath;
+        if (subpath.startsWith("/news/")) {
+          targetPath = `/tin-tuc${subpath.slice(5)}`;
+        } else if (subpath.startsWith("/phap-ly/")) {
+          targetPath = subpath;
+        }
         const originalPathname = url.pathname;
         url.pathname = targetPath;
 

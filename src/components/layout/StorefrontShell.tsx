@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import Navbar from '@/components/common/Navbar';
 import CinematicIntro8K from '@/components/motion/CinematicIntro8K';
 import GalleryLightboxModal from '@/components/modals/GalleryLightboxModal';
-import QuickChatWidget from '@/components/common/QuickChatWidget';
 import QuickSupportWidget from '@/components/common/QuickSupportWidget';
 import MobileBottomBar from '@/components/MobileBottomBar';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';

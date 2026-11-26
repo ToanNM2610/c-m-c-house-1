@@ -66,9 +66,22 @@ function MenuItemCard({
             {/* Price */}
             <div className="flex flex-col items-end shrink-0 whitespace-nowrap">
               {showPrices && (
-                <span className="font-sans text-base font-bold text-accent-botanical">
-                  {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
-                </span>
+                <>
+                  {item.salePriceVnd && item.salePriceVnd < item.price ? (
+                    <div className="flex flex-col items-end">
+                      <span className="font-sans text-base font-bold text-accent-earth">
+                        {item.salePriceVnd.toLocaleString('vi-VN')}đ
+                      </span>
+                      <span className="font-mono text-xs text-ink-muted line-through">
+                        {item.price.toLocaleString('vi-VN')}đ
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="font-sans text-base font-bold text-accent-botanical">
+                      {item.priceDisplay || `${item.price.toLocaleString('vi-VN')}đ`}
+                    </span>
+                  )}
+                </>
               )}
               {showPrices && isEn && (
                 <span className="block text-[11px] font-normal text-ink-muted font-sans">
@@ -79,9 +92,30 @@ function MenuItemCard({
           </div>
 
           {/* Description */}
-          <p className="text-xs text-ink-muted leading-relaxed mb-3 font-sans">
+          <p className="text-[14px] text-ink-muted leading-relaxed mb-3 font-sans">
             {desc}
           </p>
+
+          {/* Terroir / Origin & Tasting Notes Spec Line (Text-Only) */}
+          {(item.originRegion || item.tastingNotes || item.servingSize) && (
+            <div className="mb-3 flex flex-wrap items-center gap-2 text-xs font-mono text-ink-muted">
+              {item.originRegion && (
+                <span className="px-2 py-0.5 rounded bg-moss-soft border border-forest-200/70 dark:border-forest-700 text-accent-earth font-medium">
+                  {item.originRegion}
+                </span>
+              )}
+              {item.tastingNotes && (
+                <span className="px-2 py-0.5 rounded bg-moss-soft border border-forest-200/70 dark:border-forest-700">
+                  {item.tastingNotes}
+                </span>
+              )}
+              {item.servingSize && (
+                <span className="text-xs font-mono text-ink-muted">
+                  · {item.servingSize}
+                </span>
+              )}
+            </div>
+          )}
 
           {/* Available Variant Labels */}
           {variants && variants.length > 0 && (

@@ -17,7 +17,12 @@ export interface MenuItem {
   description: string;
   descriptionEn?: string;
   price: number; // Base price
+  salePriceVnd?: number | null;
+  costPriceVnd?: number;
   priceDisplay?: string;
+  originRegion?: string | null;
+  tastingNotes?: string | null;
+  servingSize?: string | null;
   variants?: MenuItemVariant[];
   variantsEn?: MenuItemVariant[];
   highlight?: 'Best-seller' | 'Signature' | 'Đặc sản thảo mộc xanh sạch' | 'Đăk Nông mùa bơ sáp' | 'Signature béo ngậy' | 'Green Detox xanh sạch' | 'Hạt đác rim dẻo giòn' | 'Giải nhiệt bên suối' | 'Điểm tâm đậm đà' | string;
@@ -32,12 +37,15 @@ export interface MenuItem {
   inStock: boolean;
   isAvailable?: boolean;
   isVisible?: boolean;
+  allowOrdering?: boolean;
   sortOrder?: number;
   orderCount?: number;
-  sku?: string;
+  sku?: string | null;
   productType?: ProductType;
   trackInventory?: boolean;
   stockQuantity?: number;
+  stockReserved?: number;
+  lowStockThreshold?: number;
 }
 
 export interface PhilosophyCard {
@@ -347,6 +355,11 @@ export interface CafeSettings {
   whatsappUrl?: string;
   instagramUrl?: string;
   usdExchangeRate?: number;
+
+  // Dual-Mode Showcase <-> Commerce Flags
+  commerceEnabled?: boolean;
+  enableCustomerPortal?: boolean;
+  enableNewsletter?: boolean;
 }
 
 export interface TeamMember {
@@ -500,8 +513,35 @@ export interface SystemLog {
   createdAt: string | Date;
 }
 
+export interface CommerceSettingsData {
+  id?: string;
+  commerceEnabled: boolean;
+  enableDelivery: boolean;
+  enablePickup: boolean;
+  enableDineInBbq: boolean;
+  enableCod: boolean;
+  enableVietQr: boolean;
+  enableEwallet: boolean;
+  enableCard: boolean;
+  bankId: string;
+  bankAccountNo: string;
+  bankAccountName: string;
+  vietQrTemplate: string;
+  vatPercent: number;
+  defaultFreeShipThreshold: number;
+  orderNotificationEmail?: string | null;
+  enableCustomerPortal: boolean;
+  enableNewsletter: boolean;
+  enableQuickSupportWidget: boolean;
+  enableSupportHotline: boolean;
+  enableSupportZalo: boolean;
+  enableSupportMessenger: boolean;
+  enableSupportWhatsApp: boolean;
+}
+
 export interface DatabaseSchema {
   settings: CafeSettings;
+  commerceSettings?: CommerceSettingsData | null;
   content: SiteContent;
   menu: MenuItem[];
   spatialPlates: SpatialPlate[];
@@ -513,7 +553,15 @@ export interface DatabaseSchema {
   lastUpdated: string;
 }
 
-export type AdminRole = 'SUPER_ADMIN' | 'EDITOR' | 'SEO_MANAGER';
+export type AdminRole =
+  | 'SUPER_ADMIN'
+  | 'MARKETING_CONTENT'
+  | 'SALES_CSKH'
+  | 'WAREHOUSE_OPS'
+  | 'ACCOUNTANT'
+  | 'EDITOR'
+  | 'SEO_MANAGER'
+  | 'STAFF';
 
 export interface AdminUserSafe {
   id: string;
@@ -521,6 +569,8 @@ export interface AdminUserSafe {
   fullName: string;
   role: AdminRole;
   isActive: boolean;
+  totpEnabled?: boolean;
+  lastLoginAt?: string | Date | null;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }

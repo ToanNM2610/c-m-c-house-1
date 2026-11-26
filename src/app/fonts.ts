@@ -1,11 +1,20 @@
-// src/app/fonts.ts
-import { Fraunces, Be_Vietnam_Pro } from "next/font/google";
+import { Lora, Newsreader, Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 
-export const fraunces = Fraunces({
+export const lora = Lora({
   subsets: ["vietnamese", "latin-ext"],
-  axes: ["opsz", "SOFT"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
-  variable: "--font-fraunces",
+  variable: "--font-lora",
+});
+
+export const newsreader = Newsreader({
+  subsets: ["vietnamese", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  adjustFontFallback: false,
+  variable: "--font-newsreader",
 });
 
 export const beVietnamPro = Be_Vietnam_Pro({
@@ -13,4 +22,11 @@ export const beVietnamPro = Be_Vietnam_Pro({
   weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-be-vietnam",
+});
+
+export const jetbrainsMono = JetBrains_Mono({
+  subsets: ["vietnamese", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-mono",
 });

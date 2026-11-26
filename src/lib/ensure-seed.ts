@@ -5,12 +5,14 @@ let seedPromise: Promise<void> | null = null;
 
 export async function ensureDatabaseSeeded(): Promise<void> {
   try {
-    const [menuCount, settingsExists] = await Promise.all([
+    const [menuCount, siteSettingsExists, storeSettingsExists, commerceSettingsExists] = await Promise.all([
       prisma.menuItem.count().catch(() => 0),
       prisma.siteSettings.findUnique({ where: { id: 'default' } }).catch(() => null),
+      prisma.storeSettings.findUnique({ where: { id: 'default' } }).catch(() => null),
+      prisma.commerceSettings.findUnique({ where: { id: 'commerce-settings' } }).catch(() => null),
     ]);
 
-    if (menuCount >= 60 && settingsExists) return;
+    if (menuCount >= 60 && siteSettingsExists && storeSettingsExists && commerceSettingsExists) return;
 
     if (seedPromise) return seedPromise;
 

@@ -7,34 +7,36 @@
   --font-be-vietnam: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-jakarta: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-lora: 'Lora', 'Newsreader', Georgia, serif;
+  --font-newsreader: 'Newsreader', 'Lora', Georgia, serif;
   --font-cormorant: 'Cormorant Garamond', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Default Typography Preset: sans-be-vietnam (Crisp Clean Sans-serif) */
-  --font-heading: var(--font-be-vietnam), sans-serif;
+  /* Default Typography Preset: Terroir Storytelling (Lora/Newsreader + Be Vietnam Pro) */
+  --font-heading: var(--font-lora), Georgia, serif;
   --font-body: var(--font-be-vietnam), sans-serif;
-  --heading-letter-spacing: -0.02em;
+  --heading-letter-spacing: -0.015em;
 
-  /* Default Light Theme Tokens */
+  /* Light Mode Tokens (Ban ngày bên suối — Giấy dó mộc & Đất đỏ Bazan) */
   --bg-paper: #F6F3EC;
-  --bg-moss-soft: #EBF0EC;
-  --ink-primary: #1A241E;
-  --ink-muted: #526056;
-  --accent-botanical: #2E5A3C;
-  --accent-earth: #8C5A3C;
-  --panel-bg: rgba(246, 243, 236, 0.88);
-  --panel-border: rgba(46, 90, 60, 0.15);
+  --bg-moss-soft: #ECE7DC;
+  --ink-primary: #1C1917;
+  --ink-muted: #5C554E;
+  --accent-botanical: #233B2D;
+  --accent-earth: #9E472A;
+  --panel-bg: rgba(236, 231, 220, 0.88);
+  --panel-border: rgba(35, 59, 45, 0.16);
   --scrollbar-track: #F6F3EC;
-  --scrollbar-thumb: #C2CCBF;
-  --dot-grid: rgba(26, 36, 30, 0.08);
+  --scrollbar-thumb: #C8C1B3;
+  --dot-grid: rgba(28, 25, 23, 0.06);
 }
 
 /* Typography Presets */
 [data-font="sans-be-vietnam"],
 html:not([data-font]) {
-  --font-heading: var(--font-be-vietnam), sans-serif;
+  --font-heading: var(--font-lora), Georgia, serif;
   --font-body: var(--font-be-vietnam), sans-serif;
-  --heading-letter-spacing: -0.02em;
+  --heading-letter-spacing: -0.015em;
 }
 
 [data-font="sans-jakarta"] {
@@ -50,24 +52,24 @@ html:not([data-font]) {
 }
 
 [data-font="serif-editorial"] {
-  --font-heading: var(--font-cormorant), Georgia, serif;
+  --font-heading: var(--font-newsreader), Georgia, serif;
   --font-body: var(--font-be-vietnam), sans-serif;
-  --heading-letter-spacing: 0.01em;
+  --heading-letter-spacing: 0.005em;
 }
 
 [data-theme="dark"] {
-  /* Evening / Dark Mode Tokens */
-  --bg-paper: #111915;
-  --bg-moss-soft: #18231E;
-  --ink-primary: #F0EDE6;
-  --ink-muted: #95A59B;
-  --accent-botanical: #4C9A67;
-  --accent-earth: #D49B6A;
-  --panel-bg: rgba(24, 35, 30, 0.90);
-  --panel-border: rgba(76, 154, 103, 0.25);
-  --scrollbar-track: #111915;
-  --scrollbar-thumb: #2D3D34;
-  --dot-grid: rgba(76, 154, 103, 0.12);
+  /* Evening / Dark Mode Tokens (Đêm BBQ cuối tuần — Than rừng sâu & Lửa than ấm) */
+  --bg-paper: #131613;
+  --bg-moss-soft: #1C211D;
+  --ink-primary: #ECE7DF;
+  --ink-muted: #9E988E;
+  --accent-botanical: #3A5E49;
+  --accent-earth: #C96A47;
+  --panel-bg: rgba(28, 33, 29, 0.90);
+  --panel-border: rgba(58, 94, 73, 0.28);
+  --scrollbar-track: #131613;
+  --scrollbar-thumb: #2D3830;
+  --dot-grid: rgba(201, 106, 71, 0.08);
 }
 
 html {

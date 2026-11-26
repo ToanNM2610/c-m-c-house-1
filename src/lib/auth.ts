@@ -4,12 +4,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from './prisma';
 import { apiError } from './api-response';
 import { AdminRole, AdminUserSafe } from '@/types';
+import { AdminModuleKey, hasModuleAccess } from './rbac';
 
 export interface SessionPayload {
   userId: string;
   username: string;
   fullName: string;
   role: AdminRole;
+  sessionId?: string;
   exp: number;
 }
 
@@ -17,19 +19,12 @@ const SESSION_COOKIE_NAME = 'camcu_admin_session';
 const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || 'camcu_house_gmt7_admin_secret_key_2026_botanical';
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-/**
- * Hash password using Node.js native crypto.scryptSync with 16-byte random salt.
- * Result format: "<salt_hex>:<hash_hex>"
- */
 export function hashPassword(password: string): string {
   const salt = crypto.randomBytes(16).toString('hex');
   const derivedKey = crypto.scryptSync(password, salt, 64);
   return `${salt}:${derivedKey.toString('hex')}`;
 }
 
-/**
- * Verify password against stored "<salt_hex>:<hash_hex>" using crypto.timingSafeEqual.
- */
 export function verifyPassword(password: string, storedHash: string): boolean {
   try {
     const [salt, keyHex] = storedHash.split(':');
@@ -61,15 +56,20 @@ function base64UrlDecode(str: string): string {
   return Buffer.from(base64, 'base64').toString('utf8');
 }
 
-/**
- * Create a signed HMAC-SHA256 session token.
- */
-export function createSessionToken(user: { id: string; username: string; fullName: string; role: string }): string {
+export function hashSessionToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+export function createSessionToken(
+  user: { id: string; username: string; fullName: string; role: string },
+  sessionId?: string
+): string {
   const payload: SessionPayload = {
     userId: user.id,
     username: user.username,
     fullName: user.fullName,
     role: (user.role as AdminRole) || 'EDITOR',
+    sessionId,
     exp: Date.now() + SESSION_DURATION_MS,
   };
 
@@ -84,9 +84,42 @@ export function createSessionToken(user: { id: string; username: string; fullNam
   return `${encodedPayload}.${signature}`;
 }
 
-/**
- * Verify and decode an HMAC-SHA256 session token.
- */
+export async function createPersistedAdminSession(
+  user: { id: string; username: string; fullName: string; role: string },
+  req?: NextRequest
+): Promise<{ token: string; sessionId: string }> {
+  const sessionId = crypto.randomBytes(16).toString('hex');
+  const token = createSessionToken(user, sessionId);
+  const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
+
+  const ipAddress =
+    req?.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req?.headers.get('x-real-ip') ||
+    null;
+  const userAgent = req?.headers.get('user-agent')?.slice(0, 240) || null;
+
+  try {
+    await prisma.adminSession.create({
+      data: {
+        id: sessionId,
+        sessionToken: hashSessionToken(token),
+        userId: user.id,
+        expiresAt,
+        ipAddress,
+        userAgent,
+      },
+    });
+    await prisma.adminUser.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    }).catch(() => {});
+  } catch (err) {
+    console.warn('Could not persist AdminSession row:', err);
+  }
+
+  return { token, sessionId };
+}
+
 export function verifySessionToken(token: string): SessionPayload | null {
   try {
     const [encodedPayload, signature] = token.split('.');
@@ -112,24 +145,17 @@ export function verifySessionToken(token: string): SessionPayload | null {
   }
 }
 
-/**
- * Cookie options helper
- */
 export function getSessionCookieOptions(isProduction = process.env.NODE_ENV === 'production') {
   return {
     name: SESSION_COOKIE_NAME,
     httpOnly: true,
     sameSite: 'lax' as const,
     path: '/',
-    maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
-    // Only enforce secure on true HTTPS deployments (do not break http://localhost:3000)
+    maxAge: 7 * 24 * 60 * 60,
     secure: isProduction && process.env.COOKIE_SECURE === 'true',
   };
 }
 
-/**
- * Get current authenticated user from request or headers cookie.
- */
 export async function getSessionUser(req?: NextRequest): Promise<AdminUserSafe | null> {
   try {
     let token: string | undefined;
@@ -146,6 +172,21 @@ export async function getSessionUser(req?: NextRequest): Promise<AdminUserSafe |
     const payload = verifySessionToken(token);
     if (!payload || !payload.userId) return null;
 
+    // If token was minted with a persistent AdminSession ID, verify it was not revoked
+    if (payload.sessionId) {
+      try {
+        const dbSession = await prisma.adminSession.findUnique({
+          where: { id: payload.sessionId },
+          select: { id: true, expiresAt: true },
+        });
+        if (!dbSession || dbSession.expiresAt.getTime() < Date.now()) {
+          return null;
+        }
+      } catch {
+        // Fail open only if AdminSession table doesn't exist yet on legacy DB
+      }
+    }
+
     const user = await prisma.adminUser.findUnique({
       where: { id: payload.userId },
       select: {
@@ -154,6 +195,8 @@ export async function getSessionUser(req?: NextRequest): Promise<AdminUserSafe |
         fullName: true,
         role: true,
         isActive: true,
+        totpEnabled: true,
+        lastLoginAt: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -167,6 +210,8 @@ export async function getSessionUser(req?: NextRequest): Promise<AdminUserSafe |
       fullName: user.fullName,
       role: (user.role as AdminRole) || 'EDITOR',
       isActive: user.isActive,
+      totpEnabled: user.totpEnabled ?? false,
+      lastLoginAt: user.lastLoginAt,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
@@ -176,9 +221,6 @@ export async function getSessionUser(req?: NextRequest): Promise<AdminUserSafe |
   }
 }
 
-/**
- * Authentication guard for API route handlers with role checking.
- */
 export async function requireAuth(
   req?: NextRequest,
   allowedRoles?: AdminRole | AdminRole[]
@@ -192,7 +234,7 @@ export async function requireAuth(
 
   if (allowedRoles) {
     const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-    if (!roles.includes(user.role)) {
+    if (user.role !== 'SUPER_ADMIN' && !roles.includes(user.role)) {
       return {
         errorResponse: apiError('Bạn không có quyền thực hiện thao tác này', 403),
       };
@@ -202,3 +244,22 @@ export async function requireAuth(
   return { user };
 }
 
+export async function requireModuleAuth(
+  req: NextRequest | undefined,
+  moduleKey: AdminModuleKey
+): Promise<{ user: AdminUserSafe } | { errorResponse: NextResponse }> {
+  const user = await getSessionUser(req);
+  if (!user) {
+    return {
+      errorResponse: apiError('Yêu cầu đăng nhập tài khoản quản trị', 401),
+    };
+  }
+
+  if (!hasModuleAccess(user.role, moduleKey)) {
+    return {
+      errorResponse: apiError(`Vai trò "${user.role}" không được cấp quyền truy cập phân hệ ${moduleKey}`, 403),
+    };
+  }
+
+  return { user };
+}

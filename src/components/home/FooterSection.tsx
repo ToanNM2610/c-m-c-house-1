@@ -94,31 +94,37 @@ export default function FooterSection() {
 
             {/* Social ecosystem */}
             <div className="flex flex-wrap items-center gap-2 pt-2">
-              <a
-                href={s.links.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
-              >
-                Facebook
-              </a>
-              <a
-                href={s.links.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
-              >
-                TikTok
-              </a>
-              <a
-                href={s.links.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
-              >
-                YouTube
-              </a>
-              {s.whatsappUrl && (
+              {s.links?.facebook && (
+                <a
+                  href={s.links.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
+                >
+                  Facebook
+                </a>
+              )}
+              {s.links?.tiktok && (
+                <a
+                  href={s.links.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
+                >
+                  TikTok
+                </a>
+              )}
+              {s.links?.youtube && (
+                <a
+                  href={s.links.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-mono transition-colors"
+                >
+                  YouTube
+                </a>
+              )}
+              {s.enableWhatsApp === true && s.whatsappUrl && (
                 <a
                   href={s.whatsappUrl}
                   target="_blank"
@@ -212,19 +218,26 @@ export default function FooterSection() {
                 <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div className="flex flex-wrap gap-2">
                   {s.hotlines && s.hotlines.length > 0 ? (
-                    s.hotlines.map((h: any, idx: number) => (
-                      <React.Fragment key={h.number || idx}>
-                        {idx > 0 && <span>—</span>}
-                        <a
-                          href={`tel:${h.rawNumber || h.number?.replace(/\s+/g, '') || ''}`}
-                          className="font-mono text-emerald-300 hover:text-white underline font-semibold"
-                        >
-                          {isEn && (h.number?.includes('038') || h.number?.includes('077'))
-                            ? h.number.replace(/^0/, '+84 ')
-                            : h.number}
-                        </a>
-                      </React.Fragment>
-                    ))
+                    s.hotlines.map((h: any, idx: number) => {
+                      const displayNum = typeof h === 'string' ? h : (h?.number || h?.rawNumber || '');
+                      const rawNum = typeof h === 'string'
+                        ? h.replace(/\s+/g, '')
+                        : (h?.rawNumber || h?.number?.replace(/\s+/g, '') || '');
+                      if (!displayNum) return null;
+                      return (
+                        <React.Fragment key={rawNum || idx}>
+                          {idx > 0 && <span>—</span>}
+                          <a
+                            href={`tel:${rawNum}`}
+                            className="font-mono text-emerald-300 hover:text-white underline font-semibold"
+                          >
+                            {isEn && (displayNum.startsWith('038') || displayNum.startsWith('077'))
+                              ? displayNum.replace(/^0/, '+84 ')
+                              : displayNum}
+                          </a>
+                        </React.Fragment>
+                      );
+                    })
                   ) : (
                     <>
                       <a
@@ -301,45 +314,31 @@ export default function FooterSection() {
           {/* Legal Policy Links */}
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-mono">
             <Link
-              href="/p/chinh-sach-bao-mat"
+              href="/phap-ly/chinh-sach-bao-mat"
               className="hover:text-emerald-400 underline transition-colors"
             >
               {isEn ? 'Privacy Policy' : 'Chính sách bảo mật'}
             </Link>
             <span>•</span>
             <Link
-              href="/p/dieu-khoan-su-dung"
+              href="/phap-ly/chinh-sach-doi-tra"
               className="hover:text-emerald-400 underline transition-colors"
             >
-              {isEn ? 'Terms of Service' : 'Điều khoản sử dụng'}
+              {isEn ? 'Return Policy' : 'Chính sách đổi trả'}
             </Link>
             <span>•</span>
             <Link
-              href="/p/chinh-sach-thanh-toan"
+              href="/phap-ly/chinh-sach-bao-hanh"
               className="hover:text-emerald-400 underline transition-colors"
             >
-              {isEn ? 'Payment Policy' : 'Chính sách thanh toán'}
+              {isEn ? 'Quality Warranty' : 'Chính sách bảo hành'}
             </Link>
             <span>•</span>
             <Link
-              href="/p/chinh-sach-giao-hang-kiem-hang"
+              href="/phap-ly/dieu-khoan-su-dung"
               className="hover:text-emerald-400 underline transition-colors"
             >
-              {isEn ? 'Shipping & Inspection' : 'Giao hàng & Kiểm hàng'}
-            </Link>
-            <span>•</span>
-            <Link
-              href="/p/chinh-sach-doi-tra-hoan-tien"
-              className="hover:text-emerald-400 underline transition-colors"
-            >
-              {isEn ? 'Refund & Returns' : 'Đổi trả & Hoàn tiền'}
-            </Link>
-            <span>•</span>
-            <Link
-              href="/p/noi-quy-khong-gian"
-              className="hover:text-emerald-400 underline transition-colors"
-            >
-              {isEn ? 'Sanctuary Rules' : 'Nội quy không gian'}
+              {isEn ? 'Terms & Rules' : 'Điều khoản sử dụng'}
             </Link>
           </div>
         </div>

@@ -27,12 +27,24 @@ import {
   Loader2,
   Key,
   LayoutDashboard,
+  Package,
+  ShoppingBag,
+  Tag,
+  ToggleRight,
+  Lock,
 } from 'lucide-react';
 import AdminLogin from '@/components/admin/AdminLogin';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import AdminErrorBoundary from '@/components/admin/AdminErrorBoundary';
 import AdminCMSHome from '@/components/admin/AdminCMSHome';
 import AdminMenuManager from '@/components/admin/AdminMenuManager';
+import AdminInventoryManager from '@/components/admin/AdminInventoryManager';
+import AdminOrdersManager from '@/components/admin/AdminOrdersManager';
+import AdminCustomersManager from '@/components/admin/AdminCustomersManager';
+import AdminVouchersShippingManager from '@/components/admin/AdminVouchersShippingManager';
+import AdminCommerceAnalytics from '@/components/admin/AdminCommerceAnalytics';
+import AdminDualModeSettings from '@/components/admin/AdminDualModeSettings';
+import AdminSecurityAuditManager from '@/components/admin/AdminSecurityAuditManager';
 import AdminGalleryManager from '@/components/admin/AdminGalleryManager';
 import AdminEventsManager from '@/components/admin/AdminEventsManager';
 import AdminStoriesTeamManager from '@/components/admin/AdminStoriesTeamManager';
@@ -45,11 +57,12 @@ import AdminSettingsManager from '@/components/admin/AdminSettingsManager';
 import AnalyticsTab from '@/components/admin/AnalyticsTab';
 import IntegrationsTab from '@/components/admin/IntegrationsTab';
 import SearchConsoleTab from '@/components/admin/SearchConsoleTab';
-import { AdminUserSafe } from '@/types';
+import { AdminUserSafe, AdminRole } from '@/types';
+import { ADMIN_ROLE_LABELS, getDefaultTabForRole } from '@/lib/rbac';
 
 export type AdminTab =
   | 'dashboard'
-  // 1. Giao diện 7 Trang Web
+  // 1. Giao diện 7 Trang Web & Nội dung
   | 'page-home'
   | 'page-about'
   | 'page-space'
@@ -57,25 +70,34 @@ export type AdminTab =
   | 'page-reviews'
   | 'page-news'
   | 'page-contact'
-  | 'home-cms' // legacy alias
-  // 2. Quản lý Nội dung Quán
+  | 'home-cms'
+  // 2. Sản phẩm PIM & Kho hàng
   | 'menu-cms'
+  | 'inventory-cms'
+  // 3. Đơn hàng & Vận chuyển OMS
+  | 'orders-cms'
+  // 4. Khách hàng, CRM & Đánh giá
+  | 'customers-crm'
+  | 'vouchers-shipping'
+  | 'interactions-inbox'
+  | 'interactions-reviews'
+  | 'interactions-chat'
+  | 'interactions'
+  // 5. Nội dung tĩnh, Gallery, Blog, Pháp lý & SEO
   | 'gallery-cms'
   | 'events-cms'
   | 'stories-team'
   | 'pages-faq'
-  // 3. Khách hàng & Hộp thư
-  | 'interactions-inbox'
-  | 'interactions-reviews'
-  | 'interactions-chat'
-  | 'interactions' // legacy alias
-  // 4. SEO Google & Đo lường
   | 'seo-url'
+  // 6. Báo cáo & Phân tích kinh doanh
+  | 'commerce-analytics'
   | 'analytics'
   | 'searchConsole'
   | 'integrations'
-  // 5. Hệ thống & Cài đặt
+  // 7. Hệ thống, RBAC & Bảo mật
+  | 'dual-mode-settings'
   | 'users'
+  | 'security-audit'
   | 'settings'
   | 'ops';
 
@@ -83,65 +105,89 @@ export interface ChildNavItem {
   id: AdminTab;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  allowedRoles: ('SUPER_ADMIN' | 'EDITOR' | 'SEO_MANAGER')[];
+  allowedRoles: AdminRole[];
 }
 
 export interface ParentNavGroup {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  allowedRoles: ('SUPER_ADMIN' | 'EDITOR' | 'SEO_MANAGER')[];
+  allowedRoles: AdminRole[];
   children: ChildNavItem[];
 }
 
-// 5 Standard Hierarchical Parent Groups Definition
+const ALL_CONTENT_ROLES: AdminRole[] = ['SUPER_ADMIN', 'MARKETING_CONTENT', 'EDITOR'];
+const ALL_SALES_ROLES: AdminRole[] = ['SUPER_ADMIN', 'SALES_CSKH', 'ACCOUNTANT', 'STAFF', 'EDITOR'];
+
+// 7 Enterprise Admin Modules (Mục 4 c_u_tr_c_to_n_b_d_n_c_m_c_house.md)
 const parentGroups: ParentNavGroup[] = [
   {
-    id: 'group-pages',
-    label: 'Giao diện 7 Trang Web',
-    icon: Layout,
-    allowedRoles: ['SUPER_ADMIN', 'EDITOR'],
+    id: 'group-pim',
+    label: 'Sản phẩm, Danh mục & Kho',
+    icon: Package,
+    allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'SALES_CSKH', 'WAREHOUSE_OPS', 'EDITOR', 'STAFF'],
     children: [
-      { id: 'page-home', label: '1. Trang chủ', icon: Layout, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'page-about', label: '2. Giới thiệu', icon: Sparkles, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'page-space', label: '3. Không gian', icon: Camera, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'page-menu', label: '4. Thực đơn', icon: UtensilsCrossed, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'page-reviews', label: '5. Khách hàng', icon: MessageSquare, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'page-news', label: '6. Tin tức & FAQ', icon: FileText, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'page-contact', label: '7. Liên hệ & Đặt chỗ', icon: Globe, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'menu-cms', label: 'Thực đơn 7 Danh mục (PIM)', icon: UtensilsCrossed, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'SALES_CSKH', 'WAREHOUSE_OPS', 'EDITOR', 'STAFF'] },
+      { id: 'inventory-cms', label: 'Kho hàng & Nhập/Xuất tồn', icon: Package, allowedRoles: ['SUPER_ADMIN', 'WAREHOUSE_OPS', 'STAFF'] },
     ],
   },
   {
-    id: 'group-cms-data',
-    label: 'Quản lý Nội dung Quán',
-    icon: Layers,
-    allowedRoles: ['SUPER_ADMIN', 'EDITOR'],
+    id: 'group-oms',
+    label: 'Đơn hàng & Vận chuyển',
+    icon: ShoppingBag,
+    allowedRoles: ['SUPER_ADMIN', 'SALES_CSKH', 'WAREHOUSE_OPS', 'ACCOUNTANT', 'STAFF'],
     children: [
-      { id: 'menu-cms', label: 'Thực đơn 7 Danh mục', icon: UtensilsCrossed, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'gallery-cms', label: 'Không gian 30 Bản khắc', icon: Camera, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'events-cms', label: 'Tin tức & Bài viết', icon: Music, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'stories-team', label: 'Cột mốc & Đội ngũ', icon: Sparkles, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'pages-faq', label: 'Trang pháp lý & FAQ', icon: FileText, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'orders-cms', label: 'Đơn hàng, VietQR & Vận đơn', icon: ShoppingBag, allowedRoles: ['SUPER_ADMIN', 'SALES_CSKH', 'WAREHOUSE_OPS', 'ACCOUNTANT', 'STAFF'] },
     ],
   },
   {
     id: 'group-interactions',
-    label: 'Khách hàng & Hộp thư',
-    icon: MessageSquare,
-    allowedRoles: ['SUPER_ADMIN', 'EDITOR'],
+    label: 'Khách hàng, CRM & Đánh giá',
+    icon: Users,
+    allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'SALES_CSKH', 'ACCOUNTANT', 'EDITOR', 'STAFF'],
     children: [
-      { id: 'interactions-inbox', label: 'Đặt bàn, BBQ & Liên hệ', icon: Mail, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'interactions-reviews', label: 'Duyệt đánh giá', icon: ShieldCheck, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
-      { id: 'interactions-chat', label: 'Kênh Chat & Pixel', icon: MessageSquare, allowedRoles: ['SUPER_ADMIN', 'EDITOR'] },
+      { id: 'customers-crm', label: 'Hồ sơ CRM 360° & Công nợ', icon: Users, allowedRoles: ALL_SALES_ROLES },
+      { id: 'vouchers-shipping', label: 'Voucher & Phí vận chuyển', icon: Tag, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'EDITOR'] },
+      { id: 'interactions-inbox', label: 'Đặt bàn, BBQ & Liên hệ', icon: Mail, allowedRoles: ['SUPER_ADMIN', 'SALES_CSKH', 'MARKETING_CONTENT', 'EDITOR', 'STAFF'] },
+      { id: 'interactions-reviews', label: 'Duyệt & Trả lời đánh giá', icon: ShieldCheck, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'SALES_CSKH', 'EDITOR'] },
+      { id: 'interactions-chat', label: 'Kênh Chat & Pixel', icon: MessageSquare, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'EDITOR'] },
     ],
   },
   {
-    id: 'group-seo',
-    label: 'SEO Google & Đo lường',
-    icon: Globe,
-    allowedRoles: ['SUPER_ADMIN', 'SEO_MANAGER'],
+    id: 'group-pages',
+    label: 'Giao diện 7 Trang Web',
+    icon: Layout,
+    allowedRoles: ALL_CONTENT_ROLES,
     children: [
-      { id: 'seo-url', label: 'SEO Google & Điều hướng 301/302', icon: Search, allowedRoles: ['SUPER_ADMIN', 'SEO_MANAGER'] },
+      { id: 'page-home', label: '1. Trang chủ', icon: Layout, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'page-about', label: '2. Giới thiệu', icon: Sparkles, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'page-space', label: '3. Không gian', icon: Camera, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'page-menu', label: '4. Thực đơn', icon: UtensilsCrossed, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'page-reviews', label: '5. Khách hàng', icon: MessageSquare, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'page-news', label: '6. Tin tức & FAQ', icon: FileText, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'page-contact', label: '7. Liên hệ & Đặt chỗ', icon: Globe, allowedRoles: ALL_CONTENT_ROLES },
+    ],
+  },
+  {
+    id: 'group-cms-data',
+    label: 'Nội dung, Pháp lý & SEO',
+    icon: Layers,
+    allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'EDITOR', 'SEO_MANAGER'],
+    children: [
+      { id: 'gallery-cms', label: 'Không gian 30 Bản khắc', icon: Camera, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'events-cms', label: 'Tin tức & Bài viết Blog', icon: Music, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'stories-team', label: 'Cột mốc & Đội ngũ', icon: Sparkles, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'pages-faq', label: 'Trang pháp lý & FAQ', icon: FileText, allowedRoles: ALL_CONTENT_ROLES },
+      { id: 'seo-url', label: 'SEO Google & 301/302', icon: Search, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'EDITOR', 'SEO_MANAGER'] },
+    ],
+  },
+  {
+    id: 'group-analytics',
+    label: 'Báo cáo & Đo lường',
+    icon: BarChart3,
+    allowedRoles: ['SUPER_ADMIN', 'ACCOUNTANT', 'SEO_MANAGER'],
+    children: [
+      { id: 'commerce-analytics', label: 'Doanh thu & Xuất Excel', icon: BarChart3, allowedRoles: ['SUPER_ADMIN', 'ACCOUNTANT'] },
       { id: 'analytics', label: 'Google Analytics 4', icon: BarChart3, allowedRoles: ['SUPER_ADMIN', 'SEO_MANAGER'] },
       { id: 'searchConsole', label: 'Google Search Console', icon: Globe, allowedRoles: ['SUPER_ADMIN', 'SEO_MANAGER'] },
       { id: 'integrations', label: 'Tích hợp & Khóa API', icon: Key, allowedRoles: ['SUPER_ADMIN'] },
@@ -149,12 +195,14 @@ const parentGroups: ParentNavGroup[] = [
   },
   {
     id: 'group-system',
-    label: 'Hệ thống & Cài đặt',
+    label: 'Hệ thống, RBAC & Bảo mật',
     icon: ShieldCheck,
-    allowedRoles: ['SUPER_ADMIN', 'EDITOR', 'SEO_MANAGER'],
+    allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'SALES_CSKH', 'WAREHOUSE_OPS', 'ACCOUNTANT', 'EDITOR', 'SEO_MANAGER'],
     children: [
-      { id: 'settings', label: 'Cài đặt Quán & Chân trang', icon: Settings, allowedRoles: ['SUPER_ADMIN', 'EDITOR', 'SEO_MANAGER'] },
-      { id: 'users', label: 'Quản trị viên & Phân quyền', icon: Users, allowedRoles: ['SUPER_ADMIN'] },
+      { id: 'dual-mode-settings', label: 'Chế độ Kép & VietQR', icon: ToggleRight, allowedRoles: ['SUPER_ADMIN'] },
+      { id: 'settings', label: 'Cài đặt Quán & Chân trang', icon: Settings, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'EDITOR'] },
+      { id: 'users', label: 'Phân quyền RBAC 5 vai trò', icon: Users, allowedRoles: ['SUPER_ADMIN'] },
+      { id: 'security-audit', label: 'Bảo mật 2FA, Phiên & Audit', icon: Lock, allowedRoles: ['SUPER_ADMIN', 'MARKETING_CONTENT', 'SALES_CSKH', 'WAREHOUSE_OPS', 'ACCOUNTANT', 'EDITOR'] },
       { id: 'ops', label: 'Sao lưu DB, Cache & Logs', icon: Cpu, allowedRoles: ['SUPER_ADMIN'] },
     ],
   },
@@ -300,8 +348,8 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
         if (res.ok && json.success && json.data) {
           const user: AdminUserSafe = json.data;
           setCurrentUser(user);
-          if (user.role === 'SEO_MANAGER' && initialTab === 'dashboard') {
-            setActiveTab('seo-url');
+          if (initialTab === 'dashboard') {
+            setActiveTab(getDefaultTabForRole(user.role) as AdminTab);
           }
         } else {
           setCurrentUser(null);
@@ -339,9 +387,7 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
       <AdminLogin
         onLoginSuccess={(user) => {
           setCurrentUser(user);
-          if (user.role === 'SEO_MANAGER') {
-            setActiveTab('seo-url');
-          }
+          setActiveTab(getDefaultTabForRole(user.role) as AdminTab);
         }}
       />
     );
@@ -547,11 +593,7 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
               <div className="text-slate-400 text-xs">
                 Vai trò:{' '}
                 <span className="text-emerald-300 font-bold">
-                  {currentUser.role === 'SUPER_ADMIN'
-                    ? 'Super Admin'
-                    : currentUser.role === 'SEO_MANAGER'
-                    ? 'SEO Manager'
-                    : 'Biên tập viên'}
+                  {ADMIN_ROLE_LABELS[currentUser.role] || currentUser.role}
                 </span>
               </div>
             </div>
@@ -590,11 +632,7 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
                 <div className="p-2.5 bg-slate-800/60 rounded-xl text-xs font-mono text-slate-400 border border-slate-700/50 mb-2">
                   <div className="text-white font-medium truncate">{currentUser.fullName}</div>
                   <div className="text-emerald-400 text-xs">
-                    {currentUser.role === 'SUPER_ADMIN'
-                      ? 'Super Admin'
-                      : currentUser.role === 'SEO_MANAGER'
-                      ? 'SEO Manager'
-                      : 'Biên tập viên'}
+                    {ADMIN_ROLE_LABELS[currentUser.role] || currentUser.role}
                   </div>
                 </div>
                 <button
@@ -635,10 +673,32 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
               </AdminErrorBoundary>
             )}
 
-            {/* 2. Quản lý Nội dung Quán */}
+          {/* 2. Quản lý Sản phẩm PIM & Kho */}
             {activeTab === 'menu-cms' && (
-              <AdminErrorBoundary moduleName="Quản lý Thực đơn">
+              <AdminErrorBoundary moduleName="Quản lý Thực đơn (PIM)">
                 <AdminMenuManager />
+              </AdminErrorBoundary>
+            )}
+            {activeTab === 'inventory-cms' && (
+              <AdminErrorBoundary moduleName="Kho hàng & Nhập/Xuất tồn">
+                <AdminInventoryManager />
+              </AdminErrorBoundary>
+            )}
+            {/* 3. Quản lý Đơn hàng OMS */}
+            {activeTab === 'orders-cms' && (
+              <AdminErrorBoundary moduleName="Quản lý Đơn hàng & Vận chuyển">
+                <AdminOrdersManager />
+              </AdminErrorBoundary>
+            )}
+            {/* 4. CRM Khách hàng & Khuyến mãi */}
+            {activeTab === 'customers-crm' && (
+              <AdminErrorBoundary moduleName="CRM Khách hàng 360°">
+                <AdminCustomersManager />
+              </AdminErrorBoundary>
+            )}
+            {activeTab === 'vouchers-shipping' && (
+              <AdminErrorBoundary moduleName="Voucher & Phí vận chuyển">
+                <AdminVouchersShippingManager />
               </AdminErrorBoundary>
             )}
             {activeTab === 'gallery-cms' && (
@@ -715,7 +775,24 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
               </AdminErrorBoundary>
             )}
 
-            {/* 5. Hệ thống & Cài đặt */}
+            {/* 6. Báo cáo & Phân tích */}
+            {activeTab === 'commerce-analytics' && (
+              <AdminErrorBoundary moduleName="Báo cáo Doanh thu & Excel">
+                <AdminCommerceAnalytics />
+              </AdminErrorBoundary>
+            )}
+
+            {/* 7. Hệ thống & Cài đặt */}
+            {activeTab === 'dual-mode-settings' && (
+              <AdminErrorBoundary moduleName="Chế độ Kép & VietQR">
+                <AdminDualModeSettings />
+              </AdminErrorBoundary>
+            )}
+            {activeTab === 'security-audit' && (
+              <AdminErrorBoundary moduleName="Bảo mật 2FA, Phiên & Audit Log">
+                <AdminSecurityAuditManager isSuperAdmin={currentUser.role === 'SUPER_ADMIN'} />
+              </AdminErrorBoundary>
+            )}
             {activeTab === 'settings' && (
               <AdminErrorBoundary moduleName="Cài đặt Quán & Chân trang">
                 <AdminSettingsManager />

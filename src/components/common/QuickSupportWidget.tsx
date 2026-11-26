@@ -31,6 +31,8 @@ export default function QuickSupportWidget() {
   const hotline1 = s.hotlineNumber || s.quickChatPhone || '0382851688';
   const hotline2 = '0774659000';
   const zaloUrl = s.zaloUrl || (hotline1 ? `https://zalo.me/${hotline1}` : 'https://zalo.me/0382851688');
+  const messengerUrl = s.messengerUrl || '';
+  const whatsappUrl = s.whatsappUrl || '';
   const mapsUrl = s.links?.googleMaps || 'https://maps.app.goo.gl/G6aP51qJ6aDabp676';
 
   const isWidgetEnabled =
@@ -43,8 +45,11 @@ export default function QuickSupportWidget() {
 
   const showHotline = (s.enableHotline !== false) && Boolean(hotline1);
   const showZalo = (s.enableZalo !== false) && Boolean(zaloUrl);
+  // Strictly gated behind explicit === true (defaults false in Stage 1 Showcase Mode)
+  const showMessenger = s.enableMessenger === true && Boolean(messengerUrl);
+  const showWhatsApp = s.enableWhatsApp === true && Boolean(whatsappUrl);
 
-  if (!showHotline && !showZalo) {
+  if (!showHotline && !showZalo && !showMessenger && !showWhatsApp) {
     return null;
   }
 
@@ -118,6 +123,38 @@ export default function QuickSupportWidget() {
                   <span className="flex items-center gap-2">
                     <MessageCircle className="w-3.5 h-3.5" />
                     <span>Zalo Chat (038 285 1688)</span>
+                  </span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+
+              {/* Facebook Messenger (Only rendered when Admin explicitly enables enableMessenger) */}
+              {showMessenger && (
+                <a
+                  href={messengerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 hover:bg-sky-100 transition-colors border border-sky-200 dark:border-sky-900 font-semibold"
+                >
+                  <span className="flex items-center gap-2">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Facebook Messenger</span>
+                  </span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+
+              {/* WhatsApp (Only rendered when Admin explicitly enables enableWhatsApp) */}
+              {showWhatsApp && (
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors border border-emerald-200 dark:border-emerald-900 font-semibold"
+                >
+                  <span className="flex items-center gap-2">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>WhatsApp (+84 382 851 688)</span>
                   </span>
                   <ExternalLink className="w-3 h-3" />
                 </a>

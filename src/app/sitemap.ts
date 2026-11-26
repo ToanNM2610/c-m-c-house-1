@@ -54,12 +54,53 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  // Dynamic CMS-managed Static Pages
+  // Dynamic CMS-managed Legal Pages & Blog Posts
   try {
-    const pages = await prisma.staticPage.findMany({
-      where: { published: true },
-      select: { slug: true, updatedAt: true },
-    });
+    const [pages, legalPages, posts] = await Promise.all([
+      prisma.staticPage.findMany({
+        where: { published: true },
+        select: { slug: true, updatedAt: true },
+      }).catch(() => []),
+      prisma.legalPage.findMany({
+        where: { published: true },
+        select: { slug: true, updatedAt: true },
+      }).catch(() => []),
+      prisma.post.findMany({
+        where: { published: true },
+        select: { slug: true, updatedAt: true },
+      }).catch(() => []),
+    ]);
+
+    for (const lp of legalPages) {
+      const viUrl = `${baseUrl}/phap-ly/${lp.slug}`;
+      const enUrl = `${baseUrl}/en/phap-ly/${lp.slug}`;
+      sitemapEntries.push({
+        url: viUrl,
+        lastModified: lp.updatedAt,
+        changeFrequency: 'monthly',
+        priority: 0.6,
+        alternates: { languages: { vi: viUrl, en: enUrl, 'x-default': viUrl } },
+      });
+    }
+
+    for (const post of posts) {
+      const viUrl = `${baseUrl}/tin-tuc/${post.slug}`;
+      const enUrl = `${baseUrl}/en/news/${post.slug}`;
+      sitemapEntries.push({
+        url: viUrl,
+        lastModified: post.updatedAt,
+        changeFrequency: 'weekly',
+        priority: 0.7,
+        alternates: { languages: { vi: viUrl, en: enUrl, 'x-default': viUrl } },
+      });
+      sitemapEntries.push({
+        url: enUrl,
+        lastModified: post.updatedAt,
+        changeFrequency: 'weekly',
+        priority: 0.7,
+        alternates: { languages: { vi: viUrl, en: enUrl, 'x-default': viUrl } },
+      });
+    }
 
     for (const p of pages) {
       const viUrl = `${baseUrl}/p/${p.slug}`;

@@ -38,10 +38,15 @@ model SiteSettings {
   hotlineNumber         String   @default("0382851688")
   enableZalo            Boolean  @default(true)
   zaloUrl               String   @default("https://zalo.me/0382851688")
-  enableMessenger       Boolean  @default(true)
+  enableMessenger       Boolean  @default(false)
   messengerUrl          String   @default("https://m.me/camcuhousedaknong")
-  enableWhatsApp        Boolean  @default(true)
+  enableWhatsApp        Boolean  @default(false)
   whatsappUrl           String   @default("https://wa.me/84382851688")
+
+  // Dual-Mode Switch (Giai đoạn 1 Showcase OFF by default -> Giai đoạn 3 Commerce ON)
+  commerceEnabled       Boolean  @default(false)
+  enableCustomerPortal  Boolean  @default(false)
+  enableNewsletter      Boolean  @default(false)
 
   // Global SEO & Tracking
   metaTitleVi           String   @default("Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Gia Nghĩa, Đắk Nông")
@@ -353,39 +358,80 @@ model MenuItem {
   descEn          String?       @default("")
   description     String?       @default("")
   descriptionEn   String?       @default("")
-  priceVnd        Int           @default(25000)
-  price           Float         @default(25000)
-  priceDisplay    String?
-  imageUrl        String?
-  photoUrl        String?
-  variants        String?
-  variantsEn      String?
-  isFeatured      Boolean       @default(false)
-  isAvailable     Boolean       @default(true) // 'Còn món / Tạm hết' toggle (display only)
-  inStock         Boolean       @default(true)
-  isVisible       Boolean       @default(true) // 'Hiển thị / Ẩn'
-  badgeVi         String?
-  badgeEn         String?
-  highlight       String?
-  highlightEn     String?
-  editorialNoteVi String?
-  editorialNoteEn String?
-  editorialNote   String?
-  moodTags        String?
-  modelType       String?
-  customGlbUrl    String?
-  ingredients     String?
-  orderCount      Int           @default(0)
-  sku             String?
-  productType     String        @default("DRINK_FOOD")
-  trackInventory  Boolean       @default(false)
-  stockQuantity   Int           @default(0)
-  allowOrdering   Boolean       @default(true)
-  optionGroups    Json?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  priceVnd          Int             @default(25000)
+  salePriceVnd      Int?
+  costPriceVnd      Int             @default(0)
+  price             Float           @default(25000)
+  priceDisplay      String?
+  originRegion      String?
+  tastingNotes      String?
+  servingSize       String?
+  imageUrl          String?
+  photoUrl          String?
+  variants          String?
+  variantsEn        String?
+  isFeatured        Boolean         @default(false)
+  isAvailable       Boolean         @default(true) // 'Còn món / Tạm hết' toggle (display only)
+  inStock           Boolean         @default(true)
+  isVisible         Boolean         @default(true) // 'Hiển thị / Ẩn'
+  badgeVi           String?
+  badgeEn           String?
+  highlight         String?
+  highlightEn       String?
+  editorialNoteVi   String?
+  editorialNoteEn   String?
+  editorialNote     String?
+  moodTags          String?
+  modelType         String?
+  customGlbUrl      String?
+  ingredients       String?
+  orderCount        Int             @default(0)
+  sku               String?
+  productType       String          @default("DRINK_FOOD")
+  trackInventory    Boolean         @default(false)
+  stockQuantity     Int             @default(0)
+  stockReserved     Int             @default(0)
+  lowStockThreshold Int             @default(5)
+  allowOrdering     Boolean         @default(true)
+  optionGroups      Json?
+  variantsList      ProductVariant[]
+  stockMovements    StockMovement[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
   @@index([categoryId, sortOrder])
+}
+
+model ProductVariant {
+  id           String   @id @default(cuid())
+  menuItemId   String
+  menuItem     MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  nameVi       String
+  nameEn       String?
+  sku          String?
+  priceVnd     Int
+  salePriceVnd Int?
+  stockOnHand  Int      @default(0)
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  menuItemId    String
+  menuItem      MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  type          String   // 'IN' | 'OUT' | 'RESERVE' | 'RELEASE' | 'ADJUST'
+  quantity      Int
+  beforeQty     Int      @default(0)
+  afterQty      Int      @default(0)
+  note          String?
+  referenceId   String?
+  actorUsername String?
+  createdAt     DateTime @default(now())
+
+  @@index([menuItemId, createdAt])
 }
 
 // ============================================================================
@@ -707,18 +753,20 @@ enum AdminRole {
 }
 
 model AdminUser {
-  id           String         @id @default(cuid())
-  username     String         @unique
-  passwordHash String
-  fullName     String
-  role         String         @default("EDITOR")
-  isActive     Boolean        @default(true)
-  totpSecret   String?
-  totpEnabled  Boolean        @default(false)
-  sessions     AdminSession[]
-  auditLogs    AuditLog[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id                String         @id @default(cuid())
+  username          String         @unique
+  passwordHash      String
+  fullName          String
+  role              String         @default("EDITOR")
+  isActive          Boolean        @default(true)
+  totpSecret        String?
+  totpEnabled       Boolean        @default(false)
+  totpRecoveryCodes String?
+  lastLoginAt       DateTime?
+  sessions          AdminSession[]
+  auditLogs         AuditLog[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 }
 
 model AdminSession {
@@ -847,4 +895,234 @@ model AntiSpamConfig {
   blockedKeywords             String   @default("casino,bet88,kubet,viagra,sex,porn,vay tien,danh bac,lo de,keo nha cai,telegram,crypto,forex")
   maxGmailPerHour             Int      @default(15)
   updatedAt                   DateTime @updatedAt
+}
+
+// ============================================================================
+// 10. Giai đoạn 2–3 CRM, Loyalty, E-Commerce OMS, VietQR & Shipping
+// ============================================================================
+model ProductOptionGroup {
+  id        String   @id @default(cuid())
+  nameVi    String
+  nameEn    String?
+  type      String   @default("SINGLE") // 'SINGLE' | 'MULTIPLE'
+  required  Boolean  @default(false)
+  options   Json     // [{ labelVi, labelEn, priceDelta }]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id            String               @id @default(cuid())
+  email         String?              @unique
+  phone         String?              @unique
+  fullName      String
+  passwordHash  String?
+  avatarUrl     String?
+  isActive      Boolean              @default(true)
+  segment       String               @default("NEW") // 'NEW' | 'VIP' | 'WHOLESALE' | 'BLACKLIST'
+  debtBalance   Int                  @default(0)
+  loyaltyPoints Int                  @default(0)
+  crmNote       String?
+  totalSpent    Int                  @default(0)
+  orderCount    Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  addresses     CustomerAddress[]
+  wishlists     CustomerWishlist[]
+  orders        Order[]
+  loyaltyLogs   LoyaltyTransaction[]
+}
+
+model CustomerAddress {
+  id            String   @id @default(cuid())
+  customerId    String
+  customer      Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  label         String   @default("Nhà riêng")
+  recipientName String
+  phone         String
+  addressLine   String
+  wardDistrict  String
+  provinceCity  String
+  note          String?
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model CustomerWishlist {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  menuItemId String
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, menuItemId])
+}
+
+model LoyaltyTransaction {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  points     Int
+  type       String   @default("EARN") // 'EARN' | 'REDEEM' | 'ADJUST'
+  reason     String
+  orderId    String?
+  actor      String?
+  createdAt  DateTime @default(now())
+
+  @@index([customerId, createdAt])
+}
+
+model Order {
+  id              String               @id @default(cuid())
+  orderCode       String               @unique
+  customerId      String?
+  customer        Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  source          String               @default("WEB") // 'WEB' | 'ZALO' | 'HOTLINE'
+  fulfillmentType String               @default("DELIVERY") // 'DELIVERY' | 'PICKUP' | 'DINE_IN_BBQ'
+  scheduledTime   String?
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  shippingAddress String?
+  customerNote    String?
+  subtotal        Int
+  shippingFee     Int                  @default(0)
+  discountAmount  Int                  @default(0)
+  taxAmount       Int                  @default(0)
+  costTotal       Int                  @default(0)
+  totalAmount     Int
+  voucherCode     String?
+  paymentMethod   String               @default("VIETQR") // 'VIETQR' | 'COD' | 'ONLINE'
+  paymentStatus   String               @default("UNPAID") // 'UNPAID' | 'PENDING_VERIFY' | 'PAID' | 'REFUNDED' | 'FAILED'
+  paymentRef      String?
+  paidAt          DateTime?
+  orderStatus     String               @default("PENDING") // 'PENDING' | 'CONFIRMED' | 'PACKING' | 'SHIPPING' | 'COMPLETED' | 'RETURNED' | 'CANCELLED'
+  adminNote       String?
+  cancelReason    String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  items           OrderItem[]
+  payments        PaymentTransaction[]
+  shipments       Shipment[]
+
+  @@index([orderStatus, createdAt])
+  @@index([customerPhone])
+}
+
+model OrderItem {
+  id              String  @id @default(cuid())
+  orderId         String
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId      String?
+  itemNameVi      String
+  itemNameEn      String?
+  unitPrice       Int
+  costPrice       Int     @default(0)
+  quantity        Int
+  selectedOptions Json?
+  itemNote        String?
+  lineTotal       Int
+}
+
+model PaymentTransaction {
+  id            String    @id @default(cuid())
+  orderId       String
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  method        String    @default("VIETQR") // 'COD' | 'VIETQR' | 'ONLINE'
+  amount        Int
+  status        String    @default("PENDING") // 'PENDING' | 'PAID' | 'REFUNDED' | 'FAILED'
+  referenceCode String?
+  provider      String?
+  note          String?
+  verifiedBy    String?
+  verifiedAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([orderId, createdAt])
+}
+
+model Shipment {
+  id           String    @id @default(cuid())
+  orderId      String
+  order        Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  carrier      String    @default("SELF_DELIVERY") // 'SELF_DELIVERY' | 'GHN' | 'GHTK' | 'VIETTEL_POST'
+  trackingCode String?
+  status       String    @default("READY") // 'READY' | 'PICKED_UP' | 'IN_TRANSIT' | 'DELIVERED' | 'RETURNED'
+  shippingFee  Int       @default(0)
+  shippedAt    DateTime?
+  deliveredAt  DateTime?
+  note         String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Voucher {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  nameVi         String
+  nameEn         String?
+  discountType   String    @default("PERCENT") // 'PERCENT' | 'FIXED' | 'FREE_SHIP'
+  discountValue  Int
+  maxDiscount    Int?
+  minOrderAmount Int       @default(0)
+  usageLimit     Int?
+  usedCount      Int       @default(0)
+  startsAt       DateTime?
+  expiresAt      DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model ShippingZone {
+  id                String   @id @default(cuid())
+  nameVi            String
+  nameEn            String?
+  fee               Int
+  freeShipThreshold Int?
+  estimatedTimeVi   String?
+  estimatedTimeEn   String?
+  sortOrder         Int      @default(0)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CommerceSettings {
+  id                       String   @id @default("commerce-settings")
+  commerceEnabled          Boolean  @default(false)
+  enableDelivery           Boolean  @default(true)
+  enablePickup             Boolean  @default(true)
+  enableDineInBbq          Boolean  @default(true)
+  enableCod                Boolean  @default(true)
+  enableVietQr             Boolean  @default(true)
+  enableEwallet            Boolean  @default(false)
+  enableCard               Boolean  @default(false)
+  bankId                   String   @default("MB")
+  bankAccountNo            String   @default("0382851688")
+  bankAccountName          String   @default("CAM CU HOUSE")
+  vietQrTemplate           String   @default("compact2")
+  webhookSecret            String?
+  vatPercent               Int      @default(0)
+  defaultFreeShipThreshold Int      @default(300000)
+  orderNotificationEmail   String?
+  enableCustomerPortal     Boolean  @default(false)
+  enableNewsletter         Boolean  @default(false)
+  enableQuickSupportWidget Boolean  @default(true)
+  enableSupportHotline     Boolean  @default(true)
+  enableSupportZalo        Boolean  @default(true)
+  enableSupportMessenger   Boolean  @default(false)
+  enableSupportWhatsApp    Boolean  @default(false)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  locale    String   @default("vi")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
 }

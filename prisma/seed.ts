@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 type AdminRole = 'SUPER_ADMIN' | 'EDITOR' | 'STAFF';
+import { initialDbData, initialSiteContent } from '../src/lib/seedData';
 import {
   menuItemTranslations,
   spatialPlateTranslations,
@@ -41,14 +42,12 @@ export async function seedDatabase() {
   }
 
   // 1. SiteSettings (Single-row global config)
-  console.log('1. Seeding SiteSettings...');
+  console.log('1. Seeding SiteSettings, StoreSettings, SiteContent & CommerceSettings...');
   await prisma.siteSettings.upsert({
     where: { id: 'default' },
     update: {
       brandNameVi: 'Cẩm Cù House',
       brandNameEn: 'Cẩm Cù House',
-      taglineVi: 'Chốn dừng chân mộc mạc bên bờ suối đá',
-      taglineEn: 'A rustic eco-sanctuary along rocky streams',
       addressVi: 'Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng (P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông cũ)',
       addressEn: 'Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong (Former Nghia Trung Ward, Gia Nghia City, Dak Nong)',
       hotline1: '0382 851 688',
@@ -56,28 +55,7 @@ export async function seedDatabase() {
       email: 'thuynhu8788@gmail.com',
       operatingHoursVi: 'T2–T5: 07:00 – 18:00 | T6–CN: 07:00 – 22:00',
       operatingHoursEn: 'Mon–Thu: 07:00 – 18:00 | Fri–Sun: 07:00 – 22:00',
-      googleMapsUrl: 'https://maps.app.goo.gl/G6aP51qJ6aDabp676',
-      facebookUrl: 'https://facebook.com/camcuhouse',
-      tiktokUrl: 'https://tiktok.com/@camcuhouse',
-      youtubeUrl: '',
       coordinates: '11.99° N, 107.69° E',
-      enableSupportWidget: true,
-      enableHotline: true,
-      hotlineNumber: '0382851688',
-      enableZalo: true,
-      zaloUrl: 'https://zalo.me/0382851688',
-      enableMessenger: true,
-      messengerUrl: 'https://m.me/camcuhousedaknong',
-      enableWhatsApp: true,
-      whatsappUrl: 'https://wa.me/84382851688',
-      metaTitleVi: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Gia Nghĩa, Đắk Nông',
-      metaTitleEn: 'Cẩm Cù House — Streamside Eco-Sanctuary Café Dong Gia Nghia, Lam Dong',
-      metaDescVi: 'Không gian cà phê sinh thái trong lành nép bên dòng suối mát tự nhiên tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng. Cà phê rang mộc và thảo mộc xanh sạch.',
-      metaDescEn: 'Eco-coffee sanctuary beside a natural mountain stream in Dong Gia Nghia, Lam Dong. Authentic wood-roasted basalt coffee and fresh botanical teas.',
-      ogImageUrl: '/uploads/gallery/fig-01.jpg',
-      notificationRecipient: 'thuynhu8788@gmail.com',
-      rateLimitPerHour: 15,
-      emergencyLockdown: false,
     },
     create: {
       id: 'default',
@@ -102,10 +80,13 @@ export async function seedDatabase() {
       hotlineNumber: '0382851688',
       enableZalo: true,
       zaloUrl: 'https://zalo.me/0382851688',
-      enableMessenger: true,
+      enableMessenger: false,
       messengerUrl: 'https://m.me/camcuhousedaknong',
-      enableWhatsApp: true,
+      enableWhatsApp: false,
       whatsappUrl: 'https://wa.me/84382851688',
+      commerceEnabled: false,
+      enableCustomerPortal: false,
+      enableNewsletter: false,
       metaTitleVi: 'Cẩm Cù House — Cà Phê Sinh Thái Bên Bờ Suối Gia Nghĩa, Đắk Nông',
       metaTitleEn: 'Cẩm Cù House — Streamside Eco-Sanctuary Café Dong Gia Nghia, Lam Dong',
       metaDescVi: 'Không gian cà phê sinh thái trong lành nép bên dòng suối mát tự nhiên tại Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng. Cà phê rang mộc và thảo mộc xanh sạch.',
@@ -116,6 +97,94 @@ export async function seedDatabase() {
       emergencyLockdown: false,
     },
   });
+
+  const existingStore = await prisma.storeSettings.findUnique({ where: { id: 'default' } }).catch(() => null);
+  if (!existingStore) {
+    const s = initialDbData.settings;
+    await prisma.storeSettings.create({
+      data: {
+        id: 'default',
+        name: s.name,
+        tagline: s.tagline,
+        taglineEn: defaultSettingsEn.taglineEn || 'Streamside Ecological Café — Pure, Fresh & Harmonized with Nature',
+        address: 'Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng (P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông cũ)',
+        addressEn: defaultSettingsEn.addressEn || 'Alley 437 Hung Vuong, Dong Gia Nghia, Lam Dong',
+        hotlines: JSON.stringify(['0382 851 688', '0774 659 000']),
+        email: s.email,
+        monThuHours: s.hours.monThu,
+        friSunHours: s.hours.friSun,
+        monThuHoursEn: defaultSettingsEn.hoursWeekdayEn || 'Mon–Thu: 07:00 – 18:00',
+        friSunHoursEn: defaultSettingsEn.hoursWeekendEn || 'Fri–Sun: 07:00 – 22:00',
+        socialProof: s.socialProof,
+        socialProofEn: defaultSettingsEn.socialProofEn || '100% Recommended',
+        googleMapsUrl: s.links.googleMaps,
+        facebookUrl: s.links.facebook,
+        tiktokUrl: s.links.tiktok,
+        youtubeUrl: s.links.youtube || '',
+        announcement: s.announcement,
+        announcementEn: defaultSettingsEn.announcementEn || '',
+        footerDesc: 'Cà phê sinh thái bên bờ suối — Hẻm 437 Hùng Vương, Đông Gia Nghĩa, Lâm Đồng (P. Nghĩa Trung, TP. Gia Nghĩa, Đắk Nông cũ).',
+        footerDescEn: defaultSettingsEn.footerDescEn || '',
+        lightBgHex: '#F6F3EC',
+        lightAccentHex: '#233B2D',
+        darkBgHex: '#131613',
+        darkAccentHex: '#3A5E49',
+        enableQuickChat: true,
+        quickChatPhone: '0382851688',
+        zaloUrl: 'https://zalo.me/0382851688',
+        messengerUrl: 'https://m.me/camcuhousedaknong',
+        whatsappUrl: 'https://wa.me/84382851688',
+      },
+    }).catch((err) => console.warn('StoreSettings seed warning:', err));
+  }
+
+  const existingContent = await prisma.siteContent.findUnique({ where: { id: 'default' } }).catch(() => null);
+  if (!existingContent) {
+    await prisma.siteContent.create({
+      data: {
+        id: 'default',
+        heroEyebrow: initialSiteContent.heroEyebrow,
+        heroEyebrowEn: defaultContentEn.heroEyebrowEn || initialSiteContent.heroEyebrow,
+        heroTitle: initialSiteContent.heroTitle,
+        heroTitleEn: initialSiteContent.heroTitle,
+        heroSubtitle: initialSiteContent.heroSubtitle,
+        heroSubtitleEn: defaultContentEn.heroSubtitleEn || initialSiteContent.heroSubtitle,
+        heroTagline: initialSiteContent.heroTagline,
+        heroTaglineEn: defaultContentEn.heroTaglineEn || initialSiteContent.heroTagline,
+        heroDescription: initialSiteContent.heroDescription,
+        heroDescriptionEn: defaultContentEn.heroDescriptionEn || initialSiteContent.heroDescription,
+        philosophyCards: JSON.stringify(initialSiteContent.philosophyCards),
+        philosophyCardsEn: JSON.stringify(defaultContentEn.philosophyCardsEn || []),
+        homeSectionOrder: initialSiteContent.homeSectionOrder as any,
+        aboutSectionOrder: initialSiteContent.aboutSectionOrder as any,
+        spaceSectionOrder: initialSiteContent.spaceSectionOrder as any,
+        menuSectionOrder: initialSiteContent.menuSectionOrder as any,
+        reviewsSectionOrder: initialSiteContent.reviewsSectionOrder as any,
+        newsSectionOrder: initialSiteContent.newsSectionOrder as any,
+        contactSectionOrder: initialSiteContent.contactSectionOrder as any,
+        sectionLayouts: initialSiteContent.sectionLayouts as any,
+        sectionVisibility: initialSiteContent.sectionVisibility as any,
+        menuShowAddToCart: false,
+      },
+    }).catch((err) => console.warn('SiteContent seed warning:', err));
+  }
+
+  const existingCommerce = await prisma.commerceSettings.findUnique({ where: { id: 'commerce-settings' } }).catch(() => null);
+  if (!existingCommerce) {
+    await prisma.commerceSettings.create({
+      data: {
+        id: 'commerce-settings',
+        commerceEnabled: false,
+        enableCustomerPortal: false,
+        enableNewsletter: false,
+        enableQuickSupportWidget: true,
+        enableSupportHotline: true,
+        enableSupportZalo: true,
+        enableSupportMessenger: false,
+        enableSupportWhatsApp: false,
+      },
+    }).catch((err) => console.warn('CommerceSettings seed warning:', err));
+  }
 
   // 2. PageConfig (7 rows)
   console.log('2. Seeding PageConfig (7 pages)...');
@@ -779,10 +848,15 @@ export async function seedDatabase() {
         categoryId: catId,
         sortOrder: itemIndex,
         nameVi: item.name,
+        name: item.name,
+        vietnameseTitle: item.name,
         nameEn: tr.nameEn || item.name,
         descVi: item.description || '',
+        description: item.description || '',
         descEn: tr.descriptionEn || item.description || '',
+        descriptionEn: tr.descriptionEn || item.description || '',
         priceVnd: item.price || 25000,
+        price: item.price || 25000,
         priceDisplay: `${(item.price || 25000).toLocaleString('vi-VN')}đ`,
         imageUrl: item.image || undefined,
         isFeatured: itemIndex <= 8,
@@ -798,10 +872,15 @@ export async function seedDatabase() {
         categoryId: catId,
         sortOrder: itemIndex,
         nameVi: item.name,
+        name: item.name,
+        vietnameseTitle: item.name,
         nameEn: tr.nameEn || item.name,
         descVi: item.description || '',
+        description: item.description || '',
         descEn: tr.descriptionEn || item.description || '',
+        descriptionEn: tr.descriptionEn || item.description || '',
         priceVnd: item.price || 25000,
+        price: item.price || 25000,
         priceDisplay: `${(item.price || 25000).toLocaleString('vi-VN')}đ`,
         imageUrl: item.image || undefined,
         isFeatured: itemIndex <= 8,
@@ -815,7 +894,7 @@ export async function seedDatabase() {
     });
   }
 
-  // 5. GalleryPlate (30 spatial photos)
+  // 5. GalleryPlate (30 spatial photos) + SpatialFigure legacy sync
   console.log('5. Seeding GalleryPlate (30 spatial photos)...');
   const backupSpaceItems = backupData.space_items || [];
   for (let i = 1; i <= 30; i++) {
@@ -888,6 +967,35 @@ export async function seedDatabase() {
         chapterTitleEn,
       },
     });
+
+    await prisma.spatialFigure.upsert({
+      where: { id },
+      update: {
+        chapter,
+        chapterTitleVi,
+        chapterTitleEn,
+        titleVi,
+        titleEn,
+        locationVi: zoneTag,
+        locationEn: zoneTag,
+        descriptionVi: captionVi,
+        descriptionEn: captionEn,
+        imageUrl,
+      },
+      create: {
+        id,
+        chapter,
+        chapterTitleVi,
+        chapterTitleEn,
+        titleVi,
+        titleEn,
+        locationVi: zoneTag,
+        locationEn: zoneTag,
+        descriptionVi: captionVi,
+        descriptionEn: captionEn,
+        imageUrl,
+      },
+    }).catch(() => {});
   }
 
   // 6. Post (Events & News)
@@ -1049,24 +1157,40 @@ export async function seedDatabase() {
     });
   }
 
-  // 8. LegalPage
-  console.log('8. Seeding LegalPage...');
+  // 8. LegalPage & StaticPage (4 official policies)
+  console.log('8. Seeding LegalPage & StaticPage...');
   const legalPages = [
     {
       slug: 'chinh-sach-bao-mat',
       titleVi: 'Chính Sách Bảo Mật Thông Tin',
       titleEn: 'Privacy Policy',
-      contentVi: 'Cẩm Cù House cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng khi gửi yêu cầu liên hệ hoặc đặt bàn tại website camcuhouse.online. Chúng tôi chỉ sử dụng thông tin để xác nhận lịch hẹn và nâng cao chất lượng dịch vụ, không chia sẻ cho bất kỳ bên thứ ba nào.',
-      contentEn: 'Cẩm Cù House is committed to safeguarding personal information submitted via camcuhouse.online. We use your details solely for confirmation and customer care.',
+      contentVi: '## Cam kết bảo mật tại Cẩm Cù House\nCẩm Cù House cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng khi gửi yêu cầu liên hệ hoặc đặt bàn tại website camcuhouse.online.\n\n### Mục đích sử dụng\nChúng tôi chỉ sử dụng họ tên, số điện thoại và email để xác nhận lịch hẹn, tiệc BBQ bên suối và nâng cao chất lượng phục vụ, không chia sẻ hay bán dữ liệu cho bên thứ ba.',
+      contentEn: '## Privacy Commitment\nCẩm Cù House safeguards personal information submitted via camcuhouse.online.\n\n### Purpose\nWe use your name, phone, and email strictly to confirm reservations and improve hospitality without sharing data with third parties.',
       sortOrder: 1,
+    },
+    {
+      slug: 'chinh-sach-doi-tra',
+      titleVi: 'Chính Sách Đổi Trả & Phục Vụ',
+      titleEn: 'Return & Service Policy',
+      contentVi: '## Chính sách phục vụ & đổi trả\nTại Cẩm Cù House, mọi thức uống thảo mộc và cà phê rang mộc đều được pha chế tươi mới theo từng yêu cầu.\n\n### Hỗ trợ ngay tại bàn\nNếu thức uống chưa hợp khẩu vị hoặc có sai sót trong quá trình phục vụ, quý khách vui lòng báo nhân viên quầy pha chế để được điều chỉnh hoặc pha mới miễn phí ngay lập tức.',
+      contentEn: '## Fresh Preparation Guarantee\nAll drinks and meals at Cẩm Cù House are prepared fresh to order.\n\n### On-site Adjustment\nIf any drink does not match your preference or arrives with an error, please notify our baristas for an immediate complimentary remake.',
+      sortOrder: 2,
+    },
+    {
+      slug: 'chinh-sach-bao-hanh',
+      titleVi: 'Chính Sách Chất Lượng & Nông Sản',
+      titleEn: 'Quality & Origin Assurance Policy',
+      contentVi: '## Cam kết nguồn gốc nông sản Đắk Nông\n100% hạt cà phê Robusta được thu hái chín từ đất đỏ bazan Gia Nghĩa, rang mộc tự nhiên không tẩm hóa chất.\n\n### Thảo mộc & Nguyên liệu sạch\nTrà hoa Cẩm Cù, gừng sẻ, mật ong rừng và bơ sáp được tuyển chọn từ nông hộ địa phương đạt chuẩn an toàn vệ sinh thực phẩm.',
+      contentEn: '## Dak Nong Origin Guarantee\n100% ripe Robusta beans harvested from volcanic basalt soil and naturally wood-roasted without chemical additives.\n\n### Pure Botanicals\nHerbal infusions, forest honey, and fresh avocados are sourced directly from trusted local farms.',
+      sortOrder: 3,
     },
     {
       slug: 'dieu-khoan-su-dung',
       titleVi: 'Điều Khoản & Quy Định Không Gian',
-      titleEn: 'Terms & Space Guidelines',
-      contentVi: 'Để bảo tồn nguyên vẹn hệ sinh thái tự nhiên và dòng suối trong lành, quý khách vui lòng giữ gìn vệ sinh chung, không xả rác xuống suối, và lưu ý an toàn cho các bạn nhỏ khi dạo chơi ven bờ suối.',
-      contentEn: 'To protect our pristine streamside ecosystem, guests are kindly requested to preserve cleanliness, avoid littering, and supervise children near the stream.',
-      sortOrder: 2,
+      titleEn: 'Terms & Sanctuary Space Guidelines',
+      contentVi: '## Quy định bảo vệ dòng suối tự nhiên\nĐể bảo tồn nguyên vẹn hệ sinh thái tự nhiên và dòng suối trong lành tại Hẻm 437 Hùng Vương, quý khách vui lòng giữ gìn vệ sinh chung và không xả rác xuống suối.\n\n### An toàn bên suối\nPhụ huynh vui lòng luôn để mắt đến trẻ nhỏ khi di chuyển trên cầu gỗ và các bậc đá gần bờ suối.',
+      contentEn: '## Protecting Our Natural Stream\nTo preserve our crystal-clear stream ecosystem at Alley 437 Hung Vuong, please keep the grounds clean and avoid littering.\n\n### Streamside Safety\nParents are kindly requested to supervise young children near wooden bridges and rocky water edges.',
+      sortOrder: 4,
     },
   ];
 
@@ -1091,6 +1215,24 @@ export async function seedDatabase() {
         published: true,
       },
     });
+    await prisma.staticPage.upsert({
+      where: { slug: lp.slug },
+      update: {
+        title: lp.titleVi,
+        titleEn: lp.titleEn,
+        content: lp.contentVi,
+        contentEn: lp.contentEn,
+        published: true,
+      },
+      create: {
+        slug: lp.slug,
+        title: lp.titleVi,
+        titleEn: lp.titleEn,
+        content: lp.contentVi,
+        contentEn: lp.contentEn,
+        published: true,
+      },
+    }).catch(() => {});
   }
 
   // 9. Milestone
