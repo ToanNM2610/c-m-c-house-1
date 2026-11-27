@@ -82,6 +82,7 @@ export function AppProvider({
     try {
       const root = document.documentElement;
       root.setAttribute('data-theme', theme);
+      root.classList.toggle('dark', theme === 'dark');
       root.setAttribute('data-font', data.settings.fontPreset || 'sans-be-vietnam');
       root.lang = language;
 

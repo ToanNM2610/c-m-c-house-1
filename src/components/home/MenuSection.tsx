@@ -283,7 +283,10 @@ export default function MenuSection() {
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-ink-muted absolute left-3.5 top-3" />
           <input
+            id="menu-search"
+            name="menuSearch"
             type="text"
+            aria-label={isEn ? 'Search menu items' : 'Tìm kiếm món ăn, thức uống'}
             placeholder={isEn ? 'Search item name, ingredients (avocado, kale, salt...)...' : 'Tìm theo tên món, nguyên liệu (bơ sáp, cải kale, muối...)'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -368,7 +371,7 @@ export default function MenuSection() {
         <Info className="w-4 h-4 text-accent-botanical shrink-0" />
         <span>{dietaryNote}</span>
       </div>
-      <span className="text-forest-400 font-medium whitespace-nowrap">
+      <span className="text-ink-muted font-medium sm:whitespace-nowrap">
         {currencyNote}
       </span>
     </div>

@@ -230,8 +230,12 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
     'group-system': true,
   });
 
-  // Fetch live unread inquiries count
+  // Fetch live unread inquiries count only after admin session is authenticated
   useEffect(() => {
+    if (!currentUser) {
+      setUnreadInquiries(0);
+      return;
+    }
     let mounted = true;
     const fetchCounts = async () => {
       try {
@@ -251,7 +255,7 @@ export default function AdminPageClient({ initialTab = 'dashboard' }: { initialT
       mounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [currentUser]);
 
   const showToast = (message: string) => {
     setToastMessage(message);
